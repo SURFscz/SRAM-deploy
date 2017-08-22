@@ -1,0 +1,51 @@
+---
+- hosts: all
+  tasks:
+    - name: Read vars from secrets file
+      include_vars: "{{ secrets_file }}"
+      tags: always
+      check_mode: no
+
+- hosts: all
+  roles:
+    - { role: basic,  tags: ['common'] }
+    - { role: apt,    tags: ['common'] }
+      #- { role: common, tags: ['common'] }
+      #    - { role: firewall, tags: ['firewall' ] }
+      #   - { role: logging,  tags: ['logging'  ] }
+
+- hosts: comanage
+  roles:
+      #    - { role: postgres, tags: ['postgres'] }
+      #    - { role: comanage, tags: ['comanage'] }
+
+- hosts: ldap
+  roles:
+      #    - { role: ldap, tags: ['ldap'] }
+
+- hosts: proxy
+  roles:
+      #    - { role: satosa,  tags: ['satosa'  ] }
+      #    - { role: pyff,    tags: ['pyff'    ] }
+      #    - { role: wayf,    tags: ['wayf'    ] }
+      #    - { role: mongodb, tags: ['mongodb' ] }
+
+- hosts: metadata
+  roles:
+      #    - { role: mongodb,      tags: ['mongodb'     ] }
+      #    - { role: metadata-api, tags: ['metadata-api'] }
+
+- hosts: loadbalancer
+  roles:
+      #    - { role: sslcerts, tags: ['sslcerts'] }
+      #    - { role: haproxy,  tags: ['haproxy' ] }
+
+- hosts: mgnt1
+  #  roles:
+  #  - { role: ldap, tags: ['ldap'] }
+  #  - { role: mta,  tags: ['mta' ] }
+
+- hosts: mgnt2
+  #roles:
+  #  - { role: logstash, tags: ['logstash'] }
+  #  - { role: logstash, tags: ['logstash'] }

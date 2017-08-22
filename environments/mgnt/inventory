@@ -1,0 +1,12 @@
+[mgnt1]
+mgnt1.ams.scz.lab.surf.nl
+
+[mgnt2]
+mgnt2.ams.scz.lab.surf.nl
+
+[mgnt:children]
+mgnt1
+mgnt2
+
+[all:children]
+mgnt

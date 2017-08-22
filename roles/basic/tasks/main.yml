@@ -1,0 +1,29 @@
+---
+- name: set nameservers
+  template: src=resolv.conf.j2 dest=/etc/resolv.conf force=yes
+
+- name: set timezone
+  file: state=link src=/usr/share/zoneinfo/{{timezone}} dest=/etc/localtime force=True
+
+- name: set timezone
+  lineinfile: dest=/etc/timezone line={{timezone}} state=present regexp=.*
+
+- name: set hostname
+  hostname: name={{inventory_hostname_short}}
+
+- name: set /etc/hosts
+  template: src=hosts.j2 dest=/etc/hosts force=yes
+
+- name: check that hostname and fqdn are set up correctly
+  command: "hostname --fqdn"
+  any_errors_fatal: true
+  changed_when: false
+
+- name: disable ipv6
+  copy: src=99-sysctl-ipv6.conf dest=/etc/sysctl.d/
+  register: disable_ipv6
+
+- name: reload sysctl settings
+  systemd: name=systemd-sysctl.service state=restarted
+  when: disable_ipv6.changed
+
