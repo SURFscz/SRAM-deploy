@@ -1,7 +1,0 @@
----
-secrets_file: "environments/mgnt/secrets/all.yml"
-
-nameservers:
-  - 192.87.106.106
-  - 192.87.36.36
-

@@ -1,0 +1,12 @@
+# Allow members of groups {{sudo_groups|join(',')}} to execute any command
+{% for group in sudo_groups %}
+%{{group}}	ALL=(ALL:ALL) ALL
+{% endfor %}
+
+# root may always sudo without password
+root	ALL=(ALL:ALL) NOPASSWD: ALL
+
+# set some sane defaults
+Defaults	env_reset
+Defaults	!tty_tickets
+

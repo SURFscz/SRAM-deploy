@@ -1,0 +1,28 @@
+# IPv6 firewall configuration
+
+*filter
+:INPUT DROP [0:0]
+:FORWARD DROP [0:0]
+:OUTPUT ACCEPT [0:0]
+-A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+-A INPUT -p ipv6-icmp -j ACCEPT
+-A INPUT -i lo -j ACCEPT
+
+
+# generated from group config firewall_v6_incoming
+{% if firewall_v6_incoming is defined %}
+{% for l in firewall_v6_incoming -%}
+  {{'# '}}{{l.name}}{{"\n"}}
+  {%- if True               -%} -A INPUT                      {%- endif %}
+  {%- if True                %} -p {{l.proto|default('tcp')}} {%- endif %}
+  {%- if l.src   is defined  %} -s {{l.src}}                  {%- endif %}
+  {%- if l.sport is defined  %} -m multiport                  {%- endif %}
+  {%- if l.sport is defined  %} --sports {{l.sport}}          {%- endif %}
+  {%- if l.dport is defined  %} -m multiport                  {%- endif %}
+  {%- if l.dport is defined  %} --dports {{l.dport}}          {%- endif %}
+  {%- if True                %} -j ACCEPT                     {%- endif %}
+  {{"\n"}}
+{% endfor %}
+{% endif %}
+
+COMMIT

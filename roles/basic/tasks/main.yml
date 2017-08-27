@@ -3,10 +3,10 @@
   template: src=resolv.conf.j2 dest=/etc/resolv.conf force=yes
 
 - name: set timezone
-  file: state=link src=/usr/share/zoneinfo/{{timezone}} dest=/etc/localtime force=True
+  file: state=link src=/usr/share/zoneinfo/{{timezone}} dest=/etc/localtime force=yes
 
 - name: set timezone
-  lineinfile: dest=/etc/timezone line={{timezone}} state=present regexp=.*
+  template: src=timezone.j2 dest=/etc/timezone force=yes
 
 - name: set hostname
   hostname: name={{inventory_hostname_short}}

@@ -1,0 +1,32 @@
+# creates local users on the machines
+# in the future, we'll probably want a central ldap or so to manage the users
+---
+- name: set account defaults (1)
+  lineinfile: dest=/etc/adduser.conf line={{item.line}} regexp={{item.regexp}} state=present
+  with_items:
+    - { line: "FIRST_UID=10000", regexp: "^FIRST_UID\\s*=" }
+    - { line: "FIRST_GID=10000", regexp: "^FIRST_GID\\s*=" }
+
+- name: set account defaults (2)
+  lineinfile: dest=/etc/login.defs line={{item.line}} regexp={{item.regexp}} state=present
+  with_items:
+    - { line: "UID_MIN 10000", regexp: "^UID_MIN\\s* " }
+    - { line: "GID_MIN 10000", regexp: "^GID_MIN\\s* " }
+
+- name: create groups
+  group: name={{item.1}} state=present
+  with_subelements:
+    - "{{users}}"
+    - "groups"
+
+- name: create users
+  user: name={{item.uid}} group={{item.groups[0]}} groups={{item.groups|join(',')}} password={{item.pw_hash}} shell="/bin/bash" comment={{item.name}} state=present update_password=always
+  with_items: "{{users}}"
+
+- name: copy ssh keys
+  authorized_key: user={{item.uid}} key={{item.sshkey}} state=present manage_dir=yes
+  with_items: "{{users}}"
+
+- name: install sudo permissions
+  template: src=scz-sudo.j2 dest=/etc/sudoers.d/scz-sudo owner=root group=root mode=0600 force=yes
+
