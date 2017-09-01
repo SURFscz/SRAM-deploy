@@ -1,0 +1,15 @@
+server {
+	listen      80 default_server;
+	listen [::]:80 default_server;
+
+	server_name _;
+
+	location /.well-known/acme-challenge {
+		alias {{letsencrypt.acme_challenge}};
+	}
+
+	location / {
+		rewrite ^(.*) https://$http_host$1 permanent;
+	}
+}
+

@@ -1,0 +1,14 @@
+#!/bin/sh
+#
+# dehydrated ssl cert renewal
+set -e
+
+LOG=$(mktemp)
+dehydrated -c > $LOG
+
+grep -q 'Renewing!' $LOG  &&  cat $LOG
+
+rm -f $LOG
+
+exit 0
+

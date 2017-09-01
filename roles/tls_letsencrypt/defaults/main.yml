@@ -1,0 +1,8 @@
+# defines safe default for letsencrypt
+#   renew_days: certificate is renewed if is is valid for less than N days
+#   use_staging: use Letsencrypt staging servers (use for testing; Letsencrypt
+#   prod has rate limiting)
+---
+letsencrypt:
+  renew_days: 45
+  use_staging: true

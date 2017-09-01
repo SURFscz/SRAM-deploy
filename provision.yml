@@ -39,6 +39,11 @@
   #  - { role: logstash, tags: ['logstash'] }
   #  - { role: logstash, tags: ['logstash'] }
 
+- hosts: lb
+  roles:
+  - { role: http_nginx,      tags: ['http_nginx','test']      }
+  - { role: tls_letsencrypt, tags: ['tls_letsencrypt','test'] }
+#  - { role: https_haproxy,   tags: ['https_haproxy','test']   }
 
 - hosts: comanage
   roles:
@@ -60,9 +65,4 @@
   roles:
       #    - { role: mongodb,      tags: ['mongodb'     ] }
       #    - { role: metadata-api, tags: ['metadata-api'] }
-
-- hosts: loadbalancer
-  roles:
-      #    - { role: sslcerts, tags: ['sslcerts'] }
-      #    - { role: haproxy,  tags: ['haproxy' ] }
 

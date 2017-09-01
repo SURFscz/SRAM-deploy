@@ -1,0 +1,19 @@
+---
+- name: install dehydrated
+  apt: name=dehydrated state=installed
+
+- name: add domains to dehydrate config
+  lineinfile: dest=/etc/dehydrated/domains.txt line={{item.hostname}} state=present create=yes
+  with_items: "{{loadbalancer}}"
+
+- name: copy dehydrated config
+  template: src=dehydrated.conf.j2 dest=/etc/dehydrated/conf.d/scz.sh
+
+- name: run dehydrated
+  command: /usr/bin/dehydrated -c
+  register: result
+  changed_when: "'Renewing!' in result.stdout"
+
+- name: install dehydrated cron job
+  copy: src=cron dest=/etc/cron.daily/scz-dehydrated mode=0755 owner=root group=root
+
