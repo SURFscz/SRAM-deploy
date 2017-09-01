@@ -30,3 +30,8 @@
 - name: install sudo permissions
   template: src=scz-sudo.j2 dest=/etc/sudoers.d/scz-sudo owner=root group=root mode=0600 force=yes
 
+- name: set up ssh config
+  template: dest=/etc/ssh/sshd_config src=sshd_config.j2
+  notify:
+    - restart sshd
+
