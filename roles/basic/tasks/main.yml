@@ -27,3 +27,6 @@
   systemd: name=systemd-sysctl.service state=restarted
   when: disable_ipv6.changed
 
+- name: install sudo permissions
+  template: src=scz-sudo.j2 dest=/etc/sudoers.d/scz-sudo owner=root group=root mode=0600 force=yes
+
