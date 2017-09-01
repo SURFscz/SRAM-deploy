@@ -9,6 +9,12 @@
 - name: Upgrade packages
   apt: upgrade=dist
 
+# apt module doesn't support autoremove very well, yet
+- name: Remove obsolete packages
+  command: /usr/bin/apt --yes --purge autoremove
+  register: result
+  changed_when: "'0 upgraded, 0 newly installed, 0 to remove' not in result.stdout"
+
 - name: Install common tools / clients
   apt: name={{ item }} state=present
   with_items:
