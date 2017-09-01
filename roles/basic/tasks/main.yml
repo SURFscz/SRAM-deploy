@@ -19,13 +19,13 @@
   any_errors_fatal: true
   changed_when: false
 
-- name: disable ipv6
-  copy: src=99-sysctl-ipv6.conf dest=/etc/sysctl.d/
-  register: disable_ipv6
+- name: "{{'en' if enable_ipv6 else 'dis'}}able ipv6"
+  template: src=99-sysctl-ipv6.conf.j2 dest=/etc/sysctl.d/99-sysctl-ipv6.conf
+  register: result_ipv6
 
 - name: reload sysctl settings
   systemd: name=systemd-sysctl.service state=restarted
-  when: disable_ipv6.changed
+  when: result_ipv6.changed
 
 - name: install sudo permissions
   template: src=scz-sudo.j2 dest=/etc/sudoers.d/scz-sudo owner=root group=root mode=0600 force=yes
