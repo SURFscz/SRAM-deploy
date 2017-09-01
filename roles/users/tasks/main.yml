@@ -13,6 +13,10 @@
     - { line: "UID_MIN 10000", regexp: "^UID_MIN\\s* " }
     - { line: "GID_MIN 10000", regexp: "^GID_MIN\\s* " }
 
+- name: set root password
+  user: name=root update_password=always password={{root.pw_hash}}
+  with_items: "{{users}}"
+
 - name: create groups
   group: name={{item.1}} state=present
   with_subelements:
