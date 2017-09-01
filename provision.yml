@@ -1,10 +1,24 @@
 ---
 - hosts: all
   tasks:
-    - name: Read vars from secrets file
-      include_vars: "{{ secrets_file }}"
-      tags: always
-      check_mode: no
+  - name: Read vars from secrets file
+    include_vars: "{{ secrets_file }}"
+    tags: always
+    check_mode: no
+
+# looks hackish, but this is apparently the "a clean, official way" to gather
+# required facts from all hosts, regardless of the commandline --limit
+# parameter
+# We need this here, because in the group vars, we rely on the hostvars for
+# the ip addresses of other hosts (e.g, mgnt1)
+- hosts: all
+  pre_tasks:
+  - name: Gather facts from mgnt hosts (regardless of limit or tags)
+    setup:
+    delegate_to: "{{item}}"
+    delegate_facts: True
+    when: hostvars[item]['ansible_default_ipv4'] is not defined
+    with_items: "{{groups['mgnt']}}"
 
 - hosts: all
   roles:
