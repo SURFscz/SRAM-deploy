@@ -45,8 +45,8 @@ defaults
 #  frontend 
 # -------------------------------------------------------------------
 frontend ssl_ip
-	bind    *:443 ssl {% for host in loadbalancer %}crt {{letsencrypt.cert_dir}}/{{host.hostname}}/priv+fullchain.pem{% endfor %} no-sslv3 transparent
-	bind [::]:443 ssl {% for host in loadbalancer %}crt {{letsencrypt.cert_dir}}/{{host.hostname}}/priv+fullchain.pem{% endfor %} no-sslv3 transparent
+	bind    *:443 ssl {% for host in loadbalancer %} crt {{letsencrypt.cert_dir}}/{{host.hostname}}/priv+fullchain.pem{% endfor %} no-sslv3 transparent
+	bind [::]:443 ssl {% for host in loadbalancer %} crt {{letsencrypt.cert_dir}}/{{host.hostname}}/priv+fullchain.pem{% endfor %} no-sslv3 transparent
 
 	http-response set-header Strict-Transport-Security "max-age=16000000; includeSubDomains; preload;"
 	http-response set-header Content-Security-Policy   "default-src 'self'; frame-src 'none'; form-action 'self'; frame-ancestors 'none'; block-all-mixed-content;"
@@ -64,4 +64,5 @@ backend be_{{host.hostname}}
 	{% for be_server in host.backend_hosts -%}
 	server {{host.hostname}} {{be_server}}:{{host.backend_port}} check
 	{%- endfor %}
+
 {% endfor %}
