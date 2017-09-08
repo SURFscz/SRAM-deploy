@@ -1,0 +1,71 @@
+- name: Ensure that packages are installed
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - build-essential
+    - git
+    - xmlsec1
+    - python3.5
+    - python-dev
+    - python-setuptools
+    - python3-pip
+
+- name: install python virtualenv
+  pip:
+    name: virtualenv
+    executable: pip3
+
+- name: create cmservice user
+  user: name=cmservice shell="/bin/false" state=present
+
+- name: Create project directory
+  file: path={{ cmservice_project_dir }} state=directory mode=0755 owner=cmservice
+
+- block:
+  - name: fetch CMservice from {{ cmservice_repo_url }}, version {{ cmservice_repo_version }}
+    git:
+      repo: "{{ cmservice_repo_url }}"
+      dest: "{{ cmservice_src_dir }}"
+      version: "{{ cmservice_repo_version }}"
+      accept_hostkey: yes
+      force: yes
+
+  - name: install CMservice from {{ cmservice_src_dir }} to {{ cmservice_env_dir }}
+    pip:
+      name: "{{ cmservice_src_dir }}"
+      virtualenv: "{{ cmservice_env_dir }}"
+      virtualenv_python: python3
+      #executable: pip3
+
+  - name: Create CMservice  settings.cfg configuration
+    template: src=settings.cfg.j2
+              dest="{{ cmservice_env_dir }}/settings.cfg"
+
+  - name: Create keys directory
+    file: path="{{ cmservice_env_dir }}/keys" state=directory mode=0755
+
+  - name: Copy satosa public key
+    copy: src="{{ satosa_env_dir }}/keys/satosa.pub"
+          dest="{{ cmservice_env_dir }}/keys/satosa.pub"
+          remote_src=yes
+
+  - name: Create var directory for sqlite db
+    file: path="{{ cmservice_env_dir }}/var" state=directory mode=0755
+
+  - name: Create CMservice systemd service
+    template: src=cmservice.service.j2
+              dest="{{ cmservice_env_dir }}/cmservice.service"
+  become: yes
+  become_user: cmservice
+
+- name: Copy to cmservice.service in /etc/systemd/system
+# systemd/ctl can not enable symlinked services :(
+#- name: Create symlink to satosa.service in /etc/systemd/system
+# https://github.com/systemd/systemd/issues/3010
+#  file: src="{{ satosa_env_dir }}/satosa.service" dest=/etc/systemd/system/satosa.service state=link
+  copy: src="{{ cmservice_env_dir }}/cmservice.service" dest=/etc/systemd/system/cmservice.service
+        remote_src=yes
+
+- name: restart CMservice
+  service: name=cmservice state=restarted enabled=yes
