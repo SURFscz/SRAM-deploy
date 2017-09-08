@@ -48,6 +48,7 @@
 
 - hosts: comanage
   roles:
+      - { role: http_dummy,  tags: ['proxy','test'  ] }
       #    - { role: postgres, tags: ['postgres'] }
       #    - { role: comanage, tags: ['comanage'] }
 
