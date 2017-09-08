@@ -1,0 +1,30 @@
+module: satosa.backends.saml2.SAMLBackend
+name: Saml2SP
+config:
+  sp_config:
+    key_file: certs/backend.key
+    cert_file: certs/backend.crt
+    organization: {display_name: Example Identities, name: Example Identities Org., url: 'http://www.example.com'}
+    contact_person:
+    - {contact_type: technical, email_address: technical@example.com, given_name: Technical}
+    - {contact_type: support, email_address: support@example.com, given_name: Support}
+
+    metadata:
+#      local: [metadata/idp.xml, metadata/idp_sc_diy.xml]
+      mdq: ['https://{{ hostnames.proxy }}']
+
+    entityid: <base_url>/<name>/proxy_saml2_backend.xml
+    service:
+      sp:
+        allow_unsolicited: true
+        endpoints:
+          assertion_consumer_service:
+          - [<base_url>/<name>/acs/post, 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST']
+          - [<base_url>/<name>/acs/redirect, 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect']
+          discovery_response:
+          - [<base_url>/<name>/disco, 'urn:oasis:names:tc:SAML:profiles:SSO:idp-discovery-protocol']
+        name_id_format: 'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent'
+    #allow_unknown_attributes: true
+  # disco_srv must be defined if there is more than one IdP in the metadata specified above
+  disco_srv: https://{{ hostnames.proxy }}/role/idp.ds
+  metadata: <base_url>/<name>/metadata

@@ -1,0 +1,14 @@
+[Unit]
+Description=CMservice
+After=syslog.target network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory={{ cmservice_env_dir }}
+Environment="CMSERVICE_CONFIG={{ cmservice_env_dir }}/settings.cfg"
+ExecStart={{ cmservice_env_dir }}/bin/gunicorn -b{{ cmservice_host }}:{{ cmservice_port }} cmservice.service.run:app
+Restart=on-abort
+
+[Install]
+WantedBy=multi-user.target

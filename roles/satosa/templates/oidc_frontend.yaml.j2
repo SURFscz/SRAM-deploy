@@ -1,0 +1,11 @@
+module: satosa.frontends.openid_connect.OpenIDConnectFrontend
+name: OIDC 
+config:
+  signing_key_path: certs/frontend.key
+  db_uri: mongodb://{{ mongodb_host }} # optional: only support MongoDB, will default to in-memory storage if not specified
+  provider:
+    client_registration_supported: Yes
+    response_types_supported: ["code", "id_token token"]
+    subject_types_supported: ["public"]
+    scopes_supported: ["openid", "email", "profile"]
+
