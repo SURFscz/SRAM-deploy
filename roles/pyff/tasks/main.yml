@@ -1,0 +1,64 @@
+- name: Ensure that packages are installed
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - build-essential
+    - git
+    - xmlsec1
+    - python2.7
+    - python-dev
+    - python-setuptools
+    - python-pip
+
+- name: install python virtualenv
+  pip:
+    name: virtualenv
+    executable: pip
+
+- name: create pyFF user
+  user: name=pyff shell="/bin/false" state=present
+
+- name: Create project directory
+  file: path={{ pyff_project_dir }} state=directory mode=0755 owner=pyff
+
+- block:
+  - name: fetch pyFF from {{ pyff_repo_url }}, version {{ pyff_repo_version }}
+    git:
+      repo: "{{ pyff_repo_url }}"
+      dest: "{{ pyff_src_dir }}"
+      version: "{{ pyff_repo_version }}"
+      accept_hostkey: yes
+      force: yes
+
+  - name: install pyFF from {{ pyff_src_dir }} to {{ pyff_env_dir }}
+    pip:
+      name: "{{ pyff_src_dir }}"
+      virtualenv: "{{ pyff_env_dir }}"
+      virtualenv_python: python2
+      #executable: pip2
+
+  - name: Create pyFF mdq configuration
+    template: src=mdq.fd.j2
+              dest="{{ pyff_env_dir }}/mdq.fd"
+    become_method: sudo
+    
+  - name: Create pyFF systemd service
+    template: src=pyff.service.j2
+              dest="{{ pyff_env_dir }}/pyff.service"
+  become: yes
+  become_user: pyff
+
+- name: Copy to pyff.service in /etc/systemd/system
+# systemd/ctl can not enable symlinked services :(
+# https://github.com/systemd/systemd/issues/3010
+#- name: Create symlink to pyff.service in /etc/systemd/system
+#  file: src="{{ pyff_env_dir }}/pyff.service" dest=/etc/systemd/system/pyff.service state=link
+  copy: src="{{ pyff_env_dir }}/pyff.service" dest=/etc/systemd/system/pyff.service
+    remote_src=yes
+
+- name: Create pyff-owned pyff.pid file
+  file: path=/var/run/pyff.pid state=touch owner=pyff
+
+- name: restart pyff
+  service: name=pyff state=restarted enabled=yes
