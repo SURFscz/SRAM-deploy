@@ -5,7 +5,7 @@ server {
 	server_name _;
 
 	location /.well-known/acme-challenge {
-		alias {{letsencrypt.acme_challenge}};
+		alias {{letsencrypt.acme_challenge_dir}}/.well-known/acme-challenge;
 	}
 
 	location / {

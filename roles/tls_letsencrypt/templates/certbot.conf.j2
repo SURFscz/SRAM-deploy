@@ -1,0 +1,18 @@
+# certbot config
+
+{% if letsencrypt.use_staging %}
+staging
+{% endif %}
+
+email={{admin_email}}
+
+agree-tos
+
+rsa-key-size 2048
+
+authenticator = webroot
+webroot-path {{letsencrypt.acme_challenge_dir}}
+
+post-hook = /bin/systemctl restart haproxy.service
+renew-hook = /bin/bash -c 'cd "$RENEWED_LINEAGE" && cat {{certbot.privkey_pem}} {{certbot.fullchain_pem}} > {{certbot.all_pem}}'
+

@@ -1,0 +1,15 @@
+# install a haproxy on the load balancer
+---
+- debug: var=hostvars
+
+- name: install haproxy
+  apt: name=haproxy state=present
+
+- name: install hproxy config
+  template: src=haproxy.cfg.j2 dest=/etc/haproxy/haproxy.cfg mode=0644 owner=root group=root
+  notify:
+    - restart haproxy
+
+- name: enable haproxy
+  service: name=haproxy.service state=started enabled=true
+

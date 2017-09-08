@@ -1,0 +1,7 @@
+# installs a dummy http server
+---
+- name: install nginx
+  apt: name=nginx state=present
+
+- name: enable nginx
+  service: name=nginx.service state=started enabled=true

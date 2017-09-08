@@ -1,3 +1,4 @@
+# vim:ts=2:sw=2:expandtab
 ---
 - hosts: all
   tasks:
@@ -18,7 +19,7 @@
     delegate_to: "{{item}}"
     delegate_facts: True
     when: hostvars[item]['ansible_default_ipv4'] is not defined
-    with_items: "{{groups['mgnt']}}"
+    with_items: "{{groups['all']}}"
 
 - hosts: all
   roles:
@@ -41,9 +42,9 @@
 
 - hosts: lb
   roles:
-  - { role: http_nginx,      tags: ['http_nginx','test']      }
-  - { role: tls_letsencrypt, tags: ['tls_letsencrypt','test'] }
-#  - { role: https_haproxy,   tags: ['https_haproxy','test']   }
+  - { role: http_nginx,      tags: ['http_nginx']      }
+  - { role: tls_letsencrypt, tags: ['tls_letsencrypt'] }
+  - { role: https_haproxy,   tags: ['https_haproxy','test']   }
 
 - hosts: comanage
   roles:
@@ -56,6 +57,7 @@
 
 - hosts: proxy
   roles:
+      - { role: http_dummy,  tags: ['proxy','test'  ] }
       #    - { role: satosa,  tags: ['satosa'  ] }
       #    - { role: pyff,    tags: ['pyff'    ] }
       #    - { role: wayf,    tags: ['wayf'    ] }
