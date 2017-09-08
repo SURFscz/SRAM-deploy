@@ -15,9 +15,11 @@
    - sudo
    - bash
    - zsh
+   - vim
    - locales-all
    - open-vm-tools
    - open-vm-tools-dkms
+   - curl
 
 - name: remove unneccessary packages
   apt: name={{ item }} state=absent
