@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<md:EntityDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"
+                     xmlns:mdui="urn:oasis:names:tc:SAML:metadata:ui"
+                     entityID="{{ sp_endpoint_url }}/metadata">
+  <md:SPSSODescriptor AuthnRequestsSigned="true"
+                      WantAssertionsSigned="true"
+                      protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+    <md:Extensions>
+      <mdui:UIInfo>
+        <mdui:DisplayName xml:lang="en">COmanage {{ sp_hostname }}</mdui:DisplayName>
+        <mdui:Description xml:lang="en">
+          This is a basic installation of COmanage for {{ sp_hostname }}
+        </mdui:Description>
+      </mdui:UIInfo>
+    </md:Extensions>
+    <md:KeyDescriptor use="signing">
+      <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+        <ds:X509Data>
+          <ds:X509Certificate>{{ sp_cert }}</ds:X509Certificate>
+        </ds:X509Data>
+      </ds:KeyInfo>
+    </md:KeyDescriptor>
+   <md:NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified</md:NameIDFormat>
+    <md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://{{ sp_endpoint_url }}/postResponse" index="1"/>
+  </md:SPSSODescriptor>
+  <md:Organization>
+    <md:OrganizationName xml:lang="en-US">{{ sp_organisation }}</md:OrganizationName>
+    <md:OrganizationDisplayName xml:lang="en-US">{{ sp_organisation }}</md:OrganizationDisplayName>
+    <md:OrganizationURL xml:lang="en-US">{{ sp_organisation_url }}</md:OrganizationURL>
+  </md:Organization>
+  <md:ContactPerson contactType="technical">
+    <md:GivenName>{{ sp_technical_contact_gn }}</md:GivenName>
+    <md:SurName>{{ sp_technical_contact_sn }}</md:SurName>
+    <md:EmailAddress>{{ sp_technical_contact }}</md:EmailAddress>
+  </md:ContactPerson>
+</md:EntityDescriptor>

@@ -1,0 +1,13 @@
+---
+packages:
+  - mysql-client
+  - mysql-server
+  - python-mysqldb
+
+sqlstart:
+  - name: "mysql"
+    state: "started"
+
+sqlrestart:
+  - name: "mysql"
+    state: "restarted"

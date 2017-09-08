@@ -1,0 +1,39 @@
+---
+# playbook to install and configure general components of Apache
+- include_vars: "apache.yml"
+
+- name: Update apt cache
+  apt: update_cache=yes
+  changed_when: False
+
+- name: Install apache modules
+  apt: name={{ item }} state=present
+  with_items:
+   - apache2
+
+- name: Ensure some modules are not activated
+  apache2_module:
+    state: absent
+    name: "{{ item }}"
+    # apache complains no MPM is set after disabling mpm_event, due to the module testing
+    # if the module was disabled succesfully. It was, but it causes an error situation
+    # and makes the module fail, where in fact disabling the module was succesful.
+    # By using ignore_configcheck, the enabled-check returns False, which we want
+    # anyway.
+    ignore_configcheck: True
+  with_items: "{{ disable_modules }}"
+  ignore_errors: True
+
+- name: Activate apache modules
+  apache2_module:
+    state: present
+    name: "{{ item }}"
+    # Just before the module is enabled, the module checks if the module is already
+    # available. Because no MPM is available at first, this causes an error situation
+    # that we can avoid by setting the configcheck false. In that case it will not
+    # fail the entire operation, but just return a False on the enabled-check, so
+    # we can continue.
+    ignore_configcheck: True
+  with_items: "{{ modules }}"
+  become: yes
+

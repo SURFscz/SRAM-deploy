@@ -1,0 +1,41 @@
+---
+- include_vars: mysql.yml
+
+- name: perform apt-get update
+  apt:
+    update_cache: yes
+    cache_valid_time: 1
+  become: Yes
+
+- name: ensure that packages are installed
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ packages  }}"
+  become: Yes
+
+- name: Start the MySQL service
+  service:
+    name: "{{ item.name }}"
+    state: "{{ item.state }}"
+  with_items: "{{ sqlstart }}"
+
+- name: create database for {{ mysql_database }}
+  mysql_db:
+    name: "{{ mysql_database }}"
+    state: present
+    login_password: "{{ mysql_root_password }}"
+
+- name: create user for mysql with all privilege
+  mysql_user:
+    name: "{{ mysql_user }}"
+    password: "{{ mysql_password }}"
+    priv: "{{ mysql_database }}.*:ALL"
+    state: present
+    login_password: "{{ mysql_root_password }}"
+
+- name: Restart the MySQL service
+  service:
+    name: "{{ item.name }}"
+    state: "{{ item.state }}"
+  with_items: "{{ sqlrestart }}"
