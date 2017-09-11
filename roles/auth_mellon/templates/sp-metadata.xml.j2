@@ -7,7 +7,7 @@
                       protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
     <md:Extensions>
       <mdui:UIInfo>
-        <mdui:DisplayName xml:lang="en">COmanage {{ sp_hostname }}</mdui:DisplayName>
+        <mdui:DisplayName xml:lang="en">COmanage ({{ sp_hostname }})</mdui:DisplayName>
         <mdui:Description xml:lang="en">
           This is a basic installation of COmanage for {{ sp_hostname }}
         </mdui:Description>
@@ -21,7 +21,7 @@
       </ds:KeyInfo>
     </md:KeyDescriptor>
    <md:NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified</md:NameIDFormat>
-    <md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://{{ sp_endpoint_url }}/postResponse" index="1"/>
+    <md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="{{ sp_endpoint_url }}/postResponse" index="1"/>
   </md:SPSSODescriptor>
   <md:Organization>
     <md:OrganizationName xml:lang="en-US">{{ sp_organisation }}</md:OrganizationName>

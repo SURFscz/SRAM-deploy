@@ -31,6 +31,13 @@
     dest: "{{ comanage_path }}"
     state: link
 
+- name: Overwrite templates that require changes
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  with_items: "{{ comanage_templates }}"
+  become: yes
+
 #- name: Adding non-core plugins
 #  file:
 #    src: " {{ comanage_package }}/app/AvailablePlugin/{{ item }}"
@@ -89,7 +96,7 @@
   file:
     path: "{{ comanage_package }}/local/Config"
     owner: www-data
-    mode: 0700
+    mode: 0755
     state: directory
     recurse: yes
 
@@ -133,7 +140,6 @@
   file:
     path: "{{ comanage_package }}/local/Config"
     owner: root
-    mode: 0644
     state: directory
     recurse: yes
 

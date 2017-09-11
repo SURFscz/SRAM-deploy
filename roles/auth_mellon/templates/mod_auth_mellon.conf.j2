@@ -33,7 +33,7 @@ MellonLockFile "/var/run/mod_auth_mellon.lock"
 # are saved during authentication. This directory must writable by the
 # Apache user. It should not be writable (or readable) by other users.
 # Default: None
-# Example: MellonPostDirectory "/var/cache/mod_auth_mellon_postdata"
+MellonPostDirectory "/var/cache/apache2/mod_auth_mellon"
 
 # MellonPostTTL is the delay in seconds before a saved POST request can
 # be flushed.

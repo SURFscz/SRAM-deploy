@@ -56,3 +56,10 @@
   notify:
     - Restart Apache
 
+- name: Enable auth_mellon
+  apache2_module:
+    state: present
+    name: auth_mellon
+  become: yes
+
+

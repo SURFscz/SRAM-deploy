@@ -16,4 +16,4 @@ infodb:
    replace: "{{ comanage_admin_username }}"
 
 comanage_templates:
-  - { src: apache2-comanage.conf.j2, dest: /etc/apache2/conf-available/apache2-comanage.conf }
+  - { src: login_index.php.j2, dest: /opt/comanage/app/webroot/auth/login/index.php }

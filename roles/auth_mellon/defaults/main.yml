@@ -2,7 +2,7 @@
 sp_protocol: "https://"
 sp_hostname: "portal.example.org"
 sp_home: "/"
-sp_path: "{{ sp_home }}/auth/sp"
+sp_path: "{{ sp_home }}auth/sp"
 sp_endpoint_url: "{{sp_protocol }}{{ sp_hostname }}{{ sp_path }}"
 
 sp_metadata_dir: /etc/apache2/mellon

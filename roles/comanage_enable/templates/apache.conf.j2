@@ -27,8 +27,7 @@
             Options Indexes FollowSymLinks
             DirectoryIndex index.php
             AllowOverride All
-            Order allow,deny
-            Allow from all
+            Require all granted
         </Directory>
 
         ErrorLog ${APACHE_LOG_DIR}/error.log
@@ -54,7 +53,7 @@
             MellonEnable "info"
         </Location>
 
-        <Location "{{ sp_home }}/auth">
+        <Location "{{ sp_home }}auth">
             Require valid-user
             AuthType "Mellon"
 
@@ -64,7 +63,7 @@
             MellonCookieDomain {{ portal_hostname }}
             MellonCookiePath /
 
-            MellonUser "urn:oid:1.3.6.1.4.1.5923.1.1.1.6"
+            MellonUser "{{ idp_attribute }}"
             MellonEndpointPath "{{ sp_path }}"
             MellonDefaultLoginPath "{{ sp_home }}"
 

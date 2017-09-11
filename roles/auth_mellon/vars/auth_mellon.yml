@@ -1,6 +1,6 @@
 ---
 auth_mellon_templates:
-  - { src: mod_auth_mellon.conf.j2,  dest: "{{ sp_metadata_dir }}/mod_auth_mellon.conf", mode: "0644" }
+  - { src: mod_auth_mellon.conf.j2,  dest: "/etc/apache2/mods-available/auth_mellon.conf", mode: "0644" }
   - { src: sp-metadata.xml.j2,       dest: "{{ sp_metadata_dir }}/sp-metadata.xml", mode: "0644" }
 
 packages:
