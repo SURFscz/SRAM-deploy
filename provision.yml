@@ -49,6 +49,7 @@
 - hosts: comanage
   roles:
    - { role: http_apache, tags: ['comanage'] }
+   - { role: postfix, tags: ['comanage'] }
    - { role: mysql, tags: ['comanage'] }
    - { role: php56, tags: ['comanage'] }
    - { role: auth_mellon, tags: ['comanage'] }
