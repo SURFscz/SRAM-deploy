@@ -58,14 +58,14 @@
 
 - hosts: proxy
   roles:
-      - { role: http_dummy,  tags: ['proxy','test'  ] }
+      #- { role: http_dummy,  tags: ['proxy','test'  ] }
       - { role: satosa,      tags: ['satosa'    ] }
       - { role: pyff,        tags: ['pyff'      ] }
       - { role: cmservice,   tags: ['cmservice' ] }
-      #    - { role: mongodb, tags: ['mongodb' ] }
+      - { role: http_rp,     tags: ['http_rp' ] }
 
-- hosts: metadata
+- hosts: meta
   roles:
-      #    - { role: mongodb,      tags: ['mongodb'     ] }
-      #    - { role: metadata-api, tags: ['metadata-api'] }
+      - { role: http_dummy,  tags: ['http']      }
+      - { role: metadata,    tags: ['metadata'] }
 
