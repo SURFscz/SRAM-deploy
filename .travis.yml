@@ -1,17 +1,19 @@
 ---
-sudo: required
+# Use containers instead of full VMs for faster startup.
+sudo: false
 
-language:
-  - bash
-  - python
+# the syntax check scripts as weel as yamllint need python3
+language: python
+python:
+  - 3.5
 
-# disable the default submodule logic
+# disable the default submodule logic, as travis can't reach gitlab anyway
 git:
-  submodules: "false"
+  submodules: false
 
-
-before_install:
-  - sudo apt install ansible yamllint
+install:
+  - pip install yamllint
+  - pip install jinja2
 
 script:
   - ./scripts/syntax-check

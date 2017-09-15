@@ -1,15 +1,13 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 from __future__ import print_function
 import yaml
 import sys
-reload(sys)
-sys.setdefaultencoding('utf-8')
 
 filename = sys.argv[1]
 print("Checking {}... ".format(filename), end='')
 
 try:
-	with open(filename) as y:
+	with open(filename, encoding='utf-8') as y:
 		yaml.safe_load(y.read())
 except Exception as e:
 	print("failed: {}".format(e))
