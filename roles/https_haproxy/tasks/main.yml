@@ -1,7 +1,23 @@
 # install a haproxy on the load balancer
 ---
-- debug: var=hostvars
 
+##########################################
+## handle generation of dh params
+##
+- name: install openssl
+  apt: name=openssl state=installed
+  when: haproxy.custom_dhparam
+
+- name: generate Diffie-Hellman group
+  command: openssl dhparam -out {{ haproxy.dhparam_file }} {{ haproxy.dhparam_keysize }}
+  args:
+    creates: "{{ haproxy.dhparam_file }}"
+  when: haproxy.custom_dhparam
+
+
+##########################################
+## install haproxy
+##
 - name: install haproxy
   apt: name=haproxy state=present
 
