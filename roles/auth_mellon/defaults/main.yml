@@ -1,0 +1,20 @@
+---
+sp_protocol: "https://"
+sp_hostname: "portal.example.org"
+sp_home: "/"
+sp_path: "{{ sp_home }}auth/sp"
+sp_endpoint_url: "{{sp_protocol }}{{ sp_hostname }}{{ sp_path }}"
+
+sp_metadata_dir: /etc/apache2/mellon
+
+# Default values for the self-signed certificate are based on the certificate hostname
+sp_technical_contact_gn: "John"
+sp_technical_contact_sn: "Doe"
+sp_technical_contact: "ict@example.org"
+sp_organisation: "Example, Inc."
+sp_organisation_url: "https://www.example.org"
+
+sp_subject: "/O={{ sp_organisation }}/CN={{ sp_hostname }}"
+sp_days_valid: 3650
+sp_certificate: "{{ sp_metadata_dir }}/sp-cert.pem"
+sp_key: "{{ sp_metadata_dir }}/sp-private-key.pem"

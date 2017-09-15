@@ -1,0 +1,14 @@
+---
+- name: create database for {{ comanage_mysql_database }}
+  mysql_db:
+    name: "{{ comanage_db }}"
+    state: present
+
+- name: create user for mysql with all privilege
+  mysql_user:
+    name: "{{ comanage_db_user }}"
+    password: "{{ comanage_db_password }}"
+    priv: "{{ comanage_db }}.*:ALL"
+    state: present
+  notify:
+    - Restart MySQL

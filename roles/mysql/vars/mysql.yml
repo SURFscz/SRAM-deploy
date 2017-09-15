@@ -1,0 +1,7 @@
+---
+packages:
+  - mysql-client
+  - mysql-server
+  - mysql-common
+  - python-mysqldb
+

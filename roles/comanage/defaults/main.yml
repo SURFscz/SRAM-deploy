@@ -1,0 +1,20 @@
+---
+comanage_version: 1.0.7
+comanage_url: "https://github.com/Internet2/comanage-registry/archive/{{ comanage_version }}.tar.gz"
+comanage_install_dir: /opt
+# the package name has to point to the directory that was stored inside the comanage tarball
+comanage_package: "{{ comanage_install_dir }}/comanage-registry-{{ comanage_version }}"
+comanage_tmp_dir: "{{ comanage_package }}/app/tmp.dist"
+comanage_path: "{{ comanage_install_dir }}/comanage"
+
+comanage_db_user: comanage
+comanage_db_password: changethispassword
+comanage_db: "registry"
+comanage_users_table: "cm_users"
+
+comanage_www_user: "www-data"
+comanage_admin_given_name: "John"
+comanage_admin_family_name: "Doe"
+comanage_admin_username: "j.doe@example.com"
+comanage_enable_pooling: "No"
+
