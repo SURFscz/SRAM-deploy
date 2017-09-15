@@ -1,0 +1,20 @@
+#!/usr/bin/python
+from __future__ import print_function
+import jinja2
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
+
+env = jinja2.Environment()
+filename = sys.argv[1]
+print("Checking {}... ".format(filename), end='')
+
+try:
+	with open(filename) as template:
+		env.parse(template.read())
+except Exception as e:
+	print("failed: {}".format(e))
+	exit(1)
+
+print("ok")
+sys.exit(0)
