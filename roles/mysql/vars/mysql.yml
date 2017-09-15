@@ -2,12 +2,6 @@
 packages:
   - mysql-client
   - mysql-server
+  - mysql-common
   - python-mysqldb
 
-sqlstart:
-  - name: "mysql"
-    state: "started"
-
-sqlrestart:
-  - name: "mysql"
-    state: "restarted"

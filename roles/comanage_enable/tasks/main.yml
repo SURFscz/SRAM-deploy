@@ -24,10 +24,4 @@
     state: present
     name: "{{ item }}"
   with_items: "{{ apache_modules }}"
-
-- name: Restart Apache and related services
-  service:
-    name: "{{ item }}"
-    state: restarted
-  with_items: "{{ restart }}"
-  become: yes
+  notify: Restart Apache

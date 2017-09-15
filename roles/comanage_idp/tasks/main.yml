@@ -28,9 +28,6 @@
     owner: www-data
     mode: 0600
     validate_certs: no
-  notify:
-    - Restart Apache
-
 
 - name: Obtain IdP certificate
   get_url:
@@ -39,15 +36,13 @@
     owner: www-data
     mode: 0600
     validate_certs: no
-  when: idp_extract_certificate == "no"
-  notify:
-    - Restart Apache
+  when: idp_extract_certificate == False
 
 # The following line is based on a SimpleSAMLphp metadata export. It extracts the Certificate nodes
 # (only the first), then base64 decodes it and uses openssl to re-encode it as a PEM certificate.
 # Mileage may vary, adjust as required
 - name: Extract IdP certificate from XML metadata
   shell: "xmlstarlet sel -N md='urn:oasis:names:tc:SAML:2.0:metadata' -N ds='http://www.w3.org/2000/09/xmldsig#' -t -v /md:EntityDescriptor/md:IDPSSODescriptor/md:KeyDescriptor/ds:KeyInfo/ds:X509Data/ds:X509Certificate {{ idp_metadata_path }} | head -1 | base64 --decode | openssl x509 -inform DER -out {{ idp_certificate_path }}"
-  when: idp_extract_certificate != "no"
+  when: idp_extract_certificate == True
   notify:
     - Restart Apache

@@ -23,11 +23,11 @@
 
 - hosts: all
   roles:
-    - { role: basic,    tags: ['common'], when: not preinstalled }
+    - { role: basic,    tags: ['common'] }
     - { role: apt,      tags: ['common'] }
     - { role: firewall, tags: ['common'] }
-    - { role: ntp,      tags: ['common'], when: not preinstalled }
-    - { role: users,    tags: ['common'], when: not preinstalled }
+    - { role: ntp,      tags: ['common'] }
+    - { role: users,    tags: ['common'] }
 #   - { role: logging,  tags: ['logging'  ] }
 
 - hosts: mgnt1
@@ -48,14 +48,16 @@
 
 - hosts: comanage
   roles:
-   - { role: http_apache, tags: ['comanage'] }
-   - { role: postfix, tags: ['comanage'] }
-   - { role: mysql, tags: ['comanage'] }
-   - { role: php56, tags: ['comanage'] }
-   - { role: auth_mellon, tags: ['comanage'] }
-   - { role: comanage, tags: ['comanage'] }
-   - { role: comanage_idp, tags: ['comanage'] }
-   - { role: comanage_enable, tags: ['comanage'] }
+   - { role: http_apache, tags: ['comanage', 'web'] }
+   - { role: postfix, tags: ['comanage', 'smtp'] }
+   - { role: mysql, tags: ['comanage', 'db'] }
+   - { role: comanage_mysql, tags: ['comanage', 'db'] }
+   - { role: php56, tags: ['comanage', 'web'] }
+   - { role: auth_mellon, tags: ['comanage', 'web'] }
+   - { role: comanage, tags: ['comanage', 'web'] }
+   - { role: comanage_idp, tags: ['comanage', 'web'] }
+   - { role: comanage_enable, tags: ['comanage', 'web'] }
+   - { role: comanage_plugins, tags: ['comanage', 'web'] }
 
 - hosts: ldap
   roles:

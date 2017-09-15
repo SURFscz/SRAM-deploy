@@ -1,0 +1,46 @@
+---
+- include_vars: comanage_plugins.yml
+
+- name: perform apt-get update
+  apt:
+    update_cache: yes
+    cache_valid_time: 1
+  become: Yes
+
+- name: ensure that packages are installed
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ packages  }}"
+  become: Yes
+
+- name: Checkout the relevant Git based plugins
+  git:
+    repo: "{{ item.src }}"
+    dest: "{{ comanage_package }}/local/Plugin/{{ item.name }}"
+    version: "{{ item.version }}"
+  with_items: "{{ comanage_git_plugins }}"
+  become: yes
+
+- name: Install configurations
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ comanage_package }}/app/Config/{{ item.dest }}"
+  with_items: "{{ comanage_plugin_configurations }}"
+  become: yes
+
+- name: Clearing Cake cache
+  command: ./Console/cake cache
+  become: true
+  become_user: "{{ comanage_www_user }}"
+  args:
+    chdir: "{{ comanage_package }}/app"
+
+- name: Setup Plugin schemata
+  command: ./Console/cake database
+  become: true
+  become_user: "{{ comanage_www_user }}"
+  args:
+    chdir: "{{ comanage_package }}/app"
+
+  

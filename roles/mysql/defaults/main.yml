@@ -1,6 +1,4 @@
 ---
 
-mysql_database: changethisname
-mysql_user: changethisuser
-mysql_password: changethispassword
+mysql_root_password: changethispassword
 
