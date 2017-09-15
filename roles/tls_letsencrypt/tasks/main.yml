@@ -27,14 +27,15 @@
   register: result
 
 - name: create or renew certificates
-  command: '/usr/bin/certbot certonly --noninteractive --keep-until-expiring --renew-with-new-domains --domains={{item}}'
+  command: "/usr/bin/certbot certonly --noninteractive --keep-until-expiring \
+            --renew-with-new-domains --domains={{item}}"
   register: result
   changed_when: '"Your certificate and chain have been saved" in result.stdout'
   with_items: '{{loadbalancer|map(attribute="hostname")|list}}'
 
 # extra renewal is necessary, because certbot does not run its renew_hook when the
 # certificate is first created
-- name: renew certificates 
+- name: renew certificates
   command: '/usr/bin/certbot certonly --noninteractive --force-renewal --domains={{item}}'
   register: result
   changed_when: '"Your certificate and chain have been saved" in result.stdout'

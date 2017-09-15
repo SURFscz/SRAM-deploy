@@ -8,7 +8,8 @@ letsencrypt:
   acme_challenge_dir: "/var/www/certbot"
 
 certbot:
-  account_dir: '/etc/letsencrypt/accounts/{{"acme-staging.api.letsencrypt.org" if letsencrypt.use_staging else "acme-v01.api.letsencrypt.org"}}'
+  account_dir: "/etc/letsencrypt/accounts/{{'acme-staging.api.letsencrypt.org' \
+                if letsencrypt.use_staging else 'acme-v01.api.letsencrypt.org'}}"
   cert_dir: '/etc/letsencrypt/live'
   cert_pem: 'cert.pem'
   chain_pem: 'chain.pem'

@@ -23,7 +23,14 @@
     - "{{users|map(attribute='groups')|flatten|uniq}}"
 
 - name: create users
-  user: name={{item.uid}} group={{item.groups[0]}} groups={{item.groups|join(',')}} password={{item.pw_hash}} shell="/bin/bash" comment={{item.name}} state=present update_password=always
+  user: name={{item.uid}} state=present
+  args:
+    group: "{{item.groups[0]}}"
+    groups: "{{item.groups|join(',')}}"
+    password: "{{item.pw_hash}}"
+    shell: "/bin/bash"
+    comment: "{{item.name}}"
+    update_password: always
   with_items: "{{users}}"
 
 - name: copy ssh keys

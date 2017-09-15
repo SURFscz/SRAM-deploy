@@ -2,23 +2,20 @@
 - name: Install iptables
   apt: name={{item}} state=present
   with_items:
-  - iptables
-  - netfilter-persistent
-  - iptables-persistent
+    - iptables
+    - netfilter-persistent
+    - iptables-persistent
 
 - name: Put ip4tables
   template: src=ip4tables.j2 dest='/etc/iptables/rules.v4'
   notify:
-  - restart netfilter-persistent
+    - restart netfilter-persistent
 
 - name: Put ip6tables
   template: src=ip6tables.j2 dest='/etc/iptables/rules.v6'
   notify:
-  - restart netfilter-persistent
-
-#- debug: var=groups
-#- debug: var=hostvars
+    - restart netfilter-persistent
 
 - name: Start and enable netfilter-persistent
-  service: name=netfilter-persistent.service state=started enabled=yes
+  service: name=netfilter-persistent.service state=started enabled="yes"
 

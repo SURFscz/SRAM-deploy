@@ -15,4 +15,3 @@
 - name: enable NGINX
   service: name=nginx state=started enabled=true
 
-

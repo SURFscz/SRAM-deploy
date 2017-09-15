@@ -2,10 +2,10 @@
 ---
 - hosts: all
   tasks:
-  - name: Read vars from secrets file
-    include_vars: "{{ secrets_file }}"
-    tags: always
-    check_mode: no
+    - name: Read vars from secrets file
+      include_vars: "{{ secrets_file }}"
+      tags: always
+      check_mode: "no"
 
 # looks hackish, but this is apparently the "a clean, official way" to gather
 # required facts from all hosts, regardless of the commandline --limit
@@ -14,13 +14,13 @@
 # the ip addresses of other hosts (e.g, mgnt1)
 - hosts: all
   pre_tasks:
-  - name: Gather facts from mgnt hosts (regardless of limit or tags)
-    setup:
-    delegate_to: "{{item}}"
-    delegate_facts: True
-    when: hostvars[item]['ansible_default_ipv4'] is not defined
-    with_items: "{{groups['all']}}"
-    tags: always
+    - name: Gather facts from mgnt hosts (regardless of limit or tags)
+      setup:
+      delegate_to: "{{item}}"
+      delegate_facts: "true"
+      when: hostvars[item]['ansible_default_ipv4'] is not defined
+      with_items: "{{groups['all']}}"
+      tags: always
 
 - hosts: all
   roles:
@@ -32,41 +32,32 @@
 #   - { role: logging,  tags: ['logging'  ] }
 
 - hosts: mgnt1
-  #  roles:
+  roles:
   #  - { role: ldap, tags: ['ldap'] }
   #  - { role: mta,  tags: ['mta' ] }
 
 - hosts: mgnt2
-  #roles:
+  roles:
   #  - { role: logstash, tags: ['logstash'] }
   #  - { role: logstash, tags: ['logstash'] }
 
 - hosts: lb
   roles:
-  - { role: http_nginx,      tags: ['http_nginx']      }
-  - { role: tls_letsencrypt, tags: ['tls_letsencrypt'] }
-  - { role: https_haproxy,   tags: ['https_haproxy','test']   }
+    - { role: http_nginx,      tags: ['http_nginx']      }
+    - { role: tls_letsencrypt, tags: ['tls_letsencrypt'] }
+    - { role: https_haproxy,   tags: ['https_haproxy','test']   }
 
 - hosts: comanage
   roles:
-      - { role: http_dummy,  tags: ['proxy','test'  ] }
-      #    - { role: postgres, tags: ['postgres'] }
-      #    - { role: comanage, tags: ['comanage'] }
+    - { role: http_dummy,  tags: ['proxy','test'] }
 
 - hosts: ldap
   roles:
-      #    - { role: ldap, tags: ['ldap'] }
 
 - hosts: proxy
   roles:
-      - { role: http_dummy,  tags: ['proxy','test'  ] }
-      #    - { role: satosa,  tags: ['satosa'  ] }
-      #    - { role: pyff,    tags: ['pyff'    ] }
-      #    - { role: wayf,    tags: ['wayf'    ] }
-      #    - { role: mongodb, tags: ['mongodb' ] }
+    - { role: http_dummy,  tags: ['proxy','test'] }
 
 - hosts: metadata
   roles:
-      #    - { role: mongodb,      tags: ['mongodb'     ] }
-      #    - { role: metadata-api, tags: ['metadata-api'] }
 
