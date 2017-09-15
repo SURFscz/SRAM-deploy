@@ -46,6 +46,9 @@ frontend fe_https
 
 	mode	http
 
+	# secure cookies:
+	rspirep ^(set-cookie:.*) \1;\ Secure;\ HttpOnly;\ SameSite=strict
+
 	http-response set-header Strict-Transport-Security "max-age=16000000; includeSubDomains; preload;"
 	http-response set-header Content-Security-Policy   "default-src 'self'; frame-src 'none'; form-action 'self'; frame-ancestors 'none'; block-all-mixed-content;"
 	http-response set-header X-Frame-Options "DENY"
