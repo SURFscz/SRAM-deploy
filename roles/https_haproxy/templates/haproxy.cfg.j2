@@ -41,8 +41,8 @@ defaults
 #  frontend 
 # -------------------------------------------------------------------
 frontend fe_https
-	bind    *:443 ssl {% for host in lb_http %} crt {{host.hostname}}/priv+fullchain.pem{% endfor %} no-sslv3 transparent
-	bind [::]:443 ssl {% for host in lb_http %} crt {{host.hostname}}/priv+fullchain.pem{% endfor %} no-sslv3 transparent
+	bind    *:443 ssl {% for host in lb_http %} crt {{host.hostname}}/priv+fullchain.pem{% endfor %} transparent
+	bind [::]:443 ssl {% for host in lb_http %} crt {{host.hostname}}/priv+fullchain.pem{% endfor %} transparent
 
 	mode	http
 
@@ -69,8 +69,8 @@ backend be_{{host.hostname}}
 
 {% for host in lb_other %}
 listen proxy_{{host.hostname}}_{{host.frontend_port}}
-	bind    *:{{host.frontend_port}} ssl crt {{host.hostname}}/priv+fullchain.pem no-sslv3 transparent
-	bind [::]:{{host.frontend_port}} ssl crt {{host.hostname}}/priv+fullchain.pem no-sslv3 transparent
+	bind    *:{{host.frontend_port}} ssl crt {{host.hostname}}/priv+fullchain.pem transparent
+	bind [::]:{{host.frontend_port}} ssl crt {{host.hostname}}/priv+fullchain.pem transparent
 
 	mode	tcp
 	option	tcpka
