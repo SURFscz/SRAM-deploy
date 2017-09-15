@@ -5,6 +5,11 @@ language:
   - bash
   - python
 
+# disable the default submodule logic
+git:
+  submodules: "false"
+
+
 before_install:
   - sudo apt install ansible yamllint
 
