@@ -47,10 +47,15 @@ frontend fe_https
 	mode	http
 
 	# secure cookies:
-	rspirep ^(set-cookie:.*) \1;\ Secure;\ HttpOnly;\ SameSite=strict
+	# todo: only for satosa
+	#rspirep ^(set-cookie:.*) \1;\ Secure;\ HttpOnly;\ SameSite=strict
+	rspirep ^(set-cookie:.*) \1;\ Secure;\ HttpOnly;\ SameSite=lax
 
 	http-response set-header Strict-Transport-Security "max-age=16000000; includeSubDomains; preload;"
-	http-response set-header Content-Security-Policy   "default-src 'self'; frame-src 'none'; form-action 'self'; frame-ancestors 'none'; block-all-mixed-content;"
+	# TODO: only make exception for pyff/mdq
+	#http-response set-header Content-Security-Policy   "default-src 'self'; frame-src 'none'; form-action 'self'; frame-ancestors 'none'; block-all-mixed-content;"
+	http-response set-header Content-Security-Policy   "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; frame-src 'none'; frame-ancestors 'none'; form-action 'self'; block-all-mixed-content;"
+
 	http-response set-header X-Frame-Options "DENY"
 	http-response set-header X-XSS-Protection "1; mode=block"
 	http-response set-header X-Content-Type-Options "nosniff"
