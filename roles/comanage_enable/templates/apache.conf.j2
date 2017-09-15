@@ -4,87 +4,72 @@
 
 <VirtualHost *:80>
     ServerName {{ portal_hostname }}
-    Redirect  "/" "https://{{ portal_hostname }}/"
-</VirtualHost>
+    ServerAdmin {{ admin_email }}
 
-<IfModule mod_ssl.c>
-    <VirtualHost *:443>
-        ServerName {{ portal_hostname }}
-        ServerAdmin webmaster@{{ portal_hostname }}
+    DocumentRoot {{ comanage_path }}
 
-        DocumentRoot {{ comanage_path }}
-
-        <IfModule mod_php5.c>
-            <FilesMatch "\.ph(p|tml)$">
-                SetHandler application/x-httpd-php
-            </FilesMatch>
-            <FilesMatch "\.phps$">
-                SetHandler application/x-httpd-php-source
-            </FilesMatch>
-        </IfModule>
-
-        <Directory "{{ comanage_path }}">
-            Options Indexes FollowSymLinks
-            DirectoryIndex index.php
-            AllowOverride All
-            Require all granted
-        </Directory>
-
-        ErrorLog ${APACHE_LOG_DIR}/error.log
-        CustomLog ${APACHE_LOG_DIR}/access.log combined
-
-        #   SSL Engine Switch:
-        #   Enable/Disable SSL for this virtual host.
-        SSLEngine on
-        SSLCertificateFile    {{ certificate_file }}
-        SSLCertificateKeyFile {{ key_file }}
-        SSLCertificateChainFile {{ chain_file }}
-
-        <FilesMatch "\.php$">
-            SSLOptions +StdEnvVars
+    <IfModule mod_php5.c>
+        <FilesMatch "\.ph(p|tml)$">
+            SetHandler application/x-httpd-php
         </FilesMatch>
+        <FilesMatch "\.phps$">
+            SetHandler application/x-httpd-php-source
+        </FilesMatch>
+    </IfModule>
 
-        BrowserMatch "MSIE [2-6]" nokeepalive ssl-unclean-shutdown downgrade-1.0 force-response-1.0
-        # MSIE 7 and newer should be able to use keepalive
-        BrowserMatch "MSIE [17-9]" ssl-unclean-shutdown
+    <Directory "{{ comanage_path }}">
+        Options Indexes FollowSymLinks
+        DirectoryIndex index.php
+        AllowOverride All
+        Require all granted
+    </Directory>
 
-        <Location "{{ sp_home }}">
-            AuthType "Mellon"
-            MellonEnable "info"
-        </Location>
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
 
-        <Location "{{ sp_home }}auth">
-            Require valid-user
-            AuthType "Mellon"
+    <FilesMatch "\.php$">
+        SSLOptions +StdEnvVars
+    </FilesMatch>
 
-            MellonEnable "auth"
-            MellonVariable "cookie"
-            MellonSecureCookie On
-            MellonCookieDomain {{ portal_hostname }}
-            MellonCookiePath /
+    BrowserMatch "MSIE [2-6]" nokeepalive ssl-unclean-shutdown downgrade-1.0 force-response-1.0
+    # MSIE 7 and newer should be able to use keepalive
+    BrowserMatch "MSIE [17-9]" ssl-unclean-shutdown
 
-            MellonUser "{{ idp_attribute }}"
-            MellonEndpointPath "{{ sp_path }}"
-            MellonDefaultLoginPath "{{ sp_home }}"
+    <Location "{{ sp_home }}">
+        AuthType "Mellon"
+        MellonEnable "info"
+    </Location>
 
-            MellonSessionLength 86400
-            MellonNoCookieErrorPage "https://{{ sp_hostname }}/no_cookie.html"
-            MellonSPMetadataFile {{ sp_metadata_dir }}/sp-metadata.xml
+    <Location "{{ sp_home }}auth">
+        Require valid-user
+        AuthType "Mellon"
 
-            MellonSPPrivateKeyFile {{ sp_key }}
-            MellonSPCertFile {{ sp_certificate }}
+        MellonEnable "auth"
+        MellonVariable "cookie"
+        MellonSecureCookie On
+        MellonCookieDomain {{ portal_hostname }}
+        MellonCookiePath /
 
-            MellonIdPMetadataFile {{ idp_metadata_path }}
-            MellonIdPPublicKeyFile {{ idp_certificate_path }}
+        MellonUser "{{ idp_attribute }}"
+        MellonEndpointPath "{{ sp_path }}"
+        MellonDefaultLoginPath "{{ sp_home }}"
 
-            MellonSessionDump Off
-            MellonSamlResponseDump Off
-            MellonECPSendIDPList Off
-            MellonRedirectDomains [self]
+        MellonSessionLength 86400
+        MellonNoCookieErrorPage "https://{{ sp_hostname }}/no_cookie.html"
+        MellonSPMetadataFile {{ sp_metadata_dir }}/sp-metadata.xml
 
-        </Location>
+        MellonSPPrivateKeyFile {{ sp_key }}
+        MellonSPCertFile {{ sp_certificate }}
 
-    </VirtualHost>
-</IfModule>
+        MellonIdPMetadataFile {{ idp_metadata_path }}
+        MellonIdPPublicKeyFile {{ idp_certificate_path }}
+
+        MellonSessionDump Off
+        MellonSamlResponseDump Off
+        MellonECPSendIDPList Off
+        MellonRedirectDomains [self]
+    </Location>
+
+</VirtualHost>
 
 # vim: syntax=apache ts=4 sw=4 sts=4 sr noet

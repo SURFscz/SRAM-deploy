@@ -29,6 +29,13 @@
   with_items: "{{ comanage_plugin_configurations }}"
   become: yes
 
+- name: Set Database configuration for external Proxy database
+  blockinfile:
+    path: "{{ comanage_package }}/local/Config/database.php"
+    follow: yes
+    insertafter: "class DATABASE_CONFIG {$"
+    block: "        public $scz = array(\r\n                'datasource' => 'Database/Mysql',\r\n                'persistent' => false,\r\n                'host' => '{{ comanage_proxy_db }}',\r\n                'login' => '{{ comanage_proxy_db_user }}',\r\n                'password' => '{{ comanage_proxy_db_password }}',\r\n                'database' => '{{ comanage_proxy_db_name }}',\r\n                'prefix' => '',\r\n        );\r\n"
+
 - name: Clearing Cake cache
   command: ./Console/cake cache
   become: true

@@ -37,3 +37,10 @@
   with_items: "{{ modules }}"
   become: yes
 
+- name: Disable nginx, if it is installed
+  service:
+    name: nginx
+    state: stopped
+  ignore_errors: true
+  notify:
+    - Restart Apache
