@@ -18,10 +18,9 @@
   with_items: "{{users}}"
 
 - name: create groups
-  group: name={{item.1}} state=present
-  with_subelements:
-    - "{{users}}"
-    - "groups"
+  group: name={{item}} state=present
+  with_items:
+    - "{{users|map(attribute='groups')|flatten|uniq}}"
 
 - name: create users
   user: name={{item.uid}} group={{item.groups[0]}} groups={{item.groups|join(',')}} password={{item.pw_hash}} shell="/bin/bash" comment={{item.name}} state=present update_password=always

@@ -1,3 +1,4 @@
 .ansible/
 .vagrant/
 provision.retry
+*.pyc
