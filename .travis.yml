@@ -4,6 +4,7 @@ sudo: false
 
 # the syntax check scripts as weel as yamllint need python3
 language: python
+cache: pip
 python:
   - 3.5
 
