@@ -53,6 +53,7 @@
 
 - hosts: ldap
   roles:
+    - { role: ldap, tags: ['ldap'] }
 
 - hosts: proxy
   roles:
