@@ -58,11 +58,9 @@
 
 - hosts: proxy
   roles:
-      #- { role: http_dummy,  tags: ['proxy','test'  ] }
       - { role: satosa,      tags: ['satosa'    ] }
       - { role: pyff,        tags: ['pyff'      ] }
       - { role: cmservice,   tags: ['cmservice' ] }
-      - { role: http_rp,     tags: ['http_rp' ] }
 
 - hosts: meta
   roles:

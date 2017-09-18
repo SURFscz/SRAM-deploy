@@ -123,8 +123,8 @@
       dest="{{ satosa_env_dir }}/clients.json"
       mode=0755
 
-  - name: Copy sync_clients script
-    copy: src=sync_clients
+  - name: Create sync_clients script
+    template: src=sync_clients.j2
       dest="{{ satosa_env_dir }}/sync_clients"
       mode=0755
 
