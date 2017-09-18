@@ -4,7 +4,6 @@ config:
   sp_config:
     key_file: certs/backend.key
     cert_file: certs/backend.crt
-<<<<<<< HEAD
     organization: {display_name: SCZ Test SP, name: SCZ Test SP, url: 'https://meta.test.scz.lab.surf.nl/'}
     contact_person:
     - {contact_type: technical, email_address: technical@test.scz.lab.surf.nl, given_name: Technical}
@@ -13,17 +12,6 @@ config:
     metadata:
 #      local: [metadata/idp.xml, metadata/idp_sc_diy.xml]
       mdq: ['http://localhost:{{ pyff_port }}']
-=======
-    organization: {display_name: Example Identities, name: Example Identities Org., url: 'http://www.example.com'}
-    contact_person:
-    - {contact_type: technical, email_address: technical@example.com, given_name: Technical}
-    - {contact_type: support, email_address: support@example.com, given_name: Support}
-
-    metadata:
-#      local: [metadata/idp.xml, metadata/idp_sc_diy.xml]
-      mdq: ['https://{{ hostnames.proxy }}']
->>>>>>> b6d6840aa6b260c716ef871c8ba649742366200d
-
     entityid: <base_url>/<name>/proxy_saml2_backend.xml
     service:
       sp:
@@ -37,9 +25,5 @@ config:
         name_id_format: 'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent'
     #allow_unknown_attributes: true
   # disco_srv must be defined if there is more than one IdP in the metadata specified above
-<<<<<<< HEAD
   disco_srv: https://{{ hostnames.mdq }}/role/idp.ds
-=======
-  disco_srv: https://{{ hostnames.proxy }}/role/idp.ds
->>>>>>> b6d6840aa6b260c716ef871c8ba649742366200d
   metadata: <base_url>/<name>/metadata
