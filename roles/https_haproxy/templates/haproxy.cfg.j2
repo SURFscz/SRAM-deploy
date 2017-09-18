@@ -49,7 +49,7 @@ frontend fe_https
 	# secure cookies:
 	# todo: only for satosa
 	#rspirep ^(set-cookie:.*) \1;\ Secure;\ HttpOnly;\ SameSite=strict
-	rspirep ^(set-cookie:.*) \1;\ Secure;\ HttpOnly;\ SameSite=lax
+	#rspirep ^(set-cookie:.*) \1;\ Secure;\ HttpOnly;\ SameSite=lax
 
 	http-response set-header Strict-Transport-Security "max-age=16000000; includeSubDomains; preload;"
 	# TODO: only make exception for pyff/mdq
