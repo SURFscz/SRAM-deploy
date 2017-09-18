@@ -90,9 +90,14 @@
     command: openssl req -new -nodes -x509 -subj "/C=NL/CN={{ item }}" -days 3650 -keyout "{{ satosa_env_dir }}/certs/{{ item }}.key" -out "{{ satosa_env_dir }}/certs/{{ item }}.crt" -extensions v3_ca
       creates="{{ satosa_env_dir }}/certs/{{ item }}.crt"
     with_items:
+<<<<<<< HEAD
         - frontend
         - backend
         - signing
+=======
+      - frontend
+      - backend
+>>>>>>> b6d6840aa6b260c716ef871c8ba649742366200d
 
   - name: Create keys directory
     file: path="{{ satosa_env_dir }}/keys" state=directory mode=0755
@@ -103,6 +108,7 @@
 
   - name: Create SATOSA systemd service
     template: src=satosa.service.j2
+<<<<<<< HEAD
       dest="{{ satosa_env_dir }}/satosa.service"
       mode=0644
 
@@ -132,6 +138,9 @@
     shell: ./sync_clients metadata/clients.json
       chdir="{{ satosa_env_dir }}"
 
+=======
+          dest="{{ satosa_env_dir }}/satosa.service"
+>>>>>>> b6d6840aa6b260c716ef871c8ba649742366200d
   become: yes
   become_user: satosa
       
@@ -144,4 +153,8 @@
     remote_src=yes
 
 - name: restart SATOSA
+<<<<<<< HEAD
   systemd: daemon_reload=yes name=satosa state=restarted enabled=yes
+=======
+  service: name=satosa state=restarted enabled=yes
+>>>>>>> b6d6840aa6b260c716ef871c8ba649742366200d

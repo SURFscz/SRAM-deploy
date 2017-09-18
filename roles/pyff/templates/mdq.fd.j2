@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 - when normalize:
     - xslt:
        stylesheet: tidy.xsl
@@ -10,6 +11,19 @@
     - load:
        - https://meta.test.scz.lab.surf.nl/sc_edugain_rs_coco_nosc.xml
        - metadata/
+=======
+- when normalize:                                                                                                                                                                         
+    - xslt:                                                                                                                                                                               
+       stylesheet: tidy.xsl                                                                                                                                                               
+    - break                                                                                                                                                                               
+- when edugain:                                                                                                                                                                           
+    - xslt:                                                                                                                                                                               
+       stylesheet: tidy.xsl                                                                                                                                                               
+    - break                                                                                                                                                                               
+- when update:                                                                                                                                                                            
+    - load:                                                                                                                                                                               
+       - https://engine.surfconext.nl/authentication/proxy/idps-metadata                                                                                                                 
+>>>>>>> b6d6840aa6b260c716ef871c8ba649742366200d
     - break
 - when request:
     - select
@@ -22,8 +36,13 @@
                 cacheDuration: PT5H
                 validUntil: P10D
              - sign:
+<<<<<<< HEAD
                  key: certs/signing.key
                  cert: certs/signing.crt
+=======
+                 key: sign.key
+                 cert: sign.crt
+>>>>>>> b6d6840aa6b260c716ef871c8ba649742366200d
              - emit application/xml
              - break
         - when accept application/json:

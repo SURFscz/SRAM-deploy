@@ -4,7 +4,11 @@ config:
   signing_key_path: certs/frontend.key
   db_uri: mongodb://{{ mongodb_host }} # optional: only support MongoDB, will default to in-memory storage if not specified
   provider:
+<<<<<<< HEAD
     client_registration_supported: No
+=======
+    client_registration_supported: Yes
+>>>>>>> b6d6840aa6b260c716ef871c8ba649742366200d
     response_types_supported: ["code", "id_token token"]
     subject_types_supported: ["public"]
     scopes_supported: ["openid", "email", "profile"]

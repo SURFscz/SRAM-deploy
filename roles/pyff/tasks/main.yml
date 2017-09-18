@@ -46,6 +46,7 @@
   - name: Create pyFF systemd service
     template: src=pyff.service.j2
               dest="{{ pyff_env_dir }}/pyff.service"
+<<<<<<< HEAD
 
   - name: Create local metadata directory
     file: path={{ pyff_env_dir }}/metadata state=directory mode=0755 owner=pyff
@@ -63,6 +64,8 @@
     with_items:
         - signing
         
+=======
+>>>>>>> b6d6840aa6b260c716ef871c8ba649742366200d
   become: yes
   become_user: pyff
 
@@ -78,4 +81,8 @@
   file: path=/var/run/pyff.pid state=touch owner=pyff
 
 - name: restart pyff
+<<<<<<< HEAD
   systemd: daemon_reload=yes name=pyff state=restarted enabled=yes
+=======
+  service: name=pyff state=restarted enabled=yes
+>>>>>>> b6d6840aa6b260c716ef871c8ba649742366200d
