@@ -1,0 +1,18 @@
+# installs a proxy http server
+---
+- name: install nginx
+  apt: name=nginx state=present
+
+- name: remove default NGINX sites
+  file: dest=/etc/nginx/sites-enabled/default state=absent
+  notify: restart nginx
+
+- name: install NGINX config file
+  template: src=proxy.conf.j2 dest=/etc/nginx/sites-available/proxy.conf
+  notify: restart nginx
+
+- name: enable proxy configuration
+  file: src="/etc/nginx/sites-available/proxy.conf" dest="/etc/nginx/sites-enabled/00-proxy.conf" state=link
+
+- name: enable nginx
+  service: name=nginx.service state=started enabled=true

@@ -1,6 +1,6 @@
 module: satosa.micro_services.consent.Consent
 name: Consent
 config:
-  api_url: "https://{{ hostnames.proxy }}/"
-  redirect_url: "https://{{ hostnames.proxy }}/consent"
+  api_url: "http://localhost:{{ cmservice_port }}/"
+  redirect_url: "https://{{ hostnames.consent }}/consent"
   sign_key: "keys/satosa.pem"

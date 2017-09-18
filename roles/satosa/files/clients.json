@@ -1,0 +1,14 @@
+{
+    "postman":
+    { 
+      "application_type" : "web",
+      "client_name" : "My TestClient",
+      "subject_type" : "public",
+      "client_secret" : "ringstwice",
+      "response_types" : [ "code" ],
+      "redirect_uris" : [ "https://www.getpostman.com/oauth2/callback" ],
+      "client_id" : "postman",
+      "client_secret_expires_at" : 0,
+      "client_id_issued_at" : 0
+    }
+}

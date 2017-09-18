@@ -1,14 +1,15 @@
-- when normalize:                                                                                                                                                                         
-    - xslt:                                                                                                                                                                               
-       stylesheet: tidy.xsl                                                                                                                                                               
-    - break                                                                                                                                                                               
-- when edugain:                                                                                                                                                                           
-    - xslt:                                                                                                                                                                               
-       stylesheet: tidy.xsl                                                                                                                                                               
-    - break                                                                                                                                                                               
-- when update:                                                                                                                                                                            
-    - load:                                                                                                                                                                               
-       - https://engine.surfconext.nl/authentication/proxy/idps-metadata                                                                                                                 
+- when normalize:
+    - xslt:
+       stylesheet: tidy.xsl
+    - break
+- when edugain:
+    - xslt:
+       stylesheet: tidy.xsl
+    - break
+- when update:
+    - load:
+       - https://meta.test.scz.lab.surf.nl/sc_edugain_rs_coco_nosc.xml
+       - metadata/
     - break
 - when request:
     - select
@@ -21,8 +22,8 @@
                 cacheDuration: PT5H
                 validUntil: P10D
              - sign:
-                 key: sign.key
-                 cert: sign.crt
+                 key: certs/signing.key
+                 cert: certs/signing.crt
              - emit application/xml
              - break
         - when accept application/json:

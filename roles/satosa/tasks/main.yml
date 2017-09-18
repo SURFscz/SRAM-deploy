@@ -90,8 +90,9 @@
     command: openssl req -new -nodes -x509 -subj "/C=NL/CN={{ item }}" -days 3650 -keyout "{{ satosa_env_dir }}/certs/{{ item }}.key" -out "{{ satosa_env_dir }}/certs/{{ item }}.crt" -extensions v3_ca
       creates="{{ satosa_env_dir }}/certs/{{ item }}.crt"
     with_items:
-      - frontend
-      - backend
+        - frontend
+        - backend
+        - signing
 
   - name: Create keys directory
     file: path="{{ satosa_env_dir }}/keys" state=directory mode=0755
@@ -102,7 +103,35 @@
 
   - name: Create SATOSA systemd service
     template: src=satosa.service.j2
-          dest="{{ satosa_env_dir }}/satosa.service"
+      dest="{{ satosa_env_dir }}/satosa.service"
+      mode=0644
+
+  - name: Create metadata directory
+    file: path="{{ satosa_env_dir }}/metadata" state=directory mode=0755
+
+  - name: Copy metadata generating script
+    copy: src=gen_metadata
+      dest="{{ satosa_env_dir }}/gen_metadata"
+      mode=0755
+
+  - name: Generate metadata
+    shell: ./gen_metadata
+      chdir="{{ satosa_env_dir }}"
+
+  - name: Copy clients.json example file
+    copy: src=clients.json
+      dest="{{ satosa_env_dir }}/clients.json"
+      mode=0755
+
+  - name: Copy sync_clients script
+    copy: src=sync_clients
+      dest="{{ satosa_env_dir }}/sync_clients"
+      mode=0755
+
+  - name: Insert OIDC clients
+    shell: ./sync_clients metadata/clients.json
+      chdir="{{ satosa_env_dir }}"
+
   become: yes
   become_user: satosa
       
@@ -115,4 +144,4 @@
     remote_src=yes
 
 - name: restart SATOSA
-  service: name=satosa state=restarted enabled=yes
+  systemd: daemon_reload=yes name=satosa state=restarted enabled=yes

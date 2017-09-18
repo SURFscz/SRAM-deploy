@@ -2,15 +2,15 @@ module: satosa.frontends.saml2.SAMLFrontend
 name: Saml2IDP
 config:
   idp_config:
-    organization: {display_name: Satosa IdP, name: Satosa IdP Org., url: 'http://www.example.com'}
+    organization: {display_name: SCZ Test IdP, name: SCZ Test IdP Org., url: 'https://meta.test.scz.lab.surf.nl/'}
     contact_person:
-    - {contact_type: technical, email_address: technical@example.com, given_name: Technical}
-    - {contact_type: support, email_address: support@example.com, given_name: Support}
+    - {contact_type: technical, email_address: technical@test.scz.lab.surf.nl, given_name: Technical}
+    - {contact_type: support, email_address: support@test.scz.lab.surf.nl, given_name: Support}
     key_file: certs/frontend.key
     cert_file: certs/frontend.crt
     metadata:
       #local: [metadata/sp.xml]
-      mdq: ['https://{{ hostnames.proxy }}']
+      mdq: ['http://localhost:{{ pyff_port }}']
 
     entityid: <base_url>/<name>/proxy.xml
     service:

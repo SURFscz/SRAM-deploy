@@ -1,0 +1,25 @@
+- name: Ensure that packages are installed
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - xsltproc
+    
+- name: Create project directory
+  file: path="{{ metadata_project_dir }}" state=directory mode=0755
+  
+- name: Create html directory
+  file: path="/var/www/html" state=directory mode=0755
+
+- name: Copy xsl files and shell script in place
+  copy: src={{ item }} dest={{ metadata_project_dir }}/{{ item }}
+  with_items:
+    - idps.xsl
+    - sps.xsl
+    - rs_coco_nosc.xsl
+    
+- name: Copy xsl processing script script in place
+  template: src=create_metadata dest={{ metadata_project_dir }}/create_metadata mode=0755
+
+- name: Add hourly cronjob
+  cron: special_time=hourly job="{{ metadata_project_dir }}/create_metadata" cron_file=create_metadata user=root state=present

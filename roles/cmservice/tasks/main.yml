@@ -68,4 +68,4 @@
         remote_src=yes
 
 - name: restart CMservice
-  service: name=cmservice state=restarted enabled=yes
+  systemd: daemon_reload=yes name=cmservice state=restarted enabled=yes
