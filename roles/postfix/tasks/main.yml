@@ -1,0 +1,36 @@
+---
+- include_vars: postfix.yml
+
+- name: perform apt-get update
+  apt:
+    update_cache: yes
+    cache_valid_time: 1
+  become: Yes
+
+- name: ensure that packages are installed
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ packages  }}"
+  become: Yes
+
+- name: Start the Postfix service
+  service:
+    name: "{{ item.name }}"
+    state: "{{ item.state }}"
+  with_items: "{{ postfixstart }}"
+
+
+- name: Push the template for Postfix
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  with_items: "{{ postfix_templates }}"
+  become: yes
+
+
+- name: Restart the Postfix service
+  service:
+    name: "{{ item.name }}"
+    state: "{{ item.state }}"
+  with_items: "{{ postfixrestart }}"

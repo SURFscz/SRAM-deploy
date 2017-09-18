@@ -1,0 +1,14 @@
+---
+- name: create database for {{ proxy_mysql_database }}
+  mysql_db:
+    name: "{{ proxy_db }}"
+    state: present
+
+- name: create user for mysql with all privilege
+  mysql_user:
+    name: "{{ proxy_db_user }}"
+    password: "{{ proxy_db_password }}"
+    priv: "{{ proxy_db }}.*:ALL"
+    state: present
+  notify:
+    - Restart MySQL

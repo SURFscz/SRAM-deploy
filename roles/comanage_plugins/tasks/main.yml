@@ -1,0 +1,53 @@
+---
+- include_vars: comanage_plugins.yml
+
+- name: perform apt-get update
+  apt:
+    update_cache: yes
+    cache_valid_time: 1
+  become: Yes
+
+- name: ensure that packages are installed
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ packages  }}"
+  become: Yes
+
+- name: Checkout the relevant Git based plugins
+  git:
+    repo: "{{ item.src }}"
+    dest: "{{ comanage_package }}/local/Plugin/{{ item.name }}"
+    version: "{{ item.version }}"
+  with_items: "{{ comanage_git_plugins }}"
+  become: yes
+
+- name: Install configurations
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ comanage_package }}/app/Config/{{ item.dest }}"
+  with_items: "{{ comanage_plugin_configurations }}"
+  become: yes
+
+- name: Set Database configuration for external Proxy database
+  blockinfile:
+    path: "{{ comanage_package }}/local/Config/database.php"
+    follow: yes
+    insertafter: "class DATABASE_CONFIG {$"
+    block: "        public $scz = array(\r\n                'datasource' => 'Database/Mysql',\r\n                'persistent' => false,\r\n                'host' => '{{ comanage_proxy_db }}',\r\n                'login' => '{{ comanage_proxy_db_user }}',\r\n                'password' => '{{ comanage_proxy_db_password }}',\r\n                'database' => '{{ comanage_proxy_db_name }}',\r\n                'prefix' => '',\r\n        );\r\n"
+
+- name: Clearing Cake cache
+  command: ./Console/cake cache
+  become: true
+  become_user: "{{ comanage_www_user }}"
+  args:
+    chdir: "{{ comanage_package }}/app"
+
+- name: Setup Plugin schemata
+  command: ./Console/cake database
+  become: true
+  become_user: "{{ comanage_www_user }}"
+  args:
+    chdir: "{{ comanage_package }}/app"
+
+  
