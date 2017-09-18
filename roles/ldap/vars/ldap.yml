@@ -1,0 +1,13 @@
+---
+packages:
+  - slapd
+  - ldap-utils
+  - unzip
+
+eduPersonSchema_ldif: openLdapEduperson-201602DV.ldif
+eduPersonSchema_zip: 2xOpenLdapEduPerson-201602.zip
+eduPersonSchema_url: https://spaces.internet2.edu/download/attachments/2309/{{ eduPersonSchema_zip }}
+
+ldapPublicKey: openssh-lpk-openldap
+ldapPublicKey_ldif: openssh-lpk-openldap.ldif
+ldapPublicKeySchema_url: https://raw.githubusercontent.com/AndriiGrytsenko/openssh-ldap-publickey/master/misc/openssh-lpk-openldap.schema
