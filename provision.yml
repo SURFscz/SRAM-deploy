@@ -57,6 +57,8 @@
 - hosts: proxy
   roles:
     - { role: http_dummy,  tags: ['proxy','test'] }
+    - { role: mysql,  tags: ['proxy','db'] }
+    - { role: proxy_mysql,  tags: ['proxy','db'] }
 
 - hosts: metadata
   roles:
