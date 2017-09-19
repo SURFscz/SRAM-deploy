@@ -4,14 +4,14 @@
 
 - name: Update apt cache
   apt: update_cache=yes
-  changed_when: False
+  changed_when: false
 
 - name: Install LDAP
   apt: name={{ item }} state=present
   with_items:
-   - slapd
-   - unzip
-   - ldap-utils
+    - slapd
+    - unzip
+    - ldap-utils
 
 - name: Ensure the a number of directories exist
   become_user: "{{ ldap_user }}"
@@ -37,14 +37,14 @@
 
 - name: Fetch the eduPerson schema
   become_user: "{{ ldap_user }}"
-  become: True
+  become: true
   get_url:
     url: "{{ eduPersonSchema_url }}"
     dest: "{{ ldap_download_dir }}"
 
 - name: Fetch LdapPublicKey schema
   become_user: "{{ ldap_user }}"
-  become: True
+  become: true
   get_url:
     url: "{{ ldapPublicKeySchema_url }}"
     dest: "{{ ldap_schema_dir }}"
@@ -58,7 +58,7 @@
 # porting the fix to 2.2.0 has been forgotten...
 - name: Unzipping downloaded schema
   become_user: "{{ ldap_user }}"
-  become: True
+  become: true
   command: unzip -o "{{ ldap_download_dir }}/{{ eduPersonSchema_zip }}" -d /tmp
 
 # OpenLDAP does not like adding exisiting entries again. Only add the
@@ -68,10 +68,12 @@
   copy:
     src: /tmp/{{ eduPersonSchema_ldif }}
     dest: "{{ ldap_schema_dir }}/{{ eduPersonSchema_ldif }}"
-    remote_src: True
+    remote_src: true
 
 - name: Check if eduPerson schema is already present
-  shell: ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// -b 'cn=schema,cn=config' '(cn=*)' dn | grep 'cn={[0123456789]\+}eduperson,cn=schema,cn=config'
+  shell: >
+    ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// -b 'cn=schema,cn=config' '(cn=*)' dn
+    | grep 'cn={[0123456789]\+}eduperson,cn=schema,cn=config'
   failed_when: not [0, 1]
   register:
     eduPersonSchemaPresent
@@ -80,17 +82,23 @@
 # the schema to the ldap database. Copying the same file in the previous
 # task, would lead to not registering the edoPersonSchema variable.
 - name: Ensure the eduPerson schema is added to LDAP
-  command: ldapadd -Q -Y EXTERNAL -H ldapi:/// -D "cn=config" -f {{ ldap_schema_dir }}/{{ eduPersonSchema_ldif }}
+  command: >
+    ldapadd -Q -Y EXTERNAL -H ldapi:/// -D "cn=config"
+    -f {{ ldap_schema_dir }}/{{ eduPersonSchema_ldif }}
   when: eduPersonSchemaPresent.stdout == ""
 
 - name: Check if the ldapPublicKey schema is already present
-  shell: ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// -b 'cn=schema,cn=config' '(cn=*)' dn | grep 'cn={[0-9]\+}openssh-lpk-openldap,cn=schema,cn=config'
+  shell: >
+    ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// -b 'cn=schema,cn=config' '(cn=*)' dn
+    | grep 'cn={[0-9]\+}openssh-lpk-openldap,cn=schema,cn=config'
   failed_when: not [0, 1]
   register:
     ldapPublicKey
 
 - name: Ensure the ldapPublicKey schema is added to LDAP
-  command: ldapadd -Q -Y EXTERNAL -H ldapi:/// -D "cn=config" -f "{{ ldap_schema_dir }}/{{ ldapPublicKey_ldif }}"
+  command: >
+    ldapadd -Q -Y EXTERNAL -H ldapi:/// -D "cn=config"
+    -f "{{ ldap_schema_dir }}/{{ ldapPublicKey_ldif }}"
   when: ldapPublicKey.stdout == ""
 
 - name: Generating password hash for LDAP admin
@@ -101,7 +109,7 @@
 
 - name: Generate ldif from template
   become_user: "{{ ldap_user }}"
-  become: True
+  become: true
   template:
     src: "templates/{{ item.src }}"
     dest: "{{ ldap_ldif_dir }}/{{ item.dest }}"
@@ -126,9 +134,10 @@
 
 - name: Initialize DIT
   become_user: "{{ ldap_user }}"
-  become: True
-  command:
-    ldapadd -c -x -D "{{ ldap.binddn }}" -w "{{ ldap_password }}" -f "{{ ldap_ldif_dir }}/initial_setup.ldif"
+  become: true
+  command: >
+    ldapadd -c -x -D "{{ ldap.binddn }}" -w "{{ ldap_password }}"
+    -f "{{ ldap_ldif_dir }}/initial_setup.ldif"
   register: result
   failed_when: "(result.rc not in [0, 68])"
   tags: ldap
