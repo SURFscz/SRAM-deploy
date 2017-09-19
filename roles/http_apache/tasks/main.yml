@@ -9,7 +9,7 @@
 - name: Install apache modules
   apt: name={{ item }} state=present
   with_items:
-   - apache2
+    - apache2
 
 - name: Ensure some modules are not activated
   apache2_module:

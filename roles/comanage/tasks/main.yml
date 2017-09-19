@@ -6,7 +6,9 @@
     path: "{{ item.path }}"
     state: "{{ item.state }}"
   with_items:
-    - { path: "{{ comanage_install_dir }}/comanage-registry-{{ comanage_version }}", state: directory }
+    -
+      path: "{{ comanage_install_dir }}/comanage-registry-{{ comanage_version }}"
+      state: directory
 
 - name: Download comanage source
   become: True
@@ -37,15 +39,6 @@
     dest: "{{ item.dest }}"
   with_items: "{{ comanage_templates }}"
   become: yes
-
-#- name: Adding non-core plugins
-#  file:
-#    src: " {{ comanage_package }}/app/AvailablePlugin/{{ item }}"
-#    dest: "{{ comanage_package }}/local/Plugin/{{ item }}"
-#    state: link
-#  with_items:
-#    - LdapServiceTokenProvisioner
-#    - CoServiceToken
 
 - name: Check for comanage tmp directory
   stat:
@@ -82,7 +75,9 @@
   register: comanage_database_stat
 
 - name: Copy database config
-  command: cp {{ comanage_package }}/app/Config/database.php.default {{ comanage_package }}/local/Config/database.php
+  command: >
+    cp {{ comanage_package }}/app/Config/database.php.default
+    {{ comanage_package }}/local/Config/database.php
   when: comanage_database_stat.stat.exists == false
 
 - name: Configure database connection info
@@ -114,7 +109,9 @@
   register: comanage_email_stat
 
 - name: Copy email config
-  command: cp {{ comanage_package }}/app/Config/email.php.default {{ comanage_package }}/local/Config/email.php
+  command: >
+    cp {{ comanage_package }}/app/Config/email.php.default
+    {{ comanage_package }}/local/Config/email.php
   when: comanage_email_stat.stat.exists == false
 
 - name: Configure database connection info
@@ -125,11 +122,18 @@
   with_items: "{{ infodb }}"
 
 - name: Check for {{ comanage_users_table }} in {{ comanage_database }}
-  command: mysql -Nse 'SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = "{{ comanage_db }}" AND table_name = "{{ comanage_users_table }}";' -u {{ comanage_db_user }} "--password={{ comanage_db_password }}"
+  command: >
+    mysql -Nse 'SELECT COUNT(*) FROM information_schema.tables
+    WHERE table_schema = "{{ comanage_db }}" AND table_name = "{{ comanage_users_table }}";'
+    -u {{ comanage_db_user }} "--password={{ comanage_db_password }}"
   register: comanage_cm_users_table_exists
 
 - name: Setup Cake for login
-  command: ./Console/cake setup --admin-given-name "{{ comanage_admin_given_name }}" --admin-family-name "{{ comanage_admin_family_name }} " --admin-username "{{ comanage_admin_username }}" --enable-pooling="{{ comanage_enable_pooling }}"
+  command: >
+    ./Console/cake setup --admin-given-name "{{ comanage_admin_given_name }}"
+    --admin-family-name "{{ comanage_admin_family_name }} "
+    --admin-username "{{ comanage_admin_username }}"
+    --enable-pooling="{{ comanage_enable_pooling }}"
   become: true
   become_user: "{{ comanage_www_user }}"
   args:

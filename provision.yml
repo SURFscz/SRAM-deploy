@@ -49,16 +49,16 @@
 
 - hosts: comanage
   roles:
-   - { role: http_apache, tags: ['comanage', 'web'] }
-   - { role: postfix, tags: ['comanage', 'smtp'] }
-   - { role: mysql, tags: ['comanage', 'db'] }
-   - { role: comanage_mysql, tags: ['comanage', 'db'] }
-   - { role: php56, tags: ['comanage', 'web'] }
-   - { role: auth_mellon, tags: ['comanage', 'web'] }
-   - { role: comanage, tags: ['comanage', 'web'] }
-   - { role: comanage_idp, tags: ['comanage', 'web'] }
-   - { role: comanage_enable, tags: ['comanage', 'web'] }
-   - { role: comanage_plugins, tags: ['comanage', 'web'] }
+    - { role: http_apache, tags: ['comanage', 'web'] }
+    - { role: postfix, tags: ['comanage', 'smtp'] }
+    - { role: mysql, tags: ['comanage', 'db'] }
+    - { role: comanage_mysql, tags: ['comanage', 'db'] }
+    - { role: php56, tags: ['comanage', 'web'] }
+    - { role: auth_mellon, tags: ['comanage', 'web'] }
+    - { role: comanage, tags: ['comanage', 'web'] }
+    - { role: comanage_idp, tags: ['comanage', 'web'] }
+    - { role: comanage_enable, tags: ['comanage', 'web'] }
+    - { role: comanage_plugins, tags: ['comanage', 'web'] }
 
 - hosts: ldap
   roles:

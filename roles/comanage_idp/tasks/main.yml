@@ -44,12 +44,18 @@
 # (only the first), then base64 decodes it and uses openssl to re-encode it as a PEM certificate.
 # Mileage may vary, adjust as required
 - name: Extract IdP certificate from XML metadata
-  shell: "xmlstarlet sel -N md='urn:oasis:names:tc:SAML:2.0:metadata' -N ds='http://www.w3.org/2000/09/xmldsig#' -t -v /md:EntityDescriptor/md:IDPSSODescriptor/md:KeyDescriptor/ds:KeyInfo/ds:X509Data/ds:X509Certificate {{ idp_metadata_path }} | head -1 | base64 --decode | openssl x509 -inform DER -out {{ idp_certificate_path }}"
+  shell: >
+    xmlstarlet sel -N md='urn:oasis:names:tc:SAML:2.0:metadata'
+    -N ds='http://www.w3.org/2000/09/xmldsig#' -t
+    -v {{ idp_xml_sso_tag }}
+    {{ idp_metadata_path }} | head -1 | base64 --decode |
+    openssl x509 -inform DER -out {{ idp_certificate_path }}
   when: idp_extract_certificate == True
   notify:
     - Restart Apache
 
-# Finally add a RewriteRule to the CoManage .htaccess to allow redirection of the sp metadata to a convenient URL
+# Finally add a RewriteRule to the CoManage .htaccess to allow redirection of the
+# sp metadata to a convenient URL
 - name: Add rewrite rule for SP metadata
   blockinfile:
     block: "RewriteRule  \"^/auth/sp/metadata$\" \"/etc/apache2/mellon/sp-metadata.xml\""

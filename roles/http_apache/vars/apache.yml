@@ -14,7 +14,7 @@ modules:
 conf:
 
 disable_modules:
- - mpm_event
+  - mpm_event
 
 restart:
   - apache2
