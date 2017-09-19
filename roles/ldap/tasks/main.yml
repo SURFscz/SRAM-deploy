@@ -95,7 +95,7 @@
 
 - name: Generating password hash for LDAP admin
   command:
-    slappasswd -h {SSHA} -s {{ ldap_admin_passwd }}
+    slappasswd -h {SSHA} -s {{ ldap_password }}
   register:
     ldap_root_hash
 
@@ -120,7 +120,7 @@
 
 - name: Check if DIT has been created before
   command:
-    ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// -b "{{ ldap_basedn }}" "(ou=group)" dn
+    ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// -b "{{ ldap.basedn }}" "(ou=group)" dn
   register: emptyDIT
   failed_when: "emptyDIT.rc not in [0, 32]"
 
@@ -128,7 +128,7 @@
   become_user: "{{ ldap_user }}"
   become: True
   command:
-    ldapadd -c -x -D "cn={{ ldap_admin }},{{ ldap_basedn }}" -w "{{ ldap_admin_passwd }}" -f "{{ ldap_ldif_dir }}/initial_setup.ldif"
+    ldapadd -c -x -D "{{ ldap.binddn }}" -w "{{ ldap_password }}" -f "{{ ldap_ldif_dir }}/initial_setup.ldif"
   register: result
   failed_when: "(result.rc not in [0, 68])"
   tags: ldap

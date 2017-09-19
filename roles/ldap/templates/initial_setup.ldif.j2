@@ -1,29 +1,29 @@
 # Create the admin identity
-dn: {{ ldap_basedn }}
-o: {{ organization }}
-dc: {{ ldap_basedn | regex_replace('^dc=([^,]+).*', '\\1') }}
+dn: {{ ldap.dc }}
+o: {{ ldap.o }}
+dc: {{ ldap.dc | regex_replace('^dc=([^,]+).*', '\\1') }}
 objectClass: dcObject
 objectClass: organization
 
-dn: cn={{ ldap_admin }},{{ ldap_basedn }}
+dn: {{ ldap.binddn }}
 cn: admin
 objectClass: organizationalRole
 
 # Create the organisational unit (ou) group, which will contain all groups
-dn: ou=group,{{ ldap_basedn }}
-ou: groups
+dn: {{ ldap.groupdn }}
+ou: {{ ldap.groupdn | regex_replace('^ou=([^,]+).*', '\\1') }}
 objectClass: top
 objectClass: organizationalUnit
 
 # Add a group to the group container
-#dn: cn=irodsuser,ou=group,{{ ldap_basedn }}
+#dn: cn=irodsuser,{{ ldap.groupdn }}
 #cn: irodsuser
 #gidNumber: 2500
 #objectClass: top
 #objectClass: posixGroup
 
 # Create the organisational unit (ou) people
-dn: ou=people,{{ ldap_basedn }}
-ou: people
+dn: {{ ldap.basedn }}
+ou: {{ ldap.basedn | regex_replace('^ou=([^,]+).*', '\\1') }}
 objectClass: top
 objectClass: organizationalUnit
