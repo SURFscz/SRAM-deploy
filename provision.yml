@@ -58,6 +58,10 @@
   roles:
     - { role: http_dummy,  tags: ['proxy','test'] }
 
+- hosts: client
+  roles:
+    - { role: http_dummy,  tags: ['client','test'] }
+
 - hosts: metadata
   roles:
 
