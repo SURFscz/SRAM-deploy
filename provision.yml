@@ -29,6 +29,7 @@
     - { role: firewall, tags: ['common'] }
     - { role: ntp,      tags: ['common'] }
     - { role: users,    tags: ['common'] }
+    - { role: mail,     tags: ['common','mail'] }
 #   - { role: logging,  tags: ['logging'  ] }
 
 - hosts: mgnt1
