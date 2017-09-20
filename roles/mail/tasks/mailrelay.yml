@@ -15,13 +15,13 @@
 
 - name: install postfix aliases
   template: src=aliases.j2 dest=/etc/postfix/aliases
-  notify: 
+  notify:
     - postalias
     - restart postfix
 
 - name: install postfix virtual addresses
   template: src=virtual.j2 dest=/etc/postfix/virtual
-  notify: 
+  notify:
     - postmap virtual
     - restart postfix
 

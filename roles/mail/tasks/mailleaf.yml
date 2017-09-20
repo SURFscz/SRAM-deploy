@@ -10,4 +10,3 @@
 - name: install ssmtp config
   template: src=ssmtp.conf.j2 dest=/etc/ssmtp/ssmtp.conf
 
-

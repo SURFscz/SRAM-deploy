@@ -2,7 +2,7 @@
 - name: restart postfix
   service: name=postfix state=restarted
 
-- name: postalias 
+- name: postalias
   command: /usr/sbin/postalias hash:aliases
   args:
     chdir: /etc/postfix
