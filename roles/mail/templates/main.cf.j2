@@ -9,6 +9,9 @@ alias_maps = hash:/etc/postfix/aliases
 alias_database = hash:/etc/postfix/aliases
 virtual_alias_maps = hash:/etc/postfix/virtual
 
+# add missing headers for all replayed mail
+local_header_rewrite_clients = permit_inet_interfaces,permit_mynetworks
+
 smtpd_banner = $myhostname ESMTP $mail_name (Debian/GNU)
 biff = no
 
