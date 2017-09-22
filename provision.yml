@@ -43,9 +43,9 @@
 
 - hosts: lb
   roles:
-    - { role: http_nginx,      tags: ['http_nginx']      }
-    - { role: tls_letsencrypt, tags: ['tls_letsencrypt'] }
-    - { role: https_haproxy,   tags: ['https_haproxy','test']   }
+    - { role: http_nginx,      tags: ['lb','http_nginx'     ] }
+    - { role: tls_letsencrypt, tags: ['lb','tls_letsencrypt'] }
+    - { role: https_haproxy,   tags: ['lb','https_haproxy'  ] }
 
 - hosts: comanage
   roles:
