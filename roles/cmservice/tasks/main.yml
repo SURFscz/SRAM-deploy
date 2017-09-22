@@ -36,6 +36,7 @@
       name: "{{ cmservice_src_dir }}"
       virtualenv: "{{ cmservice_env_dir }}"
       virtualenv_python: python3
+      state: latest
       #executable: pip3
 
   - name: Create CMservice  settings.cfg configuration

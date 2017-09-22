@@ -36,6 +36,7 @@
       name: "{{ pyff_src_dir }}"
       virtualenv: "{{ pyff_env_dir }}"
       virtualenv_python: python2
+      state: latest
       #executable: pip2
 
   - name: Create pyFF mdq configuration
@@ -49,10 +50,6 @@
 
   - name: Create local metadata directory
     file: path={{ pyff_env_dir }}/metadata state=directory mode=0755 owner=pyff
-
-  - name: Link Satosa backend metadata
-    file: src="{{ satosa_env_dir }}/metadata/backend.xml" path="{{ pyff_env_dir }}/metadata/satosa_backend.xml" state=link
-        remote_src=yes
     
   - name: Create certs directory
     file: path="{{ pyff_env_dir }}/certs" state=directory mode=0755

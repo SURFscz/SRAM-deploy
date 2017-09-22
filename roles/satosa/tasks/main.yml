@@ -38,6 +38,7 @@
       name: "{{ satosa_src_dir }}"
       virtualenv: "{{ satosa_env_dir }}"
       virtualenv_python: python3
+      state: latest
       #executable: pip3
 
   - name: Create SATOSA  proxy_conf configuration
@@ -77,6 +78,20 @@
     template: src=consent.yaml.j2
           dest="{{ satosa_env_dir }}/plugins/micro_services/consent.yaml"
 
+  - name: Create static directory
+    file: path="{{ satosa_env_dir }}/static" state=directory mode=0755
+
+  - name: Create custom_alias.yaml definition
+    template: src=custom_alias.yaml.j2
+          dest="{{ satosa_env_dir }}/plugins/micro_services/custom_alias.yaml"
+
+  - name: Copy error and info pages to static alias directory
+    copy: src={{ item }}
+        dest={{ satosa_env_dir }}/static/{{ item }}
+    with_items:
+        - info
+        - error
+        
   - name: Create MongoDB database satosa with collection clients
     shell: mongo satosa --eval "db.createCollection('clients')"
 
@@ -120,7 +135,7 @@
 
   - name: Copy clients.json example file
     copy: src=clients.json
-      dest="{{ satosa_env_dir }}/clients.json"
+      dest="{{ satosa_env_dir }}/metadata/clients.json"
       mode=0755
 
   - name: Create sync_clients script

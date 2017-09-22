@@ -65,5 +65,8 @@
 - hosts: meta
   roles:
       - { role: http_dummy,  tags: ['http']      }
-      - { role: metadata,    tags: ['metadata'] }
+      - { role: metadata,    tags: ['metadata']  }
 
+- hosts: client
+  roles:
+      - { role: clients,     tags: ['clients']    }

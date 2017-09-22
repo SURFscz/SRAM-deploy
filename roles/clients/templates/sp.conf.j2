@@ -1,0 +1,19 @@
+<VirtualHost *:80>
+        ServerName {{ hostnames.sp }}
+
+        ServerAdmin webmaster@localhost
+        DocumentRoot /var/www/html
+
+        Alias /saml /opt/simplesaml/simplesaml/www
+        
+        ErrorLog ${APACHE_LOG_DIR}/error.log
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+        <Directory /opt/simplesaml>
+            Options FollowSymLinks
+            AllowOverride None
+            Order allow,deny
+            allow from all
+            Require all granted
+        </Directory>
+</VirtualHost>
