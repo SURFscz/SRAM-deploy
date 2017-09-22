@@ -1,0 +1,4 @@
+---
+sudo_groups:
+  - sudo_mgnt
+

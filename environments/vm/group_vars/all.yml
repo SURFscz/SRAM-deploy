@@ -1,0 +1,39 @@
+---
+secrets_file: "environments/vm/secrets/all.yml"
+
+admin_email: "admin@scz.vnet"
+
+servers:
+  dns:
+    - 8.8.8.8
+    - 208.67.222.222
+    - 208.67.220.220
+  ntp:
+    - 0.pool.ntp.org
+    - 1.pool.ntp.org
+    - 2.pool.ntp.org
+    - 3.pool.ntp.org
+
+iprange:
+  vpn:
+    vm:   172.20.1.0/24
+  bastion:   "{{hostvars[ groups['mgnt1'][0] ]['ansible_default_ipv4']['address']}}"
+  lb:        "{{hostvars[ groups['lb'][0] ]['ansible_default_ipv4']['address']}}"
+  mgnt:      "{{hostvars[ groups['mgnt1'][0] ]['ansible_default_ipv4']['address']}}/\
+              {{hostvars[ groups['mgnt1'][0] ]['ansible_default_ipv4']['netmask']}}"
+
+# poor man's user management
+root:
+  pw_hash: "$6$rounds=500000$AtgwpGVMAm0fyIf$g4JqeEu8O//KsklaqIEJX6UnQgEtrMTrZdNcp/v/O/G75BjISGZINC\
+            rJ0JREkKficMZV5IsdshT9cVACb0cxR1"
+users:
+  - name: SCZ
+    uid: scz
+    groups: ['scz','sudo_test','sudo_mgnt','systemd-journal']
+    pw_hash: "$6$rounds=500000$OOIfLX7bEQus$krZ/mSucwYN5dK25FlrvxmkMfUa4R585tXwihZFDWbXUVSJXymIeJpq\
+             pRvP88TEgaNAXrKMD9qbWYvnSLeDOe."
+    sshkey: ""
+
+firewall_v4_incoming:
+  - { name: bastion,  src: "{{iprange.bastion}}", dport: "22,80,443", proto: tcp }
+
