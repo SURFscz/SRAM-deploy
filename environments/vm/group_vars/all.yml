@@ -30,8 +30,9 @@ users:
   - name: SCZ
     uid: scz
     groups: ['scz','sudo_test','sudo_mgnt','systemd-journal']
+    # password 'scz'
     pw_hash: "$6$rounds=500000$OOIfLX7bEQus$krZ/mSucwYN5dK25FlrvxmkMfUa4R585tXwihZFDWbXUVSJXymIeJpq\
-             pRvP88TEgaNAXrKMD9qbWYvnSLeDOe."
+              pRvP88TEgaNAXrKMD9qbWYvnSLeDOe."
     sshkey: ""
 
 firewall_v4_incoming:
