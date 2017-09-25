@@ -48,7 +48,7 @@
     xmlstarlet sel -N md='urn:oasis:names:tc:SAML:2.0:metadata'
     -N ds='http://www.w3.org/2000/09/xmldsig#' -t
     -v {{ idp_xml_sso_tag }}
-    {{ idp_metadata_path }} | head -1 | base64 --decode |
+    {{ idp_metadata_path }} | base64 --decode |
     openssl x509 -inform DER -out {{ idp_certificate_path }}
   when: idp_extract_certificate == True
   notify:
