@@ -33,6 +33,7 @@ machines = {
 # you're doing.
 Vagrant.configure("2") do |config|
     config.vm.box = "debian/stretch64"
+    config.vm.synced_folder ".", "/vagrant", disabled: true
 
     # being paranoid and all, we don't trust random updated images without
     # manually checking sha256sums against https://cloud.alioth.debian.org/vagrantboxes/
