@@ -60,6 +60,13 @@ frontend fe_https
 	#http-response set-header X-XSS-Protection "1; mode=block"
 	#http-response set-header X-Content-Type-Options "nosniff"
 
+	http-request set-header X-Forwarded-For "%[src]"
+	http-request set-header X-Forwarded-Port "%[dst_port]"
+	http-request set-header X-Forwarded-Proto "https" if   { ssl_fc }
+	http-request set-header X-Forwarded-Proto "http"  if ! { ssl_fc }
+	http-request set-header Forwarded "for=%[src]; proto=https; by=%[dst]" if   { ssl_fc }
+	http-request set-header Forwarded "for=%[src]; proto=http; by=%[dst]"  if ! { ssl_fc }
+
 {% for host in lb_http %}
 	acl acl_{{host.hostname}} ssl_fc_sni -i {{host.hostname}}
 	use_backend be_{{host.hostname}} if acl_{{host.hostname}}
