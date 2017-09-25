@@ -24,7 +24,6 @@ global
 
 defaults
 	log	global
-	option	httplog
 	option	dontlognull
         timeout connect 5000
         timeout client  50000
@@ -45,6 +44,7 @@ frontend fe_https
 	bind [::]:443 ssl {% for host in lb_http %} crt {{host.hostname}}/priv+fullchain.pem{% endfor %} transparent
 
 	mode	http
+	option	httplog
 
 	# secure cookies:
 	# todo: only for satosa
@@ -89,6 +89,7 @@ listen proxy_{{host.hostname}}_{{host.frontend_port}}
 
 	mode	tcp
 	option	tcpka
+	option	tcplog
 
 	{% for be_server in host.backend_hosts -%}
 	server {{be_server}} {{be_server}}:{{host.backend_port}} check
