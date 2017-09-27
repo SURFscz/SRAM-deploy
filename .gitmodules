@@ -1,3 +1,4 @@
 [submodule "environments/surf"]
 	path = environments/surf
 	url = git@gitlab.surfnet.nl:SCZ/SCZ-deploy-surf.git
+	branch = master

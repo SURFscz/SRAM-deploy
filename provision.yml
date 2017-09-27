@@ -25,8 +25,8 @@
 - hosts: all
   roles:
     - { role: basic,    tags: ['common'] }
-    - { role: apt,      tags: ['common'] }
-    - { role: firewall, tags: ['common'] }
+    - { role: apt,      tags: ['common','apt']      }
+    - { role: firewall, tags: ['common','firewall'] }
     - { role: ntp,      tags: ['common'] }
     - { role: users,    tags: ['common'] }
     - { role: mail,     tags: ['common','mail'] }
