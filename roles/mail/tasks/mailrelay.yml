@@ -1,0 +1,30 @@
+---
+- name: install postfix
+  apt: name=postfix state=installed
+
+- name: remove ssmtp
+  apt: name=ssmtp state=absent purge=true
+
+- name: install postfix config
+  template: src=main.cf.j2 dest=/etc/postfix/main.cf
+  notify: restart postfix
+
+- name: install postfix rewriting config
+  template: src=canonical.j2 dest=/etc/postfix/canonical
+  notify: restart postfix
+
+- name: install postfix aliases
+  template: src=aliases.j2 dest=/etc/postfix/aliases
+  notify:
+    - postalias
+    - restart postfix
+
+- name: install postfix virtual addresses
+  template: src=virtual.j2 dest=/etc/postfix/virtual
+  notify:
+    - postmap virtual
+    - restart postfix
+
+- name: remove default alias file
+  file: dest=/etc/aliases src=/etc/postfix/aliases state=link force=yes
+

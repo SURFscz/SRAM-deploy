@@ -17,6 +17,11 @@
   user: name=root update_password=always password={{root.pw_hash}}
   with_items: "{{users}}"
 
+- name: remove default users
+  user: name={{item}} state=absent remove=yes
+  with_items:
+    - surf
+
 - name: create groups
   group: name={{item}} state=present
   with_items:
