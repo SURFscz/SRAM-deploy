@@ -1,3 +1,4 @@
+---
 - name: Ensure that packages are installed
   apt:
     name: "{{ item }}"
@@ -23,52 +24,59 @@
   file: path={{ pyff_project_dir }} state=directory mode=0755 owner=pyff
 
 - block:
-  - name: fetch pyFF from {{ pyff_repo_url }}, version {{ pyff_repo_version }}
-    git:
-      repo: "{{ pyff_repo_url }}"
-      dest: "{{ pyff_src_dir }}"
-      version: "{{ pyff_repo_version }}"
-      accept_hostkey: yes
-      force: yes
+    - name: fetch pyFF from {{ pyff_repo_url }}, version {{ pyff_repo_version }}
+      git:
+        repo: "{{ pyff_repo_url }}"
+        dest: "{{ pyff_src_dir }}"
+        version: "{{ pyff_repo_version }}"
+        accept_hostkey: "yes"
+        force: "yes"
 
-  - name: install pyFF from {{ pyff_src_dir }} to {{ pyff_env_dir }}
-    pip:
-      name: "{{ pyff_src_dir }}"
-      virtualenv: "{{ pyff_env_dir }}"
-      virtualenv_python: python2
-      state: latest
-      #executable: pip2
+    - name: install pyFF from {{ pyff_src_dir }} to {{ pyff_env_dir }}
+      pip:
+        name: "{{ pyff_src_dir }}"
+        virtualenv: "{{ pyff_env_dir }}"
+        virtualenv_python: python2
+        state: latest
+        #executable: pip2
 
-  - name: Create pyFF mdq configuration
-    template: src=mdq.fd.j2
-              dest="{{ pyff_env_dir }}/mdq.fd"
-    become_method: sudo
-    
-  - name: Create pyFF systemd service
-    template: src=pyff.service.j2
-              dest="{{ pyff_env_dir }}/pyff.service"
+    - name: Create pyFF mdq configuration
+      template: src=mdq.fd.j2
+                dest="{{ pyff_env_dir }}/mdq.fd"
+      become_method: sudo
 
-  - name: Create local metadata directory
-    file: path={{ pyff_env_dir }}/metadata state=directory mode=0755 owner=pyff
-    
-  - name: Create certs directory
-    file: path="{{ pyff_env_dir }}/certs" state=directory mode=0755
+    - name: Create pyFF systemd service
+      template: src=pyff.service.j2
+                dest="{{ pyff_env_dir }}/pyff.service"
 
-  - name: create self-signed Token Signing SSL certs
-    shell: openssl genrsa -out "{{ pyff_env_dir }}/certs/{{ item }}.key" 2048; openssl req -new -nodes -x509 -subj "/C=NL/CN={{ item }}" -days 3650 -key "{{ pyff_env_dir }}/certs/{{ item }}.key" -out "{{ pyff_env_dir }}/certs/{{ item }}.crt" -extensions v3_ca
-      creates="{{ pyff_env_dir }}/certs/{{ item }}.crt"
-    with_items:
+    - name: Create local metadata directory
+      file: path={{ pyff_env_dir }}/metadata state=directory mode=0755 owner=pyff
+
+    - name: Create certs directory
+      file: path="{{ pyff_env_dir }}/certs" state=directory mode=0755
+
+    - name: create self-signed Metadata Signing SSL certs
+      shell: >
+        openssl genrsa -out "{{ pyff_env_dir }}/certs/{{ item }}.key" 2048;
+        openssl req -new -nodes -x509 -subj "/C=NL/CN={{ item }}"
+        -days 3650 -key "{{ pyff_env_dir }}/certs/{{ item }}.key"
+        -out "{{ pyff_env_dir }}/certs/{{ item }}.crt" -extensions v3_ca
+      args:
+        creates: "{{ pyff_env_dir }}/certs/{{ item }}.crt"
+      with_items:
         - signing
-        
-  become: yes
+
+  become: "yes"
   become_user: pyff
 
 - name: Copy to pyff.service in /etc/systemd/system
-# systemd/ctl can not enable symlinked services :(
-# https://github.com/systemd/systemd/issues/3010
-#- name: Create symlink to pyff.service in /etc/systemd/system
-#  file: src="{{ pyff_env_dir }}/pyff.service" dest=/etc/systemd/system/pyff.service state=link
-  copy: src="{{ pyff_env_dir }}/pyff.service" dest=/etc/systemd/system/pyff.service
+  # systemd/ctl can not enable symlinked services :(
+  # https://github.com/systemd/systemd/issues/3010
+  #- name: Create symlink to pyff.service in /etc/systemd/system
+  #  file: src="{{ pyff_env_dir }}/pyff.service" dest=/etc/systemd/system/pyff.service state=link
+  copy: >
+    src="{{ pyff_env_dir }}/pyff.service"
+    dest=/etc/systemd/system/pyff.service
     remote_src=yes
 
 - name: Create pyff-owned pyff.pid file

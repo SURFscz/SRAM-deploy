@@ -1,10 +1,14 @@
+---
 attributes:
   uid:
     openid: [uid]
     saml: ['urn:mace:dir:attribute-def:uid', uid]
   eppn:
     openid: [eppn]
-    saml: ['urn:mace:dir:attribute-def:eduPersonPrincipalName', 'urn:oid:1.3.6.1.4.1.5923.1.1.1.6', eduPersonPrincipalName]
+    saml:
+      - 'urn:mace:dir:attribute-def:eduPersonPrincipalName'
+      - 'urn:oid:1.3.6.1.4.1.5923.1.1.1.6'
+      - 'eduPersonPrincipalName'
   address:
     openid: [address.street_address]
     saml: [postaladdress]
