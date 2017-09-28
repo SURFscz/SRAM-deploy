@@ -4,6 +4,7 @@
 :INPUT DROP [0:0]
 :FORWARD DROP [0:0]
 :OUTPUT ACCEPT [0:0]
+
 -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
 -A INPUT -p ipv6-icmp -j ACCEPT
 -A INPUT -i lo -j ACCEPT
@@ -24,5 +25,9 @@
   {{"\n"}}
 {% endfor %}
 {% endif %}
+
+# explicitly add a REJECT rule to prevent timeouts when connecting to ipv6
+# note: REJECT is not a valid policy, but can only be used in targets
+-A INPUT -j REJECT
 
 COMMIT

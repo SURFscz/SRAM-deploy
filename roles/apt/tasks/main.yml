@@ -4,7 +4,7 @@
 
 - name: Update apt cache
   apt: update_cache=yes
-  changed_when: False
+  changed_when: "false"
 
 - name: Upgrade packages
   apt: upgrade=dist
@@ -12,14 +12,14 @@
 - name: Install common tools / clients
   apt: name={{ item }} state=present
   with_items:
-   - sudo
-   - bash
-   - zsh
-   - vim
-   - locales-all
-   - open-vm-tools
-   - open-vm-tools-dkms
-   - curl
+    - sudo
+    - bash
+    - zsh
+    - vim
+    - locales-all
+    - open-vm-tools
+    - open-vm-tools-dkms
+    - curl
 
 - name: remove unneccessary packages
   apt: name={{ item }} state=absent
@@ -29,7 +29,7 @@
 
 # apt module doesn't support autoremove very well, yet
 - name: Remove obsolete packages
-  command: /usr/bin/apt --yes --purge autoremove
+  command: "/usr/bin/apt --yes --purge autoremove"
   register: result
   changed_when: "'0 upgraded, 0 newly installed, 0 to remove' not in result.stdout"
 
