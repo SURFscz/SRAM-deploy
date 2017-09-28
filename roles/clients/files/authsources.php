@@ -83,6 +83,7 @@ $config = array(
     ),
     */
 
+    /*
     'example-userpass' => array(
         'exampleauth:UserPass',
         // Give the user an option to save their username for future login attempts
@@ -103,17 +104,34 @@ $config = array(
             'eduPersonAffiliation' => array('member', 'employee'),
         ),
     ),
+    */
 
-    /*
     'crypto-hash' => array(
         'authcrypt:Hash',
-        // hashed version of 'verysecret', made with bin/pwgen.php
-        'professor:{SSHA256}P6FDTEEIY2EnER9a6P2GwHhI5JDrwBgjQ913oVQjBngmCtrNBUMowA==' => array(
-            'uid' => array('prof_a'),
-            'eduPersonAffiliation' => array('member', 'employee', 'board'),
+        // hashed version of password, made with bin/pwgen.php
+        'baas:{SSHA256}k3PEnrrBqpxjOwuE4kArdPwAG2lVrJZBeS5/+Ej8598nGbBKCvYfzQ==' => array(
+            'uid' => array('admin'),
+            'urn:mace:dir:attribute-def:uid' => array('admin'),
+            'eduPersonAffiliation' => array('member', 'employee'),
+            'urn:mace:dir:attribute-def:mail' => array('admin@scz.lab.surf.nl'),
+            'urn:mace:terena.org:attribute-def:schacHomeOrganization' => array('scz.lab.surf.nl'),
+            'urn:mace:dir:attribute-def:eduPersonPrincipalName' => array('admin@scz.lab.surf.nl'),
+            'urn:oid:1.3.6.1.4.1.5923.1.1.1.6' => array('admin@scz.lab.surf.nl'),
+        ),
+        'student:{SSHA256}sa1hYchNHSHa0DwbZjf0vSuQj34GnaMVRVJVGBG+ao18/5NcvAnr7w==' => array(
+            'uid' => array('test'),
+            'urn:mace:dir:attribute-def:uid' => array('testuid'),
+            'eduPersonAffiliation' => array('member', 'student'),
+            'urn:mace:dir:attribute-def:mail' => array('some@mailaddress.org'),
+            'urn:mace:terena.org:attribute-def:schacHomeOrganization' => array('mrvanes.com'),
+            'urn:mace:dir:attribute-def:eduPersonPrincipalName' => array('eppn_student@mrvanes.com'),
+            'urn:oid:1.3.6.1.4.1.5923.1.1.1.6' => array('oid_student@mrvanes.com'),
+        ),
+        'employee:{SSHA256}sa1hYchNHSHa0DwbZjf0vSuQj34GnaMVRVJVGBG+ao18/5NcvAnr7w==' => array(
+            'uid' => array('employee'),
+            'eduPersonAffiliation' => array('member', 'employee'),
         ),
     ),
-    */
 
     /*
     'htpasswd' => array(

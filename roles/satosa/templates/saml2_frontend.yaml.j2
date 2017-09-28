@@ -24,12 +24,11 @@ config:
             fail_on_missing_requested: false
             lifetime: {minutes: 15}
             #name_form: urn:oasis:names:tc:SAML:2.0:attrname-format:basic
-    #allow_unknown_attributes: true
+    attribute_map_dir: '{{ satosa_env_dir }}/mapper'
+    allow_unknown_attributes: true
   acr_mapping:
     "": default-LoA
     "https://accounts.google.com": LoA1
   endpoints:
     single_sign_on_service: {'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST': sso/post,
       'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect': sso/redirect}
-  metadata: <base_url>/<name>/metadata
-

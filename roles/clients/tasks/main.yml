@@ -80,6 +80,9 @@
   - name: SimpleSaml enable example-userpass
     file: dest={{ simplesaml_project_dir }}/simplesaml/modules/exampleauth/enable state=touch
       
+  - name: SimpleSaml enable authcrypt
+    file: dest={{ simplesaml_project_dir }}/simplesaml/modules/authcrypt/enable state=touch
+
   - name: SimpleSaml Test SCZ metadata
     copy: src={{ item }}
       dest={{ simplesaml_project_dir }}/simplesaml/metadata/{{ item }}
