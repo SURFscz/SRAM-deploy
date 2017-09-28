@@ -57,12 +57,19 @@
 
 - hosts: proxy
   roles:
-    - { role: http_dummy,  tags: ['proxy','test'] }
+    - { role: satosa,      tags: ['satosa'    ] }
+    - { role: pyff,        tags: ['pyff'      ] }
+    - { role: cmservice,   tags: ['cmservice' ] }
 
 - hosts: client
   roles:
     - { role: http_dummy,  tags: ['client','test'] }
 
-- hosts: metadata
+- hosts: meta
   roles:
+    - { role: http_dummy,  tags: ['http']      }
+    - { role: metadata,    tags: ['metadata']  }
 
+- hosts: client
+  roles:
+    - { role: clients,     tags: ['clients']    }
