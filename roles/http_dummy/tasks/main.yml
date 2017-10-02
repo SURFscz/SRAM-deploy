@@ -3,5 +3,12 @@
 - name: install nginx
   apt: name=nginx state=present
 
+- name: install our NGINX default file
+  copy: src=default dest=/etc/nginx/sites-available/default
+
+- name: Create symlink to default in /etc/nginx/sites-enabled
+  file: src="/etc/nginx/sites-available/default" dest=/etc/nginx/sites-enabled/00-default state=link
+  notify: restart nginx
+
 - name: enable nginx
   service: name=nginx.service state=started enabled=true

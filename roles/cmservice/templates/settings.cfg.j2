@@ -1,0 +1,17 @@
+#SSL=False
+#SERVER_CERT="./keys/cmservice.crt"
+#SERVER_KEY="./keys/cmservice.key"
+TRUSTED_KEYS = ["./keys/satosa.pub"]
+SECRET_SESSION_KEY="8qbnunWehytCW6wa5DZywzYxaxAVkAin"
+PORT={{ cmservice_port }}
+HOST="{{ cmservice_host }}"
+DEBUG=True
+TICKET_TTL=600
+CONSENT_DATABASE_URL="sqlite:///var/consent.db"
+CONSENT_REQUEST_DATABASE_URL="sqlite:///var/consent.db"
+AUTO_SELECT_ATTRIBUTES=True
+MAX_CONSENT_EXPIRATION_MONTH=12
+USER_CONSENT_EXPIRATION_MONTH = [3, 6]
+LOGGING_LEVEL="DEBUG"
+CONSENT_SALT="VFT0yZ2dXzAHRlGb0cAhsac2ipKueybl8ZfuPzsHUrTZ8o7Vs6HnAlMhwbob"
+SECRET_KEY="123456789"

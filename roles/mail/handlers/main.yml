@@ -1,0 +1,18 @@
+---
+- name: restart postfix
+  service: name=postfix state=restarted
+
+- name: postalias
+  command: /usr/sbin/postalias hash:aliases
+  args:
+    chdir: /etc/postfix
+    creates: /etc/postfix/aliases.db
+  notify: restart postfix
+
+- name: postmap virtual
+  command: /usr/sbin/postmap hash:virtual
+  args:
+    chdir: /etc/postfix
+    creates: /etc/postfix/virtual.db
+  notify: restart postfix
+

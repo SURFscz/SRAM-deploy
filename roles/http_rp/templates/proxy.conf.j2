@@ -1,0 +1,16 @@
+# Reverse all proxy services on service paths
+server {
+    listen 80 default_server;
+    server_name _;
+
+    location /satosa/ {
+        proxy_pass http://localhost:{{ satosa_port }}/;
+    }
+    location /mdq/ {
+        proxy_pass http://localhost:{{ pyff_port }}/;
+    }
+    location /cs/ {
+        proxy_pass http://localhost:{{ cmservice_port }}/;
+    }
+}
+

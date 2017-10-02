@@ -1,0 +1,12 @@
+# install a simpel smtp server that will redirect all mail to
+# {{maiL_relayhost}}
+---
+- name: install ssmtp
+  apt: name=ssmtp state=installed
+
+- name: purge postfix
+  apt: name=postfix state=absent purge=true
+
+- name: install ssmtp config
+  template: src=ssmtp.conf.j2 dest=/etc/ssmtp/ssmtp.conf
+

@@ -1,0 +1,37 @@
+- when normalize:
+    - xslt:
+       stylesheet: tidy.xsl
+    - break
+- when edugain:
+    - xslt:
+       stylesheet: tidy.xsl
+    - break
+- when update:
+    - load:
+       - https://meta.test.scz.lab.surf.nl/sc_edugain_rs_coco_nosc.xml
+       - https://proxy.test.scz.lab.surf.nl/md/backend.xml
+       - https://sp-test.scz.lab.surf.nl/saml/module.php/saml/sp/metadata.php/default-sp
+       - https://idp-test.scz.lab.surf.nl/saml/saml2/idp/metadata.php
+       - https://engine.connect.surfconext.nl/authentication/proxy/idps-metadata?sp-entity-id=https://proxy.test.scz.lab.surf.nl/Saml2SP/proxy_saml2_backend.xml
+       - https://comanage.test.scz.lab.surf.nl/auth/sp/metadata
+       - metadata/
+    - break
+- when request:
+    - select
+    - pipe:
+        - when accept application/xml:
+             - xslt:
+                 stylesheet: tidy.xsl
+             - first
+             - finalize:
+                cacheDuration: PT5H
+                validUntil: P10D
+             - sign:
+                 key: certs/signing.key
+                 cert: certs/signing.crt
+             - emit application/xml
+             - break
+        - when accept application/json:
+             - discojson
+             - emit application/json
+             - break
