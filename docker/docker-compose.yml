@@ -1,0 +1,63 @@
+version: "2"
+services:
+  ldap:
+    build:
+      context: "."
+      dockerfile: Dockerfile
+    image: library/ldap:latest
+    ports:
+      - "2222:22"
+      - "2280:80"
+      - "2243:443"
+      - "2289:389"
+      - "2236:636"
+    networks:
+      scznet:
+        ipv4_address: 172.20.1.20
+  comanage:
+    build:
+      context: "."
+      dockerfile: Dockerfile
+    image: library/comanage:latest
+    ports:
+      - "2322:22"
+      - "2380:80"
+      - "2343:443"
+    networks:
+      scznet:
+        ipv4_address: 172.20.1.21
+  proxy:
+    build:
+      context: "."
+      dockerfile: Dockerfile
+    image: library/proxy:latest
+    ports:
+      - "2422:22"
+      - "2480:80"
+      - "2443:443"
+    networks:
+      scznet:
+        ipv4_address: 172.20.1.22
+  meta:
+    build:
+      context: "."
+      dockerfile: Dockerfile
+    image: library/meta:latest
+    ports:
+      - "2522:22"
+      - "2580:80"
+      - "2543:443"
+    networks:
+      scznet:
+        ipv4_address: 172.20.1.23
+
+
+networks:
+  scznet:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.1.0/24
+          ip_range: 172.20.1.0/24
+          gateway: 172.20.1.1
+

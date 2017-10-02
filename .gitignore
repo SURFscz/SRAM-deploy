@@ -3,3 +3,5 @@
 provision.retry
 *.pyc
 core
+*~
+
