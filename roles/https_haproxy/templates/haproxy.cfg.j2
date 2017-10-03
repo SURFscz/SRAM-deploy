@@ -24,7 +24,6 @@ global
 
 defaults
 	log	global
-	option	httplog
 	option	dontlognull
         timeout connect 5000
         timeout client  50000
@@ -45,6 +44,7 @@ frontend fe_https
 	bind [::]:443 ssl {% for host in lb_http %} crt {{host.hostname}}/priv+fullchain.pem{% endfor %} transparent
 
 	mode	http
+	option	httplog
 
 	# secure cookies:
 	# todo: only for satosa
@@ -59,6 +59,13 @@ frontend fe_https
 	#http-response set-header X-Frame-Options "DENY"
 	#http-response set-header X-XSS-Protection "1; mode=block"
 	#http-response set-header X-Content-Type-Options "nosniff"
+
+	http-request set-header X-Forwarded-For "%[src]"
+	http-request set-header X-Forwarded-Port "%[dst_port]"
+	http-request set-header X-Forwarded-Proto "https" if   { ssl_fc }
+	http-request set-header X-Forwarded-Proto "http"  if ! { ssl_fc }
+	http-request set-header Forwarded "for=%[src]; proto=https; by=%[dst]" if   { ssl_fc }
+	http-request set-header Forwarded "for=%[src]; proto=http; by=%[dst]"  if ! { ssl_fc }
 
 {% for host in lb_http %}
 	acl acl_{{host.hostname}} ssl_fc_sni -i {{host.hostname}}
@@ -82,6 +89,7 @@ listen proxy_{{host.hostname}}_{{host.frontend_port}}
 
 	mode	tcp
 	option	tcpka
+	option	tcplog
 
 	{% for be_server in host.backend_hosts -%}
 	server {{be_server}} {{be_server}}:{{host.backend_port}} check
