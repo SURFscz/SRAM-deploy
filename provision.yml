@@ -60,6 +60,8 @@
     - { role: satosa,      tags: ['satosa'    ] }
     - { role: pyff,        tags: ['pyff'      ] }
     - { role: cmservice,   tags: ['cmservice' ] }
+    - { role: mysql,       tags: ['mysql'     ] }
+    - { role: proxy_mysql, tags: ['mysql'     ] }
 
 - hosts: client
   roles:

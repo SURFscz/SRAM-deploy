@@ -13,6 +13,7 @@
     - python3-pip
     - mongodb
     - mongodb-server
+    - libmariadbclient-dev
 
 - name: install python3 virtualenv
   pip:
@@ -81,6 +82,16 @@
         src=custom_logging_service.yaml.j2
         dest="{{ satosa_env_dir }}/plugins/micro_services/custom_logging_service.yaml"
 
+    - name: Create db_acl.yaml definition
+      template: >
+        src=db_acl.yaml.j2
+        dest="{{ satosa_env_dir }}/plugins/micro_services/db_acl.yaml"
+
+    - name: Create db_attributes_store.yaml definition
+      template: >
+        src=db_attributes_store.yaml.j2
+        dest="{{ satosa_env_dir }}/plugins/micro_services/db_attributes_store.yaml"
+
     - name: Create consent.yaml definition
       template: >
         src=consent.yaml.j2
@@ -101,6 +112,7 @@
       with_items:
         - info
         - error
+        - access_denied
 
     - name: Create MongoDB database satosa with collection clients
       shell: mongo satosa --eval "db.createCollection('clients')"

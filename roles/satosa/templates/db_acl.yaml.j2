@@ -1,0 +1,11 @@
+module: satosa.micro_services.db_acl.DBAcl
+name: DBAcl
+config:
+  db_host: 'localhost'
+  db_user: comanage
+  db_schema: cotosa
+  db_password: c0m@n@g3
+  idp_identifiers:
+    #- uid
+    - eppn
+  access_denied: '/static/access_denied'
