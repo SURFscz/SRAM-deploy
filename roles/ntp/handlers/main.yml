@@ -1,4 +1,4 @@
 ---
-- name: restart ntpd
-  service: name=ntp.service state=restarted
+- name: restart chrony
+  service: name=chrony.service state=restarted
 
