@@ -1,0 +1,48 @@
+# make sure our traffic get back through the firewall
+acquisitionport 123
+
+# upstream servers
+{% for s in servers.ntp %}
+server {{s}} iburst presend 9 maxpoll 12
+{% endfor %}
+
+# This directive specify the location of the file containing ID/key pairs for
+# NTP authentication.
+keyfile /etc/chrony/chrony.keys
+
+# This directive specify the file into which chronyd will store the rate
+# information.
+driftfile /var/lib/chrony/chrony.drift
+
+# Uncomment the following line to turn logging on.
+#log tracking measurements statistics
+
+# Log files location.
+logdir /var/log/chrony
+
+# Stop bad estimates upsetting machine clock.
+maxupdateskew 100.0
+
+# This directive enables kernel synchronisation (every 11 minutes) of the
+# real-time clock. Note that it can’t be used along with the 'rtcfile' directive.
+rtcsync
+
+# Step the system clock instead of slewing it if the adjustment is larger than
+# one second, but only in the first three clock updates.
+makestep 1 3
+
+# leap second slew
+# The first directive is necessary to disable the clock step which would reset
+# the smoothing process. The second directive limits the slewing rate of the
+# local clock to 1000 ppm, which improves the stability of the smoothing
+# process when the local correction starts and ends. The third directive
+# enables the server time smoothing process. It will start when the clock gets
+# to 00:00:00 UTC and it will take 17 hours 34 minutes to finish. The
+# frequency offset will be changing by 0.001 ppm per second and will reach a
+# maximum of 31.623 ppm. The leaponly option makes the duration of the leap
+# smear constant and allows the clients to safely synchronise with multiple
+# identically configured leap smearing servers.
+leapsecmode slew
+maxslewrate 1000
+smoothtime 400 0.001 leaponly
+
