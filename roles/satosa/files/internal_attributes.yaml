@@ -1,9 +1,9 @@
 ---
 attributes:
-  uid:
+  'urn:mace:dir:attribute-def:uid':
     openid: [uid]
     saml: ['urn:mace:dir:attribute-def:uid', uid]
-  eppn:
+  'urn:mace:dir:attribute-def:eduPersonPrincipalName':
     openid: [eppn]
     saml:
       - 'urn:mace:dir:attribute-def:eduPersonPrincipalName'
@@ -12,7 +12,7 @@ attributes:
   address:
     openid: [address.street_address]
     saml: [postaladdress]
-  displayName:
+  'urn:mace:dir:attribute-def:displayName':
     openid: [nickname]
     saml: ['urn:mace:dir:attribute-def:displayName', displayName]
   edupersontargetedid:
@@ -21,7 +21,7 @@ attributes:
   givenname:
     openid: [given_name]
     saml: [givenName]
-  mail:
+  'urn:mace:dir:attribute-def:mail':
     openid: [email]
     saml: ['urn:mace:dir:attribute-def:mail', email, emailAdress, mail]
   name:
@@ -30,6 +30,6 @@ attributes:
   surname:
     openid: [family_name]
     saml: [sn, surname]
-  schacHomeOrganization:
+  'urn:mace:terena.org:attribute-def:schacHomeOrganization':
     openid: [sho]
     saml: ['urn:mace:terena.org:attribute-def:schacHomeOrganization']
