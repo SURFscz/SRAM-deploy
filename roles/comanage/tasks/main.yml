@@ -7,7 +7,7 @@
     state: "{{ item.state }}"
   with_items:
     -
-      path: "{{ comanage_install_dir }}/comanage-registry-{{ comanage_version }}"
+      path: "{{ comanage_package }}"
       state: directory
 
 - name: Download comanage source
@@ -121,7 +121,7 @@
     replace: "{{ item.replace }}"
   with_items: "{{ infodb }}"
 
-- name: Check for {{ comanage_users_table }} in {{ comanage_database }}
+- name: Check for ci_users in the COmanage database
   command: >
     mysql -Nse 'SELECT COUNT(*) FROM information_schema.tables
     WHERE table_schema = "{{ comanage_db }}" AND table_name = "{{ comanage_users_table }}";'

@@ -37,10 +37,5 @@
   with_items: "{{ modules }}"
   become: yes
 
-- name: Disable nginx, if it is installed
-  service:
-    name: nginx
-    state: stopped
-  ignore_errors: true
-  notify:
-    - Restart Apache
+- name: purge nginx
+  apt: name=nginx state=absent purge=true
