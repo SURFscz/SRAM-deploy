@@ -7,6 +7,7 @@
     - build-essential
     - git
     - xmlsec1
+    - libffi-dev
     - python3.5
     - python-dev
     - python-setuptools
