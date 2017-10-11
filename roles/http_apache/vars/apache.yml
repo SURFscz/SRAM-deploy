@@ -1,0 +1,21 @@
+---
+modules:
+  - mpm_prefork
+  - ssl
+  - status
+  - cgid
+  - cgi
+  - actions
+  - alias
+  - rewrite
+  - authn_core
+  - authz_user
+
+conf:
+
+disable_modules:
+  - mpm_event
+
+restart:
+  - apache2
+

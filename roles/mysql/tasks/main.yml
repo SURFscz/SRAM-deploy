@@ -1,0 +1,21 @@
+---
+- include_vars: mysql.yml
+
+- name: perform apt-get update
+  apt:
+    update_cache: yes
+    cache_valid_time: 1
+  become: Yes
+
+- name: ensure that packages are installed
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ packages  }}"
+  become: Yes
+
+- name: Start the MySQL service
+  service:
+    name: mysql
+    state: started
+

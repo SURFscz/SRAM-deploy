@@ -1,0 +1,30 @@
+---
+comanage_version: 1.0.7
+comanage_url: "https://github.com/Internet2/comanage-registry/archive/{{ comanage_version }}.tar.gz"
+comanage_install_dir: /opt
+# the package name has to point to the directory that was stored inside the comanage tarball
+comanage_package: "{{ comanage_install_dir }}/comanage-registry-{{ comanage_version }}"
+comanage_tmp_dir: "{{ comanage_package }}/app/tmp.dist"
+# the path directory is where the installation is usually accessed, which we symlink to the
+# package directory
+comanage_path: "{{ comanage_install_dir }}/registry"
+# the comanage_root is the web-root. The default case is where we install in a registry
+# subdirectory (until COmanage is able to be installed in a proper root)
+comanage_root: "{{ comanage_install_dir }}"
+# the comanage_full_hostname is derived from the sp_hostname (which is the hostname
+# we publish in our certificate. Because of reverse proxy settings, this hostname
+# should include the https:// protocol as well, which allows us to recognise a
+# https:// request on port 80 as a valid regular request
+comanage_full_hostname: "https://{{ sp_hostname }}"
+
+comanage_db_user: comanage
+comanage_db_password: changethispassword
+comanage_db: "registry"
+comanage_users_table: "cm_users"
+
+comanage_www_user: "www-data"
+comanage_admin_given_name: "John"
+comanage_admin_family_name: "Doe"
+comanage_admin_username: "j.doe@example.com"
+comanage_enable_pooling: "No"
+
