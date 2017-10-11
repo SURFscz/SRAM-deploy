@@ -11,5 +11,7 @@ ftp: root
 abuse: root
 noc: root
 security: root
-root: scz@list.surfnet.nl
+{% if mail.admin_address is not defined %}
+root: {{ mail.admin_address }}
+{% endif %}
 
