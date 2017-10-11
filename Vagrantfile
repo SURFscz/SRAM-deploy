@@ -53,17 +53,17 @@ machines = {
 # you're doing.
 Vagrant.configure("2") do |config|
     config.vm.synced_folder ".", "/vagrant", disabled: true
-    #config.vm.box = "debian/stretch64"
-    # being paranoid and all, we don't trust random updated images without
-    # manually checking sha256sums against https://cloud.alioth.debian.org/vagrantboxes/
-    #config.vm.box_check_update = false
-    #config.vm.box_download_checksum_type = "sha256"
-    #config.vm.box_download_checksum = "ecd924aae99d1e029e795cb55775bb96aabb77ab122f3ab4d3655589fd5674cd"
 
     # because docker does not require an image (and in fact, we want it provisioned
     # atop our current OS) we put box information inside the providers that actually
     # need to download the box
 	config.vm.provider "virtualbox" do |vb|
+        vb.box = "debian/stretch64"
+        # being paranoid and all, we don't trust random updated images without
+        # manually checking sha256sums against https://cloud.alioth.debian.org/vagrantboxes/
+        vb.box_check_update = false
+        vb.box_download_checksum_type = "sha256"
+        vb.box_download_checksum = "ecd924aae99d1e029e795cb55775bb96aabb77ab122f3ab4d3655589fd5674cd"
 		vb.cpus = "1"
 		vb.memory = "512"
 	end
@@ -72,15 +72,6 @@ Vagrant.configure("2") do |config|
 		lv.memory = "512"
 		lv.graphics_type = "spice"
 		lv.video_type = "qxl"
-	end
-	config.vm.provider "docker" do |dk|
-        # dk.image = "debian:stretch"
-        # dk.ports = ['22:22', '80:80', '443:443']
-        dk.build_dir = "./docker"
-        dk.build_args = ["-t=scz"]
-        dk.remains_running =true
-        dk.has_ssh=true
-        dk.cmd = ["/usr/bin/tail", "-f", "/dev/null" ]
 	end
 
     # we add the key to authorized_keys instead of provisioning the entire file, to allow
@@ -93,97 +84,144 @@ Vagrant.configure("2") do |config|
                         echo '' >> /home/vagrant/.ssh/authorized_keys"
     end
 
-#    machine1 = machines["m1"]
-#    config.vm.define machine1["name"], autostart: true do |m|
-#	    m.vm.network :private_network, ip: machine1["ip"]
-#	    m.vm.hostname = machine1["hostname"]
-#	    m.vm.provider "virtualbox" do |v|
-#	        v.name = "SCZ #{machine1['name']}"
-#	    end
-#	    m.vm.provider "docker" do |dk|
-#	        dk.name = machine1['name']
-#	        dk.ports = machine1['ports']
-#	    end
-#       m.ssh.insert_key = false
-#
-#    end
-#    machine2 = machines["m2"]
-#    config.vm.define machine2["name"], autostart: true do |m|
-#	    m.vm.network :private_network, ip: machine2["ip"]
-#	    m.vm.hostname = machine2["hostname"]
-#	    m.vm.provider "virtualbox" do |v|
-#	        v.name = "SCZ #{machine2['name']}"
-#	    end
-#	    m.vm.provider "docker" do |dk|
-#	        dk.name = machine2['name']
-#	        dk.ports = machine2['ports']
-#	    end
-#       m.ssh.insert_key = false
-#
-#    end
-#    machine3 = machines["m3"]
-#    config.vm.define machine3["name"], autostart: true do |m|
-#	    m.vm.network :private_network, ip: machine3["ip"]
-#	    m.vm.hostname = machine3["hostname"]
-#	    m.vm.provider "virtualbox" do |v|
-#	        v.name = "SCZ #{machine3['name']}"
-#	    end
-#	    m.vm.provider "docker" do |dk|
-#	        dk.name = machine3['name']
-#	        dk.ports = machine3['ports']
-#	    end
-#        m.ssh.insert_key = false
-#
-#    end
+    (1..N).each do |machine_id|
+        machine = machines["m#{machine_id}"]
 
-    machine4 = machines["m4"]
-    config.vm.define machine4["name"], autostart: true do |m|
-	    m.vm.network :private_network, ip: machine4["ip"]
-	    m.vm.hostname = machine4["hostname"]
-	    m.vm.provider "virtualbox" do |v|
-	        v.name = "SCZ #{machine4['name']}"
-	    end
-	    m.vm.provider "docker" do |dk|
-	        dk.name = machine4['name']
-	        dk.ports = machine4['ports']
-	        dk.compose = true
-	        dk.compose_configuration = {
-                "networks" => {
-                    "scznet" => {
-                        "driver" => "bridge"
-#                        "ipam" => {
-#                            "config" => {
-#                                "subnet" => "172.20.1.0/24",
-#                                "ip_range" => "172.20.1.0/24",
-#                                "gateway" =>  "172.20.1.1"	        
-#	                         }
-#	                     }
-	                 }
-	             }
-	         }
-	    end
-        m.ssh.insert_key = false
-        m.ssh.guest_port = 2522
-        m.local_data_path = "docker"
+        config.vm.define machine["name"], autostart: true do |m|
+            m.vm.network :private_network, ip: machine["ip"]
+	        m.vm.hostname = machine["hostname"]
+	        m.vm.provider "virtualbox" do |v|
+	            v.name = "SCZ #{machine['name']}"
+	        end
 
-        m.vm.provision :docker
-        m.vm.provision :docker_compose do |dc|
-            dc.yml = "/mnt/carn/raid/projects/surfnet/scz/SCZ-deploy/docker/docker-compose.yml"
-        end
+  	        m.vm.provider "docker" do |dk|
+#                dk.name = machine['name']
+#                dk.build_dir ="./docker"
+#                dk.build_dir ="./docker/#{machine['name']}"
+                dk.image = "scz"
+                dk.remains_running = false
+#                dk.cmd = ["/usr/sbin/sshd", "-D" ]
+#  	             dk.create_args = ["--ip",machine["ip"], "--network", "scznet" ]
+                dk.has_ssh = false
+#                dk.compose = true
+#                dk.compose_configuration = {
+#                    "services" => {
+#                        machine["name"] => {
+#                            "networks" => {
+#                                "scznet" => {
+#                                    "ipv4_address" => machine["ip"]
+#                                }
+#                            }
+#                        }
+#                    },
+#                    "networks" => {
+#                        "scznet" => {
+#                            "driver" => "bridge",
+#                            "ipam" => {
+#                                "config" => [{
+#                                    "subnet" => "172.20.1.0/24",
+#                                    "gateway" => "172.20.1.1"
+#                                }]
+#                            }
+#                        }
+#                    }
+#                }
+            end
 
-        m.vm.provision :ansible do |ansible|
-            # Disable default limit to connect to all the machines
-            ansible.limit = "all"
-            ansible.playbook = "provision.yml"
-            ansible.inventory_path = "./environments/vm/inventory"
-#            ansible.verbose = 3
-#            ansible.raw_arguments = "-vvv"
-            ansible.raw_ssh_args = ["-o IdentityFile=.vagrant/id_rsa", "-D 2522"]
-            ansible.limit = "comanage,ldap,proxy,meta"
-            ansible.extra_vars = {
-                user: "vagrant",
-                secrets_file: "environments/vm/secrets/all.yml",
-            }
+	        if machine_id == N
+    	        m.vm.provider "docker" do |dk|
+#	                dk.name = machine['name']
+#	                dk.build_dir ="./docker"
+                    dk.image = "scz"
+	                dk.cmd = ["/usr/sbin/sshd", "-D" ]
+     	            dk.create_args = ["--project-name", "scz" ]
+	                dk.has_ssh = true
+	                dk.compose = true
+	                dk.compose_configuration = {
+                        "services" => {
+                            machines["m1"]["name"] => {
+                                "build" => {
+                                    "context" => "../../docker/#{machines['m1']['name']}"
+                                },
+                                "command" => ["/usr/sbin/sshd", "-D" ],
+                                "image" => "scz",
+                                "hostname" => "#{machines['m1']['name']}.scz.vnet",
+                                "networks" => {
+                                    "scznet" => {
+                                        "ipv4_address" => machines["m1"]["ip"]
+                                    }
+                                }
+                            },
+                            machines["m2"]["name"] => {
+                                "build" => {
+                                    "context" => "../../docker/#{machines['m2']['name']}"
+                                },
+                                "command" => ["/usr/sbin/sshd", "-D" ],
+                                "image" => "scz",
+                                "hostname" => "#{machines['m2']['name']}.scz.vnet",
+                                "networks" => {
+                                    "scznet" => {
+                                        "ipv4_address" => machines["m2"]["ip"]
+                                    }
+                                }
+                            },
+                            machines["m3"]["name"] => {
+                                "build" => {
+                                    "context" => "../../docker/#{machines['m3']['name']}"
+                                },
+                                "command" => ["/usr/sbin/sshd", "-D" ],
+                                "image" => "scz",
+                                "hostname" => "#{machines['m3']['name']}.scz.vnet",
+                                "networks" => {
+                                    "scznet" => {
+                                        "ipv4_address" => machines["m3"]["ip"]
+                                    }
+                                }
+                            },
+                            machines["m4"]["name"] => {
+                                "build" => {
+                                    "context" => "../../docker/#{machines['m4']['name']}"
+                                },
+                                "command" => ["/usr/sbin/sshd", "-D" ],
+                                "image" => "scz",
+                                "hostname" => "#{machines['m4']['name']}.scz.vnet",
+                                "networks" => {
+                                    "scznet" => {
+                                        "ipv4_address" => machines["m4"]["ip"]
+                                    }
+                                }
+                            }
+                        },
+	                    "networks" => {
+	                        "scznet" => {
+	                            "driver" => "bridge",
+	                            "ipam" => {
+	                                "config" => [{
+	                                    "subnet" => "172.20.1.0/24",
+	                                    "gateway" => "172.20.1.1"
+	                                }]
+  	                            }
+                            }
+                        }
+	                }
+    	        end
+                m.ssh.insert_key = false
+
+                m.vm.provision :ansible do |ansible|
+                    # Disable default limit to connect to all the machines
+                    ansible.limit = "all"
+                    ansible.playbook = "provision.yml"
+                    ansible.inventory_path = "./environments/vm/inventory"
+                    ansible.verbose = 3
+                    ansible.raw_arguments = "-vvv"
+                    ansible.raw_ssh_args = ["-o IdentityFile=.vagrant/id_rsa"]
+                    ansible.limit = "comanage,ldap,proxy,meta"
+                    ansible.extra_vars = {
+                        user: "vagrant",
+                        secrets_file: "environments/vm/secrets/all.yml",
+                    }
+                end
+            end
         end
     end
 end
