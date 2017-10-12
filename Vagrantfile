@@ -19,6 +19,8 @@ if ARGV[0] == "up"  and  ( !sshkeypriv.exist?  or  !sshkeypub.exist? )
 	File.chmod(0600,sshkeypriv)
 end
 
+ENV['COMPOSE_PROJECT_NAME']="scz"
+
 N=4
 machines = {
   "m1" => {
@@ -95,46 +97,17 @@ Vagrant.configure("2") do |config|
 	        end
 
   	        m.vm.provider "docker" do |dk|
-#                dk.name = machine['name']
-#                dk.build_dir ="./docker"
-#                dk.build_dir ="./docker/#{machine['name']}"
-                dk.image = "scz"
+                dk.name = machine['name']
+                dk.build_dir ="./docker/#{machine['name']}"
+  	            dk.build_args = ["-t", "scz:#{machine['name']}" ]
+#                dk.image = "scz"
                 dk.remains_running = false
-#                dk.cmd = ["/usr/sbin/sshd", "-D" ]
-#  	             dk.create_args = ["--ip",machine["ip"], "--network", "scznet" ]
                 dk.has_ssh = false
-#                dk.compose = true
-#                dk.compose_configuration = {
-#                    "services" => {
-#                        machine["name"] => {
-#                            "networks" => {
-#                                "scznet" => {
-#                                    "ipv4_address" => machine["ip"]
-#                                }
-#                            }
-#                        }
-#                    },
-#                    "networks" => {
-#                        "scznet" => {
-#                            "driver" => "bridge",
-#                            "ipam" => {
-#                                "config" => [{
-#                                    "subnet" => "172.20.1.0/24",
-#                                    "gateway" => "172.20.1.1"
-#                                }]
-#                            }
-#                        }
-#                    }
-#                }
             end
 
 	        if machine_id == N
     	        m.vm.provider "docker" do |dk|
-#	                dk.name = machine['name']
-#	                dk.build_dir ="./docker"
-                    dk.image = "scz"
 	                dk.cmd = ["/usr/sbin/sshd", "-D" ]
-     	            dk.create_args = ["--project-name", "scz" ]
 	                dk.has_ssh = true
 	                dk.compose = true
 	                dk.compose_configuration = {
@@ -144,7 +117,7 @@ Vagrant.configure("2") do |config|
                                     "context" => "../../docker/#{machines['m1']['name']}"
                                 },
                                 "command" => ["/usr/sbin/sshd", "-D" ],
-                                "image" => "scz",
+                                "image" => "scz:#{machines['m1']['name']}",
                                 "hostname" => "#{machines['m1']['name']}.scz.vnet",
                                 "networks" => {
                                     "scznet" => {
@@ -157,7 +130,7 @@ Vagrant.configure("2") do |config|
                                     "context" => "../../docker/#{machines['m2']['name']}"
                                 },
                                 "command" => ["/usr/sbin/sshd", "-D" ],
-                                "image" => "scz",
+                                "image" => "scz:#{machines['m2']['name']}",
                                 "hostname" => "#{machines['m2']['name']}.scz.vnet",
                                 "networks" => {
                                     "scznet" => {
@@ -170,7 +143,7 @@ Vagrant.configure("2") do |config|
                                     "context" => "../../docker/#{machines['m3']['name']}"
                                 },
                                 "command" => ["/usr/sbin/sshd", "-D" ],
-                                "image" => "scz",
+                                "image" => "scz:#{machines['m3']['name']}",
                                 "hostname" => "#{machines['m3']['name']}.scz.vnet",
                                 "networks" => {
                                     "scznet" => {
@@ -183,7 +156,7 @@ Vagrant.configure("2") do |config|
                                     "context" => "../../docker/#{machines['m4']['name']}"
                                 },
                                 "command" => ["/usr/sbin/sshd", "-D" ],
-                                "image" => "scz",
+                                "image" => "scz:#{machines['m4']['name']}",
                                 "hostname" => "#{machines['m4']['name']}.scz.vnet",
                                 "networks" => {
                                     "scznet" => {
@@ -213,7 +186,7 @@ Vagrant.configure("2") do |config|
                     ansible.playbook = "provision.yml"
                     ansible.inventory_path = "./environments/vm/inventory"
                     ansible.verbose = 3
-                    ansible.raw_arguments = "-vvv"
+#                    ansible.raw_arguments = "-vvv"
                     ansible.raw_ssh_args = ["-o IdentityFile=.vagrant/id_rsa"]
                     ansible.limit = "comanage,ldap,proxy,meta"
                     ansible.extra_vars = {
