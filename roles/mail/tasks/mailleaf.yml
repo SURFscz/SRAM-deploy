@@ -1,12 +1,22 @@
 # install a simpel smtp server that will redirect all mail to
 # {{maiL_relayhost}}
 ---
-- name: install ssmtp
-  apt: name=ssmtp state=installed
+- name: install nullmailer
+  apt: name=nullmailer state=installed
 
-- name: purge postfix
+- name: start nullmailer
+  service: name=nullmailer state=started enabled=true
+
+- name: purge other MTAs
   apt: name=postfix state=absent purge=true
+  with_items:
+    - postfix
+    - ssmtp
 
-- name: install ssmtp config
-  template: src=ssmtp.conf.j2 dest=/etc/ssmtp/ssmtp.conf
+- name: fix mailname
+  template: src=mailname.j2 dest=/etc/mailname
+  notify: restart nullmailer
 
+- name: install nullmail config
+  template: src=nullmailer.remotes.j2 dest=/etc/nullmailer/remotes
+  notify: restart nullmailer

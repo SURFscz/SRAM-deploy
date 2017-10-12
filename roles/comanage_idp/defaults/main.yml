@@ -1,0 +1,12 @@
+---
+
+idp_mellon_path: /etc/apache2/mellon/your-idp
+idp_metadata_url: https://idp.example.org/saml2/idp/metadata.php
+idp_metadata_path: "{{ idp_mellon_path }}/idp-metadata.xml"
+idp_certificate_url: "{{ idp_metadata_url }}"
+idp_certificate_path: "{{ idp_mellon_path }}/certificate.pem"
+idp_extract_certificate: yes
+# break up to appease CI/Travis
+idp_xml_sso_tag1: /md:EntityDescriptor/md:IDPSSODescriptor/md:KeyDescriptor
+idp_xml_sso_tag2: /ds:KeyInfo/ds:X509Data/ds:X509Certificate
+idp_xml_sso_tag: "{{ idp_xml_sso_tag1 }}{{ idp_xml_sso_tag2 }}"

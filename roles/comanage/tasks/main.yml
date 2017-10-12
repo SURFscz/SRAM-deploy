@@ -1,0 +1,158 @@
+---
+- include_vars: comanage.yml
+
+- name: Create target directories
+  file:
+    path: "{{ item.path }}"
+    state: "{{ item.state }}"
+  with_items:
+    -
+      path: "{{ comanage_package }}"
+      state: directory
+
+- name: Download comanage source
+  become: True
+  get_url:
+    url: "{{ comanage_url }}"
+    dest: "/tmp/comanage-{{ comanage_version }}.tar.gz"
+  register: comanage_downloaded
+
+# here we have to guess at the directory coming out of the tar archive. We assume it is
+# comanage-registry-{{ comanage_version }}
+- name: Unarchive comanage source
+  become: True
+  unarchive:
+    src: "/tmp/comanage-{{ comanage_version }}.tar.gz"
+    dest: "{{ comanage_install_dir }}"
+    copy: no
+  when: comanage_downloaded|changed
+
+- name: Symlink comanage source
+  file:
+    src: "{{ comanage_package }}"
+    dest: "{{ comanage_path }}"
+    state: link
+
+- name: Overwrite templates that require changes
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  with_items: "{{ comanage_templates }}"
+  become: yes
+
+- name: Check for comanage tmp directory
+  stat:
+    path: /var/cache/comanage
+  register: comanage_tmp_stat
+
+- name: Create comanage tmp directory
+  command: mv {{ comanage_tmp_dir }} /var/cache/comanage
+  when: comanage_tmp_stat.stat.exists == false
+
+- name: Verify comanage tmp directory ownership and permissions
+  file:
+    path: "/var/cache/comanage"
+    owner: www-data
+    mode: 0700
+    state: directory
+    recurse: yes
+
+- name: Check for comanage local tmp
+  stat:
+    path: "{{ comanage_package }}/local/tmp"
+  register: comanage_tmp_local_stat
+
+- name: Create comanage tmp symlink
+  file:
+    src: /var/cache/comanage
+    dest: "{{ comanage_package }}/local/tmp"
+    state: link
+  when: comanage_tmp_local_stat.stat.exists == false
+
+- name: Check for database config
+  stat:
+    path: "{{ comanage_package }}/local/Config/database.php"
+  register: comanage_database_stat
+
+- name: Copy database config
+  command: >
+    cp {{ comanage_package }}/app/Config/database.php.default
+    {{ comanage_package }}/local/Config/database.php
+  when: comanage_database_stat.stat.exists == false
+
+- name: Configure database connection info
+  replace:
+    dest: "{{ comanage_package }}/local/Config/database.php"
+    regexp: "{{ item.regexp }}"
+    replace: "{{ item.replace }}"
+  with_items: "{{ replace }}"
+
+- name: Elevate Config directory ownership and permissions
+  file:
+    path: "{{ comanage_package }}/local/Config"
+    owner: www-data
+    mode: 0755
+    state: directory
+    recurse: yes
+
+- name: Install database schema
+  command: ./Console/cake database
+  become: true
+  become_user: "{{ comanage_www_user }}"
+  args:
+    chdir: "{{ comanage_package }}/app"
+  when: comanage_database_stat.stat.exists == false
+
+- name: Check for email config
+  stat:
+    path: "{{ comanage_package }}/local/Config/email.php"
+  register: comanage_email_stat
+
+- name: Copy email config
+  command: >
+    cp {{ comanage_package }}/app/Config/email.php.default
+    {{ comanage_package }}/local/Config/email.php
+  when: comanage_email_stat.stat.exists == false
+
+- name: Configure database connection info
+  replace:
+    dest: "{{ comanage_package }}/local/Config/database.php"
+    regexp: "{{ item.regexp }}"
+    replace: "{{ item.replace }}"
+  with_items: "{{ infodb }}"
+
+- name: Check for ci_users in the COmanage database
+  command: >
+    mysql -Nse 'SELECT COUNT(*) FROM information_schema.tables
+    WHERE table_schema = "{{ comanage_db }}" AND table_name = "{{ comanage_users_table }}";'
+    -u {{ comanage_db_user }} "--password={{ comanage_db_password }}"
+  register: comanage_cm_users_table_exists
+
+- name: Setup Cake for login
+  command: >
+    ./Console/cake setup --admin-given-name "{{ comanage_admin_given_name }}"
+    --admin-family-name "{{ comanage_admin_family_name }} "
+    --admin-username "{{ comanage_admin_username }}"
+    --enable-pooling="{{ comanage_enable_pooling }}"
+  become: true
+  become_user: "{{ comanage_www_user }}"
+  args:
+    chdir: "{{ comanage_package }}/app"
+  when: comanage_cm_users_table_exists.stdout == "0"
+
+- name: Reset Config directory ownership and permissions
+  file:
+    path: "{{ comanage_package }}/local/Config"
+    owner: root
+    state: directory
+    recurse: yes
+
+- name: Create a crontab entry
+  cron:
+    name: "Cake Job Cleaning"
+    state: present
+    minute: "0"
+    hour: "3"
+    user: "{{ comanage_www_user }}"
+    job: "cd {{ comanage_package }}/app && Console/cake job -q"
+
