@@ -1,0 +1,53 @@
+#######################################################################
+{{ ansible_managed | comment('plain') }}
+#######################################################################
+
+
+###########################################################################
+# Global configuration for mod_auth_mellon. This configuration is shared by
+# every virtual server and location in this instance of apache.
+###########################################################################
+
+# MellonCacheSize sets the maximum number of sessions which can be active
+# at once. When mod_auth_mellon reaches this limit, it will begin removing
+# the least recently used sessions. The server must be restarted before any
+# changes to this option takes effect.
+# Default: MellonCacheSize 100
+MellonCacheSize 100
+
+# MellonCacheEntrySize sets the maximum size for a single session entry in
+# bytes. When mod_auth_mellon reaches this limit, it cannot store any more
+# data in the session and will return an error. The minimum entry size is
+# 65536 bytes, values lower than that will be ignored and the minimum will
+# be used.
+# Default: MellonCacheEntrySize 196608
+
+# MellonLockFile is the full path to a file used for synchronizing access
+# to the session data. The path should only be used by one instance of
+# apache at a time. The server must be restarted before any changes to this
+# option takes effect.
+# Default: MellonLockFile "/var/run/mod_auth_mellon.lock"
+MellonLockFile "/var/run/mod_auth_mellon.lock"
+
+# MellonPostDirectory is the full path of a directory where POST requests
+# are saved during authentication. This directory must writable by the
+# Apache user. It should not be writable (or readable) by other users.
+# Default: None
+MellonPostDirectory "/var/cache/apache2/mod_auth_mellon"
+
+# MellonPostTTL is the delay in seconds before a saved POST request can
+# be flushed.
+# Default: MellonPostTTL 900 (15 mn)
+MellonPostTTL 900
+
+# MellonPostSize is the maximum size for saved POST requests
+# Default: MellonPostSize 1048576 (1 MB)
+MellonPostSize 1048576
+
+# MellonPostCount is the maximum amount of saved POST requests
+# Default: MellonPostCount 100
+MellonPostCount 100
+
+###########################################################################
+# End of global configuration for mod_auth_mellon.
+###########################################################################

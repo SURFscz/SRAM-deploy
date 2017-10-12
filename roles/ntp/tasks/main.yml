@@ -9,14 +9,17 @@
   service: name=systemd-timedated.service enabled=false
   when: stoptimesync.changed
 
-- name: install ntp
-  apt: name=ntp state=present
+- name: install chrony
+  apt: name=chrony state=present
 
-- name: start ntpd
-  service: name=ntp.service state=started enabled=true
+- name: remove ntp
+  apt: name=ntp state=absent purge=yes
 
-- name: install ntp config
-  template: src=ntp.conf.j2 dest=/etc/ntp.conf force=yes
+- name: start chrony
+  service: name=chrony.service state=started enabled=true
+
+- name: install chrony config
+  template: src=chrony.conf.j2 dest=/etc/chrony/chrony.conf force=yes
   notify:
-    - restart ntpd
+    - restart chrony
 

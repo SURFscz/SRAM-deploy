@@ -1,0 +1,66 @@
+---
+- include_vars: comanage_idp.yml
+
+- name: perform apt-get update
+  apt:
+    update_cache: yes
+    cache_valid_time: 1
+  become: Yes
+
+- name: ensure that packages are installed
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ packages  }}"
+  become: Yes
+
+- name: Ensure directory exists
+  file:
+    path: "{{ idp_mellon_path }}"
+    state: directory
+    owner: www-data
+    mode: 0755
+
+- name: Get the IdP metadata
+  get_url:
+    url: "{{ idp_metadata_url }}"
+    dest: "{{ idp_metadata_path }}"
+    owner: www-data
+    mode: 0600
+    validate_certs: no
+
+- name: Obtain IdP certificate
+  get_url:
+    url: "{{ idp_certificate_url }}"
+    dest: "{{ idp_certificate_path }}"
+    owner: www-data
+    mode: 0600
+    validate_certs: no
+  when: idp_extract_certificate == False
+  notify:
+    - Restart Apache
+
+# The following line is based on a SimpleSAMLphp metadata export. It extracts the Certificate nodes
+# (only the first), then base64 decodes it and uses openssl to re-encode it as a PEM certificate.
+# Mileage may vary, adjust as required
+- name: Extract IdP certificate from XML metadata
+  shell: >
+    xmlstarlet sel -N md='urn:oasis:names:tc:SAML:2.0:metadata'
+    -N ds='http://www.w3.org/2000/09/xmldsig#' -t
+    -v {{ idp_xml_sso_tag }}
+    {{ idp_metadata_path }} | base64 --decode |
+    openssl x509 -inform DER -out {{ idp_certificate_path }}
+  when: idp_extract_certificate == True
+  notify:
+    - Restart Apache
+
+# Finally add a RewriteRule to the CoManage .htaccess to allow redirection of the
+# sp metadata to a convenient URL
+- name: Add rewrite rule for SP metadata
+  blockinfile:
+    block: "RewriteRule  \"^/auth/sp/metadata$\" \"/etc/apache2/mellon/sp-metadata.xml\""
+    follow: yes
+    insertafter: "RewriteRule.*$"
+    path: "{{ comanage_path }}/.htaccess"
+  notify:
+    - Restart Apache

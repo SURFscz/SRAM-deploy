@@ -1,0 +1,82 @@
+#######################################################################
+{{ ansible_managed | comment('plain') }}
+#######################################################################
+
+<VirtualHost *:{{ comanage_port }}>
+    ServerName {{ comanage_full_hostname }}
+    ServerAdmin {{ admin_email }}
+
+    DocumentRoot {{ comanage_root }}
+{% if sp_home is not equalto "" %}
+    <IfModule mod_rewrite.c>
+        RewriteEngine on
+        RewriteCond %{REQUEST_URI} "^/(?!registry)" [NC]
+        RewriteRule "^(.*)" "/registry$1" [R,L]
+    </IfModule>
+{% endif %}
+
+    <IfModule mod_php5.c>
+        <FilesMatch "\.ph(p|tml)$">
+            SetHandler application/x-httpd-php
+        </FilesMatch>
+        <FilesMatch "\.phps$">
+            SetHandler application/x-httpd-php-source
+        </FilesMatch>
+    </IfModule>
+
+    <Directory "{{ comanage_path }}">
+        Options Indexes FollowSymLinks
+        DirectoryIndex index.php
+        AllowOverride All
+        Require all granted
+    </Directory>
+
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+    <FilesMatch "\.php$">
+        SSLOptions +StdEnvVars
+    </FilesMatch>
+
+    BrowserMatch "MSIE [2-6]" nokeepalive ssl-unclean-shutdown downgrade-1.0 force-response-1.0
+    # MSIE 7 and newer should be able to use keepalive
+    BrowserMatch "MSIE [17-9]" ssl-unclean-shutdown
+
+    <Location "{{ sp_home }}/">
+        AuthType "Mellon"
+        MellonEnable "info"
+    </Location>
+
+    <Location "{{ sp_home }}/auth">
+        Require valid-user
+        AuthType "Mellon"
+
+        MellonEnable "auth"
+        MellonVariable "cookie"
+        MellonSecureCookie On
+        MellonCookieDomain {{ portal_hostname }}
+        MellonCookiePath /
+
+        MellonUser "{{ idp_attribute }}"
+        MellonEndpointPath "{{ sp_path }}"
+        MellonDefaultLoginPath "{{ sp_home }}/"
+
+        MellonSessionLength 86400
+        MellonNoCookieErrorPage "{{ comanage_full_hostname }}/no_cookie.html"
+        MellonSPMetadataFile {{ sp_metadata_dir }}/sp-metadata.xml
+
+        MellonSPPrivateKeyFile {{ sp_key }}
+        MellonSPCertFile {{ sp_certificate }}
+
+        MellonIdPMetadataFile {{ idp_metadata_path }}
+        MellonIdPPublicKeyFile {{ idp_certificate_path }}
+
+        MellonSessionDump Off
+        MellonSamlResponseDump Off
+        MellonECPSendIDPList Off
+        MellonRedirectDomains [self]
+    </Location>
+
+</VirtualHost>
+
+# vim: syntax=apache ts=4 sw=4 sts=4 sr noet
