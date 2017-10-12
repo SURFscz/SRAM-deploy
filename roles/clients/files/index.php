@@ -1,8 +1,3 @@
 <?php
-foreach ($_SERVER as $claim => $value) {
-    if (substr($claim, 0, 4) === 'OIDC') {
-        echo "<p>" . substr($claim, 5) . ": $value</p>\n";
-    }
-}
-//phpinfo();
-
+foreach ($_SERVER as $key => $value) if (substr($key,0,4) == "OIDC") echo "<p>" . substr($key,5) . ": $value</p>\n";
+#phpinfo();

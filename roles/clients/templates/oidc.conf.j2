@@ -17,7 +17,7 @@ LoadModule auth_openidc_module /usr/lib/apache2/modules/mod_auth_openidc.so
         OIDCResponseMode "query"
         OIDCScope "openid"
         #OIDCScope "openid email profile"
-        OIDCAuthRequestParams claims={"userinfo":{"foobar":null,"nickname":null,"name":null,"uid":null,"email":null,"sho":null,"family_name":null,"eppn":null}}
+        OIDCAuthRequestParams claims={"userinfo":{"foobar":null,"nickname":null,"name":null,"uid":null,"email":null,"sho":null,"family_name":null,"eppn":null,"address":{"street_address":null}}}
 
         OIDCRedirectURI https://{{ hostnames.oidc }}/redirect_uri
         OIDCCryptoPassphrase randompassword
