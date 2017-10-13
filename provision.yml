@@ -55,7 +55,7 @@
 - hosts: comanage
   roles:
     - { role: http_apache, tags: ['comanage', 'web'] }
-#   - { role: postfix, tags: ['comanage', 'smtp'] }
+    #- { role: postfix, tags: ['comanage', 'smtp'] }
     - { role: mysql, tags: ['comanage', 'db'] }
     - { role: comanage_mysql, tags: ['comanage', 'db'] }
     - { role: php56, tags: ['comanage', 'web'] }
