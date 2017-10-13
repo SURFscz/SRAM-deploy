@@ -10,7 +10,7 @@ attributes:
     openid: [address.street_address]
     saml:
       - 'urn:mace:dir:attribute-def:postalAddress'
-      - 'postaladdress'
+      - 'postalAddress'
       - 'urn:oid:2.5.4.16'
   displayName:
     openid: [nickname]

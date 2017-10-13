@@ -126,7 +126,7 @@ $config = array(
             'urn:mace:terena.org:attribute-def:schacHomeOrganization' => array('surfnet.nl'),
             'urn:mace:dir:attribute-def:eduPersonPrincipalName' => array('eppn_student@surfnet.nl'),
 //             'urn:oid:1.3.6.1.4.1.5923.1.1.1.6' => array('eppn_student@surfnet.nl'),
-            'postaladdress' => array('Waar je huis woont')
+            'urn:mace:dir:attribute-def:postalAddress' => array('Waar je huis woont')
         ),
         'employee:{SSHA256}sa1hYchNHSHa0DwbZjf0vSuQj34GnaMVRVJVGBG+ao18/5NcvAnr7w==' => array(
             'uid' => array('employee'),
