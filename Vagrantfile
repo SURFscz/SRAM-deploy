@@ -19,6 +19,8 @@ if ARGV[0] == "up"  and  ( !sshkeypriv.exist?  or  !sshkeypub.exist? )
 	File.chmod(0600,sshkeypriv)
 end
 
+
+
 ENV['COMPOSE_PROJECT_NAME']="scz"
 
 N=4
@@ -56,20 +58,29 @@ machines = {
 Vagrant.configure("2") do |config|
     config.vm.synced_folder ".", "/vagrant", disabled: true
 
+
     # because docker does not require an image (and in fact, we want it provisioned
     # atop our current OS) we put box information inside the providers that actually
     # need to download the box
-	config.vm.provider "virtualbox" do |vb|
-        vb.box = "debian/stretch64"
+	config.vm.provider "virtualbox" do |vb, override|
+        override.vm.box = "debian/stretch64"
         # being paranoid and all, we don't trust random updated images without
         # manually checking sha256sums against https://cloud.alioth.debian.org/vagrantboxes/
-        vb.box_check_update = false
-        vb.box_download_checksum_type = "sha256"
-        vb.box_download_checksum = "ecd924aae99d1e029e795cb55775bb96aabb77ab122f3ab4d3655589fd5674cd"
+        override.vm.box_check_update = false
+        override.vm.box_download_checksum_type = "sha256"
+        override.vm.box_download_checksum = "ecd924aae99d1e029e795cb55775bb96aabb77ab122f3ab4d3655589fd5674cd"
+
 		vb.cpus = "1"
 		vb.memory = "512"
 	end
-	config.vm.provider "libvirt" do |lv|
+	config.vm.provider "libvirt" do |lv, override|
+        override.vm.box = "debian/stretch64"
+        # being paranoid and all, we don't trust random updated images without
+        # manually checking sha256sums against https://cloud.alioth.debian.org/vagrantboxes/
+        override.vm.box_check_update = false
+        override.vm.box_download_checksum_type = "sha256"
+        override.vm.box_download_checksum = "ecd924aae99d1e029e795cb55775bb96aabb77ab122f3ab4d3655589fd5674cd"
+
 		lv.cpus = "1"
 		lv.memory = "512"
 		lv.graphics_type = "spice"
@@ -100,7 +111,6 @@ Vagrant.configure("2") do |config|
                 dk.name = machine['name']
                 dk.build_dir ="./docker/#{machine['name']}"
   	            dk.build_args = ["-t", "scz:#{machine['name']}" ]
-#                dk.image = "scz"
                 dk.remains_running = false
                 dk.has_ssh = false
             end
@@ -108,6 +118,7 @@ Vagrant.configure("2") do |config|
 	        if machine_id == N
     	        m.vm.provider "docker" do |dk|
 	                dk.cmd = ["/usr/sbin/sshd", "-D" ]
+	                dk.remains_running = true
 	                dk.has_ssh = true
 	                dk.compose = true
 	                dk.compose_configuration = {
@@ -181,12 +192,10 @@ Vagrant.configure("2") do |config|
                 m.ssh.insert_key = false
 
                 m.vm.provision :ansible do |ansible|
-                    # Disable default limit to connect to all the machines
-                    ansible.limit = "all"
                     ansible.playbook = "provision.yml"
                     ansible.inventory_path = "./environments/vm/inventory"
-                    ansible.verbose = 3
-#                    ansible.raw_arguments = "-vvv"
+#                   ansible.verbose = 3
+#                   ansible.raw_arguments = "-vvv"
                     ansible.raw_ssh_args = ["-o IdentityFile=.vagrant/id_rsa"]
                     ansible.limit = "comanage,ldap,proxy,meta"
                     ansible.extra_vars = {

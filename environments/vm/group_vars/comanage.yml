@@ -1,5 +1,49 @@
 ---
-firewall_v4_incoming:
-  - { name: bastion,      src: "{{iprange.bastion}}", dport:  "22", proto: tcp }
-  - { name: loadbalancer, src: "{{iprange.lb}}",      dport:  "80", proto: tcp }
+domain: muisitscz.vnet
 
+sp_protocol: "https://"
+sp_hostname: "comanage.{{ domain }}"
+sp_home: "/registry"
+
+# Default values for the self-signed certificate are based on the certificate hostname
+sp_technical_contact_gn: "John"
+sp_technical_contact_sn: "Doe"
+sp_technical_contact: "ict@{{ domain }}"
+sp_organisation: "example Ltd."
+sp_organisation_url: "https://www.example.com"
+
+comanage_port: 443
+comanage_version: "3.0.0-rc2"
+comanage_db_user: comanage
+comanage_db: registry
+comanage_www_user: "www-data"
+comanage_admin_given_name: "John"
+comanage_admin_family_name: "Doe"
+comanage_admin_username: "john.doe@example.com"
+
+comanage_install_dir: "/var/www"
+comanage_path: "{{ comanage_install_dir }}{{ sp_home }}"
+comanage_full_hostname: "{{ sp_hostname }}"
+
+comanage_scope: "@scz.vnet"
+
+comanage_ldap_basedn: "ou=People,dc=example,dc=com"
+comanage_ldap_groupdn: "ou=Groups,dc=example,dc=com"
+comanage_ldap_host: "ldap:///"
+comanage_ldap_binddn: "cn=admin,dc=example,dc=com"
+
+comanage_proxy_db: "{{ groups['proxy'][0] }}"
+comanage_proxy_db_user: "scz"
+comanage_proxy_db_name: "scz"
+
+idp_mellon_path: /etc/apache2/mellon/satosa
+idp_metadata_url: http://172.20.1.22/saml2/idp/metadata.php
+idp_attribute: "urn:oid:1.3.6.1.4.1.5923.1.1.1.6"
+idp_extract_certificate: yes
+
+portal_hostname: "{{ sp_hostname }}"
+certificate_file: /etc/ssl/certs/ssl-cert-snakeoil.pem
+key_file: /etc/ssl/private/ssl-cert-snakeoil.key
+chain_file: /etc/ssl/certs/ssl-cert-snakeoil.pem
+
+smtp_hostname : "{{ sp_hostname }}"

@@ -28,7 +28,7 @@ RUN echo -n 'vagrant:vagrant' | chpasswd
 # Enable passwordless sudo for the "vagrant" user
 RUN mkdir -p /etc/sudoers.d
 RUN install -b -m 0440 /dev/null /etc/sudoers.d/vagrant
-RUN echo 'vagrant ALL=NOPASSWD: ALL' >> /etc/sudoers.d/vagrant
+RUN echo 'vagrant ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers.d/vagrant
 
 # Clean up APT when done.
 
