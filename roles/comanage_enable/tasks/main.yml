@@ -1,0 +1,27 @@
+---
+- include_vars: comanage_enable.yml
+
+# Finally link all installed applications and configurations and enable the COManage site
+
+- name: Push the template for the CoManage site
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  with_items: "{{ apache_templates }}"
+  become: yes
+
+- name: Enable COmanage site
+  command: a2ensite comanage
+  become: yes
+
+- name: disable the default site
+  command: a2dissite "{{ item }}"
+  with_items: "{{ comanage_roundup_disable }}"
+  become: yes
+
+- name: Activate apache modules
+  apache2_module:
+    state: present
+    name: "{{ item }}"
+  with_items: "{{ apache_modules }}"
+  notify: Restart Apache

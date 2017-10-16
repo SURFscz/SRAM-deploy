@@ -1,0 +1,8 @@
+#!/bin/sh
+cd {{ metadata_project_dir }}
+wget https://wayf.surfnet.nl/metadata/edugain/downstream.xml -O sc_edugain.xml
+xsltproc rs_coco_nosc.xsl sc_edugain.xml              > sc_edugain_rs_coco_nosc.xml
+xsltproc idps.xsl         sc_edugain_rs_coco_nosc.xml > sc_edugain_rs_coco_nosc_idps.xml
+xsltproc sps.xsl          sc_edugain_rs_coco_nosc.xml > sc_edugain_rs_coco_nosc_sps.xml
+
+mv *.xml /var/www/html

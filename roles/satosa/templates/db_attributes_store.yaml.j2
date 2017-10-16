@@ -1,0 +1,14 @@
+module: satosa.micro_services.db_attribute_store.DBAttributeStore
+name: DBAttributeStore
+config:
+  db_host: 'localhost'
+  db_user: comanage
+  db_schema: cotosa
+  db_password: c0m@n@g3
+  idp_identifiers:
+    - eduPersonPrincipalName
+    #- uid
+
+  # Whether to clear values for attributes incoming
+  # to this microservice. Default is no or false.
+  clear_input_attributes: yes

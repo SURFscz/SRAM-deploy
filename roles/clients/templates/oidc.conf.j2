@@ -1,0 +1,28 @@
+LoadModule auth_openidc_module /usr/lib/apache2/modules/mod_auth_openidc.so
+
+<VirtualHost *:80>
+        ServerName {{ hostnames.oidc }}
+
+        ServerAdmin webmaster@localhost
+        DocumentRoot /var/www/html
+
+        ErrorLog ${APACHE_LOG_DIR}/error.log
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+        OIDCProviderMetadataURL https://{{ hostnames.proxy }}/.well-known/openid-configuration
+        OIDCSSLValidateServer Off
+        OIDCClientID oidctest
+        OIDCClientSecret test
+        OIDCResponseType "code"
+        OIDCResponseMode "query"
+        OIDCScope "openid email profile address phone"
+        OIDCAuthRequestParams claims={"userinfo":{"schac_home_organisation":null,"eduperson_affiliation":null,"nickname":null,"name":null,"uid":null,"email":null,"family_name":null,"eppn":null,"address":{"street_address":null}}}
+
+        OIDCRedirectURI https://{{ hostnames.oidc }}/oidc/redirect_uri
+        OIDCCryptoPassphrase randompassword
+
+        <Location /oidc/>
+           AuthType openid-connect
+           Require valid-user
+        </Location>
+</VirtualHost>

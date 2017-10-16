@@ -1,0 +1,29 @@
+---
+- name: listen mysql on 0.0.0.0
+  copy:
+    src="99-myserver.cnf"
+    dest="/etc/mysql/mariadb.conf.d/99-myserver.cnf"
+    mode=0644
+  notify:
+    - Restart MySQL
+
+- name: Copy create_db file
+  copy:
+    src: "create_db.sql"
+    dest: /tmp
+
+- name: create database for CoManage-Proxy linkup
+  mysql_db:
+    name: "{{ comanage_proxy_db_name }}"
+    state: import
+    target: /tmp/create_db.sql
+
+- name: create user for mysql with all privilege
+  mysql_user:
+    name: "{{ comanage_proxy_db_user }}"
+    host: "%"
+    password: "{{ comanage_proxy_db_password }}"
+    priv: "{{ comanage_proxy_db_name }}.*:ALL"
+    state: present
+  notify:
+    - Restart MySQL

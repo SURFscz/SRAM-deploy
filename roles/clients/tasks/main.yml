@@ -1,0 +1,124 @@
+---
+- name: Ensure that packages are installed
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - apache2
+    - libapache2-mod-auth-openidc
+    - libapache2-mod-php7.0
+    - php-date
+    - php-mcrypt
+    - php-json
+    - php-simplexml
+    - php-mbstring
+
+# This breaks SimpleSAMLphp, do NOT enable globally.
+# Library load will be included in oidc site conf
+#- name: Enable auth_openidc
+#  apache2_module: name=auth_openidc state=present
+- name: Remove default index files
+  file: dest=/var/www/html/{{ item }} state=absent
+  with_items:
+    - index.html
+    - index.nginx-debian.html
+
+- name: Create new SP test root index.php
+  copy: >
+    src=sp_index.php
+    dest=/var/www/html/index.php
+    mode=0644
+
+- name: Create OIDC RP test dir
+  file: >
+    path="/var/www/html/oidc"
+    state=directory mode=0755 owner=www-data group=www-data
+
+- name: Create new OIDC RP test root index.php
+  copy: >
+    src=oidc_index.php
+    dest=/var/www/html/oidc/index.php
+    mode=0644
+
+- name: Remove default website
+  file: dest=/etc/apache2/sites-enabled/00-default state=absent
+
+- name: Add websites
+  template: >
+    src={{ item }}.conf.j2
+    dest=/etc/apache2/sites-available/{{ item }}.conf
+    mode=0644
+  with_items:
+    - idp
+    - oidc
+    - sp
+
+- name: Enable websites
+  file: >
+    src=/etc/apache2/sites-available/{{ item }}.conf
+    dest=/etc/apache2/sites-enabled/00-{{ item }}.conf
+    state=link
+  with_items:
+    - idp
+    - oidc
+    - sp
+
+- name: Create simplesaml project dir
+  file: >
+    path="{{ simplesaml_project_dir }}"
+    state=directory mode=0755 owner=www-data group=www-data
+
+- block:
+    - name: Download SimpleSamlPHP
+      unarchive: "src={{ simplesaml_download_url }}/v{{ simplesaml_version }}/\
+                  simplesamlphp-{{ simplesaml_version }}.tar.gz \
+                  dest={{ simplesaml_project_dir }} remote_src=yes"
+
+    - name: Link simplesaml
+      file: >
+        src="{{ simplesaml_project_dir }}/simplesamlphp-{{ simplesaml_version }}"
+        dest={{ simplesaml_project_dir }}/simplesaml
+        state=link
+
+    - name: SimpleSaml configuration
+      copy: >
+        src=config.php
+        dest={{ simplesaml_project_dir }}/simplesaml/config/config.php
+
+    - name: SimpleSaml test authsources
+      copy: >
+        src=authsources.php
+        dest={{ simplesaml_project_dir }}/simplesaml/config/authsources.php
+
+    - name: SimpleSaml enable example-userpass
+      file: >
+        dest={{ simplesaml_project_dir }}/simplesaml/modules/exampleauth/enable
+        state=touch
+
+    - name: SimpleSaml enable authcrypt
+      file: >
+        dest={{ simplesaml_project_dir }}/simplesaml/modules/authcrypt/enable
+        state=touch
+
+    - name: SimpleSaml Test SCZ metadata
+      copy: >
+        src={{ item }}
+        dest={{ simplesaml_project_dir }}/simplesaml/metadata/{{ item }}
+      with_items:
+        - saml20-sp-remote.php
+        - saml20-idp-remote.php
+        - saml20-idp-hosted.php
+
+    - name: create self-signed Token Signing SSL certs
+      command: "openssl req -new -nodes -x509 -subj '/C=NL/CN=tokensigning' \
+                -days 3650 -keyout '{{ simplesaml_project_dir }}/simplesaml/cert/server.pem' \
+                -out '{{ simplesaml_project_dir }}/simplesaml/cert/server.crt' \
+                -extensions v3_ca"
+      args:
+        creates: "{{ simplesaml_project_dir }}/simplesaml/cert/server.crt"
+
+  become: "yes"
+  become_user: www-data
+
+- name: restart Apache
+  systemd: daemon_reload=yes name=apache2 state=restarted enabled=yes
