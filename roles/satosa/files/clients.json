@@ -1,6 +1,6 @@
 {
     "postman":
-    { 
+    {
       "application_type" : "web",
       "client_name" : "Postman TestClient",
       "subject_type" : "public",
@@ -12,13 +12,13 @@
       "client_id_issued_at" : 0
     },
     "oidctest":
-    { 
+    {
       "application_type" : "web",
       "client_name" : "SCZ TestClient",
       "subject_type" : "public",
       "client_secret" : "test",
       "response_types" : [ "code" ],
-      "redirect_uris" : [ "https://oidc-test.scz.lab.surf.nl/redirect_uri" ],
+      "redirect_uris" : [ "https://oidc-test.scz.lab.surf.nl/oidc/redirect_uri" ],
       "client_id" : "oidctest",
       "client_secret_expires_at" : 0,
       "client_id_issued_at" : 0
