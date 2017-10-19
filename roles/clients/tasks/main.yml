@@ -24,8 +24,8 @@
     - index.nginx-debian.html
 
 - name: Create new SP test root index.php
-  copy: >
-    src=sp_index.php
+  template: >
+    src=sp_index.php.j2
     dest=/var/www/html/index.php
     mode=0644
 
@@ -100,9 +100,9 @@
         dest={{ simplesaml_project_dir }}/simplesaml/modules/authcrypt/enable
         state=touch
 
-    - name: SimpleSaml Test SCZ metadata
-      copy: >
-        src={{ item }}
+    - name: SimpleSaml {{ environment_string }} metadata
+      template: >
+        src={{ item }}.j2
         dest={{ simplesaml_project_dir }}/simplesaml/metadata/{{ item }}
       with_items:
         - saml20-sp-remote.php
