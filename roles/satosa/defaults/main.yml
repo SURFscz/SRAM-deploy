@@ -1,0 +1,14 @@
+---
+# SATOSA configuration
+satosa_repo_url: "https://github.com/SURFscz/SATOSA.git"
+satosa_repo_version: "scz-poc"
+satosa_project_dir: "/opt/satosa"
+satosa_src_dir: "{{ satosa_project_dir }}/satosa-src"
+satosa_env_dir: "{{ satosa_project_dir }}/satosa-env"
+
+satosa_host: "0.0.0.0"
+satosa_port: "8080"
+satosa_state_encryption_key: "poikjh567"
+satosa_user_id_hash_salt: "59o3gaxfwg0svem1n1g3tk22i9mihcom"
+
+mongodb_host: "127.0.0.1"

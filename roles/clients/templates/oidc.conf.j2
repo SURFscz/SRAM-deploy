@@ -1,6 +1,6 @@
 LoadModule auth_openidc_module /usr/lib/apache2/modules/mod_auth_openidc.so
 
-<VirtualHost *:80>
+<VirtualHost *:{{ oidc_test_port }}>
         ServerName {{ hostnames.oidc }}
 
         ServerAdmin webmaster@localhost
