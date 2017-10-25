@@ -1,0 +1,21 @@
+---
+- name: dump vars
+  debug: var=vars
+
+- name: dump environment
+  debug: var=environment
+
+- name: dump group_names
+  debug: var=group_names
+
+- name: dump groups
+  debug: var=groups
+
+- name: dump hostvars
+  debug: var=hostvars
+
+- name: dump var
+  debug: var=lb_hosts
+
+- name: dump lb
+  debug: var=loadbalancer
