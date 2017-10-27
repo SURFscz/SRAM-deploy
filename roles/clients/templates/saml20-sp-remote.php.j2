@@ -56,13 +56,13 @@ $metadata['https://proxy.test.scz.lab.surf.nl/Saml2SP/proxy_saml2_backend.xml'] 
     0 =>
     array (
       'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
-      'Location' => 'https://proxy.test.scz.lab.surf.nl/Saml2SP/acs/post',
+      'Location' => 'https://{{ hostnames.proxy }}/Saml2SP/acs/post',
       'index' => 1,
     ),
     1 =>
     array (
       'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
-      'Location' => 'https://proxy.test.scz.lab.surf.nl/Saml2SP/acs/redirect',
+      'Location' => 'https://{{ hostnames.proxy }}/Saml2SP/acs/redirect',
       'index' => 2,
     ),
   ),
