@@ -28,7 +28,7 @@
     - { role: apt,      tags: ['common','apt']      }
     - { role: firewall, tags: ['common','firewall'] }
     - { role: ntp,      tags: ['common'] }
-    - { role: users,    tags: ['common'] }
+    - { role: users,    tags: ['common','users'] }
     - { role: mail,     tags: ['common','mail'] }
 #   - { role: logging,  tags: ['logging'  ] }
 
@@ -67,11 +67,11 @@
 
 - hosts: proxy
   roles:
-    - { role: satosa,      tags: ['satosa'    ] }
-    - { role: pyff,        tags: ['pyff'      ] }
-    - { role: cmservice,   tags: ['cmservice' ] }
-    - { role: mysql,       tags: ['mysql'     ] }
-    - { role: proxy_mysql, tags: ['mysql'     ] }
+    - { role: satosa,      tags: ['proxy','satosa'    ] }
+    - { role: pyff,        tags: ['proxy','pyff'      ] }
+    - { role: cmservice,   tags: ['proxy','cmservice' ] }
+    - { role: mysql,       tags: ['proxy','mysql'     ] }
+    - { role: proxy_mysql, tags: ['proxy','mysql'     ] }
 
 - hosts: client
   roles:

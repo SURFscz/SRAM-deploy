@@ -1,5 +1,6 @@
 ---
-comanage_version: 1.0.7
+# TODO: note, this seems to be used somehow for pilot....
+#comanage_version: 1.0.7
 comanage_url: "https://github.com/Internet2/comanage-registry/archive/{{ comanage_version }}.tar.gz"
 comanage_install_dir: /opt
 # the package name has to point to the directory that was stored inside the comanage tarball
