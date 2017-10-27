@@ -1,0 +1,144 @@
+---
+# playbook to install and configure general components of the LDAP
+- include_vars: "ldap.yml"
+
+- name: Update apt cache
+  apt: update_cache=yes
+  changed_when: false
+
+- name: Install LDAP
+  apt: name={{ item }} state=present
+  with_items:
+    - slapd
+    - unzip
+    - ldap-utils
+
+- name: Ensure the a number of directories exist
+  become_user: "{{ ldap_user }}"
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ ldap_user }}"
+    group: "{{ ldap_user }}"
+    mode: 0755
+  tags: ldap
+  with_items:
+    - "{{ ldap_bin_dir }}"
+    - "{{ ldap_schema_dir }}"
+    - "{{ ldap_ldif_dir }}"
+    - "{{ ldap_download_dir }}"
+
+- name: Copy schema2ldif
+  become_user: "{{ ldap_user }}"
+  copy:
+    src: roles/ldap/files/schema2ldif
+    dest: "{{ ldap_bin_dir }}"
+    mode: 0755
+
+- name: Fetch the eduPerson schema
+  become_user: "{{ ldap_user }}"
+  become: true
+  get_url:
+    url: "{{ eduPersonSchema_url }}"
+    dest: "{{ ldap_download_dir }}"
+
+- name: Fetch LdapPublicKey schema
+  become_user: "{{ ldap_user }}"
+  become: true
+  get_url:
+    url: "{{ ldapPublicKeySchema_url }}"
+    dest: "{{ ldap_schema_dir }}"
+
+- name: Convert schema to ldif format
+  become_user: "{{ ldap_user }}"
+  command: "{{ ldap_bin_dir }}/schema2ldif {{ ldap_schema_dir }}/{{ ldapPublicKey }}.schema"
+
+# Of course the unarchive module should be used here, but the things is,
+# it seems broken in 2.2.0, although it should be fixed in 2.1.1. I guess
+# porting the fix to 2.2.0 has been forgotten...
+- name: Unzipping downloaded schema
+  become_user: "{{ ldap_user }}"
+  become: true
+  command: unzip -o "{{ ldap_download_dir }}/{{ eduPersonSchema_zip }}" -d /tmp
+
+# OpenLDAP does not like adding exisiting entries again. Only add the
+# schema if it has not been added already. This does not yet take care
+# of changes in the eduPerson schema.
+- name: Copy the unpacked ldifs
+  copy:
+    src: /tmp/{{ eduPersonSchema_ldif }}
+    dest: "{{ ldap_schema_dir }}/{{ eduPersonSchema_ldif }}"
+    remote_src: true
+
+- name: Check if eduPerson schema is already present
+  shell: >
+    ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// -b 'cn=schema,cn=config' '(cn=*)' dn
+    | grep 'cn={[0123456789]\+}eduperson,cn=schema,cn=config'
+  failed_when: not [0, 1]
+  register:
+    eduPersonSchemaPresent
+
+# Based on the success or failure of copying the eduPerson schema add
+# the schema to the ldap database. Copying the same file in the previous
+# task, would lead to not registering the edoPersonSchema variable.
+- name: Ensure the eduPerson schema is added to LDAP
+  command: >
+    ldapadd -Q -Y EXTERNAL -H ldapi:/// -D "cn=config"
+    -f {{ ldap_schema_dir }}/{{ eduPersonSchema_ldif }}
+  when: eduPersonSchemaPresent.stdout == ""
+
+- name: Check if the ldapPublicKey schema is already present
+  shell: >
+    ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// -b 'cn=schema,cn=config' '(cn=*)' dn
+    | grep 'cn={[0-9]\+}openssh-lpk-openldap,cn=schema,cn=config'
+  failed_when: not [0, 1]
+  register:
+    ldapPublicKey
+
+- name: Ensure the ldapPublicKey schema is added to LDAP
+  command: >
+    ldapadd -Q -Y EXTERNAL -H ldapi:/// -D "cn=config"
+    -f "{{ ldap_schema_dir }}/{{ ldapPublicKey_ldif }}"
+  when: ldapPublicKey.stdout == ""
+
+- name: Generating password hash for LDAP admin
+  command:
+    slappasswd -h {SSHA} -s {{ ldap_password }}
+  register:
+    ldap_root_hash
+
+- name: Generate ldif from template
+  become_user: "{{ ldap_user }}"
+  become: true
+  template:
+    src: "templates/{{ item.src }}"
+    dest: "{{ ldap_ldif_dir }}/{{ item.dest }}"
+    mode: 0644
+  with_items:
+    - { src: "initial_setup.ldif.j2", dest: "initial_setup.ldif" }
+    - { src: "set_root_credentials.ldif.j2", dest: "set_root_credentials.ldif" }
+
+- name: Starting slapd service
+  service:
+    name: slapd
+    state: started
+
+- name: Ensure the ldap admin credentials are set
+  command: ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f "{{ ldap_ldif_dir }}/set_root_credentials.ldif"
+
+- name: Check if DIT has been created before
+  command:
+    ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// -b "{{ ldap.basedn }}" "(ou=group)" dn
+  register: emptyDIT
+  failed_when: "emptyDIT.rc not in [0, 32]"
+
+- name: Initialize DIT
+  become_user: "{{ ldap_user }}"
+  become: true
+  command: >
+    ldapadd -c -x -D "{{ ldap.binddn }}" -w "{{ ldap_password }}"
+    -f "{{ ldap_ldif_dir }}/initial_setup.ldif"
+  register: result
+  failed_when: "(result.rc not in [0, 68])"
+  tags: ldap
+  when: emptyDIT.stdout == ""

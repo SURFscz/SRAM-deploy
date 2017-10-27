@@ -1,0 +1,8 @@
+---
+ldap_install_dir: /etc/ldap
+ldap_bin_dir: "{{ ldap_install_dir }}/bin"
+ldap_download_dir: "{{ ldap_install_dir }}/downloads"
+ldap_ldif_dir: "{{ ldap_install_dir }}/schema"
+ldap_schema_dir: "{{ ldap_install_dir }}/schema"
+ldap_user: root
+
