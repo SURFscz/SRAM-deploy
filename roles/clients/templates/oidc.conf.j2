@@ -11,18 +11,17 @@ LoadModule auth_openidc_module /usr/lib/apache2/modules/mod_auth_openidc.so
 
         OIDCProviderMetadataURL https://{{ hostnames.proxy }}/.well-known/openid-configuration
         OIDCSSLValidateServer Off
-        OIDCClientID oidctest                                                                                                                                                                                                
+        OIDCClientID oidctest
         OIDCClientSecret test
         OIDCResponseType "code"
         OIDCResponseMode "query"
-        OIDCScope "openid"
-        #OIDCScope "openid email profile"
-        OIDCAuthRequestParams claims={"userinfo":{"foobar":null,"nickname":null,"name":null,"uid":null,"email":null,"sho":null,"family_name":null,"eppn":null}}
+        OIDCScope "openid email profile address phone"
+        OIDCAuthRequestParams claims={"userinfo":{"schac_home_organisation":null,"eduperson_affiliation":null,"nickname":null,"name":null,"uid":null,"email":null,"family_name":null,"eppn":null,"address":{"street_address":null}}}
 
-        OIDCRedirectURI https://{{ hostnames.oidc }}/redirect_uri
+        OIDCRedirectURI https://{{ hostnames.oidc }}/oidc/redirect_uri
         OIDCCryptoPassphrase randompassword
 
-        <Location />
+        <Location /oidc/>
            AuthType openid-connect
            Require valid-user
         </Location>

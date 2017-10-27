@@ -1,0 +1,14 @@
+---
+packages:
+  - postfix
+
+postfixstart:
+  - name: "postfix"
+    state: "started"
+
+postfixrestart:
+  - name: "postfix"
+    state: "restarted"
+
+postfix_templates:
+  - { src: main.cf.j2, dest: /etc/postfix/main.cf }

@@ -28,7 +28,7 @@
     - { role: apt,      tags: ['common','apt']      }
     - { role: firewall, tags: ['common','firewall'] }
     - { role: ntp,      tags: ['common'] }
-    - { role: users,    tags: ['common'] }
+    - { role: users,    tags: ['common','users'] }
     - { role: mail,     tags: ['common','mail'] }
 #   - { role: logging,  tags: ['logging'  ] }
 
@@ -50,16 +50,27 @@
 
 - hosts: comanage
   roles:
-    - { role: http_dummy,  tags: ['proxy','test'] }
+    - { role: http_apache, tags: ['comanage', 'web'] }
+#    - { role: postfix, tags: ['comanage', 'smtp'] }
+    - { role: mysql, tags: ['comanage', 'db'] }
+    - { role: comanage_mysql, tags: ['comanage', 'db'] }
+    - { role: php56, tags: ['comanage', 'web'] }
+    - { role: auth_mellon, tags: ['comanage', 'web'] }
+    - { role: comanage, tags: ['comanage', 'web'] }
+    - { role: comanage_idp, tags: ['comanage', 'web'] }
+    - { role: comanage_enable, tags: ['comanage', 'web'] }
+    - { role: comanage_plugins, tags: ['comanage', 'web'] }
 
 - hosts: ldap
   roles:
 
 - hosts: proxy
   roles:
-    - { role: satosa,      tags: ['satosa'    ] }
-    - { role: pyff,        tags: ['pyff'      ] }
-    - { role: cmservice,   tags: ['cmservice' ] }
+    - { role: satosa,      tags: ['proxy','satosa'    ] }
+    - { role: pyff,        tags: ['proxy','pyff'      ] }
+    - { role: cmservice,   tags: ['proxy','cmservice' ] }
+    - { role: mysql,       tags: ['proxy','mysql'     ] }
+    - { role: proxy_mysql, tags: ['proxy','mysql'     ] }
 
 - hosts: client
   roles:
