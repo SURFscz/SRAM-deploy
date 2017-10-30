@@ -25,7 +25,6 @@
     src: "/tmp/comanage-{{ comanage_version }}.tar.gz"
     dest: "{{ comanage_install_dir }}"
     copy: no
-  when: comanage_downloaded|changed
 
 - name: Symlink comanage source
   file:
