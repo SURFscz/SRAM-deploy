@@ -1,5 +1,5 @@
 ---
-domain: muisitscz.vnet
+domain: scz.vnet
 
 sp_protocol: "https://"
 sp_hostname: "comanage.{{ domain }}"

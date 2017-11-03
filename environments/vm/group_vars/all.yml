@@ -60,3 +60,9 @@ ldap:
   basedn: "ou=people,{{ ldap_base.dc }}"
   groupdn: "ou=groups,{{ ldap_base.dc }}"
   binddn: "cn={{ ldap_base.cn }},{{ ldap_base.dc }}"
+
+# Comanage-Proxy database configuration is here, because it is needed in both the
+# Proxy and Comanage groups.
+comanage_proxy_db: "{{ groups['proxy'][0] }}"
+comanage_proxy_db_user: "scz"
+comanage_proxy_db_name: "cotosa"
