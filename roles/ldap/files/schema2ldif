@@ -1,0 +1,43 @@
+#!/bin/bash
+
+function read_args {
+    case $# in
+        1)
+            schema_extentionless=${1%.schema}
+            [[ "$schema_extentionless" == "$1" ]] && echo "Error: Schema file does not end in .schema" && exit
+            schema_name=${schema_extentionless##*/}
+            schema_file=$1
+            ldif_file=$schema_extentionless.ldif
+            ;;
+        2)
+            schema_file=$1
+            ldif_file=${1%.schema}.ldif
+            schema_name=$2
+            ;;
+        3)
+            schema_file=$1
+            ldif_file=$2
+            schema_name=3
+            ;;
+        *)
+            echo "Wrong args"
+            ;;
+    esac
+}
+
+read_args $@
+
+echo "Translating schema '$schema_file' into '$ldif_file'."
+
+cat << EOF >$ldif_file
+dn: cn=$schema_name,cn=schema,cn=config
+objectClass: olcSchemaConfig
+cn: $schema_name
+EOF
+
+cat $schema_file | \
+    sed -e 's/attributetype/olcAttributeTypes:/' \
+        -e 's/objectclass/olcObjectClasses:/' \
+        -e 's/^[ \t]\+/  /' \
+        -e '/^$/d' \
+>> $ldif_file

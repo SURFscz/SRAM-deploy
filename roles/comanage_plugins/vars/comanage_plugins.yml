@@ -1,0 +1,22 @@
+---
+packages:
+  - git
+
+comanage_git_plugins:
+  -
+    name: "ZoneProvisioner"
+    version: "HEAD"
+    src: "https://github.com/muisit/comanage-scz.git"
+  -
+    name: "LdapFixedProvisioner"
+    version: "HEAD"
+    src: "https://github.com/muisit/comanage-ldapfixedprovisioner.git"
+  -
+    name: "EmailProvisioner"
+    version: "HEAD"
+    src: "https://github.com/muisit/comanage-emailprovisioner.git"
+
+comanage_plugin_configurations:
+  - { src: ldapfixedprovisioner.php.j2, dest: ldapfixedprovisioner.php }
+  - { src: scz.php.j2, dest: scz.php }
+

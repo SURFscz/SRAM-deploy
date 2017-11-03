@@ -1,11 +1,11 @@
-<VirtualHost *:80>
+<VirtualHost *:{{ sp_test_port }}>
         ServerName {{ hostnames.sp }}
 
         ServerAdmin webmaster@localhost
         DocumentRoot /var/www/html
 
         Alias /saml /opt/simplesaml/simplesaml/www
-        
+
         ErrorLog ${APACHE_LOG_DIR}/error.log
         CustomLog ${APACHE_LOG_DIR}/access.log combined
 

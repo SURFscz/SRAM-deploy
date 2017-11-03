@@ -3,81 +3,81 @@
  * SURFnet SCZ Test frontend metadata
  **/
 
-$metadata['https://proxy.test.scz.lab.surf.nl/Saml2IDP/proxy.xml'] = array (
-  'entityid' => 'https://proxy.test.scz.lab.surf.nl/Saml2IDP/proxy.xml',
-  'description' => 
+$metadata['https://{{ hostnames.proxy }}/Saml2IDP/proxy.xml'] = array (
+  'entityid' => 'https://{{ hostnames.proxy }}/Saml2IDP/proxy.xml',
+  'description' =>
   array (
     'en' => 'SCZ Test IdP Org.',
   ),
-  'OrganizationName' => 
+  'OrganizationName' =>
   array (
     'en' => 'SCZ Test IdP Org.',
   ),
-  'name' => 
+  'name' =>
   array (
     'en' => 'SCZ Test IdP',
   ),
-  'OrganizationDisplayName' => 
+  'OrganizationDisplayName' =>
   array (
     'en' => 'SCZ Test IdP',
   ),
-  'url' => 
+  'url' =>
   array (
     'en' => 'https://meta.test.scz.lab.surf.nl/',
   ),
-  'OrganizationURL' => 
+  'OrganizationURL' =>
   array (
     'en' => 'https://meta.test.scz.lab.surf.nl/',
   ),
-  'contacts' => 
+  'contacts' =>
   array (
-    0 => 
+    0 =>
     array (
       'contactType' => 'technical',
       'givenName' => 'Technical',
-      'emailAddress' => 
+      'emailAddress' =>
       array (
         0 => 'technical@test.scz.lab.surf.nl',
       ),
     ),
-    1 => 
+    1 =>
     array (
       'contactType' => 'support',
       'givenName' => 'Support',
-      'emailAddress' => 
+      'emailAddress' =>
       array (
         0 => 'support@test.scz.lab.surf.nl',
       ),
     ),
   ),
   'metadata-set' => 'saml20-idp-remote',
-  'SingleSignOnService' => 
+  'SingleSignOnService' =>
   array (
-    0 => 
+    0 =>
     array (
       'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
-      'Location' => 'https://proxy.test.scz.lab.surf.nl/Saml2SP/sso/post',
+      'Location' => 'https://{{ hostnames.proxy }}/Saml2SP/sso/post',
     ),
-    1 => 
+    1 =>
     array (
       'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
-      'Location' => 'https://proxy.test.scz.lab.surf.nl/Saml2SP/sso/redirect',
+      'Location' => 'https://{{ hostnames.proxy }}/Saml2SP/sso/redirect',
     ),
   ),
-  'SingleLogoutService' => 
+  'SingleLogoutService' =>
   array (
   ),
-  'ArtifactResolutionService' => 
+  'ArtifactResolutionService' =>
   array (
   ),
-  'NameIDFormats' => 
+  'NameIDFormats' =>
   array (
     0 => 'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent',
     1 => 'urn:oasis:names:tc:SAML:2.0:nameid-format:transient',
   ),
-  'keys' => 
+  'keys' =>
   array (
-    0 => 
+    0 =>
     array (
       'encryption' => false,
       'signing' => true,

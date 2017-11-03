@@ -4,10 +4,10 @@ config:
   sp_config:
     key_file: certs/backend.key
     cert_file: certs/backend.crt
-    organization: {display_name: SCZ Test SP, name: SCZ Test SP, url: 'https://meta.test.scz.lab.surf.nl/'}
+    organization: {display_name: {{ environment_string }} SP, name: {{ environment_string }} SP, url: 'https://{{ hostnames.meta }}/'}
     contact_person:
-    - {contact_type: technical, email_address: technical@test.scz.lab.surf.nl, given_name: Technical}
-    - {contact_type: support, email_address: support@test.scz.lab.surf.nl, given_name: Support}
+    - {contact_type: technical, email_address: technical@{{ hostnames.proxy }}, given_name: Technical}
+    - {contact_type: support, email_address: support@{{ hostnames.proxy }}, given_name: Support}
 
     metadata:
 #      local: [metadata/idp.xml, metadata/idp_sc_diy.xml]
@@ -23,7 +23,7 @@ config:
           discovery_response:
           - [<base_url>/<name>/disco, 'urn:oasis:names:tc:SAML:profiles:SSO:idp-discovery-protocol']
         name_id_format: 'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent'
-    attribute_map_dir: '{{ satosa_env_dir }}/mapper'
+#    attribute_map_dir: '{{ satosa_env_dir }}/mapper'
     allow_unknown_attributes: true
   # disco_srv must be defined if there is more than one IdP in the metadata specified above
   disco_srv: https://{{ hostnames.mdq }}/role/idp.ds

@@ -2,6 +2,7 @@
 .vagrant/
 provision.retry
 *.pyc
+*~
 core
 *~
 
