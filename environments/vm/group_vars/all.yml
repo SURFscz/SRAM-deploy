@@ -17,7 +17,7 @@ servers:
 iprange:
   vpn:
     vm:   172.20.1.0/24
-  bastion:   "{{hostvars[ groups['mgnt1'][0] ]['ansible_default_ipv4']['address']}}"
+  bastion:   172.20.1.1
   lb:        "{{hostvars[ groups['lb'][0] ]['ansible_default_ipv4']['address']}}"
   comanage:  "{{hostvars[ groups['comanage'][0] ]['ansible_default_ipv4']['address']}}"
   mgnt:      "{{hostvars[ groups['mgnt1'][0] ]['ansible_default_ipv4']['address']}}/\
