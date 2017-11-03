@@ -19,8 +19,17 @@ iprange:
     vm:   172.20.1.0/24
   bastion:   "{{hostvars[ groups['mgnt1'][0] ]['ansible_default_ipv4']['address']}}"
   lb:        "{{hostvars[ groups['lb'][0] ]['ansible_default_ipv4']['address']}}"
+  comanage:  "{{hostvars[ groups['comanage'][0] ]['ansible_default_ipv4']['address']}}"
   mgnt:      "{{hostvars[ groups['mgnt1'][0] ]['ansible_default_ipv4']['address']}}/\
               {{hostvars[ groups['mgnt1'][0] ]['ansible_default_ipv4']['netmask']}}"
+
+mail:
+  relay_host: "172.20.1.1"
+  relay_to: "outgoing.scz.vnet"
+  relay_for:
+    - "{{iprange.mgnt}}"
+  domain: "scz.vnet"
+
 
 # poor man's user management
 root:
@@ -38,3 +47,16 @@ users:
 firewall_v4_incoming:
   - { name: bastion,  src: "{{iprange.bastion}}", dport: "22,80,443", proto: tcp }
 
+# LDAP definition is here, because we need it in both the Ldap and Comanage groups
+ldap_base:
+  cn: "John Doe"
+  dc: "dc=scz,dc=vnet"
+  o: "SCZ"
+
+ldap:
+  cn: "{{ ldap_base.cn }}"
+  dc: "{{ ldap_base.dc }}"
+  o: "{{ ldap_base.o }}"
+  basedn: "ou=people,{{ ldap_base.dc }}"
+  groupdn: "ou=groups,{{ ldap_base.dc }}"
+  binddn: "cn={{ ldap_base.cn }},{{ ldap_base.dc }}"

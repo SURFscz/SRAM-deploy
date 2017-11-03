@@ -1,0 +1,42 @@
+#!/bin/bash
+#
+# This is a convenience script to reset the local system state for choosing a different
+# provider.
+# We remove all active boxes and/or containers, remove dynamic networks to avoid
+# leftovers blocking our static IP range and finally remove left-over machine
+# definitions to avoid cached state information choosing incorrect providers or
+# using stale docker-compose information.
+#
+# Note: use at your own risk. If your vagrant, libvirt, virtualbox or docker
+# environment is anything but a simple setup, this script can potentially remove
+# too much and severly hamper your endeavours.
+
+# try to destroy any active boxes
+vagrant destroy -f
+
+# Docker: remove active containers
+for i in `/usr/bin/docker ps -a | grep -v "^CONTAINER" | awk '{print $1}'`;do /usr/bin/docker rm -f $i;done
+
+# Docker: remove networks
+/usr/bin/docker network rm `/usr/bin/docker network ls | grep "scz" | awk '{print $1}'`
+
+# Libvirt: remove networks
+NETS=`LANG=C virsh net-list --all | grep "[^a-z]active" | awk '{print $1}'`
+for i in $NETS
+do
+    virsh net-destroy $i
+done
+
+# Virtual box: remove networks
+NETS=`vboxmanage list hostonlyifs | awk '/^Name:/ { NM=$2 } /^IPAddress:/ { print NM }'`
+for i in $NETS
+do
+    vboxmanage hostonlyif remove $i
+done
+
+# Vagrant: remove machine definitions and other relevant directories
+rm -rf .vagrant/machines .vagrant/docker-compose
+
+# Reset Vagrant information
+/usr/bin/vagrant global-status --prune
+
