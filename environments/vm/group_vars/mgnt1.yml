@@ -1,0 +1,4 @@
+---
+firewall_v4_incoming:
+  - { name: VPN_vm,    src: "{{iprange.vpn.vm}}",   dport: "22,80,443", proto: tcp }
+
