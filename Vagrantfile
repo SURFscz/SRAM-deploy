@@ -56,6 +56,9 @@ machines = {
 # backwards compatibility). Please don't change it unless you know what
 # you're doing.
 Vagrant.configure("2") do |config|
+	# Workaround for ttyname errors: https://stackoverflow.com/questions/40815349/
+	config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
+
     config.vm.synced_folder ".", "/vagrant", disabled: true
 
 
