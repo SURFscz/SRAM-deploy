@@ -112,7 +112,7 @@ $config = array(
         'baas:{SSHA256}k3PEnrrBqpxjOwuE4kArdPwAG2lVrJZBeS5/+Ej8598nGbBKCvYfzQ==' => array(
             'uid' => array('admin'),
             'urn:mace:dir:attribute-def:uid' => array('admin'),
-            'eduPersonAffiliation' => array('member', 'employee'),
+            'urn:mace:dir:attribute-def:eduPersonAffiliation' => array('member', 'employee'),
             'urn:mace:dir:attribute-def:mail' => array('admin@scz.lab.surf.nl'),
             'urn:mace:terena.org:attribute-def:schacHomeOrganization' => array('scz.lab.surf.nl'),
             'urn:mace:dir:attribute-def:eduPersonPrincipalName' => array('admin@scz.lab.surf.nl'),
@@ -121,7 +121,7 @@ $config = array(
         'student:{SSHA256}sa1hYchNHSHa0DwbZjf0vSuQj34GnaMVRVJVGBG+ao18/5NcvAnr7w==' => array(
 //             'uid' => array('test'),
             'urn:mace:dir:attribute-def:uid' => array('testuid'),
-            'eduPersonAffiliation' => array('member', 'student'),
+            'urn:mace:dir:attribute-def:eduPersonAffiliation' => array('member', 'student'),
             'urn:mace:dir:attribute-def:mail' => array('some@mailaddress.org'),
             'urn:mace:terena.org:attribute-def:schacHomeOrganization' => array('surfnet.nl'),
             'urn:mace:dir:attribute-def:eduPersonPrincipalName' => array('eppn_student@surfnet.nl'),
