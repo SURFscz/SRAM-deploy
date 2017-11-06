@@ -1,5 +1,5 @@
 # custom config for yamllint
-# vim:ft=yaml
+# vim:ft=yaml:expandtab:sw=2
 
 extends: default
 
@@ -28,4 +28,4 @@ rules:
   line-length:
     max: 100
     allow-non-breakable-words: false
-
+  truthy: disable
