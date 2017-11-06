@@ -10,8 +10,14 @@ eduPersonSchema_url: >
   https://spaces.internet2.edu/download/attachments/2309/{{ eduPersonSchema_zip }}
 
 ldapPublicKey: openssh-lpk-openldap
-ldapPublicKey_ldif: openssh-lpk-openldap.ldif
+ldapPublicKey_ldif: "{{ ldapPublicKey }}.ldif"
 # avoid Travis yamllint error on line-length....
 ldapPKS1: https://raw.githubusercontent.com/AndriiGrytsenko/
 ldapPKS2: openssh-ldap-publickey/master/misc/openssh-lpk-openldap.schema
 ldapPublicKeySchema_url: "{{ ldapPKS1 }}{{ ldapPKS2 }}"
+
+eduMember: edumember
+eduMember_ldif: "{{ eduMember }}.ldif"
+eduMember_host: https://raw.githubusercontent.com
+eduMember_path: /Internet2/grouper/master/apacheds-ldappc-schema/src/main/schema/eduMember.schema
+eduMemberSchema_url: "{{ eduMember_host }}{{ eduMember_path }}"
