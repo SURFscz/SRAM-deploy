@@ -138,6 +138,15 @@
 
 - name: Setup Cake for login
   command: >
+    ./Console/cake database
+  become: true
+  become_user: "{{ comanage_www_user }}"
+  args:
+    chdir: "{{ comanage_package }}/app"
+  when: comanage_cm_users_table_exists.stdout == "0"
+
+- name: Setup Cake for login
+  command: >
     ./Console/cake setup --admin-given-name "{{ comanage_admin_given_name }}"
     --admin-family-name "{{ comanage_admin_family_name }} "
     --admin-username "{{ comanage_admin_username }}"

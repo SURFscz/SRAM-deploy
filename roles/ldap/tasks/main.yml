@@ -49,9 +49,20 @@
     url: "{{ ldapPublicKeySchema_url }}"
     dest: "{{ ldap_schema_dir }}"
 
-- name: Convert schema to ldif format
+- name: Convert LdapPublicKey schema to ldif format
   become_user: "{{ ldap_user }}"
   command: "{{ ldap_bin_dir }}/schema2ldif {{ ldap_schema_dir }}/{{ ldapPublicKey }}.schema"
+
+- name: Fetch eduMember schema
+  become_user: "{{ ldap_user }}"
+  become: true
+  get_url:
+    url: "{{ eduMemberSchema_url }}"
+    dest: "{{ ldap_schema_dir }}"
+
+- name: Convert eduMember schema to ldif format
+  become_user: "{{ ldap_user }}"
+  command: "{{ ldap_bin_dir }}/schema2ldif {{ ldap_schema_dir }}/{{ eduMember }}.schema"
 
 # Of course the unarchive module should be used here, but the things is,
 # it seems broken in 2.2.0, although it should be fixed in 2.1.1. I guess
@@ -93,13 +104,27 @@
     | grep 'cn={[0-9]\+}openssh-lpk-openldap,cn=schema,cn=config'
   failed_when: not [0, 1]
   register:
-    ldapPublicKey
+    ldapPublicKeyTask
 
 - name: Ensure the ldapPublicKey schema is added to LDAP
   command: >
     ldapadd -Q -Y EXTERNAL -H ldapi:/// -D "cn=config"
     -f "{{ ldap_schema_dir }}/{{ ldapPublicKey_ldif }}"
-  when: ldapPublicKey.stdout == ""
+  when: ldapPublicKeyTask.stdout == ""
+
+- name: Check if the eduMember schema is already present
+  shell: >
+    ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// -b 'cn=schema,cn=config' '(cn=*)' dn
+    | grep 'cn={[0-9]\+}eduMember,cn=schema,cn=config'
+  failed_when: not [1, 2]
+  register:
+    eduMemberTask
+
+- name: Ensure the eduMember schema is added to LDAP
+  command: >
+    ldapadd -Q -Y EXTERNAL -H ldapi:/// -D "cn=config"
+    -f "{{ ldap_schema_dir }}/{{ eduMember_ldif }}"
+  when: eduMemberTask.stdout == ""
 
 - name: Generating password hash for LDAP admin
   command:

@@ -1,15 +1,64 @@
-[loadbalancer]
+##########################################
+# managment machines
+[mgnt1]
+mgnt1.scz.vnet ansible_host=172.20.1.20
+
+[mgnt2]
+
+[mgnt:children]
+mgnt1
+mgnt2
+
+##########################################
+# VM environment
+[vm-lb]
 lb.scz.vnet ansible_host=172.20.1.20
 
-[comanage]
-comanage.scz.vnet ansible_host=172.20.1.20
+[vm-proxy]
+proxy.scz.vnet ansible_host=172.20.1.22
 
-[ldap]
-145.100.180.107
+[vm-comanage]
+comanage.scz.vnet ansible_host=172.20.1.21
 
-[proxy]
-145.100.180.107
+[vm-ldap]
+ldap.scz.vnet ansible_host=172.20.1.20
 
-[metadata]
-145.100.180.107
+[vm-meta]
+meta.scz.vnet ansible_host=172.20.1.23
 
+[vm-client]
+client.scz.vnet ansible_host=172.20.1.22
+
+[vm:children]
+vm-lb
+vm-proxy
+vm-comanage
+vm-ldap
+vm-meta
+vm-client
+
+##########################################
+# role-based groups
+[lb:children]
+vm-lb
+
+[proxy:children]
+vm-proxy
+
+[comanage:children]
+vm-comanage
+
+[ldap:children]
+vm-ldap
+
+[meta:children]
+vm-meta
+
+[client:children]
+vm-client
+
+##########################################
+# all
+[all:children]
+mgnt
+vm

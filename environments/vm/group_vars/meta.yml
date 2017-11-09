@@ -1,0 +1,6 @@
+---
+firewall_v4_incoming:
+  - { name: bastion,      src: "{{iprange.bastion}}", dport:  "22", proto: tcp }
+  - { name: loadbalancer, src: "{{iprange.lb}}",      dport:  "80", proto: tcp }
+
+metadata_project_dir: "/opt/metadata"
