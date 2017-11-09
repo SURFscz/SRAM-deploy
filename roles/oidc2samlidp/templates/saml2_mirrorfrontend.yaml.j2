@@ -1,0 +1,34 @@
+module: satosa.frontends.saml2.SAMLMirrorFrontend
+name: OIDC2SamlIdP
+config:
+  idp_config:
+    organization: {name: {{ proxy_name }}, display_name: {{ proxy_display_name }},  url: '{{ proxy_url }}'}
+    contact_person:
+    - {contact_type: technical, email_address: {{ proxy_technical_contact_email }}, given_name: {{ proxy_technical_contact_name }}}
+    - {contact_type: support, email_address: {{ proxy_support_contact_email }}, given_name: {{ proxy_support_contact_name }}}
+    key_file: certs/frontend.key
+    cert_file: certs/frontend.crt
+    metadata:
+      local: [metadata/]
+    entityid: <base_url>/<name>/proxy.xml
+    service:
+      idp:
+        endpoints:
+          single_sign_on_service: []
+        name: {{ proxy_name }}
+        name_id_format: ['urn:oasis:names:tc:SAML:2.0:nameid-format:persistent', 'urn:oasis:names:tc:SAML:2.0:nameid-format:transient']
+        policy:
+          default:
+            attribute_restrictions: null
+            fail_on_missing_requested: false
+            lifetime: {minutes: 15}
+            #name_form: urn:oasis:names:tc:SAML:2.0:attrname-format:basic
+            attribute_map_dir: '{{ satosa_env_dir }}/mapper'
+    allow_unknown_attributes: true
+  acr_mapping:
+    "": default-LoA
+    "https://accounts.google.com": LoA1
+  endpoints:
+    single_sign_on_service: {'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST': sso/post,
+      'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect': sso/redirect}
+

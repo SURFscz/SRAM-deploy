@@ -72,10 +72,6 @@
     - { role: mysql,       tags: ['proxy','mysql'     ] }
     - { role: proxy_mysql, tags: ['proxy','mysql'     ] }
 
-- hosts: client
-  roles:
-    - { role: http_dummy,  tags: ['client','test'] }
-
 - hosts: meta
   roles:
     - { role: http_dummy,  tags: ['http']      }
@@ -83,4 +79,6 @@
 
 - hosts: client
   roles:
+    #- { role: http_dummy,  tags: ['client','test'] }
     - { role: clients,     tags: ['clients']    }
+    - { role: oidc2samlidp, tags: ['oidc2samlidp'] }

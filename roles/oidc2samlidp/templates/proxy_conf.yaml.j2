@@ -1,0 +1,43 @@
+#--- SATOSA Config ---#
+BASE: https://{{ hostnames.google }}
+INTERNAL_ATTRIBUTES: "internal_attributes.yaml"
+COOKIE_STATE_NAME: "SATOSA_STATE"
+STATE_ENCRYPTION_KEY: "{{ satosa_state_encryption_key }}"
+CUSTOM_PLUGIN_MODULE_PATHS:
+  - "plugins/backends"
+  - "plugins/frontends"
+  - "plugins/micro_services"
+BACKEND_MODULES:
+  - "plugins/backends/google_backend.yaml"
+FRONTEND_MODULES:
+  - "plugins/frontends/saml2_mirrorfrontend.yaml"
+MICRO_SERVICES:
+  - "plugins/micro_services/custom_alias.yaml"
+USER_ID_HASH_SALT: "{{ satosa_user_id_hash_salt }}"
+LOGGING:
+  version: 1
+  formatters:
+    simple:
+      format: "[%(asctime)-19.19s] [%(levelname)-5.5s]: %(message)s"
+  handlers:
+    console:
+      class: logging.StreamHandler
+      level: DEBUG
+      formatter: simple
+      stream: ext://sys.stdout
+    info_file_handler:
+      class: logging.handlers.RotatingFileHandler
+      level: INFO
+      formatter: simple
+      filename: info.log
+      maxBytes: 10485760 # 10MB
+      backupCount: 20
+      encoding: utf8
+  loggers:
+    satosa:
+      level: DEBUG
+      handlers: [console]
+      propagate: no
+  root:
+    level: INFO
+    handlers: [info_file_handler]
