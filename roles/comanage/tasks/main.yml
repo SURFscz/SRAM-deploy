@@ -127,6 +127,15 @@
     -u {{ comanage_db_user }} "--password={{ comanage_db_password }}"
   register: comanage_cm_users_table_exists
 
+- name: Setup Cake database
+  command: >
+    ./Console/cake database
+  become: true
+  become_user: "{{ comanage_www_user }}"
+  args:
+    chdir: "{{ comanage_package }}/app"
+  when: comanage_cm_users_table_exists.stdout == "0"
+
 - name: Setup Cake for login
   command: >
     ./Console/cake setup --admin-given-name "{{ comanage_admin_given_name }}"

@@ -9,21 +9,21 @@ dn: {{ ldap.binddn }}
 cn: admin
 objectClass: organizationalRole
 
-# Create the organisational unit (ou) group, which will contain all groups
-dn: {{ ldap.groupdn }}
-ou: {{ ldap.groupdn | regex_replace('^ou=([^,]+).*', '\\1') }}
+# Create the organisation (o), which will contain all COs, people and groups
+dn: {{ ldap.basedn }}
+o: {{ ldap.o }}
 objectClass: top
-objectClass: organizationalUnit
+objectClass: organization
 
 # Add a group to the group container
-#dn: cn=irodsuser,{{ ldap.groupdn }}
+#dn: cn=irodsuser,ou=People,{{ ldap.basedn }}
 #cn: irodsuser
 #gidNumber: 2500
 #objectClass: top
 #objectClass: posixGroup
 
 # Create the organisational unit (ou) people
-dn: {{ ldap.basedn }}
-ou: {{ ldap.basedn | regex_replace('^ou=([^,]+).*', '\\1') }}
-objectClass: top
-objectClass: organizationalUnit
+#dn: {{ ldap.basedn }}
+#ou: {{ ldap.basedn | regex_replace('^ou=([^,]+).*', '\\1') }}
+#objectClass: top
+#objectClass: organizationalUnit

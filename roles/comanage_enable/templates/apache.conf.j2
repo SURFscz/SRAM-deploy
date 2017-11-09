@@ -1,6 +1,12 @@
 #######################################################################
 {{ ansible_managed | comment('plain') }}
 #######################################################################
+{% if comanage_port is equalto 443 %}
+<VirtualHost *:80>
+    ServerName {{ comanage_full_hostname }}
+    Redirect / https://{{ comanage_full_hostname }}/
+</VirtualHost>
+{% endif %}
 
 <VirtualHost *:{{ comanage_port }}>
     ServerName {{ comanage_full_hostname }}
@@ -76,6 +82,13 @@
         MellonECPSendIDPList Off
         MellonRedirectDomains [self]
     </Location>
+
+{% if comanage_port is equalto 443 %}
+    # enabling SSL access, which is normally terminated at the LB
+    SSLEngine on
+    SSLCertificateFile      /etc/ssl/certs/ssl-cert-snakeoil.pem
+    SSLCertificateKeyFile /etc/ssl/private/ssl-cert-snakeoil.key
+{% endif %}
 
 </VirtualHost>
 
