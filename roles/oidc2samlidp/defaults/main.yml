@@ -1,8 +1,4 @@
 ---
-#Google Backend
-proxy_client_id: "639041247808-fm3l8t3qm07uqrt7h3t71p83ebahb643.apps.googleusercontent.com"
-proxy_secret: "m-KeRooMufwF1jpZKM9s5g4I"
-
 #Google Frontend
 proxy_name: "SCZ Google Mirror IdP Org."
 proxy_display_name: "SCZ Google Mirror IdP"
