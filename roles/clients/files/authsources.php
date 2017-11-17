@@ -28,6 +28,22 @@ $config = array(
         // Can be NULL/unset, in which case a builtin discovery service will be used.
         'discoURL' => null,
 
+        'UIInfo' => array(
+            'DisplayName' => array(
+                'en' => '{{ environment_string }} SP'
+             ),
+            'Description' => array(
+                'en' => '{{ environment_string }} SP description'
+             ),
+            'Logo' => array(
+                array(
+                        'url' => 'https://{{ hostnames.sp }}/saml/resources/icons/ssplogo-fish-small.png',
+                        'width' => '60',
+                        'height' => '41'
+                    )
+            )
+        ),
+
         /*
          * WARNING: SHA-1 is disallowed starting January the 1st, 2014.
          *

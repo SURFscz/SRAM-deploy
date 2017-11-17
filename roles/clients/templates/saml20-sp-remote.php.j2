@@ -1,52 +1,43 @@
 <?php
 /**
-  * SURFnet SCZ Test backend metadata
+  * SURFnet {{ environment_string }} backend metadata
   **/
 
-$metadata['https://{{ hostnames.proxy }}/Saml2SP/proxy_saml2_backend.xml'] = array (
-  'entityid' => 'https://{{ hostnames.proxy }}/Saml2SP/proxy_saml2_backend.xml',
+$metadata['https://{{ hostnames.proxy }}/SamlMirrorSP/proxy.xml/SamlIdP/aHR0cHM6Ly9zcC10ZXN0LnNjei5sYWIuc3VyZi5ubC9zYW1sL21vZHVsZS5waHAvc2FtbC9zcC9tZXRhZGF0YS5waHAvZGVmYXVsdC1zcA=='] = array (
+  'entityid' => 'https://{{ hostnames.proxy }}/SamlMirrorSP/proxy.xml/SamlIdP/aHR0cHM6Ly9zcC10ZXN0LnNjei5sYWIuc3VyZi5ubC9zYW1sL21vZHVsZS5waHAvc2FtbC9zcC9tZXRhZGF0YS5waHAvZGVmYXVsdC1zcA==',
   'description' =>
   array (
-    'en' => 'SCZ Test SP',
+    'en' => '{{ environment_string }} Mirror SP Proxy Org.',
   ),
   'OrganizationName' =>
   array (
-    'en' => 'SCZ Test SP',
+    'en' => '{{ environment_string }} Mirror SP Proxy Org.',
   ),
   'name' =>
   array (
-    'en' => 'SCZ Test SP',
+    'en' => 'SURF {{ environment_string }} SP',
   ),
   'OrganizationDisplayName' =>
   array (
-    'en' => 'SCZ Test SP',
+    'en' => '{{ environment_string }} Mirror SP Proxy',
   ),
   'url' =>
   array (
-    'en' => 'https://meta.test.scz.lab.surf.nl/',
+    'en' => 'https://{{ hostnames.meta }}/',
   ),
   'OrganizationURL' =>
   array (
-    'en' => 'https://meta.test.scz.lab.surf.nl/',
+    'en' => 'https://{{ hostnames.meta }}/',
   ),
   'contacts' =>
   array (
     0 =>
     array (
       'contactType' => 'technical',
-      'givenName' => 'Technical',
+      'givenName' => 'Administrator',
       'emailAddress' =>
       array (
-        0 => 'technical@test.scz.lab.surf.nl',
-      ),
-    ),
-    1 =>
-    array (
-      'contactType' => 'support',
-      'givenName' => 'Support',
-      'emailAddress' =>
-      array (
-        0 => 'support@test.scz.lab.surf.nl',
+        0 => 'info@example.org',
       ),
     ),
   ),
@@ -56,13 +47,250 @@ $metadata['https://{{ hostnames.proxy }}/Saml2SP/proxy_saml2_backend.xml'] = arr
     0 =>
     array (
       'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
-      'Location' => 'https://{{ hostnames.proxy }}/Saml2SP/acs/post',
+      'Location' => 'https://{{ hostnames.proxy }}/SamlMirrorSP/acs/post',
       'index' => 1,
     ),
     1 =>
     array (
       'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
-      'Location' => 'https://{{ hostnames.proxy }}/Saml2SP/acs/redirect',
+      'Location' => 'https://{{ hostnames.proxy }}/SamlMirrorSP/acs/redirect',
+      'index' => 2,
+    ),
+  ),
+  'SingleLogoutService' =>
+  array (
+  ),
+  'NameIDFormat' => 'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent',
+  'keys' =>
+  array (
+    0 =>
+    array (
+      'encryption' => false,
+      'signing' => true,
+      'type' => 'X509Certificate',
+      'X509Certificate' => 'MIIDFDCCAfygAwIBAgIJAL30q8piZU1HMA0GCSqGSIb3DQEBCwUAMB8xCzAJBgNV
+BAYTAk5MMRAwDgYDVQQDDAdiYWNrZW5kMB4XDTE3MDkxNTEzMjQ0OFoXDTI3MDkx
+MzEzMjQ0OFowHzELMAkGA1UEBhMCTkwxEDAOBgNVBAMMB2JhY2tlbmQwggEiMA0G
+CSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDZTq/p7+dvDWHtKdLbafSDel8yE+rM
+CzCWl0pO1pflmeFS7zwIkN2OxT8Hjvw/apPdxgWxjJE7NXUEWxAHuDde4JbrOY40
+/VPg+QSBkNMcENKCMEyKem3Tox8ruZhHbNvs3M5IG2f1Dvx7tU2YZMdcSs6U6PJg
+qsFQ+PCM2BWGAEz7Ic6YISWDZsJIDWBE7cw99pMw9UFqK9kmHuKBVnwnjnJaAi1i
+EdQitZa8fAF6OBCKRnazxgqX7UWSf+LC4AHfYKuJTZJTaPx52ofvll0ABaTohnmV
+uXfILpwUFFXwOPN07iLAF2v+gqBRyhLjV1DxEJk6MMbR+ymMMwMtf6YLAgMBAAGj
+UzBRMB0GA1UdDgQWBBQc9/wr+5WKS+JAy3y8m3bLubPWeTAfBgNVHSMEGDAWgBQc
+9/wr+5WKS+JAy3y8m3bLubPWeTAPBgNVHRMBAf8EBTADAQH/MA0GCSqGSIb3DQEB
+CwUAA4IBAQAZ+MCfjzpzMNEqncBHbD+mw4gWRy28Pj2l8ogrrYvJXzx9L/uPlD2k
+8dpjFNDQOWmqYVAKa769L37B6qn4960hXljcWdGKtJOqkTNbtOaAQs2vbd3yOOmf
+RoydWqA/fTCZcnx0s+7mha8WZVuCHS3ShvkFVIPFg8NdMx6jj6e8tfvcQ8/R8yU3
+jHVpGEDv0QGpDgGUt0zx+G6aGrQVxtNaezuPhCQTdDNmzSU1txSBtLzcW0CJvhJD
+8tArwvnU3hMebwsrJ9RIvQQ/AnXPZK0BivjCcuFtek8Z39WtEKTVHXvAoQSkfcnC
+XOkAuqSqVGuNtzuvzf28wA9QWGENja2d
+',
+    ),
+  ),
+  'validate.authnrequest' => false,
+  'saml20.sign.assertion' => true,
+  'UIInfo' =>
+  array (
+    'DisplayName' =>
+    array (
+      'en' => 'SURF {{ environment_string }} SP',
+    ),
+    'Description' =>
+    array (
+      'en' => 'SURF {{ environment_string }} SP description',
+    ),
+    'InformationURL' =>
+    array (
+    ),
+    'PrivacyStatementURL' =>
+    array (
+    ),
+    'Logo' =>
+    array (
+      0 =>
+      array (
+        'url' => 'https://{{ hostnames.sp }}/saml/resources/icons/ssplogo-fish-small.png',
+        'height' => 41,
+        'width' => 60,
+      ),
+    ),
+  ),
+);
+$metadata['https://{{ hostnames.proxy }}/SamlMirrorSP/proxy.xml/SamlMirrorIdP/aHR0cHM6Ly9zcC10ZXN0LnNjei5sYWIuc3VyZi5ubC9zYW1sL21vZHVsZS5waHAvc2FtbC9zcC9tZXRhZGF0YS5waHAvZGVmYXVsdC1zcA=='] = array (
+  'entityid' => 'https://{{ hostnames.proxy }}/SamlMirrorSP/proxy.xml/SamlMirrorIdP/aHR0cHM6Ly9zcC10ZXN0LnNjei5sYWIuc3VyZi5ubC9zYW1sL21vZHVsZS5waHAvc2FtbC9zcC9tZXRhZGF0YS5waHAvZGVmYXVsdC1zcA==',
+  'description' =>
+  array (
+    'en' => '{{ environment_string }} Mirror SP Proxy Org.',
+  ),
+  'OrganizationName' =>
+  array (
+    'en' => '{{ environment_string }} Mirror SP Proxy Org.',
+  ),
+  'name' =>
+  array (
+    'en' => 'SURF {{ environment_string }} SP',
+  ),
+  'OrganizationDisplayName' =>
+  array (
+    'en' => '{{ environment_string }} Mirror SP Proxy',
+  ),
+  'url' =>
+  array (
+    'en' => 'https://{{ hostnames.meta }}/',
+  ),
+  'OrganizationURL' =>
+  array (
+    'en' => 'https://{{ hostnames.meta }}/',
+  ),
+  'contacts' =>
+  array (
+    0 =>
+    array (
+      'contactType' => 'technical',
+      'givenName' => 'Administrator',
+      'emailAddress' =>
+      array (
+        0 => 'info@example.org',
+      ),
+    ),
+  ),
+  'metadata-set' => 'saml20-sp-remote',
+  'AssertionConsumerService' =>
+  array (
+    0 =>
+    array (
+      'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
+      'Location' => 'https://{{ hostnames.proxy }}/SamlMirrorSP/acs/post',
+      'index' => 1,
+    ),
+    1 =>
+    array (
+      'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
+      'Location' => 'https://{{ hostnames.proxy }}/SamlMirrorSP/acs/redirect',
+      'index' => 2,
+    ),
+  ),
+  'SingleLogoutService' =>
+  array (
+  ),
+  'NameIDFormat' => 'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent',
+  'keys' =>
+  array (
+    0 =>
+    array (
+      'encryption' => false,
+      'signing' => true,
+      'type' => 'X509Certificate',
+      'X509Certificate' => 'MIIDFDCCAfygAwIBAgIJAL30q8piZU1HMA0GCSqGSIb3DQEBCwUAMB8xCzAJBgNV
+BAYTAk5MMRAwDgYDVQQDDAdiYWNrZW5kMB4XDTE3MDkxNTEzMjQ0OFoXDTI3MDkx
+MzEzMjQ0OFowHzELMAkGA1UEBhMCTkwxEDAOBgNVBAMMB2JhY2tlbmQwggEiMA0G
+CSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDZTq/p7+dvDWHtKdLbafSDel8yE+rM
+CzCWl0pO1pflmeFS7zwIkN2OxT8Hjvw/apPdxgWxjJE7NXUEWxAHuDde4JbrOY40
+/VPg+QSBkNMcENKCMEyKem3Tox8ruZhHbNvs3M5IG2f1Dvx7tU2YZMdcSs6U6PJg
+qsFQ+PCM2BWGAEz7Ic6YISWDZsJIDWBE7cw99pMw9UFqK9kmHuKBVnwnjnJaAi1i
+EdQitZa8fAF6OBCKRnazxgqX7UWSf+LC4AHfYKuJTZJTaPx52ofvll0ABaTohnmV
+uXfILpwUFFXwOPN07iLAF2v+gqBRyhLjV1DxEJk6MMbR+ymMMwMtf6YLAgMBAAGj
+UzBRMB0GA1UdDgQWBBQc9/wr+5WKS+JAy3y8m3bLubPWeTAfBgNVHSMEGDAWgBQc
+9/wr+5WKS+JAy3y8m3bLubPWeTAPBgNVHRMBAf8EBTADAQH/MA0GCSqGSIb3DQEB
+CwUAA4IBAQAZ+MCfjzpzMNEqncBHbD+mw4gWRy28Pj2l8ogrrYvJXzx9L/uPlD2k
+8dpjFNDQOWmqYVAKa769L37B6qn4960hXljcWdGKtJOqkTNbtOaAQs2vbd3yOOmf
+RoydWqA/fTCZcnx0s+7mha8WZVuCHS3ShvkFVIPFg8NdMx6jj6e8tfvcQ8/R8yU3
+jHVpGEDv0QGpDgGUt0zx+G6aGrQVxtNaezuPhCQTdDNmzSU1txSBtLzcW0CJvhJD
+8tArwvnU3hMebwsrJ9RIvQQ/AnXPZK0BivjCcuFtek8Z39WtEKTVHXvAoQSkfcnC
+XOkAuqSqVGuNtzuvzf28wA9QWGENja2d
+',
+    ),
+  ),
+  'validate.authnrequest' => false,
+  'saml20.sign.assertion' => true,
+  'UIInfo' =>
+  array (
+    'DisplayName' =>
+    array (
+      'en' => 'SURF {{ environment_string }} SP',
+    ),
+    'Description' =>
+    array (
+      'en' => 'SURF {{ environment_string }} SP description',
+    ),
+    'InformationURL' =>
+    array (
+    ),
+    'PrivacyStatementURL' =>
+    array (
+    ),
+    'Logo' =>
+    array (
+      0 =>
+      array (
+        'url' => 'https://{{ hostnames.sp }}/saml/resources/icons/ssplogo-fish-small.png',
+        'height' => 41,
+        'width' => 60,
+      ),
+    ),
+  ),
+);
+$metadata['https://{{ hostnames.proxy }}/SamlSP/proxy.xml'] = array (
+  'entityid' => 'https://{{ hostnames.proxy }}/SamlSP/proxy.xml',
+  'description' =>
+  array (
+    'en' => '{{ environment_string }} SP Proxy Org.',
+  ),
+  'OrganizationName' =>
+  array (
+    'en' => '{{ environment_string }} SP Proxy Org.',
+  ),
+  'name' =>
+  array (
+    'en' => '{{ environment_string }} SP Proxy',
+  ),
+  'OrganizationDisplayName' =>
+  array (
+    'en' => '{{ environment_string }} SP Proxy',
+  ),
+  'url' =>
+  array (
+    'en' => 'https://{{ hostnames.meta }}/',
+  ),
+  'OrganizationURL' =>
+  array (
+    'en' => 'https://{{ hostnames.meta }}/',
+  ),
+  'contacts' =>
+  array (
+    0 =>
+    array (
+      'contactType' => 'technical',
+      'givenName' => 'Technical',
+      'emailAddress' =>
+      array (
+        0 => 'technical@{{ hostnames.proxy }}',
+      ),
+    ),
+    1 =>
+    array (
+      'contactType' => 'support',
+      'givenName' => 'Support',
+      'emailAddress' =>
+      array (
+        0 => 'support@{{ hostnames.proxy }}',
+      ),
+    ),
+  ),
+  'metadata-set' => 'saml20-sp-remote',
+  'AssertionConsumerService' =>
+  array (
+    0 =>
+    array (
+      'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
+      'Location' => 'https://{{ hostnames.proxy }}/SamlSP/acs/post',
+      'index' => 1,
+    ),
+    1 =>
+    array (
+      'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
+      'Location' => 'https://{{ hostnames.proxy }}/SamlSP/acs/redirect',
       'index' => 2,
     ),
   ),
@@ -105,27 +333,27 @@ $metadata['https://proxy.pilot.scz.lab.surf.nl/Saml2SP/proxy_saml2_backend.xml']
   'entityid' => 'https://proxy.pilot.scz.lab.surf.nl/Saml2SP/proxy_saml2_backend.xml',
   'description' =>
   array (
-    'en' => 'SCZ Test SP',
+    'en' => '{{ environment_string }} SP',
   ),
   'OrganizationName' =>
   array (
-    'en' => 'SCZ Test SP',
+    'en' => '{{ environment_string }} SP',
   ),
   'name' =>
   array (
-    'en' => 'SCZ Test SP',
+    'en' => '{{ environment_string }} SP',
   ),
   'OrganizationDisplayName' =>
   array (
-    'en' => 'SCZ Test SP',
+    'en' => '{{ environment_string }} SP',
   ),
   'url' =>
   array (
-    'en' => 'https://meta.test.scz.lab.surf.nl/',
+    'en' => 'https://{{ hostnames.meta }}/',
   ),
   'OrganizationURL' =>
   array (
-    'en' => 'https://meta.test.scz.lab.surf.nl/',
+    'en' => 'https://{{ hostnames.meta }}/',
   ),
   'contacts' =>
   array (

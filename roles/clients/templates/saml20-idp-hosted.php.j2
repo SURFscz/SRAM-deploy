@@ -17,6 +17,22 @@ $metadata['__DYNAMIC:1__'] = array(
 
         'OrganizationURL' => 'https://{{ hostnames.sp }}/',
 
+        'UIInfo' => array(
+           'DisplayName' => array(
+                'en' => '{{ environment_string }} IdP'
+             ),
+            'Description' => array(
+                'en' => '{{ environment_string }} IdP description'
+             ),
+            'Logo' => array(
+                array(
+                        'url' => 'https://{{ hostnames.sp }}/saml/resources/icons/ssplogo-fish-small.png',
+                        'width' => '60',
+                        'height' => '41'
+                    )
+            )
+        ),
+
         'host' => '__DEFAULT__',
 
         // X.509 key and certificate. Relative to the cert directory.
