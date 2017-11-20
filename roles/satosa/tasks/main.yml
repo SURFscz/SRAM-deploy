@@ -59,16 +59,22 @@
 
     - name: Create saml2_backend.yaml definition
       template: >
-        src=saml2_backend.yaml.j2
-        dest="{{ satosa_env_dir }}/plugins/backends/saml2_backend.yaml"
+        src={{ item }}.j2
+        dest="{{ satosa_env_dir }}/plugins/backends/{{ item }}"
+      with_items:
+        - saml2_backend.yaml
+        - saml2_mirrorbackend.yaml
 
     - name: Create frontends directory
       file: path="{{ satosa_env_dir }}/plugins/frontends" state=directory mode=0755
 
     - name: Create saml2_frontend.yaml definition
       template: >
-        src=saml2_frontend.yaml.j2
-        dest="{{ satosa_env_dir }}/plugins/frontends/saml2_frontend.yaml"
+        src={{ item }}.j2
+        dest="{{ satosa_env_dir }}/plugins/frontends/{{ item }}"
+      with_items:
+        - saml2_frontend.yaml
+        - saml2_mirrorfrontend.yaml
 
     - name: Create oidc_frontend.yaml definition
       template: >
@@ -199,6 +205,16 @@
       shell: ./sync_clients metadata/clients.json
       args:
         chdir: "{{ satosa_env_dir }}"
+
+    - name: Retreive Test SP metadata
+      get_url: >
+        url=https://{{ hostnames.sp }}/saml/module.php/saml/sp/metadata.php/default-sp
+        dest="{{ satosa_env_dir }}/metadata/sp-test.xml"
+
+    - name: Retreive Test IdP metadata
+      get_url: >
+        url=https://{{ hostnames.idp }}/saml/saml2/idp/metadata.php
+        dest="{{ satosa_env_dir }}/metadata/idp-test.xml"
 
   become: "yes"
   become_user: satosa

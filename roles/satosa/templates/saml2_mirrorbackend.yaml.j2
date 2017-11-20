@@ -1,10 +1,10 @@
-module: satosa.backends.saml2.SAMLBackend
-name: SamlSP
+module: satosa.backends.saml2.SAMLMirrorBackend
+name: SamlMirrorSP
 config:
   sp_config:
     key_file: certs/backend.key
     cert_file: certs/backend.crt
-    organization: {display_name: {{ environment_string }} Proxy SP, name: {{ environment_string }} Proxy SP, url: 'https://{{ hostnames.meta }}/'}
+    organization: {display_name: {{ environment_string }} Proxy Mirror SP, name: {{ environment_string }} Proxy Mirror SP, url: 'https://{{ hostnames.meta }}/'}
     contact_person:
     - {contact_type: technical, email_address: technical@{{ hostnames.proxy }}, given_name: Technical}
     - {contact_type: support, email_address: support@{{ hostnames.proxy }}, given_name: Support}
@@ -14,7 +14,7 @@ config:
     entityid: <base_url>/<name>/proxy.xml
     service:
       sp:
-        name: Proxy SP
+        name: Proxy Mirror SP
         allow_unsolicited: true
         endpoints:
           assertion_consumer_service:
@@ -22,6 +22,7 @@ config:
           - [<base_url>/<name>/acs/redirect, 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect']
           discovery_response:
           - [<base_url>/<name>/disco, 'urn:oasis:names:tc:SAML:profiles:SSO:idp-discovery-protocol']
+
         name_id_format: 'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent'
     attribute_map_dir: '{{ satosa_env_dir }}/mapper'
     allow_unknown_attributes: true

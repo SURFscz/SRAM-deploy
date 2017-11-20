@@ -1,8 +1,8 @@
-module: satosa.frontends.saml2.SAMLFrontend
-name: SamlIdP
+module: satosa.frontends.saml2.SAMLMirrorFrontend
+name: SamlMirrorIdP
 config:
   idp_config:
-    organization: {display_name: {{ environment_string }} Proxy IdP, name: {{ environment_string }} Proxy IdP Org., url: 'https://{{ hostnames.meta }}/'}
+    organization: {display_name: {{ environment_string }} Mirrored Proxy IdP, name: {{ environment_string }} Mirrored Proxy IdP Org., url: 'https://{{ hostnames.meta }}/'}
     contact_person:
     - {contact_type: technical, email_address: technical@{{ hostnames.proxy }}, given_name: Technical}
     - {contact_type: support, email_address: support@{{ hostnames.proxy }}, given_name: Support}
@@ -14,7 +14,7 @@ config:
     entityid: <base_url>/<name>/proxy.xml
     service:
       idp:
-        name: Proxy IdP
+        name: Proxy Mirror IdP
         endpoints:
           single_sign_on_service: []
         name_id_format: ['urn:oasis:names:tc:SAML:2.0:nameid-format:persistent', 'urn:oasis:names:tc:SAML:2.0:nameid-format:transient']
