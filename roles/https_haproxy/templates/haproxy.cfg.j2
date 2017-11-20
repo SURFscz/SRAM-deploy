@@ -16,7 +16,7 @@ global
 
 	ssl-default-bind-ciphers ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-SHA384:DHE-RSA-AES256-SHA256:ECDHE-RSA-AES256-SHA:DHE-RSA-AES256-SHA
 	ssl-default-bind-options no-sslv3 no-tlsv10
-{% if haproxy.custom_dhparam %}
+{% if enable_https and haproxy.custom_dhparam %}
 	ssl-dh-param-file {{haproxy.dhparam_file}}
 {% else %}
 	tune.ssl.default-dh-param {{haproxy.dhparam_keysize}}
@@ -40,12 +40,18 @@ defaults
 #  frontend 
 # -------------------------------------------------------------------
 frontend fe_https
+{% if enable_https %}
 	bind    *:443 ssl {% for host in lb_http %} crt {{host.hostname}}/priv+fullchain.pem{% endfor %} transparent
 	bind [::]:443 ssl {% for host in lb_http %} crt {{host.hostname}}/priv+fullchain.pem{% endfor %} transparent
+{% else %}
+	bind    *:80 transparent
+	bind [::]:80 transparent
+{% endif %}
 
 	mode	http
 	option	httplog
 
+{% if enable_https %}
 	# secure cookies:
 	# todo: only for satosa
 	#rspirep ^(set-cookie:.*) \1;\ Secure;\ HttpOnly;\ SameSite=strict
@@ -59,16 +65,21 @@ frontend fe_https
 	#http-response set-header X-Frame-Options "DENY"
 	#http-response set-header X-XSS-Protection "1; mode=block"
 	#http-response set-header X-Content-Type-Options "nosniff"
+{% endif %}
 
 	http-request set-header X-Forwarded-For "%[src]"
 	http-request set-header X-Forwarded-Port "%[dst_port]"
-	http-request set-header X-Forwarded-Proto "https" if   { ssl_fc }
-	http-request set-header X-Forwarded-Proto "http"  if ! { ssl_fc }
-	http-request set-header Forwarded "for=%[src]; proto=https; by=%[dst]" if   { ssl_fc }
-	http-request set-header Forwarded "for=%[src]; proto=http; by=%[dst]"  if ! { ssl_fc }
+{% if enable_https %}
+	http-request set-header X-Forwarded-Proto "https"
+	http-request set-header Forwarded "for=%[src]; proto=https; by=%[dst]"
+{% else %}
+	http-request set-header X-Forwarded-Proto "http"
+	http-request set-header Forwarded "for=%[src]; proto=http; by=%[dst]"
+{% endif %}
 
 {% for host in lb_http %}
-	acl acl_{{host.hostname}} ssl_fc_sni -i {{host.hostname}}
+	#acl acl_{{host.hostname}} ssl_fc_sni -i {{host.hostname}}
+	acl acl_{{host.hostname}} hdr(host) -i {{host.hostname}}
 	use_backend be_{{host.hostname}} if acl_{{host.hostname}}
 
 {% endfor %}
@@ -84,8 +95,13 @@ backend be_{{host.hostname}}
 
 {% for host in lb_other %}
 listen proxy_{{host.hostname}}_{{host.frontend_port}}
+{% if enable_https %}
 	bind    *:{{host.frontend_port}} ssl crt {{host.hostname}}/priv+fullchain.pem transparent
 	bind [::]:{{host.frontend_port}} ssl crt {{host.hostname}}/priv+fullchain.pem transparent
+{% else %}
+	bind    *:{{host.frontend_port}} transparent
+	bind [::]:{{host.frontend_port}} transparent
+{% endif %}
 
 	mode	tcp
 	option	tcpka

@@ -21,7 +21,7 @@ $config = array(
      * external url, no matter where you come from (direct access or via the
      * reverse proxy).
      */
-    'baseurlpath' => 'https://' . $_SERVER['HTTP_HOST'] . '/saml/',
+    'baseurlpath' => '{{http_proto}}://' . $_SERVER['HTTP_HOST'] . '/saml/',
     'certdir' => 'cert/',
     'loggingdir' => 'log/',
     'datadir' => 'data/',
@@ -150,7 +150,9 @@ $config = array(
      * - %msg: the message to be logged.
      *
      */
+{% raw %}
     //'logging.format' => '%date{%b %d %H:%M:%S} %process %level %stat[%trackid] %msg',
+{% endraw %}
 
     /*
      * Choose which facility should be used when logging with syslog.
@@ -665,8 +667,12 @@ $config = array(
      *     array('type' => 'flatfile')
      *     ),
      */
+// TODO: fix this: url fetching is debugging only;  instead, fetch the
+// metadata bij hand
     'metadata.sources' => array(
-        array('type' => 'flatfile'),
+        array('type' => 'xml', 'url' => '{{http_proto}}://{{hostnames['proxy']}}/md/frontend.xml'),
+        array('type' => 'xml', 'url' => '{{http_proto}}://{{hostnames['proxy']}}/md/backend.xml'),
+        array('type' => 'flatfile' ),
     ),
 
 

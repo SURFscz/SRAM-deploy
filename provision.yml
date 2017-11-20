@@ -28,10 +28,10 @@
     - { role: apt,      tags: ['common','apt']      }
     - role: firewall
       tags: ['common','firewall']
-      when: docker.stdout_lines[0] != "docker"
+      when: docker is undefined or docker.stdout_lines[0] != "docker"
     - role: ntp
       tags: ['common']
-      when: docker.stdout_lines[0] != "docker"
+      when: docker is undefined or docker.stdout_lines[0] != "docker"
     - { role: users,    tags: ['common','users'] }
     - { role: mail,     tags: ['common','mail'] }
 #   - { role: logging,  tags: ['logging'  ] }
@@ -48,18 +48,12 @@
 
 - hosts: lb
   roles:
-    - { role: http_nginx,      tags: ['lb','http_nginx'] }
-    - { role: tls_letsencrypt, tags: ['lb','tls_letsencrypt'] }
+    - role: http_nginx
+      tags: ['lb','http_nginx']
+    - role: tls_letsencrypt
+      tags: ['lb','tls_letsencrypt']
+      when: enable_https
     - { role: https_haproxy,   tags: ['lb','https_haproxy'] }
-
-- hosts: comanage
-  roles:
-    - { role: http_apache, tags: ['comanage', 'web'] }
-    - { role: mysql, tags: ['comanage', 'db'] }
-    - { role: comanage_mysql, tags: ['comanage', 'db'] }
-    - { role: php56, tags: ['comanage', 'web'] }
-    - { role: auth_mellon, tags: ['comanage', 'web'] }
-    - { role: comanage, tags: ['comanage', 'web'] }
 
 - hosts: ldap
   roles:
@@ -75,19 +69,22 @@
 
 - hosts: comanage
   roles:
-    - { role: comanage_idp, tags: ['comanage', 'web'] }
-    - { role: comanage_enable, tags: ['comanage', 'web'] }
+    - { role: http_apache,      tags: ['comanage', 'web'] }
+    - { role: mysql,            tags: ['comanage', 'db' ] }
+    - { role: comanage_mysql,   tags: ['comanage', 'db' ] }
+    - { role: php56,            tags: ['comanage', 'web'] }
+    - { role: auth_mellon,      tags: ['comanage', 'web'] }
+    - { role: comanage,         tags: ['comanage', 'web'] }
+    - { role: comanage_idp,     tags: ['comanage', 'web'] }
+    - { role: comanage_enable,  tags: ['comanage', 'web'] }
     - { role: comanage_plugins, tags: ['comanage', 'web'] }
 
 - hosts: client
   roles:
-    - { role: http_dummy,  tags: ['client','test'] }
+    - { role: clients,     tags: ['clients']    }
 
 - hosts: meta
   roles:
     - { role: http_dummy,  tags: ['http']      }
     - { role: metadata,    tags: ['metadata']  }
 
-- hosts: client
-  roles:
-    - { role: clients,     tags: ['clients']    }

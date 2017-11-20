@@ -1,4 +1,6 @@
 ---
+enable_https: true
+
 haproxy:
   custom_dhparam: true
   dhparam_file: /etc/ssl/dh_param.pem

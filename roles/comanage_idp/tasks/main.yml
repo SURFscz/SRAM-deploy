@@ -29,31 +29,6 @@
     mode: 0600
     validate_certs: no
 
-- name: Obtain IdP certificate
-  get_url:
-    url: "{{ idp_certificate_url }}"
-    dest: "{{ idp_certificate_path }}"
-    owner: www-data
-    mode: 0600
-    validate_certs: no
-  when: idp_extract_certificate == False
-  notify:
-    - Restart Apache
-
-# The following line is based on a SimpleSAMLphp metadata export. It extracts the Certificate nodes
-# (only the first), then base64 decodes it and uses openssl to re-encode it as a PEM certificate.
-# Mileage may vary, adjust as required
-- name: Extract IdP certificate from XML metadata
-  shell: >
-    xmlstarlet sel -N md='urn:oasis:names:tc:SAML:2.0:metadata'
-    -N ds='http://www.w3.org/2000/09/xmldsig#' -t
-    -v {{ idp_xml_sso_tag }}
-    {{ idp_metadata_path }} | base64 --decode |
-    openssl x509 -inform DER -out {{ idp_certificate_path }}
-  when: idp_extract_certificate == True
-  notify:
-    - Restart Apache
-
 # Finally add a RewriteRule to the CoManage .htaccess to allow redirection of the
 # sp metadata to a convenient URL
 - name: Add rewrite rule for SP metadata
@@ -63,4 +38,5 @@
     insertafter: "RewriteRule.*$"
     path: "{{ comanage_path }}/.htaccess"
   notify:
-    - Restart Apache
+    - restart apache
+

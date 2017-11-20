@@ -184,8 +184,8 @@
         chdir: "{{ satosa_env_dir }}"
 
     - name: Copy clients.json example file
-      copy: >
-        src=clients.json
+      template: >
+        src=clients.json.j2
         dest="{{ satosa_env_dir }}/metadata/clients.json"
         mode=0755
 

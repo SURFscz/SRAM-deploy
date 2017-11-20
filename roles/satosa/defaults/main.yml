@@ -1,4 +1,6 @@
 ---
+http_proto: https
+
 # SATOSA configuration
 satosa_repo_url: "https://github.com/SURFscz/SATOSA.git"
 satosa_repo_version: "scz-poc"

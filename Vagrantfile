@@ -19,10 +19,9 @@ if ARGV[0] == "up"  and  ( !sshkeypriv.exist?  or  !sshkeypub.exist? )
 	File.chmod(0600,sshkeypriv)
 end
 
-
 ENV['COMPOSE_PROJECT_NAME']="scz"
 
-N=4
+N=6
 machines = {
 	"m1" => {
 		"name"      => "ldap",
@@ -47,7 +46,19 @@ machines = {
 		"ip"        => "172.20.1.23",
 		"hostname"  => "meta.scz.vnet",
 		"limit"     => ['meta'],
-		"ports"     => [ '2522:22','2580:80','2543:443'] }
+		"ports"     => [ '2522:22','2580:80','2543:443'] },
+	"m5" => {
+		"name"      => "lb",
+		"ip"        => "172.20.1.24",
+		"hostname"  => "lb.scz.vnet",
+		"limit"     => ['lb'],
+		"ports"     => [ '2622:22','2680:80','2643:443'] },
+	"m6" => {
+		"name"      => "client",
+		"ip"        => "172.20.1.25",
+		"hostname"  => "client.scz.vnet",
+		"limit"     => ['client'],
+		"ports"     => [ '2722:22','2780:80','2743:443'] }
 }
 
 # All Vagrant configuration is done below. The "2" in Vagrant.configure
@@ -57,6 +68,8 @@ machines = {
 Vagrant.configure("2") do |config|
 	# Workaround for ttyname errors: https://stackoverflow.com/questions/40815349/
 	config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
+	config.ssh.private_key_path = [sshkeypriv,"~/.vagrant.d/insecure_private_key"]
+	config.ssh.insert_key = false
 
 	config.vm.synced_folder ".", "/vagrant", disabled: true
 
@@ -86,6 +99,14 @@ Vagrant.configure("2") do |config|
 		lv.memory = "512"
 		lv.graphics_type = "spice"
 		lv.video_type = "qxl"
+	end
+
+	if Vagrant.has_plugin?("vagrant-cachier")
+		config.cache.scope = :box
+		config.cache.synced_folder_opts = {
+			type: :rsync,
+			owner: "_apt",
+		}
 	end
 
 	# we add the key to authorized_keys instead of provisioning the entire file, to allow
@@ -175,6 +196,32 @@ Vagrant.configure("2") do |config|
 										"ipv4_address" => machines["m4"]["ip"]
 									}
 								}
+							},
+							machines["m5"]["name"] => {
+								"build" => {
+									"context" => "../../docker/#{machines['m5']['name']}"
+								},
+								"command" => ["/usr/sbin/sshd", "-D" ],
+								"image" => "scz:#{machines['m5']['name']}",
+								"hostname" => "#{machines['m5']['name']}.scz.vnet",
+								"networks" => {
+									"scznet" => {
+										"ipv4_address" => machines["m5"]["ip"]
+									}
+								}
+							},
+							machines["m6"]["name"] => {
+								"build" => {
+									"context" => "../../docker/#{machines['m6']['name']}"
+								},
+								"command" => ["/usr/sbin/sshd", "-D" ],
+								"image" => "scz:#{machines['m6']['name']}",
+								"hostname" => "#{machines['m6']['name']}.scz.vnet",
+								"networks" => {
+									"scznet" => {
+										"ipv4_address" => machines["m6"]["ip"]
+									}
+								}
 							}
 						},
 						"networks" => {
@@ -190,17 +237,14 @@ Vagrant.configure("2") do |config|
 						}
 					}
 				end
-				m.ssh.insert_key = false
 
 				m.vm.provision :ansible do |ansible|
 					ansible.playbook = "provision.yml"
 					ansible.inventory_path = "./environments/vm/inventory"
 					#                   ansible.verbose = 3
 					#                   ansible.raw_arguments = "-vvv"
-					ansible.raw_ssh_args = ["-o IdentityFile=.vagrant/id_rsa"]
-					ansible.limit = "comanage,ldap,proxy,meta"
+					ansible.limit = "comanage,ldap,proxy,meta,lb,client"
 					ansible.extra_vars = {
-						user: "vagrant",
 						secrets_file: "environments/vm/secrets/all.yml",
 					}
 				end

@@ -1,4 +1,6 @@
 ---
+http_proto: https
+
 # pyFF configuration
 pyff_repo_url: "https://github.com/leifj/pyFF.git"
 pyff_repo_version: "master"

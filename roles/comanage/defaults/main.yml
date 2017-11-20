@@ -1,4 +1,6 @@
 ---
+http_proto: https
+
 # TODO: note, this seems to be used somehow for pilot....
 #comanage_version: 1.0.7
 comanage_url: "https://github.com/Internet2/comanage-registry/archive/{{ comanage_version }}.tar.gz"
@@ -16,7 +18,7 @@ comanage_root: "{{ comanage_install_dir }}"
 # we publish in our certificate. Because of reverse proxy settings, this hostname
 # should include the https:// protocol as well, which allows us to recognise a
 # https:// request on port 80 as a valid regular request
-comanage_full_hostname: "https://{{ sp_hostname }}"
+comanage_full_hostname: "{{http_proto}}://{{ sp_hostname }}"
 
 comanage_db_user: comanage
 comanage_db_password: changethispassword

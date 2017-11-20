@@ -1,5 +1,7 @@
 ---
 enable_ipv6: true
+enable_https: false
+
 letsencrypt:
   use_staging: false
   acme_challenge_dir: "/var/www/certbot"
@@ -9,8 +11,6 @@ firewall_v4_incoming:
   - { name: bastion,      src: "{{iprange.bastion}}", dport:  "22", proto: tcp }
   - { name: public_http,                              dport:  "80", proto: tcp }
   - { name: public_https,                             dport: "443", proto: tcp }
-
-firewall_v6_incoming:
-  - { name: public_http,                              dport: "80",  proto: tcp }
-  - { name: public_https,                             dport: "443", proto: tcp }
+  - { name: vagrant,      src: "{{iprange.vagrant}}", dport:  "22", proto: tcp }
+  - { name: vnet,         src: "{{iprange.vpn.vm}}",  dport: "22,80,443", proto: tcp }
 

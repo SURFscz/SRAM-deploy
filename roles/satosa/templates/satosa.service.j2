@@ -6,7 +6,7 @@ After=syslog.target network.target
 Type=simple
 User=satosa
 WorkingDirectory={{ satosa_env_dir }}
-ExecStart={{ satosa_env_dir }}/bin/gunicorn -b{{ satosa_host }}:{{ satosa_port }} satosa.wsgi:app
+ExecStart={{ satosa_env_dir }}/bin/python {% if http_proto!="https" %}-O{% endif %} {{ satosa_env_dir }}/bin/gunicorn -b{{ satosa_host }}:{{ satosa_port }} satosa.wsgi:app
 Restart=on-abort
 
 [Install]

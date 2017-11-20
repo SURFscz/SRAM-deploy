@@ -1,27 +1,36 @@
 ---
+# note: {{playbook_dir}} would probably be nicer, but it turns out that that is
+# a relative path, which ssh doesn't understand
+ansible_ssh_user: "vagrant"
+ansible_ssh_private_key_file: "{{inventory_dir}}/../../.vagrant/id_rsa"
+
 secrets_file: "environments/vm/secrets/all.yml"
 
 admin_email: "admin@scz.vnet"
 
 servers:
   dns:
-    - 8.8.8.8
-    - 208.67.222.222
-    - 208.67.220.220
+    - 172.20.1.1
   ntp:
     - 0.pool.ntp.org
     - 1.pool.ntp.org
     - 2.pool.ntp.org
     - 3.pool.ntp.org
 
+fake_hostnames: true
+http_proto: http
+
+# onderstaande is breekbaar; ansible_default_ipv4 kan best een dhcp-ip zijn
+# dat niet in de inventory is gedefinieerd. (afhankelijk van je configuratie
+# van libvirt etc)
 iprange:
   vpn:
-    vm:   172.20.1.0/24
-  bastion:   172.20.1.1
-  lb:        "{{hostvars[ groups['lb'][0] ]['ansible_default_ipv4']['address']}}"
-  comanage:  "{{hostvars[ groups['comanage'][0] ]['ansible_default_ipv4']['address']}}"
-  mgnt:      "{{hostvars[ groups['mgnt1'][0] ]['ansible_default_ipv4']['address']}}/\
-              {{hostvars[ groups['mgnt1'][0] ]['ansible_default_ipv4']['netmask']}}"
+    vm:   "172.20.1.0/24"
+  vagrant: "192.168.121.0/24"
+  bastion:   "172.20.1.1"
+  lb:        "172.20.1.24"
+  comanage:  "172.20.1.21"
+  mgnt:      "172.20.1.0/24"
 
 mail:
   relay_host: "172.20.1.1"
@@ -46,6 +55,8 @@ users:
 
 firewall_v4_incoming:
   - { name: bastion,  src: "{{iprange.bastion}}", dport: "22,80,443", proto: tcp }
+  - { name: vnet,     src: "{{iprange.vpn.vm}}",  dport: "22,80,443", proto: tcp }
+  - { name: vagrant,  src: "{{iprange.vagrant}}", dport: "22", proto: tcp }
 
 # LDAP definition is here, because we need it in both the Ldap and Comanage groups
 ldap_base:
