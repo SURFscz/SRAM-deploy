@@ -93,8 +93,8 @@
         dest={{ simplesaml_project_dir }}/simplesaml/config/config.php
 
     - name: SimpleSaml test authsources
-      copy: >
-        src=authsources.php
+      template: >
+        src=authsources.php.j2
         dest={{ simplesaml_project_dir }}/simplesaml/config/authsources.php
 
     - name: SimpleSaml enable example-userpass
