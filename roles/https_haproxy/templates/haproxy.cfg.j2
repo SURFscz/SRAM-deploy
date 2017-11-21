@@ -13,9 +13,9 @@ global
 	# Default SSL material locations
 	ca-base /etc/ssl/certs
 {% if enable_https and use_fixed_cert %}
-	crt-base {{letsencrypt.cert_dir}}
-{% else %}
 	crt-base {{cert_dir}}
+{% elif enable_https %}
+	crt-base {{letsencrypt.cert_dir}}
 {% endif %}
 
 
@@ -23,7 +23,7 @@ global
 	ssl-default-bind-options no-sslv3 no-tlsv10
 {% if enable_https and haproxy.custom_dhparam %}
 	ssl-dh-param-file {{haproxy.dhparam_file}}
-{% else %}
+{% elif enable_https %}
 	tune.ssl.default-dh-param {{haproxy.dhparam_keysize}}
 {% endif %}
 
