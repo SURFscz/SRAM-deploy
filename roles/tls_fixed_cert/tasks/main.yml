@@ -1,0 +1,27 @@
+---
+
+- name: write secret key
+  copy: content={{https_cert.key}} dest={{cert_dir}}/key.pem mode=0640 owner=root group=ssl-cert
+
+- name: write certificate
+  copy: content={{https_cert.cert}} dest={{cert_dir}}/cert.pem mode=0640 owner=root group=ssl-cert
+
+- name: write chain
+  copy: content={{https_cert.chain}} dest={{cert_dir}}/chain.pem mode=0640 owner=root group=ssl-cert
+
+- name: write fullchain
+  copy: >
+    content="{{http_cert.cert}}\n{{https_cert.chain}}"
+    dest={{cert_dir}}/fullchain.pem
+    mode=0640 owner=root group=ssl-cert
+
+- name: write priv+fullchain
+  copy: >
+    content="{{https_cert.key}}\n{{http_cert.cert}}\n{{https_cert.chain}}"
+    dest={{cert_dir}}/fullchain.pem
+    mode=0640 owner=root group=ssl-cert
+
+- name: make links for all hosts
+  file: dest={{cert_dir}}/{{item}} type=link src=../
+  with_items: '{{loadbalancer|map(attribute="hostname")|list}}'
+

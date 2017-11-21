@@ -52,7 +52,10 @@
       tags: ['lb','http_nginx']
     - role: tls_letsencrypt
       tags: ['lb','tls_letsencrypt']
-      when: enable_https
+      when: enable_https and not use_fixed_cert
+    - role: tls_fixed_cert
+      tags: ['lb','tls_fixedcert']
+      when: enable_https and use_fixed_cert
     - { role: https_haproxy,   tags: ['lb','https_haproxy'] }
 
 - hosts: ldap

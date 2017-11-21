@@ -12,7 +12,12 @@ global
 
 	# Default SSL material locations
 	ca-base /etc/ssl/certs
+{% if enable_https and use_fixed_cert %}
 	crt-base {{letsencrypt.cert_dir}}
+{% else %}
+	crt-base {{cert_dir}}
+{% endif %}
+
 
 	ssl-default-bind-ciphers ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-SHA384:DHE-RSA-AES256-SHA256:ECDHE-RSA-AES256-SHA:DHE-RSA-AES256-SHA
 	ssl-default-bind-options no-sslv3 no-tlsv10

@@ -18,7 +18,7 @@ servers:
     - 3.pool.ntp.org
 
 fake_hostnames: true
-http_proto: http
+http_proto: https
 
 # onderstaande is breekbaar; ansible_default_ipv4 kan best een dhcp-ip zijn
 # dat niet in de inventory is gedefinieerd. (afhankelijk van je configuratie
