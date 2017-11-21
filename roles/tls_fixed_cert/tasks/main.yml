@@ -1,27 +1,31 @@
 ---
+- name: create ssl directory
+  file: dest={{cert_dir}} state=directory mode=0700
 
 - name: write secret key
-  copy: content={{https_cert.key}} dest={{cert_dir}}/key.pem mode=0640 owner=root group=ssl-cert
+  copy: content={{https_cert.key}} dest={{cert_dir}}/key.pem mode=0600 owner=root
 
 - name: write certificate
-  copy: content={{https_cert.cert}} dest={{cert_dir}}/cert.pem mode=0640 owner=root group=ssl-cert
+  copy: content={{https_cert.cert}} dest={{cert_dir}}/cert.pem mode=0600 owner=root
 
 - name: write chain
-  copy: content={{https_cert.chain}} dest={{cert_dir}}/chain.pem mode=0640 owner=root group=ssl-cert
+  copy: content={{https_cert.chain}} dest={{cert_dir}}/chain.pem mode=0600 owner=root
 
 - name: write fullchain
   copy: >
-    content="{{http_cert.cert}}\n{{https_cert.chain}}"
+    content="{{https_cert.cert}}\n{{https_cert.chain}}"
     dest={{cert_dir}}/fullchain.pem
-    mode=0640 owner=root group=ssl-cert
+    mode=0600
+    owner=root
 
 - name: write priv+fullchain
   copy: >
-    content="{{https_cert.key}}\n{{http_cert.cert}}\n{{https_cert.chain}}"
-    dest={{cert_dir}}/fullchain.pem
-    mode=0640 owner=root group=ssl-cert
+    content="{{https_cert.key}}\n{{https_cert.cert}}\n{{https_cert.chain}}"
+    dest={{cert_dir}}/priv+fullchain.pem
+    mode=0600
+    owner=root
 
 - name: make links for all hosts
-  file: dest={{cert_dir}}/{{item}} type=link src=../
+  file: dest={{cert_dir}}/{{item}} state=link src=./
   with_items: '{{loadbalancer|map(attribute="hostname")|list}}'
 
