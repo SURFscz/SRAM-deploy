@@ -5,6 +5,10 @@
   <md:SPSSODescriptor AuthnRequestsSigned="true"
                       WantAssertionsSigned="true"
                       protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+    <md:SingleLogoutService
+        Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
+        Location="{{ sp_endpoint_url }}/logout"
+        ResponseLocation="{{ sp_home }}" />
     <md:Extensions>
       <mdui:UIInfo>
         <mdui:DisplayName xml:lang="en">COmanage ({{ sp_hostname }})</mdui:DisplayName>
@@ -20,7 +24,7 @@
         </ds:X509Data>
       </ds:KeyInfo>
     </md:KeyDescriptor>
-   <md:NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified</md:NameIDFormat>
+    <md:NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified</md:NameIDFormat>
     <md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="{{ sp_endpoint_url }}/postResponse" index="1"/>
   </md:SPSSODescriptor>
   <md:Organization>

@@ -21,6 +21,9 @@
     </IfModule>
 {% endif %}
 
+
+    Redirect {{ sp_home }}/users/logout {{ sp_path }}/logout?ReturnTo={{ sp_home }}
+
     <IfModule mod_php5.c>
         <FilesMatch "\.ph(p|tml)$">
             SetHandler application/x-httpd-php
