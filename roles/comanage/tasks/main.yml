@@ -170,8 +170,9 @@
 
 - name: Create API user
   command: >
-    mysql -Nse 'INSERT INTO {{ comanage_db }}.{{ comanage_api_users_table }} (username, password, created, modified)
-    VALUES ("{{ comanage_api_user }}", SHA1("{{ comanage_salt.stdout }}{{ comanage_api_password }}"), NULL, NULL);'
+    mysql -Nse 'INSERT INTO {{ comanage_db }}.{{ comanage_api_users_table }}
+    (username, password, created, modified) VALUES ("{{ comanage_api_user }}",
+    SHA1("{{ comanage_salt.stdout }}{{ comanage_api_password }}"), NULL, NULL);'
     -u {{ comanage_db_user }} "--password={{ comanage_db_password }}"
   when: comanage_api_user_exists.stdout == "0"
 
