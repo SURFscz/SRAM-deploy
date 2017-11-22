@@ -157,6 +157,24 @@
     chdir: "{{ comanage_package }}/app"
   when: comanage_cm_users_table_exists.stdout == "0"
 
+- name: Check for API user in the COmanage database
+  command: >
+    mysql -Nse 'SELECT COUNT(*) FROM {{ comanage_db }}.{{comanage_api_users_table }}
+    WHERE username="{{ comanage_api_user }}";'
+    -u {{ comanage_db_user }} "--password={{ comanage_db_password }}"
+  register: comanage_api_user_exists
+
+- name: Read COmanage salt
+  command: cat {{ comanage_package }}/app/Config/security.salt
+  register: comanage_salt
+
+- name: Create API user
+  command: >
+    mysql -Nse 'INSERT INTO {{ comanage_db }}.{{ comanage_api_users_table }} (username, password, created, modified)
+    VALUES ("{{ comanage_api_user }}", SHA1("{{ comanage_salt.stdout }}{{ comanage_api_password }}"), NULL, NULL);'
+    -u {{ comanage_db_user }} "--password={{ comanage_db_password }}"
+  when: comanage_api_user_exists.stdout == "0"
+
 - name: Reset Config directory ownership and permissions
   file:
     path: "{{ comanage_package }}/local/Config"
