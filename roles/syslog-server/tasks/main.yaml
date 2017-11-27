@@ -1,0 +1,50 @@
+---
+- name: Ensure that apt-transport-https and openjdk-8-jdk are installed
+  apt:
+    name: "{{ item }}"
+  with_items:
+    - apt-transport-https
+    - openjdk-8-jdk
+
+- name: Add Elesticsearch key
+  apt_key:
+    url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+
+- name: Add Elasticsearch repository
+  apt_repository:
+    repo: "deb https://artifacts.elastic.co/packages/6.x/apt stable main"
+    update_cache: yes
+
+- name: Ensure that packages are installed
+  apt:
+    name: "{{ item }}"
+    install_recommends: no
+  with_items:
+      - elasticsearch
+      - logstash
+      - kibana
+
+- name: Ensure Elasticsearch data directory exists
+  file: path=/var/elasticsearch state=directory mode=0750 owner=elasticsearch
+
+- name: Copy elasticsearch configuration file
+  copy: >
+    src=elasticsearch.yml
+    dest=/etc/elasticsearch/elasticsearch.yml
+
+- name: Copy logstash configuration file
+  copy: >
+    src=logstash.conf
+    dest=/etc/logstash/conf.d/logstash.conf
+
+- name: Copy kibana configuration file
+  copy: >
+    src=kibana.yml
+    dest=/etc/kibana/kibana.yml
+
+- name: restart Services
+  systemd: daemon_reload=yes name={{ item }} state=restarted enabled=yes
+  with_items:
+    - elasticsearch
+    - logstash
+    - kibana

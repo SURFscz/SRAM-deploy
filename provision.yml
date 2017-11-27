@@ -43,7 +43,7 @@
 
 - hosts: mgnt2
   roles:
-  #  - { role: logstash, tags: ['logstash'] }
+    - { role: syslog-server,   tags: ['syslog'] }
   #  - { role: logstash, tags: ['logstash'] }
 
 - hosts: lb
@@ -67,11 +67,12 @@
 
 - hosts: proxy
   roles:
-    - { role: satosa,      tags: ['proxy','satosa'    ] }
-    - { role: pyff,        tags: ['proxy','pyff'      ] }
-    - { role: cmservice,   tags: ['proxy','cmservice' ] }
-    - { role: mysql,       tags: ['proxy','mysql'     ] }
-    - { role: proxy_mysql, tags: ['proxy','mysql'     ] }
+    - { role: syslog-client, tags: ['proxy','syslog'    ] }
+    - { role: satosa,        tags: ['proxy','satosa'    ] }
+    - { role: pyff,          tags: ['proxy','pyff'      ] }
+    - { role: cmservice,     tags: ['proxy','cmservice' ] }
+    - { role: mysql,         tags: ['proxy','mysql'     ] }
+    - { role: proxy_mysql,   tags: ['proxy','mysql'     ] }
 
 - hosts: comanage
   roles:

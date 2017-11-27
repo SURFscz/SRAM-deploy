@@ -1,0 +1,5 @@
+ - paths:
+    - /opt/satosa/satosa-env/var/custom.log
+  fields:
+    source: satosa
+  fields_under_root: true

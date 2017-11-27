@@ -214,5 +214,10 @@
     dest=/etc/systemd/system/satosa.service
     remote_src=yes
 
+- name: Copy filebeat config
+  copy: >
+    src=filebeat.yml
+    dest=/etc/filebeat/conf.d/satosa.yml
+
 - name: restart SATOSA
   systemd: daemon_reload=yes name=satosa state=restarted enabled=yes
