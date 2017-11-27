@@ -20,7 +20,7 @@
     state: present
     install_recommends: no
   with_items:
-      - filebeat
+    - filebeat
 
 - name: Ensure filebeat include dir exists
   file: path=/etc/filebeat/conf.d state=directory mode=0750

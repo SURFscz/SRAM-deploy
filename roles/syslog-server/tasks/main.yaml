@@ -20,9 +20,9 @@
     name: "{{ item }}"
     install_recommends: no
   with_items:
-      - elasticsearch
-      - logstash
-      - kibana
+    - elasticsearch
+    - logstash
+    - kibana
 
 - name: Ensure Elasticsearch data directory exists
   file: path=/var/elasticsearch state=directory mode=0750 owner=elasticsearch

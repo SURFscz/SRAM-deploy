@@ -67,7 +67,8 @@ path.logs: /var/log/elasticsearch
 #
 #discovery.zen.ping.unicast.hosts: ["host1", "host2"]
 #
-# Prevent the "split brain" by configuring the majority of nodes (total number of master-eligible nodes / 2 + 1):
+# Prevent the "split brain" by configuring the majority of nodes (total number
+# of master-eligible nodes / 2 + 1):
 #
 #discovery.zen.minimum_master_nodes: 3
 #
