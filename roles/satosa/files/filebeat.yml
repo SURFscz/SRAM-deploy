@@ -1,3 +1,4 @@
+---
 - paths:
     - /opt/satosa/satosa-env/var/custom.log
   fields:

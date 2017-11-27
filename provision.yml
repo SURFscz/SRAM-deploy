@@ -44,7 +44,6 @@
 - hosts: mgnt2
   roles:
     - { role: syslog-server,   tags: ['syslog'] }
-  #  - { role: logstash, tags: ['logstash'] }
 
 - hosts: lb
   roles:
