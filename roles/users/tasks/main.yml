@@ -21,6 +21,7 @@
   user: name={{item}} state=absent remove=yes
   with_items:
     - surf
+    - debian
 
 - name: create groups
   group: name={{item}} state=present
