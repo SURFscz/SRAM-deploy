@@ -32,7 +32,7 @@
   user: name={{item.uid}} state=present
   args:
     group: "{{item.groups[0]}}"
-    groups: "{{item.groups|join(',')}}"
+    groups: "{{item.groups}}"
     password: "{{item.pw_hash}}"
     shell: "/bin/bash"
     comment: "{{item.name}}"
