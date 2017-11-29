@@ -2,6 +2,10 @@
 sudo_groups:
   - sudo_test
 
+environment_name: vm
+environment_string: "SCZ VM"
+
+
 hostnames:
   proxy: proxy.scz.vnet
   mdq: mdq.scz.vnet
