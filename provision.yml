@@ -22,6 +22,10 @@
       with_items: "{{groups['all']}}"
       tags: always
 
+#- hosts: all
+#  roles:
+#    - { role: debug,    tags: ['debug'] }
+
 - hosts: all
   roles:
     - { role: basic,    tags: ['common'] }
