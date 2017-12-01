@@ -74,10 +74,10 @@
   # https://github.com/systemd/systemd/issues/3010
   #- name: Create symlink to pyff.service in /etc/systemd/system
   #  file: src="{{ pyff_env_dir }}/pyff.service" dest=/etc/systemd/system/pyff.service state=link
-  copy: >
-    src="{{ pyff_env_dir }}/pyff.service"
-    dest=/etc/systemd/system/pyff.service
-    remote_src=yes
+  copy:
+    src: "{{ pyff_env_dir }}/pyff.service"
+    dest: /etc/systemd/system/pyff.service
+    remote_src: yes
 
 - name: Create pyff-owned pyff.pid file
   file: path=/var/run/pyff.pid state=touch owner=pyff

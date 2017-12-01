@@ -24,49 +24,55 @@
     - index.nginx-debian.html
 
 - name: Create new SP test root index.php
-  template: >
-    src=sp_index.php.j2
-    dest=/var/www/html/index.php
-    mode=0644
+  template:
+    src: sp_index.php.j2
+    dest: /var/www/html/index.php
+    mode: 0644
 
 - name: Create OIDC RP test dir
-  file: >
-    path="/var/www/html/oidc"
-    state=directory mode=0755 owner=www-data group=www-data
+  file:
+    path: "/var/www/html/oidc"
+    state: directory
+    mode: 0755
+    owner: www-data
+    group: www-data
 
 - name: Create new OIDC RP test root index.php
-  copy: >
-    src=oidc_index.php
-    dest=/var/www/html/oidc/index.php
-    mode=0644
+  copy:
+    src: oidc_index.php
+    dest: /var/www/html/oidc/index.php
+    mode: 0644
 
 - name: Remove default website
   file: dest=/etc/apache2/sites-enabled/00-default state=absent
 
 - name: Add websites
-  template: >
-    src={{ item }}.conf.j2
-    dest=/etc/apache2/sites-available/{{ item }}.conf
-    mode=0644
+  template:
+    src: "{{ item }}.conf.j2"
+    dest: "/etc/apache2/sites-available/{{ item }}.conf"
+    mode: 0644
   with_items:
     - idp
     - oidc
     - sp
 
 - name: Enable websites
-  file: >
-    src=/etc/apache2/sites-available/{{ item }}.conf
-    dest=/etc/apache2/sites-enabled/00-{{ item }}.conf
-    state=link
+  file:
+    src: "/etc/apache2/sites-available/{{ item }}.conf"
+    dest: "/etc/apache2/sites-enabled/00-{{ item }}.conf"
+    state: link
   with_items:
     - idp
     - oidc
     - sp
 
 - name: Create simplesaml project dir
-  file: >
-    path="{{ simplesaml_project_dir }}"
-    state=directory mode=0755 owner=www-data group=www-data
+  file:
+    path: "{{ simplesaml_project_dir }}"
+    state: directory
+    mode: 0755
+    owner: www-data
+    group: www-data
 
 - block:
     - name: Download SimpleSamlPHP
@@ -75,45 +81,45 @@
                   dest={{ simplesaml_project_dir }} remote_src=yes"
 
     - name: Link simplesaml
-      file: >
-        src="{{ simplesaml_project_dir }}/simplesamlphp-{{ simplesaml_version }}"
-        dest={{ simplesaml_project_dir }}/simplesaml
-        state=link
+      file:
+        src: "{{ simplesaml_project_dir }}/simplesamlphp-{{ simplesaml_version }}"
+        dest: "{{ simplesaml_project_dir }}/simplesaml"
+        state: link
 
     - name: SimpleSaml configuration
-      copy: >
-        src=config.php
-        dest={{ simplesaml_project_dir }}/simplesaml/config/config.php
+      copy:
+        src: config.php
+        dest: "{{ simplesaml_project_dir }}/simplesaml/config/config.php"
 
     - name: SimpleSaml test authsources
-      template: >
-        src=authsources.php.j2
-        dest={{ simplesaml_project_dir }}/simplesaml/config/authsources.php
+      template:
+        src: authsources.php.j2
+        dest: "{{ simplesaml_project_dir }}/simplesaml/config/authsources.php"
 
     - name: SimpleSaml enable example-userpass
-      file: >
-        dest={{ simplesaml_project_dir }}/simplesaml/modules/exampleauth/enable
-        state=touch
+      file:
+        dest: "{{ simplesaml_project_dir }}/simplesaml/modules/exampleauth/enable"
+        state: touch
 
     - name: SimpleSaml enable authcrypt
-      file: >
-        dest={{ simplesaml_project_dir }}/simplesaml/modules/authcrypt/enable
-        state=touch
+      file:
+        dest: "{{ simplesaml_project_dir }}/simplesaml/modules/authcrypt/enable"
+        state: touch
 
     - name: SimpleSaml {{ environment_string }} metadata
-      template: >
-        src={{ item }}.j2
-        dest={{ simplesaml_project_dir }}/simplesaml/metadata/{{ item }}
+      template:
+        src: "{{ item }}.j2"
+        dest: "{{ simplesaml_project_dir }}/simplesaml/metadata/{{ item }}"
       with_items:
         - saml20-sp-remote.php
         - saml20-idp-remote.php
         - saml20-idp-hosted.php
 
     - name: create self-signed Token Signing SSL certs
-      command: "openssl req -new -nodes -x509 -subj '/C=NL/CN=tokensigning' \
-                -days 3650 -keyout '{{ simplesaml_project_dir }}/simplesaml/cert/server.pem' \
-                -out '{{ simplesaml_project_dir }}/simplesaml/cert/server.crt' \
-                -extensions v3_ca"
+      command: >
+        openssl req -new -nodes -x509 -subj '/C=NL/CN=tokensigning'
+        -days 3650 -keyout '{{ simplesaml_project_dir }}/simplesaml/cert/server.pem'
+        -out '{{ simplesaml_project_dir }}/simplesaml/cert/server.crt' -extensions v3_ca
       args:
         creates: "{{ simplesaml_project_dir }}/simplesaml/cert/server.crt"
 

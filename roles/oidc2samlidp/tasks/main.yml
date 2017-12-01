@@ -41,38 +41,38 @@
         state: latest
 
     - name: Create SATOSA  proxy_conf configuration
-      template: >
-        src=proxy_conf.yaml.j2
-        dest="{{ satosa_env_dir }}/proxy_conf.yaml"
+      template:
+        src: proxy_conf.yaml.j2
+        dest: "{{ satosa_env_dir }}/proxy_conf.yaml"
 
     - name: Copy internal_attributes.yaml definition
-      copy: >
-        src=internal_attributes.yaml
-        dest="{{ satosa_env_dir }}/internal_attributes.yaml"
+      copy:
+        src: internal_attributes.yaml
+        dest: "{{ satosa_env_dir }}/internal_attributes.yaml"
 
     - name: Create backends directory
       file: path="{{ satosa_env_dir }}/plugins/backends" state=directory mode=0755
 
     - name: Create google_backend.yaml definition
-      template: >
-        src=google_backend.yaml.j2
-        dest="{{ satosa_env_dir }}/plugins/backends/google_backend.yaml"
+      template:
+        src: google_backend.yaml.j2
+        dest: "{{ satosa_env_dir }}/plugins/backends/google_backend.yaml"
 
     - name: Create frontends directory
       file: path="{{ satosa_env_dir }}/plugins/frontends" state=directory mode=0755
 
     - name: Create saml2_frontend.yaml definition
-      template: >
-        src=saml2_mirrorfrontend.yaml.j2
-        dest="{{ satosa_env_dir }}/plugins/frontends/saml2_mirrorfrontend.yaml"
+      template:
+        src: saml2_mirrorfrontend.yaml.j2
+        dest: "{{ satosa_env_dir }}/plugins/frontends/saml2_mirrorfrontend.yaml"
 
     - name: Create micro_services directory
       file: path="{{ satosa_env_dir }}/plugins/micro_services" state=directory mode=0755
 
     - name: Create custom_alias.yaml definition
-      template: >
-        src=custom_alias.yaml.j2
-        dest="{{ satosa_env_dir }}/plugins/micro_services/custom_alias.yaml"
+      template:
+        src: custom_alias.yaml.j2
+        dest: "{{ satosa_env_dir }}/plugins/micro_services/custom_alias.yaml"
 
     - name: Create certs directory
       file: path="{{ satosa_env_dir }}/certs" state=directory mode=0755
@@ -89,19 +89,19 @@
         - signing
 
     - name: Create SATOSA systemd service
-      template: >
-        src=satosa.service.j2
-        dest="{{ satosa_env_dir }}/satosa.service"
-        mode=0644
+      template:
+        src: satosa.service.j2
+        dest: "{{ satosa_env_dir }}/satosa.service"
+        mode: 0644
 
     - name: Create mapper directory
       file: path="{{ satosa_env_dir }}/mapper" state=directory mode=0755
 
     - name: Copy empty mapper config
-      copy: >
-        src={{ item }}
-        dest="{{ satosa_env_dir }}/mapper/{{ item }}"
-        mode=0755
+      copy:
+        src: "{{ item }}"
+        dest: "{{ satosa_env_dir }}/mapper/{{ item }}"
+        mode: 0755
       with_items:
         - __init__.py
         - basic.py
@@ -113,10 +113,10 @@
       file: path="{{ satosa_env_dir }}/metadata" state=directory mode=0755
 
     - name: Copy metadata generating script
-      copy: >
-        src=gen_metadata
-        dest="{{ satosa_env_dir }}/gen_metadata"
-        mode=0755
+      copy:
+        src: gen_metadata
+        dest: "{{ satosa_env_dir }}/gen_metadata"
+        mode: 0755
 
     - name: Generate metadata
       shell: ./gen_metadata
@@ -124,9 +124,9 @@
         chdir: "{{ satosa_env_dir }}"
 
     - name: Retreive Proxy metadata
-      get_url: >
-        url={{ sp_proxy_metadata_url }}
-        dest="{{ satosa_env_dir }}/metadata/sp_proxy_metadata.xml"
+      get_url:
+        url: "{{ sp_proxy_metadata_url }}"
+        dest: "{{ satosa_env_dir }}/metadata/sp_proxy_metadata.xml"
 
   become: "yes"
   become_user: satosa
@@ -137,10 +137,10 @@
   #- name: Create symlink to satosa.service in /etc/systemd/system
   #  file: src="{{ satosa_env_dir }}/satosa.service"
   #        dest=/etc/systemd/system/satosa.service state=link
-  copy: >
-    src="{{ satosa_env_dir }}/satosa.service"
-    dest=/etc/systemd/system/satosa.service
-    remote_src=yes
+  copy:
+    src: "{{ satosa_env_dir }}/satosa.service"
+    dest: "/etc/systemd/system/satosa.service"
+    remote_src: yes
 
 - name: restart SATOSA
   systemd: daemon_reload=yes name=satosa state=restarted enabled=yes
