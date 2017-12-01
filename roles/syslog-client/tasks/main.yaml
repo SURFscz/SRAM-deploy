@@ -6,7 +6,8 @@
 
 - name: Add Elesticsearch key
   apt_key:
-    url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+    #url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+    data: "{{ lookup('file', 'GPG-KEY-elasticsearch') }}"
 
 - name: Add Elastic Search repository
   apt_repository:
@@ -29,6 +30,11 @@
   template: >
     src=filebeat.yml.j2
     dest=/etc/filebeat/filebeat.yml
+
+#- name: Copy generic filebeat syslog config
+#   template: >
+#     src=fb_syslog.yml.j2
+#     dest=/etc/filebeat/conf.d/fb_syslog.yml
 
 - name: restart filebeat Service
   systemd: daemon_reload=yes name=filebeat state=restarted enabled=yes

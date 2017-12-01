@@ -1,0 +1,11 @@
+---
+- paths:
+    - {{ comanage_package }}/local/tmp/logs/debug.log
+  fields:
+    source: comanage
+    environment: {{ environment_name }}
+  fields_under_root: true
+  multiline.pattern: '^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}'
+  multiline.negate: true
+  multiline.match: after
+

@@ -34,7 +34,7 @@
       when: docker.stdout_lines[0] != "docker"
     - { role: users,    tags: ['common','users'] }
     - { role: mail,     tags: ['common','mail'] }
-#   - { role: logging,  tags: ['logging'  ] }
+    - { role: syslog-client, tags: ['common','syslog'    ] }
 
 - hosts: mgnt1
   roles:
@@ -66,7 +66,6 @@
 
 - hosts: proxy
   roles:
-    - { role: syslog-client, tags: ['proxy','syslog'    ] }
     - { role: satosa,        tags: ['proxy','satosa'    ] }
     - { role: pyff,          tags: ['proxy','pyff'      ] }
     - { role: cmservice,     tags: ['proxy','cmservice' ] }
