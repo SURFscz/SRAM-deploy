@@ -164,7 +164,7 @@
 
     - name: Copy empty mapper config
       copy:
-        src: {{ item }}
+        src: "{{ item }}"
         dest: "{{ satosa_env_dir }}/mapper/{{ item }}"
         mode: 0755
       with_items:
