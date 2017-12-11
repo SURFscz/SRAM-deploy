@@ -4,36 +4,66 @@
  *
  * See: https://simplesamlphp.org/docs/stable/simplesamlphp-reference-idp-hosted
  */
-
 $metadata['__DYNAMIC:1__'] = array(
-        /*
-         * The hostname of the server (VHOST) that will use this SAML entity.
-         *
-         * Can be '__DEFAULT__', to use this entry by default.
-         */
-        'OrganizationName' => '{{ environment_string }} IdP',
-
-        'OrganizationDisplayName' => '{{ environment_string }} IdP',
-
-        'OrganizationURL' => 'https://{{ hostnames.sp }}/',
-
+        'host' => 'google-test.scz.lab.surf.nl',
+        'OrganizationName' => 'SCZ Google IdP',
+        'OrganizationDisplayName' => 'SCZ Google IdP',
+        'OrganizationURL' => 'https://google-test.scz.lab.surf.nl/',
         'UIInfo' => array(
            'DisplayName' => array(
-                'en' => '{{ environment_string }} IdP'
+                'en' => 'SCZ Google IdP'
              ),
             'Description' => array(
-                'en' => '{{ environment_string }} IdP description'
+                'en' => 'SCZ Google IdP description'
              ),
             'Logo' => array(
                 array(
-                        'url' => 'https://{{ hostnames.sp }}/saml/resources/icons/ssplogo-fish-small.png',
+                        'url' => 'https://google-test.scz.lab.surf.nl/saml/resources/icons/ssplogo-fish-small.png',
                         'width' => '60',
                         'height' => '41'
                     )
             )
         ),
+        'privatekey' => 'server.pem',
+        'certificate' => 'server.crt',
+        'auth' => 'oidc-google',
+        'signature.algorithm' => 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256',
+        'authproc' => array(
+                // Convert LDAP names to oids.
+                100 => array('class' => 'core:AttributeMap', 'google2urn'),
+        ),
+);
 
+
+$metadata['__DYNAMIC:2__'] = array(
+        /*
+         * The hostname of the server (VHOST) that will use this SAML entity.
+         *
+         * Can be '__DEFAULT__', to use this entry by default.
+         */
         'host' => '__DEFAULT__',
+
+        'OrganizationName' => 'SCZ Test IdP',
+
+        'OrganizationDisplayName' => 'SCZ Test IdP',
+
+        'OrganizationURL' => 'https://sp-test.scz.lab.surf.nl/',
+
+        'UIInfo' => array(
+           'DisplayName' => array(
+                'en' => 'SCZ Test IdP'
+             ),
+            'Description' => array(
+                'en' => 'SCZ Test IdP description'
+             ),
+            'Logo' => array(
+                array(
+                        'url' => 'https://sp-test.scz.lab.surf.nl/saml/resources/icons/ssplogo-fish-small.png',
+                        'width' => '60',
+                        'height' => '41'
+                    )
+            )
+        ),
 
         // X.509 key and certificate. Relative to the cert directory.
         'privatekey' => 'server.pem',
@@ -77,7 +107,7 @@ $metadata['__DYNAMIC:1__'] = array(
         /*
          * Uncomment the following to specify the registration information in the
          * exported metadata. Refer to:
-     * http://docs.oasis-open.org/security/saml/Post2.0/saml-metadata-rpi/v1.0/cs01/saml-metadata-rpi-v1.0-cs01.html
+         * http://docs.oasis-open.org/security/saml/Post2.0/saml-metadata-rpi/v1.0/cs01/saml-metadata-rpi-v1.0-cs01.html
          * for more information.
          */
         /*
@@ -91,3 +121,4 @@ $metadata['__DYNAMIC:1__'] = array(
         ),
         */
 );
+

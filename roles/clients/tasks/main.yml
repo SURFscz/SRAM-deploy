@@ -12,6 +12,9 @@
     - php-json
     - php-simplexml
     - php-mbstring
+    - php-curl
+    - php-gmp
+    - composer
 
 # This breaks SimpleSAMLphp, do NOT enable globally.
 # Library load will be included in oidc site conf
@@ -96,11 +99,6 @@
         src: authsources.php.j2
         dest: "{{ simplesaml_project_dir }}/simplesaml/config/authsources.php"
 
-    - name: SimpleSaml enable example-userpass
-      file:
-        dest: "{{ simplesaml_project_dir }}/simplesaml/modules/exampleauth/enable"
-        state: touch
-
     - name: SimpleSaml enable authcrypt
       file:
         dest: "{{ simplesaml_project_dir }}/simplesaml/modules/authcrypt/enable"
@@ -122,6 +120,18 @@
         -out '{{ simplesaml_project_dir }}/simplesaml/cert/server.crt' -extensions v3_ca
       args:
         creates: "{{ simplesaml_project_dir }}/simplesaml/cert/server.crt"
+
+    - name: Install OIDC module
+      composer:
+        working_dir: "{{ simplesaml_project_dir }}/simplesaml"
+        command: require
+        arguments: bradjonesllc/simplesamlphp-module-openidconnect dev-master
+        optimize_autoloader: False
+
+    - name: Copy Google attribute map
+      file:
+        src: "google2urn.php"
+        dest: "{{ simplesaml_project_dir }}/simplesaml/attributemap"
 
   become: "yes"
   become_user: www-data

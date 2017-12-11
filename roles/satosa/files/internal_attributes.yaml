@@ -15,7 +15,7 @@ attributes:
     saml:
       - 'urn:mace:dir:attribute-def:displayName'
       - 'urn:oid:2.16.840.1.113730.3.1.241'
-  givenname:
+  givenName:
     openid: [given_name]
     saml:
       - 'urn:mace:dir:attribute-def:givenName'
@@ -45,7 +45,7 @@ attributes:
     saml:
       - 'urn:mace:terena.org:attribute-def:schacHomeOrganization'
       - 'urn:oid:1.3.6.1.4.1.25178.1.2.9'
-  edupersontargetedid:
+  eduPersonTargetedID:
     openid: [eduperson_targeted_id]
     saml:
       - 'urn:mace:dir:attribute-def:eduPersonTargetedID'

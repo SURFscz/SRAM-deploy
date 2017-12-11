@@ -81,4 +81,4 @@
   roles:
     #- { role: http_dummy,  tags: ['client','test'] }
     - { role: clients,     tags: ['clients']    }
-    - { role: oidc2samlidp, tags: ['oidc2samlidp'] }
+    #- { role: oidc2samlidp, tags: ['oidc2samlidp'] }
