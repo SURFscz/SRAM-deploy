@@ -1,0 +1,11 @@
+module: satosa.micro_services.r_and_s_acl.RandSAcl
+name: RandSAcl
+config:
+  attribute_mapping:
+    edupersonprincipalname: eduPersonPrincipalName
+    edupersontargetedid: edupersontargetedid
+    displayname: displayName
+    givenname: givenname
+    sn: surname
+    mail: mail
+  access_denied: '/static/r_and_s_failed'

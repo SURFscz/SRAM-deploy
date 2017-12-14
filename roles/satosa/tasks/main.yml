@@ -103,6 +103,11 @@
         src: consent.yaml.j2
         dest: "{{ satosa_env_dir }}/plugins/micro_services/consent.yaml"
 
+    - name: Create r_and_s_acl.yaml definition
+      template:
+        src: r_and_s_acl.yaml.j2
+        dest: "{{ satosa_env_dir }}/plugins/micro_services/r_and_s_acl.yaml"
+
     - name: Create static directory
       file: path="{{ satosa_env_dir }}/static" state=directory mode=0755
 
@@ -119,6 +124,7 @@
         - info
         - error
         - access_denied
+        - r_and_s_failed
 
     - name: Create MongoDB database satosa with collection clients
       shell: mongo satosa --eval "db.createCollection('clients')"
