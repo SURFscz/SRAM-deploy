@@ -35,6 +35,13 @@
     dest: "{{ ldap_bin_dir }}"
     mode: 0755
 
+- name: Copy set_loglevel_stats.ldif
+  become_user: "{{ ldap_user }}"
+  copy:
+    src: roles/ldap/files/set_loglevel_stats.ldif
+    dest: "{{ ldap_ldif_dir }}"
+    mode: 0755
+
 - name: Fetch the eduPerson schema
   become_user: "{{ ldap_user }}"
   become: true
@@ -151,6 +158,9 @@
 - name: Ensure the ldap admin credentials are set
   command: ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f "{{ ldap_ldif_dir }}/set_root_credentials.ldif"
 
+- name: Set loglevel to stats
+  command: ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f "{{ ldap_ldif_dir }}/set_loglevel_stats.ldif"
+
 - name: Check if DIT has been created before
   command:
     ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// -b "{{ ldap.basedn }}" "(ou=group)" dn
@@ -167,3 +177,20 @@
   failed_when: "(result.rc not in [0, 68])"
   tags: ldap
   when: emptyDIT.stdout == ""
+
+- name: Redirect slapd log to /var/log/slapd.log
+  copy:
+    src: rsyslog_slapd.conf
+    dest: /etc/rsyslog.d/slapd.conf
+
+- name: restart rsyslog
+  systemd: daemon_reload=yes name=rsyslog state=restarted enabled=yes
+
+- name: Install filebeat configuration
+  template:
+    src: fb_slapd.yml.j2
+    dest: /etc/filebeat/conf.d/fb_slap.yml
+
+- name: restart filebeat
+  systemd: daemon_reload=yes name=filebeat state=restarted enabled=yes
+

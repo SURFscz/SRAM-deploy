@@ -8,6 +8,9 @@ User=pyff
 WorkingDirectory={{ pyff_env_dir }}
 ExecStart={{ pyff_env_dir }}/bin/pyffd --proxy -f --loglevel=DEBUG -H {{ pyff_host }} -P {{ pyff_port }} {{ pyff_env_dir }}/mdq.fd
 Restart=on-abort
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=pyffd
 
 [Install]
 WantedBy=multi-user.target
