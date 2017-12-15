@@ -1,0 +1,7 @@
+---
+- paths:
+    - /var/log/slapd.log
+  fields:
+    source: slapd
+    environment: {{ environment_name }}
+  fields_under_root: true

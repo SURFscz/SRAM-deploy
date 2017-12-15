@@ -38,7 +38,7 @@
       when: docker is not defined or docker.stdout_lines[0] != "docker"
     - { role: users,    tags: ['common','users'] }
     - { role: mail,     tags: ['common','mail'] }
-#   - { role: logging,  tags: ['logging'  ] }
+    - { role: syslog-client, tags: ['common','syslog'    ] }
 
 - hosts: mgnt1
   roles:
@@ -47,8 +47,7 @@
 
 - hosts: mgnt2
   roles:
-  #  - { role: logstash, tags: ['logstash'] }
-  #  - { role: logstash, tags: ['logstash'] }
+    - { role: syslog-server,   tags: ['syslog'] }
 
 - hosts: lb
   roles:
@@ -71,11 +70,11 @@
 
 - hosts: proxy
   roles:
-    - { role: satosa,      tags: ['proxy','satosa'    ] }
-    - { role: pyff,        tags: ['proxy','pyff'      ] }
-    - { role: cmservice,   tags: ['proxy','cmservice' ] }
-    - { role: mysql,       tags: ['proxy','mysql'     ] }
-    - { role: proxy_mysql, tags: ['proxy','mysql'     ] }
+    - { role: satosa,        tags: ['proxy','satosa'    ] }
+    - { role: pyff,          tags: ['proxy','pyff'      ] }
+    - { role: cmservice,     tags: ['proxy','cmservice' ] }
+    - { role: mysql,         tags: ['proxy','mysql'     ] }
+    - { role: proxy_mysql,   tags: ['proxy','mysql'     ] }
 
 - hosts: comanage
   roles:

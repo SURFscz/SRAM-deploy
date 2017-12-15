@@ -1,0 +1,40 @@
+---
+- name: Ensure that apt-transport-https is installed
+  apt:
+    name: apt-transport-https
+    state: present
+
+- name: Add Elesticsearch key
+  apt_key:
+    #url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+    data: "{{ lookup('file', 'GPG-KEY-elasticsearch') }}"
+
+- name: Add Elastic Search repository
+  apt_repository:
+    repo: "deb https://artifacts.elastic.co/packages/6.x/apt stable main"
+    state: present
+    update_cache: yes
+
+- name: Ensure that packages are installed
+  apt:
+    name: "{{ item }}"
+    state: present
+    install_recommends: no
+  with_items:
+    - filebeat
+
+- name: Ensure filebeat include dir exists
+  file: path=/etc/filebeat/conf.d state=directory mode=0750
+
+- name: Create generic filebeat conf
+  template: >
+    src=filebeat.yml.j2
+    dest=/etc/filebeat/filebeat.yml
+
+#- name: Copy generic filebeat syslog config
+#   template: >
+#     src=fb_syslog.yml.j2
+#     dest=/etc/filebeat/conf.d/fb_syslog.yml
+
+- name: restart filebeat Service
+  systemd: daemon_reload=yes name=filebeat state=restarted enabled=yes
