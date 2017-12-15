@@ -82,5 +82,21 @@
 - name: Create pyff-owned pyff.pid file
   file: path=/var/run/pyff.pid state=touch owner=pyff
 
+- name: Install filebeat configuration
+  template:
+    src: fb_slapd.yml.j2
+    dest: /etc/filebeat/conf.d/fb_slap.yml
+
+- name: restart filebeat
+  systemd: daemon_reload=yes name=filebeat state=restarted enabled=yes
+
+- name: Copy rsyslog config
+  copy: >
+    src=rsyslog_pyffd.conf
+    dest=/etc/rsyslog.d/pyffd.conf
+
+- name: restart rsyslog
+  systemd: daemon_reload=yes name=rsyslog state=restarted enabled=yes
+
 - name: restart pyff
   systemd: daemon_reload=yes name=pyff state=restarted enabled=yes

@@ -1,0 +1,7 @@
+---
+- paths:
+    - /var/log/syslog
+  fields:
+    source: syslog
+    environment: {{ environment_name }}
+  fields_under_root: true
