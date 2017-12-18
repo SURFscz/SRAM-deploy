@@ -12,10 +12,10 @@
   notify: restart nginx
 
 - name: enable proxy configuration
-  file: >
-    src="/etc/nginx/sites-available/proxy.conf"
-    dest="/etc/nginx/sites-enabled/00-proxy.conf"
-    state=link
+  file:
+    src: "/etc/nginx/sites-available/proxy.conf"
+    dest: "/etc/nginx/sites-enabled/00-proxy.conf"
+    state: link
 
 - name: enable nginx
   service: name=nginx.service state=started enabled=true

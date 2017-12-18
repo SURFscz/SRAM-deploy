@@ -1,0 +1,24 @@
+---
+#Google Frontend
+proxy_name: "SCZ Google Mirror IdP Org."
+proxy_display_name: "SCZ Google Mirror IdP"
+proxy_url: "https://google-test.scz.lab.surf.nl/"
+proxy_technical_contact_name: "Technical"
+proxy_technical_contact_email: "technical@proxy.test.scz.lab.surf.nl"
+proxy_support_contact_name: "Support"
+proxy_support_contact_email: "support@proxy.test.scz.lab.surf.nl"
+sp_proxy_metadata_url: "https://{{ hostnames.proxy }}/md/backend.xml"
+
+# SATOSA configuration
+satosa_repo_url: "https://github.com/SURFscz/SATOSA.git"
+satosa_repo_version: "scz-poc"
+satosa_project_dir: "/opt/satosa"
+satosa_src_dir: "{{ satosa_project_dir }}/satosa-src"
+satosa_env_dir: "{{ satosa_project_dir }}/satosa-env"
+
+satosa_host: "0.0.0.0"
+satosa_port: "8080"
+satosa_state_encryption_key: "5EwdbTpB"
+satosa_user_id_hash_salt: "gb1jidagukxurnuwarlg4nu4utblv0ir"
+
+mongodb_host: "127.0.0.1"

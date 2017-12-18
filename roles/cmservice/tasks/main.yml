@@ -67,10 +67,10 @@
   # https://github.com/systemd/systemd/issues/3010
   #  file: src="{{ satosa_env_dir }}/satosa.service"
   #        dest=/etc/systemd/system/satosa.service state=link
-  copy: >
-    src="{{ cmservice_env_dir }}/cmservice.service"
-    dest=/etc/systemd/system/cmservice.service
-    remote_src=yes
+  copy:
+    src: "{{ cmservice_env_dir }}/cmservice.service"
+    dest: "/etc/systemd/system/cmservice.service"
+    remote_src: yes
 
 - name: restart CMservice
   systemd: daemon_reload=yes name=cmservice state=restarted enabled=yes
