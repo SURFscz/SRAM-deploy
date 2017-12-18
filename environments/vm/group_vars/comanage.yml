@@ -1,7 +1,7 @@
 ---
 domain: scz.vnet
 
-sp_protocol: "https://"
+sp_protocol: "{{http_proto}}://"
 sp_hostname: "comanage.{{ domain }}"
 sp_home: "/registry"
 
@@ -12,7 +12,7 @@ sp_technical_contact: "ict@{{ domain }}"
 sp_organisation: "example Ltd."
 sp_organisation_url: "https://www.example.com"
 
-comanage_port: 443
+comanage_port: 80
 comanage_version: "3.0.0-rc2"
 comanage_db_user: comanage
 comanage_db: registry
@@ -37,7 +37,7 @@ comanage_proxy_db_user: "scz"
 comanage_proxy_db_name: "scz"
 
 idp_mellon_path: /etc/apache2/mellon/satosa
-idp_metadata_url: http://172.20.1.22/saml2/idp/metadata.php
+idp_metadata_url: http://proxy.vm.scz.vnet/md/frontend.xml
 idp_attribute: "urn:oid:1.3.6.1.4.1.5923.1.1.1.6"
 idp_extract_certificate: True
 

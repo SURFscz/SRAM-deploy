@@ -1,5 +1,6 @@
 ---
-sp_protocol: "https://"
+http_proto: "https"
+sp_protocol: "{{http_proto}}://"
 sp_hostname: "portal.example.org"
 sp_home: ""
 sp_path: "{{ sp_home }}/auth/sp"

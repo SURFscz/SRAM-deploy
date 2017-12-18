@@ -1,5 +1,5 @@
 #--- SATOSA Config ---#
-BASE: https://{{ hostnames.proxy }}
+BASE: {{http_proto}}://{{ hostnames.proxy }}
 INTERNAL_ATTRIBUTES: "internal_attributes.yaml"
 COOKIE_STATE_NAME: "SATOSA_STATE"
 STATE_ENCRYPTION_KEY: "{{ satosa_state_encryption_key }}"

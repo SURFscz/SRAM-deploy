@@ -2,10 +2,6 @@
 # playbook to install and configure general components of the LDAP
 - include_vars: "ldap.yml"
 
-- name: Update apt cache
-  apt: update_cache=yes
-  changed_when: false
-
 - name: Install LDAP
   apt: name={{ item }} state=present
   with_items:

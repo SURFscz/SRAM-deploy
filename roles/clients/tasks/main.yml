@@ -47,7 +47,14 @@
     mode: 0644
 
 - name: Remove default website
-  file: dest=/etc/apache2/sites-enabled/00-default state=absent
+  file: dest=/etc/apache2/sites-enabled/{{item}} state=absent
+  with_items:
+    - "default.conf"
+    - "00-default.conf"
+    - "000-default.conf"
+
+- name: Set Listen port for Apache
+  template: src=ports.conf.j2 dest=/etc/apache2/ports.conf
 
 - name: Add websites
   template:
@@ -90,8 +97,8 @@
         state: link
 
     - name: SimpleSaml configuration
-      copy:
-        src: config.php
+      template:
+        src: config.php.j2
         dest: "{{ simplesaml_project_dir }}/simplesaml/config/config.php"
 
     - name: SimpleSaml test authsources

@@ -1,7 +1,6 @@
 ---
 modules:
   - mpm_prefork
-  - ssl
   - status
   - cgid
   - cgi
@@ -15,6 +14,7 @@ conf:
 
 disable_modules:
   - mpm_event
+  - ssl
 
 restart:
   - apache2

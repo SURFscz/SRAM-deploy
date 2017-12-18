@@ -6,13 +6,13 @@
 ##
 - name: install openssl
   apt: name=openssl state=installed
-  when: haproxy.custom_dhparam
+  when: enable_https and haproxy.custom_dhparam
 
 - name: generate Diffie-Hellman group
   command: openssl dhparam -out {{ haproxy.dhparam_file }} {{ haproxy.dhparam_keysize }}
   args:
     creates: "{{ haproxy.dhparam_file }}"
-  when: haproxy.custom_dhparam
+  when: enable_https and haproxy.custom_dhparam
 
 
 ##########################################

@@ -34,9 +34,12 @@
     ErrorLog ${APACHE_LOG_DIR}/error.log
     CustomLog ${APACHE_LOG_DIR}/access.log combined
 
+<IfModule mod_ssl.c>
     <FilesMatch "\.php$">
         SSLOptions +StdEnvVars
     </FilesMatch>
+</IfModule>
+
 
     BrowserMatch "MSIE [2-6]" nokeepalive ssl-unclean-shutdown downgrade-1.0 force-response-1.0
     # MSIE 7 and newer should be able to use keepalive
@@ -68,7 +71,6 @@
         MellonSPCertFile {{ sp_certificate }}
 
         MellonIdPMetadataFile {{ idp_metadata_path }}
-        MellonIdPPublicKeyFile {{ idp_certificate_path }}
 
         MellonSessionDump Off
         MellonSamlResponseDump Off

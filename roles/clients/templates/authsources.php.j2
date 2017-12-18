@@ -1,4 +1,5 @@
 <?php
+// vim:ft=php
 
 $config = array(
 
@@ -79,10 +80,12 @@ $config = array(
         ),*/
     ),
 
+
+	/* TODO: move crypted passwords to private repo */
     'crypto-hash' => array(
         'authcrypt:Hash',
         // hashed version of password, made with bin/pwgen.php
-        'baas:{SSHA256}k3PEnrrBqpxjOwuE4kArdPwAG2lVrJZBeS5/+Ej8598nGbBKCvYfzQ==' => array(
+        'baas:{{client_idp_users.baas}}' => array(
             'uid' => array('admin'),
             'urn:mace:dir:attribute-def:uid' => array('admin'),
             'urn:mace:dir:attribute-def:eduPersonAffiliation' => array('member', 'employee'),
@@ -91,7 +94,7 @@ $config = array(
             'urn:mace:dir:attribute-def:eduPersonPrincipalName' => array('admin@scz.lab.surf.nl'),
             'urn:oid:1.3.6.1.4.1.5923.1.1.1.6' => array('admin@scz.lab.surf.nl'),
         ),
-        'student:{SSHA256}sa1hYchNHSHa0DwbZjf0vSuQj34GnaMVRVJVGBG+ao18/5NcvAnr7w==' => array(
+        'student:{{client_idp_users.student}}' => array(
 //             'uid' => array('test'),
             'urn:mace:dir:attribute-def:uid' => array('testuid'),
             'urn:mace:dir:attribute-def:eduPersonAffiliation' => array('member', 'student'),
@@ -101,7 +104,7 @@ $config = array(
 //             'urn:oid:1.3.6.1.4.1.5923.1.1.1.6' => array('eppn_student@surfnet.nl'),
             'urn:mace:dir:attribute-def:postalAddress' => array('Waar je huis woont')
         ),
-        'employee:{SSHA256}sa1hYchNHSHa0DwbZjf0vSuQj34GnaMVRVJVGBG+ao18/5NcvAnr7w==' => array(
+        'employee:{{client_idp_users.employee}}' => array(
             'uid' => array('employee'),
             'eduPersonAffiliation' => array('member', 'employee'),
         ),
