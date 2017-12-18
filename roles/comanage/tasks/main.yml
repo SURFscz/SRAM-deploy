@@ -119,7 +119,7 @@
     -u {{ comanage_db_user }} "--password={{ comanage_db_password }}"
   register: comanage_cm_users_table_exists
 
-- name: Setup Cake for login
+- name: Setup Cake database
   command: >
     ./Console/cake database
   become: true
@@ -139,6 +139,47 @@
   args:
     chdir: "{{ comanage_package }}/app"
   when: comanage_cm_users_table_exists.stdout == "0"
+
+# sometimes, when reinstalling to an existing database, the salt and seed are
+# not recreated
+- name: Setup Cake salt
+  shell: >
+    dd if=/dev/urandom bs=1 count=4000 | tr -dc 'a-zA-Z0-9' | fold -w 40
+    | head -n 1 > security.salt
+  args:
+    creates: "{{ comanage_package }}/local/Config/security.salt"
+    chdir: "{{ comanage_package }}/local/Config"
+  become: true
+  become_user: "{{ comanage_www_user }}"
+
+- name: Setup Cake seed
+  shell: >
+    dd if=/dev/urandom bs=1 count=4000 | tr -dc '0-9' | fold -w 30
+    | head -n 1 > security.seed
+  args:
+    creates: "{{ comanage_package }}/local/Config/security.seed"
+    chdir: "{{ comanage_package }}/local/Config"
+  become: true
+  become_user: "{{ comanage_www_user }}"
+
+- name: Check for API user in the COmanage database
+  command: >
+    mysql -Nse 'SELECT COUNT(*) FROM {{ comanage_db }}.{{comanage_api_users_table }}
+    WHERE username="{{ comanage_api_user }}";'
+    -u {{ comanage_db_user }} "--password={{ comanage_db_password }}"
+  register: comanage_api_user_exists
+
+- name: Read COmanage salt
+  command: cat {{ comanage_package }}/app/Config/security.salt
+  register: comanage_salt
+
+- name: Create API user
+  command: >
+    mysql -Nse 'INSERT INTO {{ comanage_db }}.{{ comanage_api_users_table }}
+    (username, password, created, modified) VALUES ("{{ comanage_api_user }}",
+    SHA1("{{ comanage_salt.stdout }}{{ comanage_api_password }}"), NULL, NULL);'
+    -u {{ comanage_db_user }} "--password={{ comanage_db_password }}"
+  when: comanage_api_user_exists.stdout == "0"
 
 - name: Reset Config directory ownership and permissions
   file:

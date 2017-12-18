@@ -31,3 +31,6 @@ comanage_admin_family_name: "Doe"
 comanage_admin_username: "j.doe@example.com"
 comanage_enable_pooling: "No"
 
+comanage_api_users_table: "cm_api_users"
+comanage_api_user: "apiuser"
+comanage_api_password: "{{ comanage_db_password }}"

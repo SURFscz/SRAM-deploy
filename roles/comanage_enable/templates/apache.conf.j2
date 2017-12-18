@@ -1,6 +1,12 @@
 #######################################################################
 {{ ansible_managed | comment('plain') }}
 #######################################################################
+{% if comanage_port is equalto 443 %}
+<VirtualHost *:80>
+    ServerName {{ comanage_full_hostname }}
+    Redirect / https://{{ comanage_full_hostname }}/
+</VirtualHost>
+{% endif %}
 
 <VirtualHost *:{{ comanage_port }}>
     ServerName {{ comanage_full_hostname }}
@@ -14,6 +20,9 @@
         RewriteRule "^(.*)" "/registry$1" [R,L]
     </IfModule>
 {% endif %}
+
+
+    Redirect {{ sp_home }}/users/logout {{ sp_path }}/logout?ReturnTo={{ sp_home }}
 
     <IfModule mod_php5.c>
         <FilesMatch "\.ph(p|tml)$">
@@ -48,6 +57,7 @@
     <Location "{{ sp_home }}/">
         AuthType "Mellon"
         MellonEnable "info"
+        MellonMergeEnvVars Off
     </Location>
 
     <Location "{{ sp_home }}/auth">
@@ -71,12 +81,23 @@
         MellonSPCertFile {{ sp_certificate }}
 
         MellonIdPMetadataFile {{ idp_metadata_path }}
+        MellonDoNotVerifyLogoutSignature "{{ idp_metadata_url }}"
 
         MellonSessionDump Off
         MellonSamlResponseDump Off
         MellonECPSendIDPList Off
         MellonRedirectDomains [self]
+
+        MellonMergeEnvVars Off
+
     </Location>
+
+{% if comanage_port is equalto 443 %}
+    # enabling SSL access, which is normally terminated at the LB
+    SSLEngine on
+    SSLCertificateFile      /etc/ssl/certs/ssl-cert-snakeoil.pem
+    SSLCertificateKeyFile /etc/ssl/private/ssl-cert-snakeoil.key
+{% endif %}
 
 </VirtualHost>
 
