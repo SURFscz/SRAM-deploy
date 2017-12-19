@@ -67,11 +67,11 @@
 
 - hosts: proxy
   roles:
-    - { role: satosa,      tags: ['proxy','satosa'    ] }
-    - { role: pyff,        tags: ['proxy','pyff'      ] }
-    - { role: cmservice,   tags: ['proxy','cmservice' ] }
-    - { role: mysql,       tags: ['proxy','mysql'     ] }
-    - { role: proxy_mysql, tags: ['proxy','mysql'     ] }
+    - { role: satosa,        tags: ['proxy','satosa'    ] }
+    - { role: pyff,          tags: ['proxy','pyff'      ] }
+    - { role: cmservice,     tags: ['proxy','cmservice' ] }
+    - { role: mysql,         tags: ['proxy','mysql'     ] }
+    - { role: proxy_mysql,   tags: ['proxy','mysql'     ] }
 
 - hosts: comanage
   roles:
