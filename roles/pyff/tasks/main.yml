@@ -84,8 +84,8 @@
 
 - name: Install filebeat configuration
   template:
-    src: fb_slapd.yml.j2
-    dest: /etc/filebeat/conf.d/fb_slap.yml
+    src: fb_pyffd.yml.j2
+    dest: /etc/filebeat/conf.d/fb_pyffd.yml
   notify: "restart filebeat"
 
 - name: Copy rsyslog config
