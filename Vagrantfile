@@ -86,7 +86,7 @@ Vagrant.configure("2") do |config|
 		override.vm.box_download_checksum = "ecd924aae99d1e029e795cb55775bb96aabb77ab122f3ab4d3655589fd5674cd"
 
 		vb.cpus = "1"
-		vb.memory = "512"
+		vb.memory = "800"
 	end
 	config.vm.provider "libvirt" do |lv, override|
 		override.vm.box = "debian/stretch64"
@@ -119,6 +119,9 @@ Vagrant.configure("2") do |config|
 					   /home/vagrant/.ssh/authorized_keys; \
 						echo '' >> /home/vagrant/.ssh/authorized_keys"
 	end
+
+	# install a swap daemon (needer for php/composer, ao)
+	config.vm.provision "shell", inline: "sudo env DEBIAN_FRONTEND=noninteractive apt-get -qq -y install swapspace > /dev/null"
 
 	(1..N).each do |machine_id|
 		machine = machines["m#{machine_id}"]
