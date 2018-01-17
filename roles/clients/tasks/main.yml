@@ -14,7 +14,17 @@
     - php-mbstring
     - php-curl
     - php-gmp
-    - composer
+
+- name: get composer installer
+  get_url:
+    url: https://getcomposer.org/installer
+    dest: /tmp/composer-installer
+    checksum: "sha384:544e09ee996cdf60ece3804abc52599c22b1f40f4323403c44d44fdfdd5864\
+               75ca9813a858088ffbc1f233e9b180f061"
+
+- name: install composer
+  command: "php -f /tmp/composer-installer -- --install-dir=/usr/local/bin --filename=composer"
+
 
 # This breaks SimpleSAMLphp, do NOT enable globally.
 # Library load will be included in oidc site conf
@@ -134,6 +144,10 @@
         command: require
         arguments: bradjonesllc/simplesamlphp-module-openidconnect dev-master
         optimize_autoloader: False
+      # Composer wants to write cache to ~/.composer, but for www-data its
+      # home (/var/www) is owned by root
+      environment:
+        COMPOSER_CACHE_DIR: /tmp/composer
 
     - name: Copy Google attribute map
       file:
