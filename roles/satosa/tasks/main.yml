@@ -183,17 +183,6 @@
     - name: Create metadata directory
       file: path="{{ satosa_env_dir }}/metadata" state=directory mode=0755
 
-    - name: Copy metadata generating script
-      copy:
-        src: gen_metadata
-        dest: "{{ satosa_env_dir }}/gen_metadata"
-        mode: 0755
-
-    - name: Generate metadata
-      shell: ./gen_metadata
-      args:
-        chdir: "{{ satosa_env_dir }}"
-
     - name: Copy clients.json example file
       template:
         src: clients.json.j2
@@ -220,6 +209,17 @@
       get_url:
         url: https://{{ hostnames.idp }}/saml/saml2/idp/metadata.php
         dest: "{{ satosa_env_dir }}/metadata/idp-test.xml"
+
+    - name: Copy metadata generating script
+      copy:
+        src: gen_metadata
+        dest: "{{ satosa_env_dir }}/gen_metadata"
+        mode: 0755
+
+    - name: Generate metadata
+      shell: ./gen_metadata
+      args:
+        chdir: "{{ satosa_env_dir }}"
 
   become: "yes"
   become_user: satosa
