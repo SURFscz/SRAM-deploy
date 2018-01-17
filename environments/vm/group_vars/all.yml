@@ -41,6 +41,7 @@ mail:
   relay_for:
     - "{{iprange.mgnt}}"
   domain: "{{base_domain}}"
+  admin_address: "root@{{base_domain}}"
 
 
 # poor man's user management

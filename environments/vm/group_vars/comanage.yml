@@ -20,6 +20,7 @@ comanage_www_user: "www-data"
 comanage_admin_given_name: "John"
 comanage_admin_family_name: "Doe"
 comanage_admin_username: "john.doe@example.com"
+comanage_email_from: "no-reply@{{domain}}"
 
 comanage_install_dir: "/var/www"
 comanage_path: "{{ comanage_install_dir }}{{ sp_home }}"
