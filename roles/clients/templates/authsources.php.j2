@@ -116,6 +116,7 @@ $config = array(
         ),
     ),
 
+{% if google_client_id is defined %}
     'oidc-google' => array(
         'openidconnect:Connect',
         'client_id'           => '{{ google_client_id }}',
@@ -125,6 +126,7 @@ $config = array(
         'auth_endpoint'       => 'https://accounts.google.com/o/oauth2/v2/auth',
         'sslcapath'           => '/etc/ssl/certs',
     ),
+{% endif %}
 
 
 );
