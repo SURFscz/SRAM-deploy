@@ -5,22 +5,22 @@
 ##########################################
 # VM environment
 [vm-lb]
-lb.scz.vnet ansible_host=172.20.1.24
+lb.vm.scz-vm.net ansible_host=172.20.1.24
 
 [vm-proxy]
-proxy.scz.vnet ansible_host=172.20.1.22
+proxy.vm.scz-vm.net ansible_host=172.20.1.22
 
 [vm-comanage]
-comanage.scz.vnet ansible_host=172.20.1.21
+comanage.vm.scz-vm.net ansible_host=172.20.1.21
 
 [vm-ldap]
-ldap.scz.vnet ansible_host=172.20.1.20
+ldap.vm.scz-vm.net ansible_host=172.20.1.20
 
 [vm-meta]
-meta.scz.vnet ansible_host=172.20.1.23
+meta.vm.scz-vm.net ansible_host=172.20.1.23
 
 [vm-client]
-client.scz.vnet ansible_host=172.20.1.25
+client.vm.scz-vm.net ansible_host=172.20.1.25
 
 [vm:children]
 vm-lb
