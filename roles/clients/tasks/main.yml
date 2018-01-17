@@ -14,6 +14,8 @@
     - php-mbstring
     - php-curl
     - php-gmp
+    - php-sqlite3
+    - php-zip
 
 - name: get composer installer
   get_url:
