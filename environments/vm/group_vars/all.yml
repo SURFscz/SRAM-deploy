@@ -72,8 +72,7 @@ ldap:
   cn: "{{ ldap_base.cn }}"
   dc: "{{ ldap_base.dc }}"
   o: "{{ ldap_base.o }}"
-  basedn: "ou=people,{{ ldap_base.dc }}"
-  groupdn: "ou=groups,{{ ldap_base.dc }}"
+  basedn: "{{ ldap_base.dc }}"
   binddn: "cn={{ ldap_base.cn }},{{ ldap_base.dc }}"
 
 # Comanage-Proxy database configuration is here, because it is needed in both the
