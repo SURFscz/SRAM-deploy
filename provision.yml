@@ -65,10 +65,14 @@
   roles:
     - { role: ldap, tags: ['ldap'] }
 
+- hosts: client
+  roles:
+    - { role: clients,     tags: ['clients']    }
+
 - hosts: proxy
   roles:
-    - { role: satosa,        tags: ['proxy','satosa'    ] }
     - { role: pyff,          tags: ['proxy','pyff'      ] }
+    - { role: satosa,        tags: ['proxy','satosa'    ] }
     - { role: cmservice,     tags: ['proxy','cmservice' ] }
     - { role: mysql,         tags: ['proxy','mysql'     ] }
     - { role: proxy_mysql,   tags: ['proxy','mysql'     ] }
@@ -90,6 +94,3 @@
     - { role: http_dummy,  tags: ['http']      }
     - { role: metadata,    tags: ['metadata']  }
 
-- hosts: client
-  roles:
-    - { role: clients,     tags: ['clients']    }
