@@ -239,33 +239,25 @@
   template: >
     src=fb_satosa.yml.j2
     dest=/etc/filebeat/conf.d/fb_satosa.yml
-
-- name: restart filebeat
-  systemd: daemon_reload=yes name=filebeat state=restarted enabled=yes
+  notify: "restart filebeat"
 
 - name: Copy rsyslog config
   copy: >
     src=rsyslog_satosa.conf
     dest=/etc/rsyslog.d/satosa.conf
-
-- name: restart rsyslog
-  systemd: daemon_reload=yes name=rsyslog state=restarted enabled=yes
+  notify: "restart rsyslog"
 
 - name: Copy filebeat config
   template: >
     src=fb_satosa.yml.j2
     dest=/etc/filebeat/conf.d/fb_satosa.yml
-
-- name: restart filebeat
-  systemd: daemon_reload=yes name=filebeat state=restarted enabled=yes
+  notify: "restart filebeat"
 
 - name: Copy rsyslog config
   copy: >
     src=rsyslog_satosa.conf
     dest=/etc/rsyslog.d/satosa.conf
-
-- name: restart rsyslog
-  systemd: daemon_reload=yes name=rsyslog state=restarted enabled=yes
+  notify: "restart rsyslog"
 
 - name: restart SATOSA
   systemd: daemon_reload=yes name=satosa state=restarted enabled=yes

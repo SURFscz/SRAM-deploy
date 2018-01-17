@@ -201,6 +201,4 @@
   template: >
     src=fb_comanage.yml.j2
     dest=/etc/filebeat/conf.d/fb_comanage.yml
-
-- name: restart filebeat
-  systemd: daemon_reload=yes name=filebeat state=restarted enabled=yes
+  notify: "restart filebeat"

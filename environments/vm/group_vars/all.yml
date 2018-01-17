@@ -18,6 +18,7 @@ servers:
     - 3.pool.ntp.org
 
 fake_hostnames: true
+use_logserver: false
 
 enable_https: true
 http_proto: "http{% if enable_https %}s{% endif %}"
