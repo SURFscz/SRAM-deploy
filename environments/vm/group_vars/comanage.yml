@@ -1,5 +1,5 @@
 ---
-domain: scz.vnet
+domain: "{{base_domain}}"
 
 sp_protocol: "{{http_proto}}://"
 sp_hostname: "comanage.{{ domain }}"
@@ -25,7 +25,7 @@ comanage_install_dir: "/var/www"
 comanage_path: "{{ comanage_install_dir }}{{ sp_home }}"
 comanage_full_hostname: "{{ sp_hostname }}"
 
-comanage_scope: "@scz.vnet"
+comanage_scope: "@{{base_domain}}"
 
 comanage_ldap_basedn: "ou=People,dc=example,dc=com"
 comanage_ldap_groupdn: "ou=Groups,dc=example,dc=com"

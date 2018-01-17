@@ -22,41 +22,42 @@ end
 ENV['COMPOSE_PROJECT_NAME']="scz"
 
 N=6
+domain = "scz-vm.net"
 machines = {
 	"m1" => {
 		"name"      => "ldap",
 		"ip"        => "172.20.1.20",
-		"hostname"  => "ldap.scz.vnet",
+		"hostname"  => "ldap.#{domain}",
 		"limit"     => ['ldap'],
 		"ports"     => [ '2222:22','2280:80','2243:443'] },
 	"m2" => {
 		"name"      => "comanage",
 		"ip"        => "172.20.1.21",
-		"hostname"  => "comanage.scz.vnet",
+		"hostname"  => "comanage.#{domain}",
 		"limit"     => ['comanage'],
 		"ports"     => [ '2322:22','2380:80','2343:443'] },
 	"m3" => {
 		"name"      => "proxy",
 		"ip"        => "172.20.1.22",
-		"hostname"  => "proxy.scz.vnet",
+		"hostname"  => "proxy.#{domain}",
 		"limit"     => ['proxy'],
 		"ports"     => [ '2422:22','2480:80','2443:443'] },
 	"m4" => {
 		"name"      => "meta",
 		"ip"        => "172.20.1.23",
-		"hostname"  => "meta.scz.vnet",
+		"hostname"  => "meta.#{domain}",
 		"limit"     => ['meta'],
 		"ports"     => [ '2522:22','2580:80','2543:443'] },
 	"m5" => {
 		"name"      => "lb",
 		"ip"        => "172.20.1.24",
-		"hostname"  => "lb.scz.vnet",
+		"hostname"  => "lb.#{domain}",
 		"limit"     => ['lb'],
 		"ports"     => [ '2622:22','2680:80','2643:443'] },
 	"m6" => {
 		"name"      => "client",
 		"ip"        => "172.20.1.25",
-		"hostname"  => "client.scz.vnet",
+		"hostname"  => "client.#{domain}",
 		"limit"     => ['client'],
 		"ports"     => [ '2722:22','2780:80','2743:443'] }
 }
@@ -151,7 +152,7 @@ Vagrant.configure("2") do |config|
 								},
 								"command" => ["/usr/sbin/sshd", "-D" ],
 								"image" => "scz:#{machines['m1']['name']}",
-								"hostname" => "#{machines['m1']['name']}.scz.vnet",
+								"hostname" => "#{machines['m1']['name']}.#{domain}",
 								"networks" => {
 									"scznet" => {
 										"ipv4_address" => machines["m1"]["ip"]
@@ -164,7 +165,7 @@ Vagrant.configure("2") do |config|
 								},
 								"command" => ["/usr/sbin/sshd", "-D" ],
 								"image" => "scz:#{machines['m2']['name']}",
-								"hostname" => "#{machines['m2']['name']}.scz.vnet",
+								"hostname" => "#{machines['m2']['name']}.#{domain}",
 								"networks" => {
 									"scznet" => {
 										"ipv4_address" => machines["m2"]["ip"]
@@ -177,7 +178,7 @@ Vagrant.configure("2") do |config|
 								},
 								"command" => ["/usr/sbin/sshd", "-D" ],
 								"image" => "scz:#{machines['m3']['name']}",
-								"hostname" => "#{machines['m3']['name']}.scz.vnet",
+								"hostname" => "#{machines['m3']['name']}.#{domain}",
 								"networks" => {
 									"scznet" => {
 										"ipv4_address" => machines["m3"]["ip"]
@@ -190,7 +191,7 @@ Vagrant.configure("2") do |config|
 								},
 								"command" => ["/usr/sbin/sshd", "-D" ],
 								"image" => "scz:#{machines['m4']['name']}",
-								"hostname" => "#{machines['m4']['name']}.scz.vnet",
+								"hostname" => "#{machines['m4']['name']}.#{domain}",
 								"networks" => {
 									"scznet" => {
 										"ipv4_address" => machines["m4"]["ip"]
@@ -203,7 +204,7 @@ Vagrant.configure("2") do |config|
 								},
 								"command" => ["/usr/sbin/sshd", "-D" ],
 								"image" => "scz:#{machines['m5']['name']}",
-								"hostname" => "#{machines['m5']['name']}.scz.vnet",
+								"hostname" => "#{machines['m5']['name']}.#{domain}",
 								"networks" => {
 									"scznet" => {
 										"ipv4_address" => machines["m5"]["ip"]
@@ -216,7 +217,7 @@ Vagrant.configure("2") do |config|
 								},
 								"command" => ["/usr/sbin/sshd", "-D" ],
 								"image" => "scz:#{machines['m6']['name']}",
-								"hostname" => "#{machines['m6']['name']}.scz.vnet",
+								"hostname" => "#{machines['m6']['name']}.#{domain}",
 								"networks" => {
 									"scznet" => {
 										"ipv4_address" => machines["m6"]["ip"]

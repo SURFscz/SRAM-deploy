@@ -4,18 +4,19 @@ sudo_groups:
 
 environment_name: vm
 environment_string: "SCZ VM"
+base_domain: "scz-vm.net"
 
-
+# externally visible!
 hostnames:
-  proxy: proxy.vm.scz.vnet
-  mdq: mdq.vm.scz.vnet
-  consent: cm.vm.scz.vnet
-  comanage: comanage.vm.scz.vnet
-  ldap: ldap.vm.scz.vnet
-  meta: meta.vm.scz.vnet
-  oidc: oidc-test.vm.scz.vnet
-  sp: sp-test.vm.scz.vnet
-  idp: idp-test.vm.scz.vnet
+  proxy:    proxy.{{base_domain}}
+  mdq:      mdq.{{base_domain}}
+  consent:  cm.{{base_domain}}
+  comanage: comanage.{{base_domain}}
+  ldap:     ldap.{{base_domain}}
+  meta:     meta.{{base_domain}}
+  oidc:     oidc-test.{{base_domain}}
+  sp:       sp-test.{{base_domain}}
+  idp:      idp-test.{{base_domain}}
 
 idp_test_port: 81
 sp_test_port: 82

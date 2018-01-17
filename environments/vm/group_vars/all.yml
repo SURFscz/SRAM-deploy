@@ -6,7 +6,7 @@ ansible_ssh_private_key_file: "{{inventory_dir}}/../../.vagrant/id_rsa"
 
 secrets_file: "environments/vm/secrets/all.yml"
 
-admin_email: "admin@scz.vnet"
+admin_email: "admin@{{base_domain}}"
 
 servers:
   dns:
@@ -36,10 +36,10 @@ iprange:
 
 mail:
   relay_host: "172.20.1.1"
-  relay_to: "outgoing.scz.vnet"
+  relay_to: "outgoing.{{base_domain}}"
   relay_for:
     - "{{iprange.mgnt}}"
-  domain: "scz.vnet"
+  domain: "{{base_domain}}"
 
 
 # poor man's user management
