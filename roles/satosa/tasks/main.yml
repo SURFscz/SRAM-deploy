@@ -211,7 +211,7 @@
       args:
         chdir: "{{ satosa_env_dir }}"
 
-    - name: Retreive Test SP metadata
+    - name: Retrieve Test SP metadata
       get_url:
         url: https://{{ hostnames.sp }}/saml/module.php/saml/sp/metadata.php/default-sp
         dest: "{{ satosa_env_dir }}/metadata/sp-test.xml"

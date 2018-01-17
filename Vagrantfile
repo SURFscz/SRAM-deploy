@@ -240,10 +240,11 @@ Vagrant.configure("2") do |config|
 				end
 
 				m.vm.provision :ansible do |ansible|
+					ansible.compatibility_mode = "2.0"
 					ansible.playbook = "provision.yml"
 					ansible.inventory_path = "./environments/vm/inventory"
-					#                   ansible.verbose = 3
-					#                   ansible.raw_arguments = "-vvv"
+					#ansible.verbose = 3
+					#ansible.raw_arguments = "-vvv"
 					ansible.limit = "comanage,ldap,proxy,meta,lb,client"
 					ansible.extra_vars = {
 						secrets_file: "environments/vm/secrets/all.yml",

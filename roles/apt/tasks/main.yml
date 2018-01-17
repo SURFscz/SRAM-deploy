@@ -9,6 +9,7 @@
 - name: Upgrade packages
   apt: upgrade=dist
 
+# TODO: only install open-vm-tools for VMware platforms
 - name: Install common tools / clients
   apt: name={{ item }} state=present
   with_items:

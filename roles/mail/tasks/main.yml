@@ -1,10 +1,10 @@
 ---
 - name: set up mail relay
-  include: mailrelay.yml
+  include_tasks: mailrelay.yml
   when: "inventory_hostname == mail.relay_host"
 
 - name: set up mail
-  include: mailleaf.yml
+  include_tasks: mailleaf.yml
   when: "inventory_hostname != mail.relay_host"
 
 - name: clean up after exim

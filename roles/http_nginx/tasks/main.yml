@@ -2,7 +2,7 @@
 # and http redirects
 ---
 - name: enable nginx
-  include: nginx.yml
+  include_tasks: nginx.yml
   when: enable_https
 
 - name: disable nginx

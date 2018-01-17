@@ -6,9 +6,9 @@ xsltproc idps.xsl         sc_edugain_rs_coco_nosc.xml > sc_edugain_rs_coco_nosc_
 xsltproc sps.xsl          sc_edugain_rs_coco_nosc.xml > sc_edugain_rs_coco_nosc_sps.xml
 
 wget https://{{ hostnames.proxy }}/md/SamlIdP.xml -q -O proxy_idp.xml
-wget https://{{ hostnames.proxy ]}/md/SamlSP.xml  -q -O proxy_sp.xml
+wget https://{{ hostnames.proxy }}/md/SamlSP.xml  -q -O proxy_sp.xml
 wget https://{{ hostnames.proxy }}/md/SamlIdP.xml -q -O proxy_idp.xml
-wget https://{{ hostnames.proxy ]}/md/SamlSP.xml  -q -O proxy_sp.xml
+wget https://{{ hostnames.proxy }}/md/SamlSP.xml  -q -O proxy_sp.xml
 
 rm /var/www/html/*.xml
 mv *.xml /var/www/html
