@@ -43,6 +43,13 @@ mail:
   domain: "{{base_domain}}"
   admin_address: "root@{{base_domain}}"
 
+admin:
+  fn: "B."
+  sn: "Baas"
+  eppn: "admin@{{base_domain}}"
+  email: "{{admin_email}}"
+  sho: "{{base_domain}}"
+
 
 # poor man's user management
 root:

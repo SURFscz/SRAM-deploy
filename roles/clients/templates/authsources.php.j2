@@ -86,13 +86,12 @@ $config = array(
         'authcrypt:Hash',
         // hashed version of password, made with bin/pwgen.php
         'baas:{{client_idp_users.baas}}' => array(
-//            'uid' => array('admin'),
             'urn:mace:dir:attribute-def:uid' => array('admin'),
-            'urn:mace:dir:attribute-def:eduPersonPrincipalName' => array('admin@scz.lab.surf.nl'),
-            'urn:mace:dir:attribute-def:displayName' => array('B. Baas'),
-//            'urn:oid:1.3.6.1.4.1.5923.1.1.1.6' => array('admin@scz.lab.surf.nl'),
-            'urn:mace:terena.org:attribute-def:schacHomeOrganization' => array('scz.lab.surf.nl'),
-            'urn:mace:dir:attribute-def:mail' => array('admin@scz.lab.surf.nl'),
+            'urn:mace:dir:attribute-def:eduPersonPrincipalName' => array('{{admin.eppn}}'),
+            'urn:mace:dir:attribute-def:givenName' => array('{{admin.fn}}'),
+            'urn:mace:dir:attribute-def:sn' => array('{{admin.sn}}'),
+            'urn:mace:terena.org:attribute-def:schacHomeOrganization' => array('{{admin.sho}}'),
+            'urn:mace:dir:attribute-def:mail' => array('{{admin.email}}'),
             'urn:mace:dir:attribute-def:eduPersonAffiliation' => array('member', 'employee'),
         ),
         'student:{{client_idp_users.student}}' => array(

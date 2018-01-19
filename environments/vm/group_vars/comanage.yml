@@ -17,9 +17,9 @@ comanage_version: "3.0.0-rc2"
 comanage_db_user: comanage
 comanage_db: registry
 comanage_www_user: "www-data"
-comanage_admin_given_name: "John"
-comanage_admin_family_name: "Doe"
-comanage_admin_username: "john.doe@example.com"
+comanage_admin_given_name: "{{admin.fn}}"
+comanage_admin_family_name: "{{admin.sn}}"
+comanage_admin_username: "{{admin.eppn}}"
 comanage_email_from: "no-reply@{{domain}}"
 
 comanage_install_dir: "/var/www"
