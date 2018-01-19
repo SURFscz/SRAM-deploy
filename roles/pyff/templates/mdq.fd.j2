@@ -17,7 +17,11 @@
 {% if hostnames.google is defined %}
        - {{http_proto}}://{{ hostnames.google }}/md/frontend.xml
 {% endif %}
-       - https://engine.connect.surfconext.nl/authentication/proxy/idps-metadata?sp-entity-id=https://proxy.test.scz.lab.surf.nl/Saml2SP/proxy_saml2_backend.xml
+{% if pyff_metadata_extra is defined %}
+{% for m in pyff_metadata_extra %}
+       - {{m}}
+{% endfor %}
+{% endif %}
        - metadata/
     - break
 - when request:
