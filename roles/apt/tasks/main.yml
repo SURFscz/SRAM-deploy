@@ -21,6 +21,7 @@
     - open-vm-tools
     - open-vm-tools-dkms
     - curl
+    - net-tools
 
 - name: remove unneccessary packages
   apt: name={{ item }} state=absent
