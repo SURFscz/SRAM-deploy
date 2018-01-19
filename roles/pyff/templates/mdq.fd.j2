@@ -10,7 +10,7 @@
 - when update:
     - load:
        - {{http_proto}}://{{ hostnames.meta }}/sc_edugain.xml
-       - {{http_proto}}://{{ hostnames.proxy }}/md/backend.xml
+       - {{http_proto}}://{{ hostnames.proxy }}/md/SamlSP.xml
        - {{http_proto}}://{{ hostnames.sp }}/saml/module.php/saml/sp/metadata.php/default-sp
        - {{http_proto}}://{{ hostnames.idp }}/saml/saml2/idp/metadata.php
        - {{http_proto}}://{{ hostnames.comanage }}/registry/auth/sp/metadata
