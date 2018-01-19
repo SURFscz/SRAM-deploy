@@ -31,7 +31,7 @@ loadbalancer:
   - hostname: "{{hostnames.mdq}}"
     http: true
     backend_hosts: "{{groups['vm-proxy']}}"
-    backend_port: 8081
+    backend_port: "{{pyff_port}}"
   - hostname: "{{hostnames.consent}}"
     http: true
     backend_hosts: "{{groups['vm-proxy']}}"
