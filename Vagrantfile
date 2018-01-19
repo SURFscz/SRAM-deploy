@@ -249,6 +249,7 @@ Vagrant.configure("2") do |config|
 					#ansible.verbose = 3
 					#ansible.raw_arguments = "-vvv"
 					ansible.limit = "comanage,ldap,proxy,meta,lb,client"
+					#ansible.tags = "clients,comanage"
 					ansible.extra_vars = {
 						secrets_file: "environments/vm/secrets/all.yml",
 					}
