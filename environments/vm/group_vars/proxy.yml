@@ -42,5 +42,3 @@ cmservice_env_dir: "{{ cmservice_project_dir }}/cmservice-env"
 
 cmservice_host: "0.0.0.0"
 cmservice_port: "8082"
-
-environment_string: "SCZ Test"
