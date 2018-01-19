@@ -9,7 +9,7 @@
   notify: restart nginx
 
 - name: install NGINX config file
-  template: src=http-redirect.conf.j2 dest=/etc/nginx/sites-enabled/00-http-redirect.j2
+  template: src=http-redirect.conf.j2 dest=/etc/nginx/sites-enabled/00-http-redirect.conf
   notify: restart nginx
 
 - name: enable NGINX
