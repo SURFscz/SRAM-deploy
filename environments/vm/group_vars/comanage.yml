@@ -13,7 +13,8 @@ sp_organisation: "example Ltd."
 sp_organisation_url: "https://www.example.com"
 
 comanage_port: 80
-comanage_version: "3.0.0-rc2"
+comanage_repo_url: "https://github.com/SURFscz/comanage-registry.git"
+comanage_repo_version: "scz"
 comanage_db_user: comanage
 comanage_db: registry
 comanage_www_user: "www-data"
@@ -22,8 +23,6 @@ comanage_admin_family_name: "{{admin.sn}}"
 comanage_admin_username: "{{admin.eppn}}"
 comanage_email_from: "no-reply@{{domain}}"
 
-comanage_install_dir: "/var/www"
-comanage_path: "{{ comanage_install_dir }}{{ sp_home }}"
 comanage_full_hostname: "{{ sp_hostname }}"
 
 comanage_scope: "@{{base_domain}}"

@@ -29,14 +29,3 @@
     mode: 0600
     validate_certs: no
 
-# Finally add a RewriteRule to the CoManage .htaccess to allow redirection of the
-# sp metadata to a convenient URL
-- name: Add rewrite rule for SP metadata
-  blockinfile:
-    block: "RewriteRule  \"^/auth/sp/metadata$\" \"/etc/apache2/mellon/sp-metadata.xml\""
-    follow: yes
-    insertafter: "RewriteRule.*$"
-    path: "{{ comanage_path }}/.htaccess"
-  notify:
-    - restart apache
-

@@ -1,2 +1,2 @@
 ---
-comanage_root: "{{ comanage_install_dir }}"
+comanage_root: "{{ comanage_install_dir }}/webroot"

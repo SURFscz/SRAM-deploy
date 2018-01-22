@@ -13,14 +13,14 @@
     ServerAdmin {{ mail.admin_address }}
 
     DocumentRoot {{ comanage_root }}
-{% if sp_home is not equalto "" %}
-    <IfModule mod_rewrite.c>
-        RewriteEngine on
-        RewriteCond %{REQUEST_URI} "^/(?!registry)" [NC]
-        RewriteRule "^(.*)" "/registry$1" [R,L]
-    </IfModule>
-{% endif %}
 
+    RewriteEngine on
+{% if sp_home is not equalto "" %}
+    RewriteCond %{REQUEST_URI} "^/(?!registry)" [NC]
+    RewriteRule "^(.*)" "/registry$1" [R,L]
+{% endif %}
+    # make SP metadata available on a convenient url
+    RewriteRule  "^/auth/sp/metadata$" "/etc/apache2/mellon/sp-metadata.xml
 
     Redirect {{ sp_home }}/users/logout {{ sp_path }}/logout?ReturnTo={{ sp_home }}
 
@@ -33,7 +33,7 @@
         </FilesMatch>
     </IfModule>
 
-    <Directory "{{ comanage_path }}">
+    <Directory "{{ comanage_install_dir }}">
         Options Indexes FollowSymLinks
         DirectoryIndex index.php
         AllowOverride All
