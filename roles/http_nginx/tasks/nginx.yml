@@ -4,7 +4,16 @@
 - name: install NGINX
   apt: name=nginx state=present
 
-- name: remove default NGINX sites
+- name: remove unused NGINX sites
+  file:
+    dest: "/etc/nginx/sites-enabled/{{item}}"
+    state: absent
+  with_items:
+    - "default"
+    - "00-http-redirect.j2"
+  notify: restart nginx
+
+- name: remove old nginx config file
   file: dest=/etc/nginx/sites-enabled/default state=absent
   notify: restart nginx
 
