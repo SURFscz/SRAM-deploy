@@ -96,3 +96,7 @@
 
 - name: restart pyff
   systemd: daemon_reload=yes name=pyff state=restarted enabled=yes
+
+- name: set up nxginx proxy
+  include_tasks: nginx.yml
+

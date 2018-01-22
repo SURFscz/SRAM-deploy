@@ -7,3 +7,7 @@
 - name: restart rsyslog
   service:  name=rsyslog state=restarted
   listen: "restart rsyslog"
+
+- name: restart nginx
+  service: name=nginx state=restarted
+
