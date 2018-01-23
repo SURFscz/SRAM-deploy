@@ -16,10 +16,10 @@
   pre_tasks:
     - name: Gather facts from mgnt hosts (regardless of limit or tags)
       setup:
-      delegate_to: "{{item}}"
+      delegate_to: "{{ item }}"
       delegate_facts: "true"
       when: hostvars[item]['ansible_default_ipv4'] is not defined
-      with_items: "{{groups['all']}}"
+      with_items: "{{ groups['all'] }}"
       tags: always
 
 - hosts: all
