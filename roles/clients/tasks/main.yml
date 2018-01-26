@@ -152,7 +152,7 @@
         COMPOSER_CACHE_DIR: /tmp/composer
 
     - name: Copy Google attribute map
-      file:
+      copy:
         src: "google2urn.php"
         dest: "{{ simplesaml_project_dir }}/simplesaml/attributemap"
 
