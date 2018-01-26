@@ -100,3 +100,7 @@
 - name: set up nxginx proxy
   include: nginx.yml
 
+# nginx needs to be restarted _now_ rather than at the end of the play
+- name: flush handlers
+  meta: flush_handlers
+
