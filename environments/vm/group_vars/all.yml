@@ -10,7 +10,7 @@ admin_email: "admin@{{base_domain}}"
 
 servers:
   dns:
-    - 172.20.1.1
+    - 8.8.8.8
   ntp:
     - 0.pool.ntp.org
     - 1.pool.ntp.org
