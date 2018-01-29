@@ -79,8 +79,10 @@
     dest: /etc/systemd/system/pyff.service
     remote_src: yes
 
+# stupid pyff want to create files in /var/run, even if it isn't run as root
+# now fixed by a pre-exec command in the service file, instead
 #- name: Create pyff-owned pyff.pid file
-  #file: path=/var/run/pyff.pid state=touch owner=pyff
+#  file: path=/var/run/pyff.pid state=touch owner=pyff
 
 - name: Install filebeat configuration
   template:

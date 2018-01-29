@@ -135,23 +135,12 @@
     - name: Create certs directory
       file: path="{{ satosa_env_dir }}/certs" state=directory mode=0755
 
-    #- name: create self-signed Token Signing SSL certs
-      #command: >
-        #openssl req -new -nodes -x509 -subj '/C=NL/CN={{ item }}'
-        #-days 3650 -keyout '{{ satosa_env_dir }}/certs/{{ item }}.key'
-        #-out '{{ satosa_env_dir }}/certs/{{ item }}.crt' -extensions v3_ca
-      #args:
-        #creates: "{{ satosa_env_dir }}/certs/{{ item }}.crt"
-      #with_items:
-        #- frontend
-        #- backend
-        #- signing
-
+    # use a fixed cert, instead of generating one dynamically
     - name: Copy self-signed Token Signing SSL certs keys
       copy:
         content: |
-            -----BEGIN PRIVATE KEY-----
-            {{ saml_ts_cert.key }}-----END PRIVATE KEY-----
+          -----BEGIN PRIVATE KEY-----
+          {{ saml_ts_cert.key }}-----END PRIVATE KEY-----
         dest: "{{ satosa_env_dir }}/certs/{{ item }}.key"
       with_items:
         - frontend
@@ -161,8 +150,8 @@
     - name: Copy self-signed Token Signing SSL certs
       copy:
         content: |
-            -----BEGIN CERTIFICATE-----
-            {{ saml_ts_cert.cert }}-----END CERTIFICATE-----
+          -----BEGIN CERTIFICATE-----
+          {{ saml_ts_cert.cert }}-----END CERTIFICATE-----
         dest: "{{ satosa_env_dir }}/certs/{{ item }}.crt"
       with_items:
         - frontend
