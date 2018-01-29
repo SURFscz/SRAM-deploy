@@ -102,16 +102,8 @@
     chdir: "{{ comanage_package }}/app"
   when: comanage_database_stat.stat.exists == false
 
-- name: Check for email config
-  stat:
-    path: "{{ comanage_package }}/local/Config/email.php"
-  register: comanage_email_stat
-
 - name: Copy email config
-  command: >
-    cp {{ comanage_package }}/app/Config/email.php.default
-    {{ comanage_package }}/local/Config/email.php
-  when: comanage_email_stat.stat.exists == false
+  template: src=email.php.j2 dest={{ comanage_package }}/local/Config/email.php owner=www-data
 
 - name: Configure database connection info
   replace:
