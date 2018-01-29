@@ -85,6 +85,9 @@ Vagrant.configure("2") do |config|
 		override.vm.box_download_checksum_type = "sha256"
 		override.vm.box_download_checksum = "ecd924aae99d1e029e795cb55775bb96aabb77ab122f3ab4d3655589fd5674cd"
 
+	    # install a swap daemon (needer for php/composer, ao)
+	    override.vm.provision "shell", inline: "sudo env DEBIAN_FRONTEND=noninteractive apt-get -qq -y install swapspace > /dev/null"
+
 		vb.cpus = "1"
 		vb.memory = "512"
 	end
@@ -95,6 +98,9 @@ Vagrant.configure("2") do |config|
 		override.vm.box_check_update = false
 		override.vm.box_download_checksum_type = "sha256"
 		override.vm.box_download_checksum = "ecd924aae99d1e029e795cb55775bb96aabb77ab122f3ab4d3655589fd5674cd"
+
+	    # install a swap daemon (needer for php/composer, ao)
+	    override.vm.provision "shell", inline: "sudo env DEBIAN_FRONTEND=noninteractive apt-get -qq -y install swapspace > /dev/null"
 
 		lv.cpus = "1"
 		lv.memory = "512"
@@ -119,9 +125,6 @@ Vagrant.configure("2") do |config|
 					   /home/vagrant/.ssh/authorized_keys; \
 						echo '' >> /home/vagrant/.ssh/authorized_keys"
 	end
-
-	# install a swap daemon (needer for php/composer, ao)
-	config.vm.provision "shell", inline: "sudo env DEBIAN_FRONTEND=noninteractive apt-get -qq -y install swapspace > /dev/null"
 
 	(1..N).each do |machine_id|
 		machine = machines["m#{machine_id}"]
