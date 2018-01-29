@@ -86,7 +86,7 @@ Vagrant.configure("2") do |config|
 		override.vm.box_download_checksum = "ecd924aae99d1e029e795cb55775bb96aabb77ab122f3ab4d3655589fd5674cd"
 
 		vb.cpus = "1"
-		vb.memory = "800"
+		vb.memory = "512"
 	end
 	config.vm.provider "libvirt" do |lv, override|
 		override.vm.box = "debian/stretch64"
@@ -243,6 +243,8 @@ Vagrant.configure("2") do |config|
 				end
 
 				m.vm.provision :ansible do |ansible|
+					# Note: recent versions of Vagrant need this, but older
+					# version choke on it
 					#ansible.compatibility_mode = "2.0"
 					ansible.playbook = "provision.yml"
 					ansible.inventory_path = "./environments/vm/inventory"
