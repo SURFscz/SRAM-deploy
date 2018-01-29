@@ -86,7 +86,7 @@ Vagrant.configure("2") do |config|
 		override.vm.box_download_checksum = "ecd924aae99d1e029e795cb55775bb96aabb77ab122f3ab4d3655589fd5674cd"
 
 		vb.cpus = "1"
-		vb.memory = "800"
+		vb.memory = "512"
 	end
 	config.vm.provider "libvirt" do |lv, override|
 		override.vm.box = "debian/stretch64"
