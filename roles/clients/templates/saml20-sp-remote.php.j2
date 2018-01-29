@@ -77,31 +77,14 @@ $metadata['https://{{ hostnames.proxy }}/SamlSP/proxy.xml'] = array (
       'encryption' => false,
       'signing' => true,
       'type' => 'X509Certificate',
-      'X509Certificate' => 'MIIDFDCCAfygAwIBAgIJAL30q8piZU1HMA0GCSqGSIb3DQEBCwUAMB8xCzAJBgNV
-BAYTAk5MMRAwDgYDVQQDDAdiYWNrZW5kMB4XDTE3MDkxNTEzMjQ0OFoXDTI3MDkx
-MzEzMjQ0OFowHzELMAkGA1UEBhMCTkwxEDAOBgNVBAMMB2JhY2tlbmQwggEiMA0G
-CSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDZTq/p7+dvDWHtKdLbafSDel8yE+rM
-CzCWl0pO1pflmeFS7zwIkN2OxT8Hjvw/apPdxgWxjJE7NXUEWxAHuDde4JbrOY40
-/VPg+QSBkNMcENKCMEyKem3Tox8ruZhHbNvs3M5IG2f1Dvx7tU2YZMdcSs6U6PJg
-qsFQ+PCM2BWGAEz7Ic6YISWDZsJIDWBE7cw99pMw9UFqK9kmHuKBVnwnjnJaAi1i
-EdQitZa8fAF6OBCKRnazxgqX7UWSf+LC4AHfYKuJTZJTaPx52ofvll0ABaTohnmV
-uXfILpwUFFXwOPN07iLAF2v+gqBRyhLjV1DxEJk6MMbR+ymMMwMtf6YLAgMBAAGj
-UzBRMB0GA1UdDgQWBBQc9/wr+5WKS+JAy3y8m3bLubPWeTAfBgNVHSMEGDAWgBQc
-9/wr+5WKS+JAy3y8m3bLubPWeTAPBgNVHRMBAf8EBTADAQH/MA0GCSqGSIb3DQEB
-CwUAA4IBAQAZ+MCfjzpzMNEqncBHbD+mw4gWRy28Pj2l8ogrrYvJXzx9L/uPlD2k
-8dpjFNDQOWmqYVAKa769L37B6qn4960hXljcWdGKtJOqkTNbtOaAQs2vbd3yOOmf
-RoydWqA/fTCZcnx0s+7mha8WZVuCHS3ShvkFVIPFg8NdMx6jj6e8tfvcQ8/R8yU3
-jHVpGEDv0QGpDgGUt0zx+G6aGrQVxtNaezuPhCQTdDNmzSU1txSBtLzcW0CJvhJD
-8tArwvnU3hMebwsrJ9RIvQQ/AnXPZK0BivjCcuFtek8Z39WtEKTVHXvAoQSkfcnC
-XOkAuqSqVGuNtzuvzf28wA9QWGENja2d
-',
+      'X509Certificate' => '{{ saml_ts_cert.cert }}',
     ),
   ),
   'validate.authnrequest' => false,
   'saml20.sign.assertion' => true,
 );
-$metadata['https://{{ hostnames.proxy }}/SamlMirrorSP/proxy.xml/SamlIdP/aHR0cHM6Ly9zcC10ZXN0LnNjei5sYWIuc3VyZi5ubC9zYW1sL21vZHVsZS5waHAvc2FtbC9zcC9tZXRhZGF0YS5waHAvZGVmYXVsdC1zcA=='] = array (
-  'entityid' => 'https://{{ hostnames.proxy }}/SamlMirrorSP/proxy.xml/SamlIdP/aHR0cHM6Ly9zcC10ZXN0LnNjei5sYWIuc3VyZi5ubC9zYW1sL21vZHVsZS5waHAvc2FtbC9zcC9tZXRhZGF0YS5waHAvZGVmYXVsdC1zcA==',
+$metadata['https://{{ hostnames.proxy }}/SamlMirrorSP/proxy.xml/SamlIdP/aHR0cHM6Ly9zcC10ZXN0LnNjei12bS5uZXQvc2FtbC9tb2R1bGUucGhwL3NhbWwvc3AvbWV0YWRhdGEucGhwL2RlZmF1bHQtc3A='] = array (
+  'entityid' => 'https://{{ hostnames.proxy }}/SamlMirrorSP/proxy.xml/SamlIdP/aHR0cHM6Ly9zcC10ZXN0LnNjei12bS5uZXQvc2FtbC9tb2R1bGUucGhwL3NhbWwvc3AvbWV0YWRhdGEucGhwL2RlZmF1bHQtc3A=',
   'description' =>
   array (
     'en' => '{{ environment_string }} Proxy Mirror SP',
@@ -165,24 +148,7 @@ $metadata['https://{{ hostnames.proxy }}/SamlMirrorSP/proxy.xml/SamlIdP/aHR0cHM6
       'encryption' => false,
       'signing' => true,
       'type' => 'X509Certificate',
-      'X509Certificate' => 'MIIDFDCCAfygAwIBAgIJAL30q8piZU1HMA0GCSqGSIb3DQEBCwUAMB8xCzAJBgNV
-BAYTAk5MMRAwDgYDVQQDDAdiYWNrZW5kMB4XDTE3MDkxNTEzMjQ0OFoXDTI3MDkx
-MzEzMjQ0OFowHzELMAkGA1UEBhMCTkwxEDAOBgNVBAMMB2JhY2tlbmQwggEiMA0G
-CSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDZTq/p7+dvDWHtKdLbafSDel8yE+rM
-CzCWl0pO1pflmeFS7zwIkN2OxT8Hjvw/apPdxgWxjJE7NXUEWxAHuDde4JbrOY40
-/VPg+QSBkNMcENKCMEyKem3Tox8ruZhHbNvs3M5IG2f1Dvx7tU2YZMdcSs6U6PJg
-qsFQ+PCM2BWGAEz7Ic6YISWDZsJIDWBE7cw99pMw9UFqK9kmHuKBVnwnjnJaAi1i
-EdQitZa8fAF6OBCKRnazxgqX7UWSf+LC4AHfYKuJTZJTaPx52ofvll0ABaTohnmV
-uXfILpwUFFXwOPN07iLAF2v+gqBRyhLjV1DxEJk6MMbR+ymMMwMtf6YLAgMBAAGj
-UzBRMB0GA1UdDgQWBBQc9/wr+5WKS+JAy3y8m3bLubPWeTAfBgNVHSMEGDAWgBQc
-9/wr+5WKS+JAy3y8m3bLubPWeTAPBgNVHRMBAf8EBTADAQH/MA0GCSqGSIb3DQEB
-CwUAA4IBAQAZ+MCfjzpzMNEqncBHbD+mw4gWRy28Pj2l8ogrrYvJXzx9L/uPlD2k
-8dpjFNDQOWmqYVAKa769L37B6qn4960hXljcWdGKtJOqkTNbtOaAQs2vbd3yOOmf
-RoydWqA/fTCZcnx0s+7mha8WZVuCHS3ShvkFVIPFg8NdMx6jj6e8tfvcQ8/R8yU3
-jHVpGEDv0QGpDgGUt0zx+G6aGrQVxtNaezuPhCQTdDNmzSU1txSBtLzcW0CJvhJD
-8tArwvnU3hMebwsrJ9RIvQQ/AnXPZK0BivjCcuFtek8Z39WtEKTVHXvAoQSkfcnC
-XOkAuqSqVGuNtzuvzf28wA9QWGENja2d
-',
+      'X509Certificate' => '{{ saml_ts_cert.cert }}',
     ),
   ),
   'validate.authnrequest' => false,
@@ -214,8 +180,8 @@ XOkAuqSqVGuNtzuvzf28wA9QWGENja2d
     ),
   ),
 );
-$metadata['https://{{ hostnames.proxy }}/SamlMirrorSP/proxy.xml/SamlMirrorIdP/aHR0cHM6Ly9zcC10ZXN0LnNjei5sYWIuc3VyZi5ubC9zYW1sL21vZHVsZS5waHAvc2FtbC9zcC9tZXRhZGF0YS5waHAvZGVmYXVsdC1zcA=='] = array (
-  'entityid' => 'https://{{ hostnames.proxy }}/SamlMirrorSP/proxy.xml/SamlMirrorIdP/aHR0cHM6Ly9zcC10ZXN0LnNjei5sYWIuc3VyZi5ubC9zYW1sL21vZHVsZS5waHAvc2FtbC9zcC9tZXRhZGF0YS5waHAvZGVmYXVsdC1zcA==',
+$metadata['https://{{ hostnames.proxy }}/SamlMirrorSP/proxy.xml/SamlMirrorIdP/aHR0cHM6Ly9zcC10ZXN0LnNjei12bS5uZXQvc2FtbC9tb2R1bGUucGhwL3NhbWwvc3AvbWV0YWRhdGEucGhwL2RlZmF1bHQtc3A='] = array (
+  'entityid' => 'https://{{ hostnames.proxy }}/SamlMirrorSP/proxy.xml/SamlMirrorIdP/aHR0cHM6Ly9zcC10ZXN0LnNjei12bS5uZXQvc2FtbC9tb2R1bGUucGhwL3NhbWwvc3AvbWV0YWRhdGEucGhwL2RlZmF1bHQtc3A=',
   'description' =>
   array (
     'en' => '{{ environment_string }} Proxy Mirror SP',
@@ -279,24 +245,7 @@ $metadata['https://{{ hostnames.proxy }}/SamlMirrorSP/proxy.xml/SamlMirrorIdP/aH
       'encryption' => false,
       'signing' => true,
       'type' => 'X509Certificate',
-      'X509Certificate' => 'MIIDFDCCAfygAwIBAgIJAL30q8piZU1HMA0GCSqGSIb3DQEBCwUAMB8xCzAJBgNV
-BAYTAk5MMRAwDgYDVQQDDAdiYWNrZW5kMB4XDTE3MDkxNTEzMjQ0OFoXDTI3MDkx
-MzEzMjQ0OFowHzELMAkGA1UEBhMCTkwxEDAOBgNVBAMMB2JhY2tlbmQwggEiMA0G
-CSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDZTq/p7+dvDWHtKdLbafSDel8yE+rM
-CzCWl0pO1pflmeFS7zwIkN2OxT8Hjvw/apPdxgWxjJE7NXUEWxAHuDde4JbrOY40
-/VPg+QSBkNMcENKCMEyKem3Tox8ruZhHbNvs3M5IG2f1Dvx7tU2YZMdcSs6U6PJg
-qsFQ+PCM2BWGAEz7Ic6YISWDZsJIDWBE7cw99pMw9UFqK9kmHuKBVnwnjnJaAi1i
-EdQitZa8fAF6OBCKRnazxgqX7UWSf+LC4AHfYKuJTZJTaPx52ofvll0ABaTohnmV
-uXfILpwUFFXwOPN07iLAF2v+gqBRyhLjV1DxEJk6MMbR+ymMMwMtf6YLAgMBAAGj
-UzBRMB0GA1UdDgQWBBQc9/wr+5WKS+JAy3y8m3bLubPWeTAfBgNVHSMEGDAWgBQc
-9/wr+5WKS+JAy3y8m3bLubPWeTAPBgNVHRMBAf8EBTADAQH/MA0GCSqGSIb3DQEB
-CwUAA4IBAQAZ+MCfjzpzMNEqncBHbD+mw4gWRy28Pj2l8ogrrYvJXzx9L/uPlD2k
-8dpjFNDQOWmqYVAKa769L37B6qn4960hXljcWdGKtJOqkTNbtOaAQs2vbd3yOOmf
-RoydWqA/fTCZcnx0s+7mha8WZVuCHS3ShvkFVIPFg8NdMx6jj6e8tfvcQ8/R8yU3
-jHVpGEDv0QGpDgGUt0zx+G6aGrQVxtNaezuPhCQTdDNmzSU1txSBtLzcW0CJvhJD
-8tArwvnU3hMebwsrJ9RIvQQ/AnXPZK0BivjCcuFtek8Z39WtEKTVHXvAoQSkfcnC
-XOkAuqSqVGuNtzuvzf28wA9QWGENja2d
-',
+      'X509Certificate' => '{{ saml_ts_cert.cert }}',
     ),
   ),
   'validate.authnrequest' => false,
@@ -402,24 +351,7 @@ $metadata['https://{{ hostnames.proxy }}/SamlMirrorSP/proxy.xml/OIDC/cG9zdG1hbg=
       'encryption' => false,
       'signing' => true,
       'type' => 'X509Certificate',
-      'X509Certificate' => 'MIIDFDCCAfygAwIBAgIJAL30q8piZU1HMA0GCSqGSIb3DQEBCwUAMB8xCzAJBgNV
-BAYTAk5MMRAwDgYDVQQDDAdiYWNrZW5kMB4XDTE3MDkxNTEzMjQ0OFoXDTI3MDkx
-MzEzMjQ0OFowHzELMAkGA1UEBhMCTkwxEDAOBgNVBAMMB2JhY2tlbmQwggEiMA0G
-CSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDZTq/p7+dvDWHtKdLbafSDel8yE+rM
-CzCWl0pO1pflmeFS7zwIkN2OxT8Hjvw/apPdxgWxjJE7NXUEWxAHuDde4JbrOY40
-/VPg+QSBkNMcENKCMEyKem3Tox8ruZhHbNvs3M5IG2f1Dvx7tU2YZMdcSs6U6PJg
-qsFQ+PCM2BWGAEz7Ic6YISWDZsJIDWBE7cw99pMw9UFqK9kmHuKBVnwnjnJaAi1i
-EdQitZa8fAF6OBCKRnazxgqX7UWSf+LC4AHfYKuJTZJTaPx52ofvll0ABaTohnmV
-uXfILpwUFFXwOPN07iLAF2v+gqBRyhLjV1DxEJk6MMbR+ymMMwMtf6YLAgMBAAGj
-UzBRMB0GA1UdDgQWBBQc9/wr+5WKS+JAy3y8m3bLubPWeTAfBgNVHSMEGDAWgBQc
-9/wr+5WKS+JAy3y8m3bLubPWeTAPBgNVHRMBAf8EBTADAQH/MA0GCSqGSIb3DQEB
-CwUAA4IBAQAZ+MCfjzpzMNEqncBHbD+mw4gWRy28Pj2l8ogrrYvJXzx9L/uPlD2k
-8dpjFNDQOWmqYVAKa769L37B6qn4960hXljcWdGKtJOqkTNbtOaAQs2vbd3yOOmf
-RoydWqA/fTCZcnx0s+7mha8WZVuCHS3ShvkFVIPFg8NdMx6jj6e8tfvcQ8/R8yU3
-jHVpGEDv0QGpDgGUt0zx+G6aGrQVxtNaezuPhCQTdDNmzSU1txSBtLzcW0CJvhJD
-8tArwvnU3hMebwsrJ9RIvQQ/AnXPZK0BivjCcuFtek8Z39WtEKTVHXvAoQSkfcnC
-XOkAuqSqVGuNtzuvzf28wA9QWGENja2d
-',
+      'X509Certificate' => '{{ saml_ts_cert.cert }}',
     ),
   ),
   'validate.authnrequest' => false,
@@ -499,24 +431,7 @@ $metadata['https://{{ hostnames.proxy }}/SamlMirrorSP/proxy.xml/OIDC/b2lkY3Rlc3Q
       'encryption' => false,
       'signing' => true,
       'type' => 'X509Certificate',
-      'X509Certificate' => 'MIIDFDCCAfygAwIBAgIJAL30q8piZU1HMA0GCSqGSIb3DQEBCwUAMB8xCzAJBgNV
-BAYTAk5MMRAwDgYDVQQDDAdiYWNrZW5kMB4XDTE3MDkxNTEzMjQ0OFoXDTI3MDkx
-MzEzMjQ0OFowHzELMAkGA1UEBhMCTkwxEDAOBgNVBAMMB2JhY2tlbmQwggEiMA0G
-CSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDZTq/p7+dvDWHtKdLbafSDel8yE+rM
-CzCWl0pO1pflmeFS7zwIkN2OxT8Hjvw/apPdxgWxjJE7NXUEWxAHuDde4JbrOY40
-/VPg+QSBkNMcENKCMEyKem3Tox8ruZhHbNvs3M5IG2f1Dvx7tU2YZMdcSs6U6PJg
-qsFQ+PCM2BWGAEz7Ic6YISWDZsJIDWBE7cw99pMw9UFqK9kmHuKBVnwnjnJaAi1i
-EdQitZa8fAF6OBCKRnazxgqX7UWSf+LC4AHfYKuJTZJTaPx52ofvll0ABaTohnmV
-uXfILpwUFFXwOPN07iLAF2v+gqBRyhLjV1DxEJk6MMbR+ymMMwMtf6YLAgMBAAGj
-UzBRMB0GA1UdDgQWBBQc9/wr+5WKS+JAy3y8m3bLubPWeTAfBgNVHSMEGDAWgBQc
-9/wr+5WKS+JAy3y8m3bLubPWeTAPBgNVHRMBAf8EBTADAQH/MA0GCSqGSIb3DQEB
-CwUAA4IBAQAZ+MCfjzpzMNEqncBHbD+mw4gWRy28Pj2l8ogrrYvJXzx9L/uPlD2k
-8dpjFNDQOWmqYVAKa769L37B6qn4960hXljcWdGKtJOqkTNbtOaAQs2vbd3yOOmf
-RoydWqA/fTCZcnx0s+7mha8WZVuCHS3ShvkFVIPFg8NdMx6jj6e8tfvcQ8/R8yU3
-jHVpGEDv0QGpDgGUt0zx+G6aGrQVxtNaezuPhCQTdDNmzSU1txSBtLzcW0CJvhJD
-8tArwvnU3hMebwsrJ9RIvQQ/AnXPZK0BivjCcuFtek8Z39WtEKTVHXvAoQSkfcnC
-XOkAuqSqVGuNtzuvzf28wA9QWGENja2d
-',
+      'X509Certificate' => '{{ saml_ts_cert.cert }}',
     ),
   ),
   'validate.authnrequest' => false,
