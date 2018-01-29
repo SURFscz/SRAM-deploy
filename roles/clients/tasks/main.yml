@@ -132,13 +132,27 @@
         - saml20-idp-remote.php
         - saml20-idp-hosted.php
 
-    - name: create self-signed Token Signing SSL certs
-      command: >
-        openssl req -new -nodes -x509 -subj '/C=NL/CN=tokensigning'
-        -days 3650 -keyout '{{ simplesaml_project_dir }}/simplesaml/cert/server.pem'
-        -out '{{ simplesaml_project_dir }}/simplesaml/cert/server.crt' -extensions v3_ca
-      args:
-        creates: "{{ simplesaml_project_dir }}/simplesaml/cert/server.crt"
+    #- name: create self-signed Token Signing SSL certs
+      #command: >
+        #openssl req -new -nodes -x509 -subj '/C=NL/CN=tokensigning'
+        #-days 3650 -keyout '{{ simplesaml_project_dir }}/simplesaml/cert/server.pem'
+        #-out '{{ simplesaml_project_dir }}/simplesaml/cert/server.crt' -extensions v3_ca
+      #args:
+        #creates: "{{ simplesaml_project_dir }}/simplesaml/cert/server.crt"
+
+    - name: Copy self-signed Token signing cert key
+      copy:
+        content: |
+            -----BEGIN PRIVATE KEY-----
+            {{ saml_ts_cert.key }}-----END PRIVATE KEY-----
+        dest: "{{ simplesaml_project_dir }}/simplesaml/cert/server.pem"
+
+    - name: Copy self-signed Token signing cert
+      copy:
+        content: |
+            -----BEGIN CERTIFICATE-----
+            {{ saml_ts_cert.cert }}-----END CERTIFICATE-----
+        dest: "{{ simplesaml_project_dir }}/simplesaml/cert/server.crt"
 
     - name: Install OIDC module
       composer:

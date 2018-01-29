@@ -98,20 +98,24 @@ $config = array(
 //             'uid' => array('test'),
             'urn:mace:dir:attribute-def:uid' => array('testuid'),
             'urn:mace:dir:attribute-def:eduPersonAffiliation' => array('member', 'student'),
+            'urn:mace:dir:attribute-def:displayName' => array('S. Tudent'),
             'urn:mace:dir:attribute-def:mail' => array('some@mailaddress.org'),
             'urn:mace:terena.org:attribute-def:schacHomeOrganization' => array('surfnet.nl'),
             'urn:mace:dir:attribute-def:eduPersonPrincipalName' => array('eppn_student@surfnet.nl'),
+            'urn:mace:dir:attribute-def:eduPersonTargetedID' => array('eptid_student@surfnet.nl'),
 //             'urn:oid:1.3.6.1.4.1.5923.1.1.1.6' => array('eppn_student@surfnet.nl'),
             'urn:mace:dir:attribute-def:postalAddress' => array('Waar je huis woont')
         ),
         'employee:{{client_idp_users.employee}}' => array(
-            'urn:mace:dir:attribute-def:eduPersonPrincipalName' => array('eppn_employee@idptest.scz'),
-            'urn:mace:dir:attribute-def:eduPersonTargetedID' => array('eptid_employee@idptest.scz'),
+            'urn:mace:dir:attribute-def:eduPersonAffiliation' => array('employee'),
             'urn:mace:dir:attribute-def:displayName' => array('E. Mployee'),
 //            'urn:mace:dir:attribute-def:givenName' => array('E.'),
 //            'urn:mace:dir:attribute-def:sn' => array('Mployee'),
+            'urn:mace:terena.org:attribute-def:schacHomeOrganization' => array('surfnet.nl'),
+            'urn:mace:dir:attribute-def:eduPersonPrincipalName' => array('eppn_employee@idptest.scz'),
+            'urn:mace:dir:attribute-def:eduPersonTargetedID' => array('eptid_student@surfnet.nl'),
             'urn:mace:dir:attribute-def:mail' => array('mail@idptest.scz'),
-            'urn:mace:dir:attribute-def:eduPersonAffiliation' => array('employee'),
+            'urn:mace:dir:attribute-def:postalAddress' => array('Antwoordnummer 1234')
         ),
     ),
 

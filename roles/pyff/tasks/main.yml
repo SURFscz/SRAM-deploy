@@ -79,8 +79,8 @@
     dest: /etc/systemd/system/pyff.service
     remote_src: yes
 
-- name: Create pyff-owned pyff.pid file
-  file: path=/var/run/pyff.pid state=touch owner=pyff
+#- name: Create pyff-owned pyff.pid file
+  #file: path=/var/run/pyff.pid state=touch owner=pyff
 
 - name: Install filebeat configuration
   template:
