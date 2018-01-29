@@ -1,4 +1,4 @@
-# -*- mode: ruby -*- vi: set ft=ruby:sw=4:s=4:noexpandtab :
+# -*- mode: ruby -*- vi: set ft=ruby:sw=4:s=4:expandtab :
 
 # Generate a single new ssh key to use for all VMs
 # By default, vagrant generates a key for each VM, but put is in a
