@@ -1,0 +1,26 @@
+# installs nginx to listen to port 80
+# default install http->https redirection
+---
+- name: install NGINX
+  apt: name=nginx state=present
+
+- name: remove unused NGINX sites
+  file:
+    dest: "/etc/nginx/sites-enabled/{{item}}"
+    state: absent
+  with_items:
+    - "default"
+    - "00-http-redirect.j2"
+  notify: restart nginx
+
+- name: remove old nginx config file
+  file: dest=/etc/nginx/sites-enabled/default state=absent
+  notify: restart nginx
+
+- name: install NGINX config file
+  template: src=http-redirect.conf.j2 dest=/etc/nginx/sites-enabled/00-http-redirect.conf
+  notify: restart nginx
+
+- name: enable NGINX
+  service: name=nginx state=started enabled=true
+

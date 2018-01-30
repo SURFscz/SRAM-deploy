@@ -1,5 +1,5 @@
 #--- SATOSA Config ---#
-BASE: https://{{ hostnames.proxy }}
+BASE: {{http_proto}}://{{ hostnames.proxy }}
 INTERNAL_ATTRIBUTES: "internal_attributes.yaml"
 COOKIE_STATE_NAME: "SATOSA_STATE"
 STATE_ENCRYPTION_KEY: "{{ satosa_state_encryption_key }}"
@@ -9,14 +9,17 @@ CUSTOM_PLUGIN_MODULE_PATHS:
   - "plugins/micro_services"
 BACKEND_MODULES:
   - "plugins/backends/saml2_backend.yaml"
+  - "plugins/backends/saml2_mirrorbackend.yaml"
 FRONTEND_MODULES:
   - "plugins/frontends/saml2_frontend.yaml"
+  - "plugins/frontends/saml2_mirrorfrontend.yaml"
   - "plugins/frontends/oidc_frontend.yaml"
 MICRO_SERVICES:
   - "plugins/micro_services/custom_logging_service.yaml"
   - "plugins/micro_services/custom_alias.yaml"
   #- "plugins/micro_services/db_acl.yaml"
   - "plugins/micro_services/db_attributes_store.yaml"
+  - "plugins/micro_services/r_and_s_acl.yaml"
   - "plugins/micro_services/consent.yaml"
 USER_ID_HASH_SALT: "{{ satosa_user_id_hash_salt }}"
 LOGGING:

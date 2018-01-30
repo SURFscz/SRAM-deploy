@@ -2,7 +2,6 @@
 $config=array(
   'fixedldap' => array(
     'basedn'  => '{{ ldap.basedn }}',
-    'groupdn' => '{{ ldap.groupdn }}',
     'dn_attribute_name' => 'uid',
     'dn_identifier_type' => 'uid',
 
@@ -29,11 +28,11 @@ $config=array(
       'person',                 # required
       'organizationalPerson',   # required
       'inetOrgPerson',          # required
-     'eduPerson',              # optional
-     'groupOfNames',           # optional
-     'eduMember',              # optional
+      'eduPerson',              # optional
+      'groupOfNames',           # optional
+      'eduMember',              # optional
 #     'posixAccount',           # optional
-     'ldapPublicKey',          # optional
+      'ldapPublicKey',          # optional
     ),
     'person' => array(
       'sn' => 'official',              # required
@@ -90,7 +89,7 @@ $config=array(
     ),
     'ldapPublicKey' => array(
       'sshPublicKey' => TRUE,  # required
-      'uid' => TRUE            # required
+      'uid' => 'uid'            # required
     )
   )
 );

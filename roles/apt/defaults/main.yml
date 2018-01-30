@@ -1,6 +1,6 @@
 ---
 debian:
   dist: 'stretch'
-  mirror: 'http://ftp.nl.debian.org/debian/'
+  mirror: 'http://ftp.de.debian.org/debian/'
   security_mirror: 'http://security.debian.org/'
 

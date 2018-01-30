@@ -1,116 +1,86 @@
 ---
 - include_vars: comanage.yml
 
+- name: Check for old comanage directories
+  find:
+    path: /var/www/
+    patterns: [ 'comanage*','registry' ]
+    recurse: "true"
+  register: comanage_old_files
+
+- name: Save and remove old comanage files
+  archive:
+    dest: /opt/comanage/comanage-old.tar.gz
+    path: [ "/var/www/comanage*", "/var/www/registry" ]
+    remove: "true"
+  when: comanage_old_files.matched > 0
+
+
 - name: Create target directories
   file:
-    path: "{{ item.path }}"
-    state: "{{ item.state }}"
-  with_items:
-    -
-      path: "{{ comanage_package }}"
-      state: directory
+    path: "{{ comanage_install_dir }}"
+    state: directory
+    recurse: "true"
 
-- name: Download comanage source
-  become: True
-  get_url:
-    url: "{{ comanage_url }}"
-    dest: "/tmp/comanage-{{ comanage_version }}.tar.gz"
-  register: comanage_downloaded
-
-# here we have to guess at the directory coming out of the tar archive. We assume it is
-# comanage-registry-{{ comanage_version }}
-- name: Unarchive comanage source
-  become: True
-  unarchive:
-    src: "/tmp/comanage-{{ comanage_version }}.tar.gz"
-    dest: "{{ comanage_install_dir }}"
-    copy: no
-
-- name: Symlink comanage source
-  file:
-    src: "{{ comanage_package }}"
+- name: Fetch comanage source
+  git:
+    repo: "{{ comanage_repo_url }}"
+    version: "{{ comanage_repo_version }}"
     dest: "{{ comanage_path }}"
-    state: link
 
-- name: Overwrite templates that require changes
-  template:
-    src: "{{ item.src }}"
-    dest: "{{ item.dest }}"
-  with_items: "{{ comanage_templates }}"
-  become: yes
 
+# comanage tmp directory needs a specific structure; copy it from the dist
 - name: Check for comanage tmp directory
   stat:
-    path: /var/cache/comanage
+    path: "{{comanage_tmp_dir}}/sessions"
   register: comanage_tmp_stat
 
+# ridiculously, ansible's copy action doesn't support remote recursive copies...
 - name: Create comanage tmp directory
-  command: mv {{ comanage_tmp_dir }} /var/cache/comanage
+  command: "cp -R {{comanage_path}}/app/tmp.dist {{comanage_tmp_dir}}"
   when: comanage_tmp_stat.stat.exists == false
 
 - name: Verify comanage tmp directory ownership and permissions
   file:
-    path: "/var/cache/comanage"
+    path: "{{comanage_tmp_dir}}"
     owner: www-data
     mode: 0700
     state: directory
     recurse: yes
 
-- name: Check for comanage local tmp
-  stat:
-    path: "{{ comanage_package }}/local/tmp"
-  register: comanage_tmp_local_stat
-
 - name: Create comanage tmp symlink
   file:
-    src: /var/cache/comanage
-    dest: "{{ comanage_package }}/local/tmp"
+    src: "{{comanage_tmp_dir}}"
+    dest: "{{ comanage_path }}/local/tmp"
     state: link
-  when: comanage_tmp_local_stat.stat.exists == false
+    force: "true"
 
-- name: Check for database config
-  stat:
-    path: "{{ comanage_package }}/local/Config/database.php"
-  register: comanage_database_stat
+# TODO: cache must be cleared, because otherwise Comanage will look for
+# plugins which haven't been instlled yet.  Real solution is probably to move
+# plugin installation here
+- name: Clear comanage cache
+  command: ./Console/clearcache
+  become: true
+  become_user: "{{ comanage_www_user }}"
+  args:
+    chdir: "{{ comanage_path }}/app"
 
-- name: Copy database config
-  command: >
-    cp {{ comanage_package }}/app/Config/database.php.default
-    {{ comanage_package }}/local/Config/database.php
-  when: comanage_database_stat.stat.exists == false
-
-- name: Configure database connection info
-  replace:
-    dest: "{{ comanage_package }}/local/Config/database.php"
-    regexp: "{{ item.regexp }}"
-    replace: "{{ item.replace }}"
-  with_items: "{{ replace }}"
-
-- name: Elevate Config directory ownership and permissions
-  file:
-    path: "{{ comanage_package }}/local/Config"
-    owner: www-data
-    mode: 0755
-    state: directory
-    recurse: yes
+- name: Copy comanage config
+  template:
+    src: "{{item}}.j2"
+    dest: "{{ comanage_path }}/local/Config/{{item}}"
+    mode: 0600
+    owner: "{{ comanage_www_user }}"
+  with_items:
+    - database.php
+    - email.php
 
 - name: Install database schema
   command: ./Console/cake database
   become: true
   become_user: "{{ comanage_www_user }}"
   args:
-    chdir: "{{ comanage_package }}/app"
-  when: comanage_database_stat.stat.exists == false
-
-- name: Copy email config
-  template: src=email.php.j2 dest={{ comanage_package }}/local/Config/email.php owner=www-data
-
-- name: Configure database connection info
-  replace:
-    dest: "{{ comanage_package }}/local/Config/database.php"
-    regexp: "{{ item.regexp }}"
-    replace: "{{ item.replace }}"
-  with_items: "{{ infodb }}"
+    chdir: "{{ comanage_path }}/app"
 
 - name: Check for ci_users in the COmanage database
   command: >
@@ -119,13 +89,13 @@
     -u {{ comanage_db_user }} "--password={{ comanage_db_password }}"
   register: comanage_cm_users_table_exists
 
-- name: Setup Cake for login
+- name: Setup Cake database
   command: >
     ./Console/cake database
   become: true
   become_user: "{{ comanage_www_user }}"
   args:
-    chdir: "{{ comanage_package }}/app"
+    chdir: "{{ comanage_path }}/app"
   when: comanage_cm_users_table_exists.stdout == "0"
 
 - name: Setup Cake for login
@@ -137,15 +107,50 @@
   become: true
   become_user: "{{ comanage_www_user }}"
   args:
-    chdir: "{{ comanage_package }}/app"
+    chdir: "{{ comanage_path }}/app"
   when: comanage_cm_users_table_exists.stdout == "0"
 
-- name: Reset Config directory ownership and permissions
-  file:
-    path: "{{ comanage_package }}/local/Config"
-    owner: root
-    state: directory
-    recurse: yes
+# sometimes, when reinstalling to an existing database, the salt and seed are
+# not recreated
+- name: Setup Cake salt
+  shell: >
+    dd if=/dev/urandom bs=1 count=4000 | tr -dc 'a-zA-Z0-9' | fold -w 40
+    | head -n 1 > security.salt
+  args:
+    creates: "{{ comanage_path }}/local/Config/security.salt"
+    chdir: "{{ comanage_path }}/local/Config"
+  become: true
+  become_user: root
+
+- name: Setup Cake seed
+  shell: >
+    dd if=/dev/urandom bs=1 count=4000 | tr -dc '0-9' | fold -w 30
+    | head -n 1 > security.seed
+  args:
+    creates: "{{ comanage_path }}/local/Config/security.seed"
+    chdir: "{{ comanage_path }}/local/Config"
+  become: true
+  become_user: root
+
+- name: Check for API user in the COmanage database
+  command: >
+    mysql -Nse 'SELECT COUNT(*) FROM {{ comanage_db }}.{{comanage_api_users_table }}
+    WHERE username="{{ comanage_api_user }}";'
+    -u {{ comanage_db_user }} "--password={{ comanage_db_password }}"
+  register: comanage_api_user_exists
+
+- name: Read COmanage salt
+  command: cat {{ comanage_path }}/app/Config/security.salt
+  changed_when: "false"
+  register: comanage_salt
+
+- name: Create API user
+  command: >
+    mysql -Nse 'INSERT INTO {{ comanage_db }}.{{ comanage_api_users_table }}
+    (username, password, created, modified) VALUES ("{{ comanage_api_user }}",
+    SHA1("{{ comanage_salt.stdout }}{{ comanage_api_password }}"), NULL, NULL);'
+    -u {{ comanage_db_user }} "--password={{ comanage_db_password }}"
+  when: comanage_api_user_exists.stdout == "0"
 
 - name: Create a crontab entry
   cron:
@@ -154,12 +159,10 @@
     minute: "0"
     hour: "3"
     user: "{{ comanage_www_user }}"
-    job: "cd {{ comanage_package }}/app && Console/cake job -q"
+    job: "cd {{ comanage_path }}/app && Console/cake job -q"
 
 - name: Copy filebeat config
   template: >
     src=fb_comanage.yml.j2
     dest=/etc/filebeat/conf.d/fb_comanage.yml
-
-- name: restart filebeat
-  systemd: daemon_reload=yes name=filebeat state=restarted enabled=yes
+  notify: "restart filebeat"

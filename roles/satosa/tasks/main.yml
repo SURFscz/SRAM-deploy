@@ -42,78 +42,89 @@
         virtualenv: "{{ satosa_env_dir }}"
         virtualenv_python: python3
         state: latest
-        #executable: pip3
 
     - name: Create SATOSA  proxy_conf configuration
-      template: >
-        src=proxy_conf.yaml.j2
-        dest="{{ satosa_env_dir }}/proxy_conf.yaml"
+      template:
+        src: proxy_conf.yaml.j2
+        dest: "{{ satosa_env_dir }}/proxy_conf.yaml"
 
     - name: Copy internal_attributes.yaml definition
-      copy: >
-        src=internal_attributes.yaml
-        dest="{{ satosa_env_dir }}/internal_attributes.yaml"
+      copy:
+        src: internal_attributes.yaml
+        dest: "{{ satosa_env_dir }}/internal_attributes.yaml"
 
     - name: Create backends directory
       file: path="{{ satosa_env_dir }}/plugins/backends" state=directory mode=0755
 
     - name: Create saml2_backend.yaml definition
-      template: >
-        src=saml2_backend.yaml.j2
-        dest="{{ satosa_env_dir }}/plugins/backends/saml2_backend.yaml"
+      template:
+        src: "{{ item }}.j2"
+        dest: "{{ satosa_env_dir }}/plugins/backends/{{ item }}"
+      with_items:
+        - saml2_backend.yaml
+        - saml2_mirrorbackend.yaml
 
     - name: Create frontends directory
       file: path="{{ satosa_env_dir }}/plugins/frontends" state=directory mode=0755
 
     - name: Create saml2_frontend.yaml definition
-      template: >
-        src=saml2_frontend.yaml.j2
-        dest="{{ satosa_env_dir }}/plugins/frontends/saml2_frontend.yaml"
+      template:
+        src: "{{ item }}.j2"
+        dest: "{{ satosa_env_dir }}/plugins/frontends/{{ item }}"
+      with_items:
+        - saml2_frontend.yaml
+        - saml2_mirrorfrontend.yaml
 
     - name: Create oidc_frontend.yaml definition
-      template: >
-        src=oidc_frontend.yaml.j2
-        dest="{{ satosa_env_dir }}/plugins/frontends/oidc_frontend.yaml"
+      template:
+        src: oidc_frontend.yaml.j2
+        dest: "{{ satosa_env_dir }}/plugins/frontends/oidc_frontend.yaml"
 
     - name: Create micro_services directory
       file: path="{{ satosa_env_dir }}/plugins/micro_services" state=directory mode=0755
 
     - name: Create custom_logging_services.yaml definition
-      template: >
-        src=custom_logging_service.yaml.j2
-        dest="{{ satosa_env_dir }}/plugins/micro_services/custom_logging_service.yaml"
+      template:
+        src: custom_logging_service.yaml.j2
+        dest: "{{ satosa_env_dir }}/plugins/micro_services/custom_logging_service.yaml"
 
     - name: Create db_acl.yaml definition
-      template: >
-        src=db_acl.yaml.j2
-        dest="{{ satosa_env_dir }}/plugins/micro_services/db_acl.yaml"
+      template:
+        src: db_acl.yaml.j2
+        dest: "{{ satosa_env_dir }}/plugins/micro_services/db_acl.yaml"
 
     - name: Create db_attributes_store.yaml definition
-      template: >
-        src=db_attributes_store.yaml.j2
-        dest="{{ satosa_env_dir }}/plugins/micro_services/db_attributes_store.yaml"
+      template:
+        src: db_attributes_store.yaml.j2
+        dest: "{{ satosa_env_dir }}/plugins/micro_services/db_attributes_store.yaml"
 
     - name: Create consent.yaml definition
-      template: >
-        src=consent.yaml.j2
-        dest="{{ satosa_env_dir }}/plugins/micro_services/consent.yaml"
+      template:
+        src: consent.yaml.j2
+        dest: "{{ satosa_env_dir }}/plugins/micro_services/consent.yaml"
+
+    - name: Create r_and_s_acl.yaml definition
+      template:
+        src: r_and_s_acl.yaml.j2
+        dest: "{{ satosa_env_dir }}/plugins/micro_services/r_and_s_acl.yaml"
 
     - name: Create static directory
       file: path="{{ satosa_env_dir }}/static" state=directory mode=0755
 
     - name: Create custom_alias.yaml definition
-      template: >
-        src=custom_alias.yaml.j2
-        dest="{{ satosa_env_dir }}/plugins/micro_services/custom_alias.yaml"
+      template:
+        src: custom_alias.yaml.j2
+        dest: "{{ satosa_env_dir }}/plugins/micro_services/custom_alias.yaml"
 
     - name: Copy error and info pages to static alias directory
-      copy: >
-        src={{ item }}
-        dest={{ satosa_env_dir }}/static/{{ item }}
+      copy:
+        src: "{{ item }}"
+        dest: "{{ satosa_env_dir }}/static/{{ item }}"
       with_items:
         - info
         - error
         - access_denied
+        - r_and_s_failed
 
     - name: Create MongoDB database satosa with collection clients
       shell: mongo satosa --eval "db.createCollection('clients')"
@@ -124,13 +135,24 @@
     - name: Create certs directory
       file: path="{{ satosa_env_dir }}/certs" state=directory mode=0755
 
-    - name: create self-signed Token Signing SSL certs
-      command: >
-        openssl req -new -nodes -x509 -subj '/C=NL/CN={{ item }}'
-        -days 3650 -keyout '{{ satosa_env_dir }}/certs/{{ item }}.key'
-        -out '{{ satosa_env_dir }}/certs/{{ item }}.crt' -extensions v3_ca
-      args:
-        creates: "{{ satosa_env_dir }}/certs/{{ item }}.crt"
+    # use a fixed cert, instead of generating one dynamically
+    - name: Copy self-signed Token Signing SSL certs keys
+      copy:
+        content: |
+          -----BEGIN PRIVATE KEY-----
+          {{ saml_ts_cert.key }}-----END PRIVATE KEY-----
+        dest: "{{ satosa_env_dir }}/certs/{{ item }}.key"
+      with_items:
+        - frontend
+        - backend
+        - signing
+
+    - name: Copy self-signed Token Signing SSL certs
+      copy:
+        content: |
+          -----BEGIN CERTIFICATE-----
+          {{ saml_ts_cert.cert }}-----END CERTIFICATE-----
+        dest: "{{ satosa_env_dir }}/certs/{{ item }}.crt"
       with_items:
         - frontend
         - backend
@@ -149,19 +171,19 @@
         creates: "{{ satosa_env_dir }}/keys/satosa.pub"
 
     - name: Create SATOSA systemd service
-      template: >
-        src=satosa.service.j2
-        dest="{{ satosa_env_dir }}/satosa.service"
-        mode=0644
+      template:
+        src: satosa.service.j2
+        dest: "{{ satosa_env_dir }}/satosa.service"
+        mode: 0644
 
     - name: Create mapper directory
       file: path="{{ satosa_env_dir }}/mapper" state=directory mode=0755
 
     - name: Copy empty mapper config
-      copy: >
-        src={{ item }}
-        dest="{{ satosa_env_dir }}/mapper/{{ item }}"
-        mode=0755
+      copy:
+        src: "{{ item }}"
+        dest: "{{ satosa_env_dir }}/mapper/{{ item }}"
+        mode: 0755
       with_items:
         - __init__.py
         - basic.py
@@ -172,31 +194,41 @@
     - name: Create metadata directory
       file: path="{{ satosa_env_dir }}/metadata" state=directory mode=0755
 
-    - name: Copy metadata generating script
-      copy: >
-        src=gen_metadata
-        dest="{{ satosa_env_dir }}/gen_metadata"
-        mode=0755
-
-    - name: Generate metadata
-      shell: ./gen_metadata
-      args:
-        chdir: "{{ satosa_env_dir }}"
-
     - name: Copy clients.json example file
-      copy: >
-        src=clients.json
-        dest="{{ satosa_env_dir }}/metadata/clients.json"
-        mode=0755
+      template:
+        src: clients.json.j2
+        dest: "{{ satosa_env_dir }}/metadata/clients.json"
+        mode: 0755
 
     - name: Create sync_clients script
-      template: >
-        src=sync_clients.j2
-        dest="{{ satosa_env_dir }}/sync_clients"
-        mode=0755
+      template:
+        src: sync_clients.j2
+        dest: "{{ satosa_env_dir }}/sync_clients"
+        mode: 0755
 
     - name: Insert OIDC clients
       shell: ./sync_clients metadata/clients.json
+      args:
+        chdir: "{{ satosa_env_dir }}"
+
+    - name: Retrieve Test SP metadata
+      get_url:
+        url: https://{{ hostnames.sp }}/saml/module.php/saml/sp/metadata.php/default-sp
+        dest: "{{ satosa_env_dir }}/metadata/sp-test.xml"
+
+    - name: Retreive Test IdP metadata
+      get_url:
+        url: https://{{ hostnames.idp }}/saml/saml2/idp/metadata.php
+        dest: "{{ satosa_env_dir }}/metadata/idp-test.xml"
+
+    - name: Copy metadata generating script
+      copy:
+        src: gen_metadata
+        dest: "{{ satosa_env_dir }}/gen_metadata"
+        mode: 0755
+
+    - name: Generate metadata
+      shell: ./gen_metadata
       args:
         chdir: "{{ satosa_env_dir }}"
 
@@ -209,26 +241,34 @@
   #- name: Create symlink to satosa.service in /etc/systemd/system
   #  file: src="{{ satosa_env_dir }}/satosa.service"
   #        dest=/etc/systemd/system/satosa.service state=link
-  copy: >
-    src="{{ satosa_env_dir }}/satosa.service"
-    dest=/etc/systemd/system/satosa.service
-    remote_src=yes
+  copy:
+    src: "{{ satosa_env_dir }}/satosa.service"
+    dest: /etc/systemd/system/satosa.service
+    remote_src: yes
 
 - name: Copy filebeat config
   template: >
     src=fb_satosa.yml.j2
     dest=/etc/filebeat/conf.d/fb_satosa.yml
-
-- name: restart filebeat
-  systemd: daemon_reload=yes name=filebeat state=restarted enabled=yes
+  notify: "restart filebeat"
 
 - name: Copy rsyslog config
   copy: >
     src=rsyslog_satosa.conf
     dest=/etc/rsyslog.d/satosa.conf
+  notify: "restart rsyslog"
 
-- name: restart rsyslog
-  systemd: daemon_reload=yes name=rsyslog state=restarted enabled=yes
+- name: Copy filebeat config
+  template: >
+    src=fb_satosa.yml.j2
+    dest=/etc/filebeat/conf.d/fb_satosa.yml
+  notify: "restart filebeat"
+
+- name: Copy rsyslog config
+  copy: >
+    src=rsyslog_satosa.conf
+    dest=/etc/rsyslog.d/satosa.conf
+  notify: "restart rsyslog"
 
 - name: restart SATOSA
   systemd: daemon_reload=yes name=satosa state=restarted enabled=yes

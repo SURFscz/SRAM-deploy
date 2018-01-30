@@ -1,0 +1,34 @@
+module: satosa.frontends.saml2.SAMLMirrorFrontend
+name: SamlMirrorIdP
+config:
+  idp_config:
+    organization: {display_name: {{ environment_string }} Mirrored Proxy IdP, name: {{ environment_string }} Mirrored Proxy IdP Org., url: 'https://{{ hostnames.meta }}/'}
+    contact_person:
+    - {contact_type: technical, email_address: technical@{{ hostnames.proxy }}, given_name: Technical}
+    - {contact_type: support, email_address: support@{{ hostnames.proxy }}, given_name: Support}
+    key_file: certs/frontend.key
+    cert_file: certs/frontend.crt
+    metadata:
+      local: ['metadata/sp-test.xml']
+      mdq: ['http://localhost:{{ pyff_port }}']
+    entityid: <base_url>/<name>/proxy.xml
+    service:
+      idp:
+        name: Proxy Mirror IdP
+        endpoints:
+          single_sign_on_service: []
+        name_id_format: ['urn:oasis:names:tc:SAML:2.0:nameid-format:persistent', 'urn:oasis:names:tc:SAML:2.0:nameid-format:transient']
+        policy:
+          default:
+            attribute_restrictions: null
+            fail_on_missing_requested: false
+            lifetime: {minutes: 15}
+            #name_form: urn:oasis:names:tc:SAML:2.0:attrname-format:basic
+    attribute_map_dir: '{{ satosa_env_dir }}/mapper'
+    allow_unknown_attributes: true
+  acr_mapping:
+    "": default-LoA
+    "https://accounts.google.com": LoA1
+  endpoints:
+    single_sign_on_service: {'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST': sso/post,
+      'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect': sso/redirect}

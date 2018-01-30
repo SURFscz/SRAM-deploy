@@ -1,19 +1,28 @@
 #######################################################################
 {{ ansible_managed | comment('plain') }}
 #######################################################################
+{% if comanage_port is equalto 443 %}
+<VirtualHost *:80>
+    ServerName {{ comanage_full_hostname }}
+    Redirect / https://{{ comanage_full_hostname }}/
+</VirtualHost>
+{% endif %}
 
 <VirtualHost *:{{ comanage_port }}>
     ServerName {{ comanage_full_hostname }}
     ServerAdmin {{ mail.admin_address }}
 
     DocumentRoot {{ comanage_root }}
+
+    RewriteEngine on
 {% if sp_home is not equalto "" %}
-    <IfModule mod_rewrite.c>
-        RewriteEngine on
-        RewriteCond %{REQUEST_URI} "^/(?!registry)" [NC]
-        RewriteRule "^(.*)" "/registry$1" [R,L]
-    </IfModule>
+    RewriteCond %{REQUEST_URI} "^/(?!registry)" [NC]
+    RewriteRule "^(.*)" "/registry$1" [R,L]
 {% endif %}
+    # make SP metadata available on a convenient url
+    RewriteRule  "^/auth/sp/metadata$" "/etc/apache2/mellon/sp-metadata.xml
+
+    Redirect {{ sp_home }}/users/logout {{ sp_path }}/logout?ReturnTo={{ sp_home }}
 
     <IfModule mod_php5.c>
         <FilesMatch "\.ph(p|tml)$">
@@ -24,7 +33,7 @@
         </FilesMatch>
     </IfModule>
 
-    <Directory "{{ comanage_path }}">
+    <Directory "{{ comanage_install_dir }}">
         Options Indexes FollowSymLinks
         DirectoryIndex index.php
         AllowOverride All
@@ -34,9 +43,12 @@
     ErrorLog ${APACHE_LOG_DIR}/error.log
     CustomLog ${APACHE_LOG_DIR}/access.log combined
 
+<IfModule mod_ssl.c>
     <FilesMatch "\.php$">
         SSLOptions +StdEnvVars
     </FilesMatch>
+</IfModule>
+
 
     BrowserMatch "MSIE [2-6]" nokeepalive ssl-unclean-shutdown downgrade-1.0 force-response-1.0
     # MSIE 7 and newer should be able to use keepalive
@@ -45,6 +57,7 @@
     <Location "{{ sp_home }}/">
         AuthType "Mellon"
         MellonEnable "info"
+        MellonMergeEnvVars Off
     </Location>
 
     <Location "{{ sp_home }}/auth">
@@ -63,19 +76,28 @@
 
         MellonSessionLength 86400
         MellonNoCookieErrorPage "{{ comanage_full_hostname }}/no_cookie.html"
-        MellonSPMetadataFile {{ sp_metadata_dir }}/sp-metadata.xml
 
         MellonSPPrivateKeyFile {{ sp_key }}
         MellonSPCertFile {{ sp_certificate }}
 
         MellonIdPMetadataFile {{ idp_metadata_path }}
-        MellonIdPPublicKeyFile {{ idp_certificate_path }}
+        MellonDoNotVerifyLogoutSignature "{{ idp_metadata_url }}"
 
         MellonSessionDump Off
         MellonSamlResponseDump Off
         MellonECPSendIDPList Off
         MellonRedirectDomains [self]
+
+        MellonMergeEnvVars Off
+
     </Location>
+
+{% if comanage_port is equalto 443 %}
+    # enabling SSL access, which is normally terminated at the LB
+    SSLEngine on
+    SSLCertificateFile      /etc/ssl/certs/ssl-cert-snakeoil.pem
+    SSLCertificateKeyFile /etc/ssl/private/ssl-cert-snakeoil.key
+{% endif %}
 
 </VirtualHost>
 

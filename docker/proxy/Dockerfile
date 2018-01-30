@@ -1,5 +1,6 @@
 FROM debian:stretch
 LABEL maintainer="SURFnet <info@surfnet.nl>"
+LABEL name=proxy
 
 # Install base tools: sshd, python
 RUN apt-get update

@@ -2,6 +2,7 @@
 CREATE TABLE IF NOT EXISTS zone_people (
  id int(11) NOT NULL AUTO_INCREMENT,
  uid varchar(2048) NOT NULL,
+ co_id int(11) NOT NULL,
  attributes longtext NOT NULL,
  modified timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
  PRIMARY KEY (id)
@@ -17,6 +18,7 @@ CREATE TABLE IF NOT EXISTS zone_person_zone_service (
 #DROP TABLE IF EXISTS zone_services;
 CREATE TABLE IF NOT EXISTS zone_services (
  id int(11) NOT NULL AUTO_INCREMENT,
+ co_id int(11) NOT NULL,
  metadata varchar(2048) NOT NULL,
  attributes longtext NOT NULL,
  PRIMARY KEY (id)

@@ -2,16 +2,25 @@
 sudo_groups:
   - sudo_test
 
+environment_name: vm
+environment_string: "SCZ VM"
+base_domain: "scz-vm.net"
+
+# externally visible!
 hostnames:
-  proxy: proxy.scz.vnet
-  mdq: mdq.scz.vnet
-  consent: cm.scz.vnet
-  comanage: comanage.scz.vnet
-  ldap: ldap.scz.vnet
-  meta: meta.scz.vnet
-  oidc_test: oidc-test.scz.vnet
-  sp_test: sp-test.scz.vnet
-  idp_test: idp-test.scz.vnet
+  proxy:    proxy.{{base_domain}}
+  mdq:      mdq.{{base_domain}}
+  consent:  cm.{{base_domain}}
+  comanage: comanage.{{base_domain}}
+  ldap:     ldap.{{base_domain}}
+  meta:     meta.{{base_domain}}
+  oidc:     oidc-test.{{base_domain}}
+  sp:       sp-test.{{base_domain}}
+  idp:      idp-test.{{base_domain}}
+
+idp_test_port: 81
+sp_test_port: 82
+oidc_test_port: 83
 
 # TODO: get rid of hardcoded ports for proxy vhosts
 loadbalancer:
@@ -35,20 +44,20 @@ loadbalancer:
     http: true
     backend_hosts: "{{groups['vm-meta']}}"
     backend_port: 80
-  - hostname: "{{hostnames.oidc_test}}"
+  - hostname: "{{hostnames.oidc}}"
     http: true
     backend_hosts: "{{groups['vm-client']}}"
-    backend_port: 80
-  - hostname: "{{hostnames.sp_test}}"
+    backend_port: "{{oidc_test_port}}"
+  - hostname: "{{hostnames.sp}}"
     http: true
     backend_hosts: "{{groups['vm-client']}}"
-    backend_port: 80
-  - hostname: "{{hostnames.idp_test}}"
+    backend_port: "{{sp_test_port}}"
+  - hostname: "{{hostnames.idp}}"
     http: true
     backend_hosts: "{{groups['vm-client']}}"
-    backend_port: 80
+    backend_port: "{{idp_test_port}}"
   - hostname: "{{hostnames.ldap}}"
     http: false
-    frontend_port: 636
+    frontend_port: 389
     backend_hosts: "{{groups['vm-ldap']}}"
     backend_port: 389

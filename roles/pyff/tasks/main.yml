@@ -74,29 +74,35 @@
   # https://github.com/systemd/systemd/issues/3010
   #- name: Create symlink to pyff.service in /etc/systemd/system
   #  file: src="{{ pyff_env_dir }}/pyff.service" dest=/etc/systemd/system/pyff.service state=link
-  copy: >
-    src="{{ pyff_env_dir }}/pyff.service"
-    dest=/etc/systemd/system/pyff.service
-    remote_src=yes
+  copy:
+    src: "{{ pyff_env_dir }}/pyff.service"
+    dest: /etc/systemd/system/pyff.service
+    remote_src: yes
 
-- name: Create pyff-owned pyff.pid file
-  file: path=/var/run/pyff.pid state=touch owner=pyff
+# stupid pyff want to create files in /var/run, even if it isn't run as root
+# now fixed by a pre-exec command in the service file, instead
+#- name: Create pyff-owned pyff.pid file
+#  file: path=/var/run/pyff.pid state=touch owner=pyff
 
 - name: Install filebeat configuration
   template:
-    src: fb_slapd.yml.j2
-    dest: /etc/filebeat/conf.d/fb_slap.yml
-
-- name: restart filebeat
-  systemd: daemon_reload=yes name=filebeat state=restarted enabled=yes
+    src: fb_pyffd.yml.j2
+    dest: /etc/filebeat/conf.d/fb_pyffd.yml
+  notify: "restart filebeat"
 
 - name: Copy rsyslog config
   copy: >
     src=rsyslog_pyffd.conf
     dest=/etc/rsyslog.d/pyffd.conf
-
-- name: restart rsyslog
-  systemd: daemon_reload=yes name=rsyslog state=restarted enabled=yes
+  notify: "restart rsyslog"
 
 - name: restart pyff
   systemd: daemon_reload=yes name=pyff state=restarted enabled=yes
+
+- name: set up nxginx proxy
+  include: nginx.yml
+
+# nginx needs to be restarted _now_ rather than at the end of the play
+- name: flush handlers
+  meta: flush_handlers
+

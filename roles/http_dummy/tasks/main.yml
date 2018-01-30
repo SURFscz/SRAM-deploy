@@ -3,6 +3,12 @@
 - name: install nginx
   apt: name=nginx state=present
 
+- name: remove upstream nginx default
+  file: dest=/etc/nginx/sites-enabled/ state=absent
+
+- name: create nginx enabled sites dir
+  file: dest=/etc/nginx/sites-enabled state=directory
+
 - name: install our NGINX default file
   copy: src=default dest=/etc/nginx/sites-available/default
 

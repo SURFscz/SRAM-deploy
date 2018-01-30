@@ -21,6 +21,7 @@
   user: name={{item}} state=absent remove=yes
   with_items:
     - surf
+    - debian
 
 - name: create groups
   group: name={{item}} state=present
@@ -31,7 +32,7 @@
   user: name={{item.uid}} state=present
   args:
     group: "{{item.groups[0]}}"
-    groups: "{{item.groups|join(',')}}"
+    groups: "{{item.groups}}"
     password: "{{item.pw_hash}}"
     shell: "/bin/bash"
     comment: "{{item.name}}"
