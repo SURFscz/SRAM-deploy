@@ -89,7 +89,7 @@ Vagrant.configure("2") do |config|
         override.vm.provision "shell", inline: "sudo env DEBIAN_FRONTEND=noninteractive apt-get -qq -y install swapspace > /dev/null"
 
         vb.cpus = "1"
-        vb.memory = "512"
+        vb.memory = "768"
     end
     config.vm.provider "libvirt" do |lv, override|
         override.vm.box = "debian/stretch64"
@@ -103,7 +103,7 @@ Vagrant.configure("2") do |config|
         override.vm.provision "shell", inline: "sudo env DEBIAN_FRONTEND=noninteractive apt-get -qq -y install swapspace > /dev/null"
 
         lv.cpus = "1"
-        lv.memory = "512"
+        lv.memory = "768"
         lv.graphics_type = "spice"
         lv.video_type = "qxl"
     end
