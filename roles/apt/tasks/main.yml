@@ -9,7 +9,6 @@
 - name: Upgrade packages
   apt: upgrade=dist
 
-# TODO: only install open-vm-tools for VMware platforms
 - name: Install common tools / clients
   apt: name={{ item }} state=present
   with_items:
@@ -18,8 +17,6 @@
     - zsh
     - vim
     - locales-all
-    - open-vm-tools
-    - open-vm-tools-dkms
     - curl
     - net-tools
     - git
@@ -29,6 +26,26 @@
   with_items:
     - nfs-common
     - cloud-init
+
+- name: install VMware clients
+  apt: name={{item}} state=present
+  with_items:
+    - open-vm-tools
+    - open-vm-tools-dkms
+  when: ansible_virtualization_type == "VMware"
+
+- name: install Qemu clients
+  apt: name={{item}} state=present
+  with_items:
+    - qemu-guest-agent
+  when: ansible_virtualization_type == "kvm"
+
+- name: install VirtualBox clients
+  apt: name={{item}} state=present
+  with_items:
+    - virtualbox-guest-dkms
+    - virtualbox-guest-utils
+  when: ansible_virtualization_type == "virtualbox"
 
 # apt module doesn't support autoremove very well, yet
 - name: Remove obsolete packages
