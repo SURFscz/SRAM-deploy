@@ -108,6 +108,11 @@
         src: r_and_s_acl.yaml.j2
         dest: "{{ satosa_env_dir }}/plugins/micro_services/r_and_s_acl.yaml"
 
+    - name: Create attribute_filter.yaml definition
+      template:
+        src: attribute_filter.yaml.j2
+        dest: "{{ satosa_env_dir }}/plugins/micro_services/attribute_filter.yaml"
+
     - name: Create static directory
       file: path="{{ satosa_env_dir }}/static" state=directory mode=0755
 
