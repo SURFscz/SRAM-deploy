@@ -13,5 +13,5 @@ firewall_v4_incoming:
   - { name: public_http,                              dport:  "80", proto: tcp }
   - { name: public_https,                             dport: "443", proto: tcp }
   - { name: vagrant,      src: "{{iprange.vagrant}}", dport:  "22", proto: tcp }
-  - { name: vnet,         src: "{{iprange.vpn.vm}}",  dport: "22,80,443", proto: tcp }
+  - { name: vnet,         src: "{{iprange.vpn.vm}}",  dport: "22,80,443,636", proto: tcp }
 
