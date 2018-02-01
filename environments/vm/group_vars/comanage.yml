@@ -38,7 +38,7 @@ comanage_proxy_db_name: "scz"
 
 idp_mellon_path: /etc/apache2/mellon/satosa
 idp_metadata_url: "https://proxy.{{base_domain}}/md/SamlIdP.xml"
-idp_attribute: "urn:oid:1.3.6.1.4.1.5923.1.1.1.6"
+idp_attribute: "cmuid"
 idp_extract_certificate: True
 
 portal_hostname: "{{ sp_hostname }}"

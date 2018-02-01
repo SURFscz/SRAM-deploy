@@ -27,5 +27,6 @@
     dest: "{{ idp_metadata_path }}"
     owner: www-data
     mode: 0600
+    force: yes
     validate_certs: no
 
