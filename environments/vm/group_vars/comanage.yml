@@ -27,23 +27,8 @@ comanage_full_hostname: "{{ sp_hostname }}"
 
 comanage_scope: "@{{base_domain}}"
 
-comanage_ldap_basedn: "ou=People,dc=example,dc=com"
-comanage_ldap_groupdn: "ou=Groups,dc=example,dc=com"
-comanage_ldap_host: "ldap:///"
-comanage_ldap_binddn: "cn=admin,dc=example,dc=com"
-
-comanage_proxy_db: "{{ groups['proxy'][0] }}"
-comanage_proxy_db_user: "scz"
-comanage_proxy_db_name: "scz"
-
 idp_mellon_path: /etc/apache2/mellon/satosa
 idp_metadata_url: "https://proxy.{{base_domain}}/md/SamlIdP.xml"
 idp_attribute: "cmuid"
 idp_extract_certificate: True
 
-portal_hostname: "{{ sp_hostname }}"
-certificate_file: /etc/ssl/certs/ssl-cert-snakeoil.pem
-key_file: /etc/ssl/private/ssl-cert-snakeoil.key
-chain_file: /etc/ssl/certs/ssl-cert-snakeoil.pem
-
-smtp_hostname: "{{ sp_hostname }}"
