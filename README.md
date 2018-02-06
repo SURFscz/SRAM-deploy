@@ -50,9 +50,18 @@ To get started, do the following:
     - libvirt and qemu: `apt install libvirt-daemon-system virt-manager
      gir1.2-spice-client-gtk-3.0 qemu qemu-kvm`
 - (libvirt only) add your user to the libvirt group: `adduser $(whoami) libvirt`
+- add the following entries to `/etc/hosts`:
+```
+172.20.1.20 ldap.vm.scz-vm.net
+172.20.1.21 comanage.vm.scz-vm.net
+172.20.1.22 proxy.vm.scz-vm.net
+172.20.1.23 meta.vm.scz-vm.net
+172.20.1.24 lb.scz-net oidc-test.scz-vm.net sp-test.scz-vm.net idp-test.scz-vm.net proxy.scz-vm.net mdq.scz-vm.net cm.scz-vm.net comanage.scz-vm.net ldap.scz-vm.net meta.scz-vm.net
+172.20.1.25 client.vm.scz-vm.net
+```
 - set up the VMs and start the deploy:
     - libvirt: `vagrant up --provider libvirt --provision` 
-    - virtualbox: `vagrant up --provider vbox --provision`
+    - virtualbox: `vagrant up --provider virtualbox --provision`
 
     This will start 5 VMs (each requires 512MB of memory) and run the ansible
     playbook to install the SCZ on those VMs.
