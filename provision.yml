@@ -31,17 +31,13 @@
 
 - hosts: all
   roles:
-    - { role: basic,    tags: ['common'] }
-    - { role: apt,      tags: ['common','apt']      }
-    - role: firewall
-      tags: ['common','firewall']
-      when: docker is not defined or docker.stdout_lines[0] != "docker"
-    - role: ntp
-      tags: ['common']
-      when: docker is not defined or docker.stdout_lines[0] != "docker"
-    - { role: users,    tags: ['common','users'] }
-    - { role: mail,     tags: ['common','mail'] }
-    - { role: syslog-client, tags: ['common','syslog'    ] }
+    - { role: basic,         tags: ['common']            }
+    - { role: apt,           tags: ['common','apt']      }
+    - { role: firewall,      tags: ['common','firewall'] }
+    - { role: ntp,           tags: ['common']            }
+    - { role: users,         tags: ['common','users']    }
+    - { role: mail,          tags: ['common','mail']     }
+    - { role: syslog-client, tags: ['common','syslog']   }
 
 - hosts: mgnt1
   roles:
