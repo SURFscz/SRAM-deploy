@@ -1,4 +1,4 @@
 ---
 - name: restart sshd
   service: name=sshd state=restarted
-  when: docker.stdout_lines[0] != "docker"
+  when: ansible_virtualization_type != "docker"
