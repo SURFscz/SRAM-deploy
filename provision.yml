@@ -22,9 +22,12 @@
       with_items: "{{ groups['all'] }}"
       tags: always
 
-#- hosts: all
-#  roles:
-#    - { role: debug,    tags: ['debug'] }
+# to run the debug target, specify --extra-vars="debug=true" / -e debug=1
+- hosts: all
+  roles:
+    - role: debug
+      tags: ['debug']
+      when: "debug | default('false') | bool"
 
 - hosts: all
   roles:
