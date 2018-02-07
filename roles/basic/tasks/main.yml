@@ -5,10 +5,10 @@
   when: ansible_virtualization_type != "docker"
 
 - name: set timezone
-  file: state=link src=/usr/share/zoneinfo/{{timezone}} dest=/etc/localtime force=yes
+  file: state=link src=/usr/share/zoneinfo/{{timezone}} dest=/etc/localtime
 
 - name: set timezone
-  template: src=timezone.j2 dest=/etc/timezone force=yes
+  template: src=timezone.j2 dest=/etc/timezone
 
 - name: set hostname
   hostname: name={{inventory_hostname_short}}
