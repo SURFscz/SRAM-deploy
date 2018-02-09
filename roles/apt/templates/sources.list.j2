@@ -1,9 +1,8 @@
-{% if ansible_virtualization_type == "virtualbox" %}
-{%   set sections = "main contrib" %}
-{% else %}
 {%   set sections = "main" %}
-{% endif -%}
 
 deb {{debian.mirror}} {{debian.dist}} {{sections}}
 deb {{debian.mirror}} {{debian.dist}}-updates {{sections}}
 deb {{debian.security_mirror}} {{debian.dist}}/updates {{sections}}
+{% if ansible_virtualization_type == "virtualbox" %}
+deb {{debian.mirror}} {{debian.dist}}-backports main contrib
+{% endif -%}
