@@ -177,7 +177,7 @@ Vagrant.configure("2") do |config|
                     create_args = create_args + [
                         "--add-host", "proxy.#{domain}:#{machines['m3']['ip']}",
                         "--add-host", "mdq.#{domain}:#{machines['m3']['ip']}",
-                        "--add-host", "consent.#{domain}:#{machines['m3']['ip']}",
+                        "--add-host", "cm.#{domain}:#{machines['m3']['ip']}",
                         "--add-host", "comanage.#{domain}:#{machines['m2']['ip']}",
                         "--add-host", "ldap.#{domain}:#{machines['m1']['ip']}",
                         "--add-host", "meta.#{domain}:#{machines['m4']['ip']}",
