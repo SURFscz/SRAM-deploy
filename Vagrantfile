@@ -21,46 +21,46 @@ end
 
 ENV['COMPOSE_PROJECT_NAME']="scz"
 
-N=6
 domain = "scz-vm.net"
 machines = {
     "m1" => {
         "name"      => "ldap",
         "ip"        => "172.20.1.20",
-        "hostname"  => "ldap.#{domain}",
+        "hostname"  => "ldap.vm.#{domain}",
         "limit"     => ['ldap'],
-        "ports"     => [ '2222:22','2280:80','2243:443'] },
+        "ports"     => [ '2222:22' ] },
     "m2" => {
         "name"      => "comanage",
         "ip"        => "172.20.1.21",
-        "hostname"  => "comanage.#{domain}",
+        "hostname"  => "comanage.vm.#{domain}",
         "limit"     => ['comanage'],
-        "ports"     => [ '2322:22','2380:80','2343:443'] },
+        "ports"     => [ '2322:22'] },
     "m3" => {
         "name"      => "proxy",
         "ip"        => "172.20.1.22",
-        "hostname"  => "proxy.#{domain}",
+        "hostname"  => "proxy.vm.#{domain}",
         "limit"     => ['proxy'],
-        "ports"     => [ '2422:22','2480:80','2443:443'] },
+        "ports"     => [ '2422:22' ] },
     "m4" => {
         "name"      => "meta",
         "ip"        => "172.20.1.23",
-        "hostname"  => "meta.#{domain}",
+        "hostname"  => "meta.vm.#{domain}",
         "limit"     => ['meta'],
-        "ports"     => [ '2522:22','2580:80','2543:443'] },
+        "ports"     => [ '2522:22' ] },
     "m5" => {
         "name"      => "lb",
         "ip"        => "172.20.1.24",
-        "hostname"  => "lb.#{domain}",
+        "hostname"  => "lb.vm.#{domain}",
         "limit"     => ['lb'],
-        "ports"     => [ '2622:22','2680:80','2643:443'] },
+        "ports"     => [ '2622:22','2680:80','2643:443', '2689:389', '2639:636' ] },
     "m6" => {
         "name"      => "client",
         "ip"        => "172.20.1.25",
-        "hostname"  => "client.#{domain}",
+        "hostname"  => "client.vm.#{domain}",
         "limit"     => ['client'],
-        "ports"     => [ '2722:22','2780:80','2743:443'] }
+        "ports"     => [ '2722:22' ] }
 }
+N=machines.size
 
 # All Vagrant configuration is done below. The "2" in Vagrant.configure
 # configures the configuration version (we support older styles for
@@ -116,6 +116,16 @@ Vagrant.configure("2") do |config|
         }
     end
 
+    config.vm.provider "docker" do |dk, override|
+        # create a docker client network
+        Vagrant::Util::Subprocess.execute('bash','-c',
+            "(docker network list | grep 'scznet') || \
+              docker network create --attachable --driver bridge \
+                --gateway 172.20.1.1 --subnet 172.20.1.0/24 scznet",
+            :notify => [:stdout, :stderr]
+        )
+    end
+
     # we add the key to authorized_keys instead of provisioning the entire file, to allow
     # vagrant to reprovision running boxes. In that case, both the vagrant key and the
     # generated key need to be allowed
@@ -126,124 +136,78 @@ Vagrant.configure("2") do |config|
                         echo '' >> /home/vagrant/.ssh/authorized_keys"
     end
 
+
     (1..N).each do |machine_id|
         machine = machines["m#{machine_id}"]
+        machinename = "#{machine['name']}.#{domain}"
 
-        config.vm.define machine["name"], autostart: true do |m|
+        config.vm.define machinename, autostart: true do |m|
             m.vm.network :private_network, ip: machine["ip"]
-            m.vm.hostname = machine["hostname"]
+            m.vm.hostname = machinename
             m.vm.provider "virtualbox" do |v|
                 v.name = "SCZ #{machine['name']}"
             end
 
             m.vm.provider "docker" do |dk|
-                dk.name = machine['name']
-                dk.build_dir ="./docker/#{machine['name']}"
-                dk.build_args = ["-t", "scz:#{machine['name']}" ]
-                dk.remains_running = false
-                dk.has_ssh = false
+                dk.name = machinename
+                dk.build_dir ="./docker"
+                dk.build_args = ["-t", "scz" ]
+                dk.remains_running = true
+                dk.has_ssh = true
+                create_args = [
+                        "-d", "-t", "-i",
+                        "--network", "scznet",
+                        "--ip", "#{machine['ip']}",
+                    # internal names (used for LB rerouting)
+                        "--add-host", "#{machines['m1']['hostname']}:#{machines['m1']['ip']}",
+                        "--add-host", "#{machines['m2']['hostname']}:#{machines['m2']['ip']}",
+                        "--add-host", "#{machines['m3']['hostname']}:#{machines['m3']['ip']}",
+                        "--add-host", "#{machines['m4']['hostname']}:#{machines['m4']['ip']}",
+                        "--add-host", "#{machines['m5']['hostname']}:#{machines['m5']['ip']}",
+                        "--add-host", "#{machines['m6']['hostname']}:#{machines['m6']['ip']}",
+                    # (unused) interface for outgoing mail
+                        "--add-host", "outgoing.#{domain}:172.20.1.1",
+                    # add options to get systemd to run properly
+                        "-v", "/sys/fs/cgroup:/sys/fs/cgroup:ro",
+                        "--tmpfs", "/run",
+                        "--tmpfs", "/tmp:exec" # need exec for vagrant
+                         ]
+                if machine['name'] == "lb"
+                    # for the loadbalancer, make sure we point to the right hosts
+                    create_args = create_args + [
+                        "--add-host", "proxy.#{domain}:#{machines['m3']['ip']}",
+                        "--add-host", "mdq.#{domain}:#{machines['m3']['ip']}",
+                        "--add-host", "consent.#{domain}:#{machines['m3']['ip']}",
+                        "--add-host", "comanage.#{domain}:#{machines['m2']['ip']}",
+                        "--add-host", "ldap.#{domain}:#{machines['m1']['ip']}",
+                        "--add-host", "meta.#{domain}:#{machines['m4']['ip']}",
+                        "--add-host", "oidc-test.#{domain}:#{machines['m6']['ip']}",
+                        "--add-host", "sp-test.#{domain}:#{machines['m6']['ip']}",
+                        "--add-host", "idp-test.#{domain}:#{machines['m6']['ip']}"
+                    ]
+                else
+                    # external interfaces are routed through the LB
+                    create_args = create_args + [
+                        "--add-host", "proxy.#{domain}:#{machines['m5']['ip']}",
+                        "--add-host", "mdq.#{domain}:#{machines['m5']['ip']}",
+                        "--add-host", "consent.#{domain}:#{machines['m5']['ip']}",
+                        "--add-host", "comanage.#{domain}:#{machines['m5']['ip']}",
+                        "--add-host", "ldap.#{domain}:#{machines['m5']['ip']}",
+                        "--add-host", "meta.#{domain}:#{machines['m5']['ip']}",
+                        "--add-host", "oidc-test.#{domain}:#{machines['m5']['ip']}",
+                        "--add-host", "sp-test.#{domain}:#{machines['m5']['ip']}",
+                        "--add-host", "idp-test.#{domain}:#{machines['m5']['ip']}",
+                         ]
+                end
+                dk.create_args = create_args
             end
 
             if machine_id == N
-                m.vm.provider "docker" do |dk|
-                    dk.cmd = ["/usr/sbin/sshd", "-D" ]
-                    dk.remains_running = true
-                    dk.has_ssh = true
-                    dk.compose = true
-                    dk.compose_configuration = {
-                        "services" => {
-                            machines["m1"]["name"] => {
-                                "build" => {
-                                    "context" => "../../docker/#{machines['m1']['name']}"
-                                },
-                                "command" => ["/usr/sbin/sshd", "-D" ],
-                                "image" => "scz:#{machines['m1']['name']}",
-                                "hostname" => "#{machines['m1']['name']}.#{domain}",
-                                "networks" => {
-                                    "scznet" => {
-                                        "ipv4_address" => machines["m1"]["ip"]
-                                    }
-                                }
-                            },
-                            machines["m2"]["name"] => {
-                                "build" => {
-                                    "context" => "../../docker/#{machines['m2']['name']}"
-                                },
-                                "command" => ["/usr/sbin/sshd", "-D" ],
-                                "image" => "scz:#{machines['m2']['name']}",
-                                "hostname" => "#{machines['m2']['name']}.#{domain}",
-                                "networks" => {
-                                    "scznet" => {
-                                        "ipv4_address" => machines["m2"]["ip"]
-                                    }
-                                }
-                            },
-                            machines["m3"]["name"] => {
-                                "build" => {
-                                    "context" => "../../docker/#{machines['m3']['name']}"
-                                },
-                                "command" => ["/usr/sbin/sshd", "-D" ],
-                                "image" => "scz:#{machines['m3']['name']}",
-                                "hostname" => "#{machines['m3']['name']}.#{domain}",
-                                "networks" => {
-                                    "scznet" => {
-                                        "ipv4_address" => machines["m3"]["ip"]
-                                    }
-                                }
-                            },
-                            machines["m4"]["name"] => {
-                                "build" => {
-                                    "context" => "../../docker/#{machines['m4']['name']}"
-                                },
-                                "command" => ["/usr/sbin/sshd", "-D" ],
-                                "image" => "scz:#{machines['m4']['name']}",
-                                "hostname" => "#{machines['m4']['name']}.#{domain}",
-                                "networks" => {
-                                    "scznet" => {
-                                        "ipv4_address" => machines["m4"]["ip"]
-                                    }
-                                }
-                            },
-                            machines["m5"]["name"] => {
-                                "build" => {
-                                    "context" => "../../docker/#{machines['m5']['name']}"
-                                },
-                                "command" => ["/usr/sbin/sshd", "-D" ],
-                                "image" => "scz:#{machines['m5']['name']}",
-                                "hostname" => "#{machines['m5']['name']}.#{domain}",
-                                "networks" => {
-                                    "scznet" => {
-                                        "ipv4_address" => machines["m5"]["ip"]
-                                    }
-                                }
-                            },
-                            machines["m6"]["name"] => {
-                                "build" => {
-                                    "context" => "../../docker/#{machines['m6']['name']}"
-                                },
-                                "command" => ["/usr/sbin/sshd", "-D" ],
-                                "image" => "scz:#{machines['m6']['name']}",
-                                "hostname" => "#{machines['m6']['name']}.#{domain}",
-                                "networks" => {
-                                    "scznet" => {
-                                        "ipv4_address" => machines["m6"]["ip"]
-                                    }
-                                }
-                            }
-                        },
-                        "networks" => {
-                            "scznet" => {
-                                "driver" => "bridge",
-                                "ipam" => {
-                                    "config" => [{
-                                        "subnet" => "172.20.1.0/24",
-                                        "gateway" => "172.20.1.1"
-                                    }]
-                                }
-                            }
-                        }
-                    }
+
+                config.vm.provision :shell do |shell|
+                    shell.inline = "echo 'Waiting 20 seconds to allow all containers to boot';sleep 20"
                 end
+
 
                 m.vm.provision :ansible do |ansible|
                     # Note: recent versions of Vagrant need this, but older

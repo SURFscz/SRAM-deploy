@@ -1,6 +1,4 @@
 ---
 # handlers file for generic
 - name: Restart Apache
-  service:
-    name: apache2
-    state: restarted
+  systemd: daemon_reload=yes name=apache2 state=restarted enabled=yes

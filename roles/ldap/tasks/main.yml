@@ -9,6 +9,24 @@
     - unzip
     - ldap-utils
 
+- name: Copying alternative service script
+  become_user: "{{ ldap_user }}"
+  become: true
+  template:
+    src: "templates/{{ item.src }}"
+    dest: "/etc/init.d/"
+    mode: 0755
+  with_items:
+    - { src: "slapd.j2", dest: "slapd" }
+  when: ansible_virtualization_type == "docker"
+
+- name: Reload systemctl
+  command: systemctl daemon-reload
+  when: ansible_virtualization_type == "docker"
+
+- name: Starting and enabling the LDAP service
+  systemd: daemon_reload=yes name=slapd state=restarted enabled=yes
+
 - name: Ensure the a number of directories exist
   become_user: "{{ ldap_user }}"
   file:
@@ -145,11 +163,6 @@
   with_items:
     - { src: "initial_setup.ldif.j2", dest: "initial_setup.ldif" }
     - { src: "set_root_credentials.ldif.j2", dest: "set_root_credentials.ldif" }
-
-- name: Starting slapd service
-  service:
-    name: slapd
-    state: started
 
 - name: Ensure the ldap admin credentials are set
   command: ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f "{{ ldap_ldif_dir }}/set_root_credentials.ldif"

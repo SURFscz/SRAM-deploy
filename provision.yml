@@ -32,10 +32,10 @@
     - { role: apt,      tags: ['common','apt']      }
     - role: firewall
       tags: ['common','firewall']
-      when: docker is not defined or docker.stdout_lines[0] != "docker"
+      when: ansible_virtualization_type != "docker"
     - role: ntp
       tags: ['common']
-      when: docker is not defined or docker.stdout_lines[0] != "docker"
+      when: ansible_virtualization_type != "docker"
     - { role: users,    tags: ['common','users'] }
     - { role: mail,     tags: ['common','mail'] }
     - { role: syslog-client, tags: ['common','syslog'    ] }
