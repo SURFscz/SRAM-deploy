@@ -1,7 +1,7 @@
 # IPv4 firewall configuration
 
 *filter
-:INPUT REJECT [0:0]
+:INPUT DROP [0:0]
 :FORWARD DROP [0:0]
 :OUTPUT ACCEPT [0:0]
 
@@ -31,5 +31,9 @@
   {{"\n"}}
 {% endfor %}
 {% endif %}
+
+# explicitly add a REJECT rule to prevent timeouts when connecting
+# note: REJECT is not a valid policy, but can only be used in targets
+-A INPUT -j REJECT
 
 COMMIT
