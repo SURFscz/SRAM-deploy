@@ -113,6 +113,11 @@
         src: attribute_filter.yaml.j2
         dest: "{{ satosa_env_dir }}/plugins/micro_services/attribute_filter.yaml"
 
+    - name: Create custom_uid.yaml definition
+      template:
+        src: custom_uid.yaml.j2
+        dest: "{{ satosa_env_dir }}/plugins/micro_services/custom_uid.yaml"
+
     - name: Create static directory
       file: path="{{ satosa_env_dir }}/static" state=directory mode=0755
 

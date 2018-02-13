@@ -67,7 +67,7 @@
         MellonEnable "auth"
         MellonVariable "cookie"
         MellonSecureCookie On
-        MellonCookieDomain {{ portal_hostname }}
+        MellonCookieDomain "{{sp_hostname}}"
         MellonCookiePath /
 
         MellonUser "{{ idp_attribute }}"
