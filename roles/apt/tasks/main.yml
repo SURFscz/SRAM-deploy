@@ -21,6 +21,7 @@
     - curl
     - net-tools
     - git
+    - acl
 
 - name: remove unneccessary packages
   apt: name={{ item }} state=absent

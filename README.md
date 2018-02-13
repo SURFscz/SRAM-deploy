@@ -40,7 +40,7 @@ broken.
 
 To get started, do the following:
 
-- install Vagrant (>=1.9) and Ansible (>=2.3)
+- install Vagrant (>=1.9) and Ansible (>=2.4.3)
     - Ubuntu/Debian: `apt install ansible vagrant`
     - MacOS: see
       <http://docs.ansible.com/ansible/latest/intro_installation.html#latest-releases-on-mac-osx>
@@ -63,6 +63,6 @@ To get started, do the following:
     - libvirt: `vagrant up --provider libvirt --provision` 
     - virtualbox: `vagrant up --provider virtualbox --provision`
 
-    This will start 5 VMs (each requires 512MB of memory) and run the ansible
+    This will start 5 VMs (each requires 786MB of memory) and run the ansible
     playbook to install the SCZ on those VMs.
 
