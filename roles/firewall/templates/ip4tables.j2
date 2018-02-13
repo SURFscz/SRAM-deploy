@@ -52,4 +52,8 @@
 # note: REJECT is not a valid policy, but can only be used in targets
 -A INPUT -j REJECT
 
+# explicitly add a REJECT rule to prevent timeouts when connecting
+# note: REJECT is not a valid policy, but can only be used in targets
+-A INPUT -j REJECT
+
 COMMIT
