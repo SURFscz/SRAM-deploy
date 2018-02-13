@@ -85,7 +85,7 @@ Vagrant.configure("2") do |config|
         override.vm.box_download_checksum_type = "sha256"
         override.vm.box_download_checksum = "ecd924aae99d1e029e795cb55775bb96aabb77ab122f3ab4d3655589fd5674cd"
 
-        # install a swap daemon (needer for php/composer, ao)
+        # install a swap daemon (needed for php/composer)
         override.vm.provision "shell", inline: "sudo env DEBIAN_FRONTEND=noninteractive apt-get -qq -y install swapspace > /dev/null"
 
         vb.cpus = "1"
@@ -99,7 +99,7 @@ Vagrant.configure("2") do |config|
         override.vm.box_download_checksum_type = "sha256"
         override.vm.box_download_checksum = "ecd924aae99d1e029e795cb55775bb96aabb77ab122f3ab4d3655589fd5674cd"
 
-        # install a swap daemon (needer for php/composer, ao)
+        # install a swap daemon (needed for php/composer)
         override.vm.provision "shell", inline: "sudo env DEBIAN_FRONTEND=noninteractive apt-get -qq -y install swapspace > /dev/null"
 
         lv.cpus = "1"
