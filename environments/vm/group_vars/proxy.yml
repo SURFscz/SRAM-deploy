@@ -1,12 +1,11 @@
 ---
 firewall_v4_incoming:
-  - { name: bastion,      src: "{{iprange.bastion}}", dport:    "22", proto: tcp }
-  - { name: loadbalancer, src: "{{iprange.lb}}",      dport:  "8080", proto: tcp }
-  - { name: loadbalancer, src: "{{iprange.lb}}",      dport:  "8081", proto: tcp }
-  - { name: loadbalancer, src: "{{iprange.lb}}",      dport:  "8082", proto: tcp }
+  - { name: bastion,      src: "{{iprange.bastion}}",  dport:    "22", proto: tcp }
+  - { name: loadbalancer, src: "{{iprange.lb}}",       dport:  "8080", proto: tcp }
+  - { name: loadbalancer, src: "{{iprange.lb}}",       dport:  "8081", proto: tcp }
+  - { name: loadbalancer, src: "{{iprange.lb}}",       dport:  "8082", proto: tcp }
   - { name: comanage,     src: "{{iprange.comanage}}", dport:  "3306", proto: tcp }
-  - { name: vagrant,      src: "{{iprange.vagrant}}", dport:   "22", proto: tcp }
-  - { name: vnet,         src: "{{iprange.vpn.vm}}",  dport: "22,80,443", proto: tcp }
+  - { name: vnet,         src: "{{iprange.vm}}",       dport: "22,80,443", proto: tcp }
 
 # SATOSA configuration
 satosa_repo_url: "https://github.com/SURFscz/SATOSA.git"
