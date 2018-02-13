@@ -60,7 +60,6 @@ machines = {
         "limit"     => ['client'],
         "ports"     => [ '2722:22' ] }
 }
-N=machines.size
 
 # All Vagrant configuration is done below. The "2" in Vagrant.configure
 # configures the configuration version (we support older styles for
@@ -137,6 +136,7 @@ Vagrant.configure("2") do |config|
     end
 
 
+    N=machines.size
     (1..N).each do |machine_id|
         machine = machines["m#{machine_id}"]
         machinename = "#{machine['name']}.#{domain}"
