@@ -24,7 +24,6 @@ end
 
 ENV['COMPOSE_PROJECT_NAME']="scz"
 
-N=6
 domain = "scz-vm.net"
 machines = {
     "m1" => {
@@ -133,6 +132,7 @@ Vagrant.configure("2") do |config|
                         echo '' >> /home/vagrant/.ssh/authorized_keys"
     end
 
+    N=machines.length
     (1..N).each do |machine_id|
         machine = machines["m#{machine_id}"]
 
