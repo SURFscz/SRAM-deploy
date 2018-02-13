@@ -1,7 +1,7 @@
 # -*- mode: ruby -*- vi:ft=ruby:sw=4:ts=4:expandtab:
 
 # Vagrant boxes location has changed
-Vagrant::DEFAULT_SERVER_URL.replace('https://vagrantcloud.com') 
+Vagrant::DEFAULT_SERVER_URL.replace('https://vagrantcloud.com')
 
 # Generate a single new ssh key to use for all VMs
 # By default, vagrant generates a key for each VM, but put is in a
