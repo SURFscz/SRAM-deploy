@@ -6,7 +6,7 @@ box_url      = "https://vagrantcloud.com/debian/boxes/stretch64/versions/9.3.0/p
 box_checksum = "22620dd2b655db09ea991d156353dac35969e798fe3d031638d7316a5f570989"
 
 # Vagrant boxes location has changed
-Vagrant::DEFAULT_SERVER_URL.replace('https://vagrantcloud.com') 
+Vagrant::DEFAULT_SERVER_URL.replace('https://vagrantcloud.com')
 
 # Generate a single new ssh key to use for all VMs
 # By default, vagrant generates a key for each VM, but put is in a
@@ -85,11 +85,11 @@ Vagrant.configure("2") do |config|
     # atop our current OS) we put box information inside the providers that actually
     # need to download the box
     config.vm.provider "virtualbox" do |vb, override|
-        # being paranoid and all, we don't trust random updated images without
-        # manually checking sha256sums against https://cloud.alioth.debian.org/vagrantboxes/
-	# and vagrant, being stupid and all, refuses to check checksums for regular vargantcloud downloads
-        # so we simply specify everything manually
-	override.vm.box = box_name
+    # being paranoid and all, we don't trust random updated images without
+    # manually checking sha256sums against https://cloud.alioth.debian.org/vagrantboxes/
+    # and vagrant, being stupid and all, refuses to check checksums for regular vargantcloud downloads
+    # so we simply specify everything manually
+    override.vm.box = box_name
         override.vm.box_url = box_url
         override.vm.box_download_checksum_type = "sha256"
         override.vm.box_download_checksum = box_checksum
@@ -101,11 +101,11 @@ Vagrant.configure("2") do |config|
         vb.memory = "768"
     end
     config.vm.provider "libvirt" do |lv, override|
-        # being paranoid and all, we don't trust random updated images without
-        # manually checking sha256sums against https://cloud.alioth.debian.org/vagrantboxes/
-	# and vagrant, being stupid and all, refuses to check checksums for regular vargantcloud downloads
-        # so we simply specify everything manually
-	override.vm.box = box_name
+    # being paranoid and all, we don't trust random updated images without
+    # manually checking sha256sums against https://cloud.alioth.debian.org/vagrantboxes/
+    # and vagrant, being stupid and all, refuses to check checksums for regular vargantcloud downloads
+    # so we simply specify everything manually
+    override.vm.box = box_name
         override.vm.box_url = box_url
         override.vm.box_download_checksum_type = "sha256"
         override.vm.box_download_checksum = box_checksum
