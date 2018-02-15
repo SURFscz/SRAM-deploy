@@ -67,7 +67,11 @@
 
 - hosts: client
   roles:
-    - { role: clients,     tags: ['clients']    }
+    - { role: client-base,        tags: ['client']    }
+    - { role: client-saml-sp,     tags: ['clientsp']    }
+    - { role: client-saml-idp,    tags: ['clientidp']    }
+    - { role: client-google-idp,  tags: ['clientgoogle']    }
+    - { role: client-oidc-rp,     tags: ['clientrp']    }
 
 - hosts: proxy
   roles:

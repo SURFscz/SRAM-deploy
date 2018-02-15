@@ -5,7 +5,6 @@
     state: present
   with_items:
     - apache2
-    - libapache2-mod-auth-openidc
     - libapache2-mod-php7.0
     - php-date
     - php-mcrypt
@@ -27,36 +26,11 @@
 - name: install composer
   command: "php -f /tmp/composer-installer -- --install-dir=/usr/local/bin --filename=composer"
 
-
-# This breaks SimpleSAMLphp, do NOT enable globally.
-# Library load will be included in oidc site conf
-#- name: Enable auth_openidc
-#  apache2_module: name=auth_openidc state=present
 - name: Remove default index files
   file: dest=/var/www/html/{{ item }} state=absent
   with_items:
     - index.html
     - index.nginx-debian.html
-
-- name: Create new SP test root index.php
-  template:
-    src: sp_index.php.j2
-    dest: /var/www/html/index.php
-    mode: 0644
-
-- name: Create OIDC RP test dir
-  file:
-    path: "/var/www/html/oidc"
-    state: directory
-    mode: 0755
-    owner: www-data
-    group: www-data
-
-- name: Create new OIDC RP test root index.php
-  copy:
-    src: oidc_index.php
-    dest: /var/www/html/oidc/index.php
-    mode: 0644
 
 - name: Remove default website
   file: dest=/etc/apache2/sites-enabled/{{item}} state=absent
@@ -65,9 +39,6 @@
     - "00-default.conf"
     - "000-default.conf"
 
-- name: Set Listen port for Apache
-  template: src=ports.conf.j2 dest=/etc/apache2/ports.conf
-
 - name: Add websites
   template:
     src: "{{ item }}.conf.j2"
@@ -75,8 +46,6 @@
     mode: 0644
   with_items:
     - idp
-    - oidc
-    - sp
 
 - name: Enable websites
   file:
@@ -85,8 +54,15 @@
     state: link
   with_items:
     - idp
-    - oidc
-    - sp
+
+- name: Listen to IdP port
+  blockinfile:
+    path: "/etc/apache2/ports.conf"
+    insertbefore: BOF
+    marker: "# {mark} ANSIBLE MANAGED BLOCK {{ hostnames.idp }}"
+    create: yes
+    block: |
+      Listen {{ idp_test_port }}
 
 - name: Create simplesaml project dir
   file:
@@ -128,8 +104,6 @@
         src: "{{ item }}.j2"
         dest: "{{ simplesaml_project_dir }}/simplesaml/metadata/{{ item }}"
       with_items:
-        - saml20-sp-remote.php
-        - saml20-idp-remote.php
         - saml20-idp-hosted.php
 
     # before, we used to generate a certificate dynamically, but that was
@@ -148,22 +122,6 @@
           -----BEGIN CERTIFICATE-----
           {{ saml_ts_cert.cert }}-----END CERTIFICATE-----
         dest: "{{ simplesaml_project_dir }}/simplesaml/cert/server.crt"
-
-    - name: Install OIDC module
-      composer:
-        working_dir: "{{ simplesaml_project_dir }}/simplesaml"
-        command: require
-        arguments: bradjonesllc/simplesamlphp-module-openidconnect dev-master
-        optimize_autoloader: False
-      # Composer wants to write cache to ~/.composer, but for www-data its
-      # home (/var/www) is owned by root
-      environment:
-        COMPOSER_CACHE_DIR: /tmp/composer
-
-    - name: Copy Google attribute map
-      copy:
-        src: "google2urn.php"
-        dest: "{{ simplesaml_project_dir }}/simplesaml/attributemap"
 
   become: "yes"
   become_user: www-data
