@@ -1,4 +1,7 @@
-# -*- mode: ruby -*- vi: set ft=ruby:sw=4:s=4:expandtab :
+# -*- mode: ruby -*- vi:ft=ruby:sw=4:ts=4:expandtab:
+
+# Vagrant boxes location has changed
+Vagrant::DEFAULT_SERVER_URL.replace('https://vagrantcloud.com')
 
 # Generate a single new ssh key to use for all VMs
 # By default, vagrant generates a key for each VM, but put is in a
@@ -21,7 +24,6 @@ end
 
 ENV['COMPOSE_PROJECT_NAME']="scz"
 
-N=6
 domain = "scz-vm.net"
 machines = {
     "m1" => {
@@ -78,28 +80,32 @@ Vagrant.configure("2") do |config|
     # atop our current OS) we put box information inside the providers that actually
     # need to download the box
     config.vm.provider "virtualbox" do |vb, override|
-        override.vm.box = "debian/stretch64"
         # being paranoid and all, we don't trust random updated images without
         # manually checking sha256sums against https://cloud.alioth.debian.org/vagrantboxes/
-        override.vm.box_check_update = false
+        # and vagrant, being stupid and all, refuses to check checksums for regular vargantcloud downloads
+        # so we simply specify everything manually
+        override.vm.box = "Debian 9 (Stretch)"
+        override.vm.box_url = "https://vagrantcloud.com/debian/boxes/stretch64/versions/9.3.0/providers/virtualbox.box"
         override.vm.box_download_checksum_type = "sha256"
-        override.vm.box_download_checksum = "ecd924aae99d1e029e795cb55775bb96aabb77ab122f3ab4d3655589fd5674cd"
+        override.vm.box_download_checksum = "22620dd2b655db09ea991d156353dac35969e798fe3d031638d7316a5f570989"
 
-        # install a swap daemon (needer for php/composer, ao)
+        # install a swap daemon (needed for php/composer)
         override.vm.provision "shell", inline: "sudo env DEBIAN_FRONTEND=noninteractive apt-get -qq -y install swapspace > /dev/null"
 
         vb.cpus = "1"
         vb.memory = "768"
     end
     config.vm.provider "libvirt" do |lv, override|
-        override.vm.box = "debian/stretch64"
         # being paranoid and all, we don't trust random updated images without
         # manually checking sha256sums against https://cloud.alioth.debian.org/vagrantboxes/
-        override.vm.box_check_update = false
+        # and vagrant, being stupid and all, refuses to check checksums for regular vargantcloud downloads
+        # so we simply specify everything manually
+        override.vm.box = "Debian 9 (Stretch)"
+        override.vm.box_url = "https://vagrantcloud.com/debian/boxes/stretch64/versions/9.3.0/providers/libvirt.box"
         override.vm.box_download_checksum_type = "sha256"
-        override.vm.box_download_checksum = "ecd924aae99d1e029e795cb55775bb96aabb77ab122f3ab4d3655589fd5674cd"
+        override.vm.box_download_checksum = "33f9f97fa8a4bbf9828a2609b386a6696126ddc29be9e03656a22108c9e425f2"
 
-        # install a swap daemon (needer for php/composer, ao)
+        # install a swap daemon (needed for php/composer)
         override.vm.provision "shell", inline: "sudo env DEBIAN_FRONTEND=noninteractive apt-get -qq -y install swapspace > /dev/null"
 
         lv.cpus = "1"
@@ -126,6 +132,7 @@ Vagrant.configure("2") do |config|
                         echo '' >> /home/vagrant/.ssh/authorized_keys"
     end
 
+    N=machines.length
     (1..N).each do |machine_id|
         machine = machines["m#{machine_id}"]
 

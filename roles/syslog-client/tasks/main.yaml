@@ -33,13 +33,11 @@
       template: >
         src=filebeat.yml.j2
         dest=/etc/filebeat/filebeat.yml
+      notify: start filebeat Service
 
     #- name: Copy generic filebeat syslog config
     #   template: >
     #     src=fb_syslog.yml.j2
     #     dest=/etc/filebeat/conf.d/fb_syslog.yml
-
-    - name: start filebeat Service
-      service: name=filebeat state=restarted enabled=yes
 
   when: use_logserver

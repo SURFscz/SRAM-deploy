@@ -7,3 +7,8 @@
 - name: restart rsyslog
   service:  name=rsyslog state=restarted
   listen: "restart rsyslog"
+
+- name: start filebeat Service
+  service: name=filebeat state=restarted enabled=yes
+  when: use_logserver
+
