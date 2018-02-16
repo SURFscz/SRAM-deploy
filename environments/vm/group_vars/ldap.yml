@@ -5,4 +5,5 @@ firewall_v4_incoming:
   - { name: comanage,     src: "{{iprange.comanage}}", dport:  "389", proto: tcp }
   - { name: vnet,         src: "{{iprange.vm}}",       dport: "22,389", proto: tcp }
 
-ldap_user: root
+ldap_user: openldap
+ldap_group: openldap

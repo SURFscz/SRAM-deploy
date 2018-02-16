@@ -6,4 +6,3 @@
 - name: reload sysctl settings
   systemd: name=systemd-sysctl.service state=restarted
   when: ansible_virtualization_type != "docker"
-
