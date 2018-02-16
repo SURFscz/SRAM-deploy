@@ -33,12 +33,8 @@
   roles:
     - { role: basic,         tags: ['common']            }
     - { role: apt,           tags: ['common','apt']      }
-    - role: firewall
-      tags: ['common','firewall']
-      when: ansible_virtualization_type != "docker"
-    - role: ntp
-      tags: ['common']
-      when: ansible_virtualization_type != "docker"
+    - { role: firewall,      tags: ['common','firewall'] }
+    - { role: ntp,           tags: ['common']            }
     - { role: users,         tags: ['common','users']    }
     - { role: mail,          tags: ['common','mail']     }
     - { role: syslog-client, tags: ['common','syslog']   }
@@ -96,4 +92,3 @@
   roles:
     - { role: http_dummy,  tags: ['http']      }
     - { role: metadata,    tags: ['metadata']  }
-

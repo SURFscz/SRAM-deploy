@@ -87,9 +87,9 @@ Vagrant.configure("2") do |config|
     config.vm.provider "virtualbox" do |vb, override|
         # being paranoid and all, we don't trust random updated images without
         # manually checking sha256sums against https://cloud.alioth.debian.org/vagrantboxes/
-	# and vagrant, being stupid and all, refuses to check checksums for regular vargantcloud downloads
+        # and vagrant, being stupid and all, refuses to check checksums for regular vargantcloud downloads
         # so we simply specify everything manually
-	override.vm.box = box_name
+        override.vm.box = box_name
         override.vm.box_url = box_url
         override.vm.box_download_checksum_type = "sha256"
         override.vm.box_download_checksum = box_checksum
@@ -103,9 +103,9 @@ Vagrant.configure("2") do |config|
     config.vm.provider "libvirt" do |lv, override|
         # being paranoid and all, we don't trust random updated images without
         # manually checking sha256sums against https://cloud.alioth.debian.org/vagrantboxes/
-	# and vagrant, being stupid and all, refuses to check checksums for regular vargantcloud downloads
+        # and vagrant, being stupid and all, refuses to check checksums for regular vargantcloud downloads
         # so we simply specify everything manually
-	override.vm.box = box_name
+        override.vm.box = box_name
         override.vm.box_url = box_url
         override.vm.box_download_checksum_type = "sha256"
         override.vm.box_download_checksum = box_checksum
@@ -143,7 +143,7 @@ Vagrant.configure("2") do |config|
     config.vm.provision "file", source: sshkeypub, destination: "~/.ssh/provision_key.pub"
     config.vm.provision :shell do |shell|
         shell.inline = "cat /home/vagrant/.ssh/provision_key.pub >> \
-                       /home/vagrant/.ssh/authorized_keys; \
+                        /home/vagrant/.ssh/authorized_keys; \
                         echo '' >> /home/vagrant/.ssh/authorized_keys"
     end
 
@@ -166,23 +166,23 @@ Vagrant.configure("2") do |config|
                 dk.remains_running = true
                 dk.has_ssh = true
                 create_args = [
-                        "-d", "-t", "-i",
-                        "--network", "scznet",
-                        "--ip", "#{machine['ip']}",
+                    "-d", "-t", "-i",
+                    "--network", "scznet",
+                    "--ip", "#{machine['ip']}",
                     # internal names (used for LB rerouting)
-                        "--add-host", "#{machines['m1']['hostname']}:#{machines['m1']['ip']}",
-                        "--add-host", "#{machines['m2']['hostname']}:#{machines['m2']['ip']}",
-                        "--add-host", "#{machines['m3']['hostname']}:#{machines['m3']['ip']}",
-                        "--add-host", "#{machines['m4']['hostname']}:#{machines['m4']['ip']}",
-                        "--add-host", "#{machines['m5']['hostname']}:#{machines['m5']['ip']}",
-                        "--add-host", "#{machines['m6']['hostname']}:#{machines['m6']['ip']}",
+                    "--add-host", "#{machines['m1']['hostname']}:#{machines['m1']['ip']}",
+                    "--add-host", "#{machines['m2']['hostname']}:#{machines['m2']['ip']}",
+                    "--add-host", "#{machines['m3']['hostname']}:#{machines['m3']['ip']}",
+                    "--add-host", "#{machines['m4']['hostname']}:#{machines['m4']['ip']}",
+                    "--add-host", "#{machines['m5']['hostname']}:#{machines['m5']['ip']}",
+                    "--add-host", "#{machines['m6']['hostname']}:#{machines['m6']['ip']}",
                     # (unused) interface for outgoing mail
-                        "--add-host", "outgoing.#{domain}:172.20.1.1",
+                    "--add-host", "outgoing.#{domain}:172.20.1.1",
                     # add options to get systemd to run properly
-                        "-v", "/sys/fs/cgroup:/sys/fs/cgroup:ro",
-                        "--tmpfs", "/run",
-                        "--tmpfs", "/tmp:exec" # need exec for vagrant
-                         ]
+                    "-v", "/sys/fs/cgroup:/sys/fs/cgroup:ro",
+                    "--tmpfs", "/run",
+                    "--tmpfs", "/tmp:exec" # need exec for vagrant
+                ]
                 if machine['name'] == "lb"
                     # for the loadbalancer, make sure we point to the right hosts
                     create_args = create_args + [
@@ -208,18 +208,12 @@ Vagrant.configure("2") do |config|
                         "--add-host", "oidc-test.#{domain}:#{machines['m5']['ip']}",
                         "--add-host", "sp-test.#{domain}:#{machines['m5']['ip']}",
                         "--add-host", "idp-test.#{domain}:#{machines['m5']['ip']}",
-                         ]
+                    ]
                 end
                 dk.create_args = create_args
             end
 
             if machine_id == N
-
-                config.vm.provision :shell do |shell|
-                    shell.inline = "echo 'Waiting 20 seconds to allow all containers to boot';sleep 20"
-                end
-
-
                 m.vm.provision :ansible do |ansible|
                     # Note: recent versions of Vagrant need this, but older
                     # version choke on it

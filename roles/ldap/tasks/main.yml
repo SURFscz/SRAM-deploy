@@ -10,30 +10,22 @@
     - ldap-utils
 
 - name: Copying alternative service script
-  become_user: "{{ ldap_user }}"
   become: true
-  template:
-    src: "templates/{{ item.src }}"
-    dest: "/etc/init.d/"
-    mode: 0755
-  with_items:
-    - { src: "slapd.j2", dest: "slapd" }
+  copy:
+    src: slapd.service
+    dest: /etc/systemd/system
   when: ansible_virtualization_type == "docker"
 
 - name: Reload systemctl
   command: systemctl daemon-reload
   when: ansible_virtualization_type == "docker"
 
-- name: Starting and enabling the LDAP service
-  systemd: daemon_reload=yes name=slapd state=restarted enabled=yes
-
-- name: Ensure the a number of directories exist
-  become_user: "{{ ldap_user }}"
+- name: Ensure that a number of directories exist
   file:
     path: "{{ item }}"
     state: directory
     owner: "{{ ldap_user }}"
-    group: "{{ ldap_user }}"
+    group: "{{ ldap_group }}"
     mode: 0755
   tags: ldap
   with_items:
@@ -41,6 +33,16 @@
     - "{{ ldap_schema_dir }}"
     - "{{ ldap_ldif_dir }}"
     - "{{ ldap_download_dir }}"
+    - /var/run/slapd
+
+- name: Enable LDAP
+  service: name=slapd state=restarted enabled=yes
+
+- name: Generating password hash for LDAP admin
+  command:
+    slappasswd -h {SSHA} -s {{ ldap_password }}
+  register:
+    ldap_root_hash
 
 - name: Copy schema2ldif
   become_user: "{{ ldap_user }}"
@@ -49,41 +51,47 @@
     dest: "{{ ldap_bin_dir }}"
     mode: 0755
 
-- name: Copy set_loglevel_stats.ldif
+- name: Generate ldif from template
   become_user: "{{ ldap_user }}"
-  copy:
-    src: roles/ldap/files/set_loglevel_stats.ldif
-    dest: "{{ ldap_ldif_dir }}"
-    mode: 0755
+  become: true
+  template:
+    src: "templates/{{ item.src }}"
+    dest: "{{ ldap_ldif_dir }}/{{ item.dest }}"
+    mode: 0644
+  with_items:
+    - { src: "initial_setup.ldif.j2", dest: "initial_setup.ldif" }
+    - { src: "set_root_credentials.ldif.j2", dest: "set_root_credentials.ldif" }
+    - { src: "set_loglevel_stats.ldif.j2", dest: "set_loglevel_stats.ldif" }
+
+- name: Ensure the ldap admin credentials are set
+  command: ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f "{{ ldap_ldif_dir }}/set_root_credentials.ldif"
+
+- name: Set loglevel to stats
+  command: ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f "{{ ldap_ldif_dir }}/set_loglevel_stats.ldif"
+
+- name: Check for presence of eduPerson ldif
+  stat:
+    path: "{{ ldap_schema_dir }}/{{ eduPersonSchema_ldif }}"
+  register: edupersonstat
+
+- name: Check for presence of LdapPublicKey ldif
+  stat:
+    path: "{{ ldap_schema_dir }}/{{ ldapPublicKey_ldif }}"
+  register: ldappkstat
+
+- name: Check for presence of eduMember ldif
+  stat:
+    path: "{{ ldap_schema_dir }}/{{ eduMember_ldif }}"
+  register: edumemberstat
 
 - name: Fetch the eduPerson schema
-  become_user: "{{ ldap_user }}"
   become: true
   get_url:
+    owner: "{{ ldap_user }}"
+    group: "{{ ldap_user }}"
     url: "{{ eduPersonSchema_url }}"
     dest: "{{ ldap_download_dir }}"
-
-- name: Fetch LdapPublicKey schema
-  become_user: "{{ ldap_user }}"
-  become: true
-  get_url:
-    url: "{{ ldapPublicKeySchema_url }}"
-    dest: "{{ ldap_schema_dir }}"
-
-- name: Convert LdapPublicKey schema to ldif format
-  become_user: "{{ ldap_user }}"
-  command: "{{ ldap_bin_dir }}/schema2ldif {{ ldap_schema_dir }}/{{ ldapPublicKey }}.schema"
-
-- name: Fetch eduMember schema
-  become_user: "{{ ldap_user }}"
-  become: true
-  get_url:
-    url: "{{ eduMemberSchema_url }}"
-    dest: "{{ ldap_schema_dir }}"
-
-- name: Convert eduMember schema to ldif format
-  become_user: "{{ ldap_user }}"
-  command: "{{ ldap_bin_dir }}/schema2ldif {{ ldap_schema_dir }}/{{ eduMember }}.schema"
+  when:  edupersonstat.stat.exists == False
 
 # Of course the unarchive module should be used here, but the things is,
 # it seems broken in 2.2.0, although it should be fixed in 2.1.1. I guess
@@ -92,16 +100,52 @@
   become_user: "{{ ldap_user }}"
   become: true
   command: unzip -o "{{ ldap_download_dir }}/{{ eduPersonSchema_zip }}" -d /tmp
+  when: edupersonstat.stat.exists == False
 
-# OpenLDAP does not like adding exisiting entries again. Only add the
-# schema if it has not been added already. This does not yet take care
-# of changes in the eduPerson schema.
 - name: Copy the unpacked ldifs
+  become: true
+  become_user: "{{ ldap_user }}"
   copy:
     src: /tmp/{{ eduPersonSchema_ldif }}
     dest: "{{ ldap_schema_dir }}/{{ eduPersonSchema_ldif }}"
     remote_src: true
+    owner: "{{ ldap_user }}"
+    group: "{{ ldap_user }}"
+  when: edupersonstat.stat.exists == False
 
+- name: Fetch LdapPublicKey schema
+  become: true
+  get_url:
+    owner: "{{ ldap_user }}"
+    group: "{{ ldap_user }}"
+    url: "{{ ldapPublicKeySchema_url }}"
+    dest: "{{ ldap_schema_dir }}"
+  when: ldappkstat.stat.exists == False
+
+- name: Convert LdapPublicKey schema to ldif format
+  command: "{{ ldap_bin_dir }}/schema2ldif {{ ldap_schema_dir }}/{{ ldapPublicKey }}.schema"
+  become: true
+  become_user: "{{ ldap_user }}"
+  when: ldappkstat.stat.exists == False
+
+- name: Fetch eduMember schema
+  become: true
+  get_url:
+    owner: "{{ ldap_user }}"
+    group: "{{ ldap_user }}"
+    url: "{{ eduMemberSchema_url }}"
+    dest: "{{ ldap_schema_dir }}"
+  when: edumemberstat.stat.exists == False
+
+- name: Convert eduMember schema to ldif format
+  command: "{{ ldap_bin_dir }}/schema2ldif {{ ldap_schema_dir }}/{{ eduMember }}.schema"
+  become: true
+  become_user: "{{ ldap_user }}"
+  when: edumemberstat.stat.exists == False
+
+# OpenLDAP does not like adding exisiting entries again. Only add the
+# schema if it has not been added already. This does not yet take care
+# of changes in the eduPerson schema.
 - name: Check if eduPerson schema is already present
   shell: >
     ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// -b 'cn=schema,cn=config' '(cn=*)' dn
@@ -114,9 +158,11 @@
 # the schema to the ldap database. Copying the same file in the previous
 # task, would lead to not registering the edoPersonSchema variable.
 - name: Ensure the eduPerson schema is added to LDAP
+  become: true
   command: >
-    ldapadd -Q -Y EXTERNAL -H ldapi:/// -D "cn=config"
+    ldapadd -Q -Y EXTERNAL -H ldapi:///
     -f {{ ldap_schema_dir }}/{{ eduPersonSchema_ldif }}
+    -D "cn=config" -w "{{ ldap_password }}"
   when: eduPersonSchemaPresent.stdout == ""
 
 - name: Check if the ldapPublicKey schema is already present
@@ -128,9 +174,11 @@
     ldapPublicKeyTask
 
 - name: Ensure the ldapPublicKey schema is added to LDAP
+  become: true
   command: >
-    ldapadd -Q -Y EXTERNAL -H ldapi:/// -D "cn=config"
+    ldapadd -Q -Y EXTERNAL -H ldapi:///
     -f "{{ ldap_schema_dir }}/{{ ldapPublicKey_ldif }}"
+    -D "cn=config" -w "{{ ldap_password }}"
   when: ldapPublicKeyTask.stdout == ""
 
 - name: Check if the eduMember schema is already present
@@ -142,33 +190,12 @@
     eduMemberTask
 
 - name: Ensure the eduMember schema is added to LDAP
-  command: >
-    ldapadd -Q -Y EXTERNAL -H ldapi:/// -D "cn=config"
-    -f "{{ ldap_schema_dir }}/{{ eduMember_ldif }}"
-  when: eduMemberTask.stdout == ""
-
-- name: Generating password hash for LDAP admin
-  command:
-    slappasswd -h {SSHA} -s {{ ldap_password }}
-  register:
-    ldap_root_hash
-
-- name: Generate ldif from template
-  become_user: "{{ ldap_user }}"
   become: true
-  template:
-    src: "templates/{{ item.src }}"
-    dest: "{{ ldap_ldif_dir }}/{{ item.dest }}"
-    mode: 0644
-  with_items:
-    - { src: "initial_setup.ldif.j2", dest: "initial_setup.ldif" }
-    - { src: "set_root_credentials.ldif.j2", dest: "set_root_credentials.ldif" }
-
-- name: Ensure the ldap admin credentials are set
-  command: ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f "{{ ldap_ldif_dir }}/set_root_credentials.ldif"
-
-- name: Set loglevel to stats
-  command: ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f "{{ ldap_ldif_dir }}/set_loglevel_stats.ldif"
+  command: >
+    ldapadd -Q -Y EXTERNAL -H ldapi:///
+    -f "{{ ldap_schema_dir }}/{{ eduMember_ldif }}"
+    -D "cn=config" -w "{{ ldap_password }}"
+  when: eduMemberTask.stdout == ""
 
 - name: Check if DIT has been created before
   command:
@@ -177,8 +204,6 @@
   failed_when: "emptyDIT.rc not in [0, 32]"
 
 - name: Initialize DIT
-  become_user: "{{ ldap_user }}"
-  become: true
   command: >
     ldapadd -c -x -D "{{ ldap.binddn }}" -w "{{ ldap_password }}"
     -f "{{ ldap_ldif_dir }}/initial_setup.ldif"
@@ -197,4 +222,4 @@
   template:
     src: fb_slapd.yml.j2
     dest: /etc/filebeat/conf.d/fb_slap.yml
-  notify: "restart filebeat"
+  notify: restart filebeat
