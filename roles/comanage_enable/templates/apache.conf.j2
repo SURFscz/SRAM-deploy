@@ -85,14 +85,6 @@
         MellonSessionLength 86400
         MellonNoCookieErrorPage "{{ comanage_full_hostname }}/no_cookie.html"
 
-{#
-        # We need an explicit metadata file to correct the HTTP->HTTPS
-        # change when we go past the LB
-        # If we don't specifiy the metadata file, mod_mellon will create
-        # one by itself, but use the HTTP protocol, because that is what
-        # we use in the backend
-#}
-        MellonSPMetadataFile /etc/apache2/mellon/sp-metadata.xml
         MellonSPPrivateKeyFile {{ sp_key }}
         MellonSPCertFile {{ sp_certificate }}
 
