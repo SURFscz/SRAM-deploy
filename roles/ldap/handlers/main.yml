@@ -7,3 +7,7 @@
 - name: restart rsyslog
   service:  name=rsyslog state=restarted
   listen: "restart rsyslog"
+
+- name: restart LDAP
+  service:  name=slapd state=restarted enabled=yes
+  listen: "restart slapd"

@@ -27,6 +27,9 @@
 - name: Create project directory
   file: path="{{ satosa_project_dir }}" state=directory mode=0755 owner=satosa
 
+- name: Enable and start mongoDB
+  systemd: daemon_reload=yes name=mongodb state=started enabled=true
+
 - block:
     - name: fetch SATOSA from {{ satosa_repo_url }}, version {{ satosa_repo_version }}
       git:

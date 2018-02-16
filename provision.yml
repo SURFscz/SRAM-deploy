@@ -92,4 +92,3 @@
   roles:
     - { role: http_dummy,  tags: ['http']      }
     - { role: metadata,    tags: ['metadata']  }
-

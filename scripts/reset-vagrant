@@ -11,32 +11,61 @@
 # environment is anything but a simple setup, this script can potentially remove
 # too much and severly hamper your endeavours.
 
+VAGRANT=`which vagrant`
+DOCKER=`which docker`
+VIRSH=`which virsh`
+VBOX=`which vboxmanage`
+
 # try to destroy any active boxes
-vagrant destroy -f
+$VAGRANT destroy -f
 
-# Docker: remove active containers
-for i in `/usr/bin/docker ps -a | grep -v "^CONTAINER" | awk '{print $1}'`;do /usr/bin/docker rm -f $i;done
+REALLYCLEAN="no"
+if [[ "x$1" = "x--force" ]]
+then
+    REALLYCLEAN="yes"
+fi
 
-# Docker: remove networks
-/usr/bin/docker network rm `/usr/bin/docker network ls | grep "scz" | awk '{print $1}'`
+if [[ ! "x$DOCKER" = "x" ]]
+then
+    # Docker: remove active containers
+    for i in `$DOCKER ps -a | grep -v "^CONTAINER" | awk '{print $1}'`;do $DOCKER rm -f $i;done
 
-# Libvirt: remove networks
-NETS=`LANG=C virsh net-list --all | grep "[^a-z]active" | awk '{print $1}'`
-for i in $NETS
-do
-    virsh net-destroy $i
-done
+    # Docker: remove networks
+    NETS=`$DOCKER network ls | grep "scz" | awk '{print $1}'`
+    if [[ ! "x$NETS" = "x" ]]
+    then
+        $DOCKER network rm $NETS
+    fi
 
-# Virtual box: remove networks
-NETS=`vboxmanage list hostonlyifs | awk '/^Name:/ { NM=$2 } /^IPAddress:/ { print NM }'`
-for i in $NETS
-do
-    vboxmanage hostonlyif remove $i
-done
+    if [[ "x$REALLYCLEAN" = "xyes" ]]
+    then
+        for i in `$DOCKER images -a | grep -v "^debian" | grep -v "^dramaturg" | awk '{print $3}'`;do $DOCKER rmi -f $i;done
+    fi
+fi
+
+if [[ ! "x$VIRSH" = "x" ]]
+then
+    # Libvirt: remove networks
+    NETS=`LANG=C $VIRSH net-list --all | grep "[^a-z]active" | awk '{print $1}'`
+    for i in $NETS
+    do
+        $VIRSH net-destroy $i
+    done
+fi
+
+if [[ ! "x$VBOX" = "x" ]]
+then
+    # Virtual box: remove networks
+    NETS=`$VBOX list hostonlyifs | awk '/^Name:/ { NM=$2 } /^IPAddress:/ { print NM }'`
+    for i in $NETS
+    do
+        $VBOX hostonlyif remove $i
+    done
+fi
 
 # Vagrant: remove machine definitions and other relevant directories
 rm -rf .vagrant/machines .vagrant/docker-compose
 
 # Reset Vagrant information
-/usr/bin/vagrant global-status --prune
+$VAGRANT global-status --prune
 
