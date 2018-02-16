@@ -65,4 +65,6 @@ To get started, do the following:
 
     This will start 5 VMs (each requires 786MB of memory) and run the ansible
     playbook to install the SCZ on those VMs.
-
+- when the deploy finishes, you should be able to browse to
+  <https://comanage.scz-vm.net> and login using the default platform admin
+  credentials `baas`/`baas`
