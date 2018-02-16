@@ -1,0 +1,12 @@
+---
+modules:
+  status: present
+  cgid: present
+  cgi: present
+  actions: present
+  alias: present
+  rewrite: present
+  authn_core: present
+  authz_user: present
+  ssl: absent
+
