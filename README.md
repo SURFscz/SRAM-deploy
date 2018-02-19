@@ -52,7 +52,7 @@ To get started, do the following:
 - (libvirt only) add your user to the libvirt group: `adduser $(whoami) libvirt`
 - add the following entries to `/etc/hosts`:
     ```
-    172.20.1.24 lb.scz-net oidc-test.scz-vm.net sp-test.scz-vm.net idp-test.scz-vm.net proxy.scz-vm.net mdq.scz-vm.net cm.scz-vm.net comanage.scz-vm.net ldap.scz-vm.net meta.scz-vm.net
+    172.20.1.24 lb.vm.scz-vm.net oidc-test.scz-vm.net sp-test.scz-vm.net idp-test.scz-vm.net proxy.scz-vm.net mdq.scz-vm.net cm.scz-vm.net comanage.scz-vm.net ldap.scz-vm.net meta.scz-vm.net
     172.20.1.20 ldap.vm.scz-vm.net
     172.20.1.21 comanage.vm.scz-vm.net
     172.20.1.22 proxy.vm.scz-vm.net
