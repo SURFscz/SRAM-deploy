@@ -1,6 +1,7 @@
 # vim:ts=2:sw=2:expandtab
 ---
 - hosts: all
+  serial: 20
   tasks:
     - name: Read vars from secrets file
       include_vars: "{{ secrets_file }}"
@@ -13,6 +14,7 @@
 # We need this here, because in the group vars, we rely on the hostvars for
 # the ip addresses of other hosts (e.g, mgnt1)
 - hosts: all
+  serial: 20
   pre_tasks:
     - name: Gather facts from mgnt hosts (regardless of limit or tags)
       setup:
@@ -30,6 +32,7 @@
       when: "debug | default('false') | bool"
 
 - hosts: all
+  serial: 20
   roles:
     - { role: basic,         tags: ['common']            }
     - { role: apt,           tags: ['common','apt']      }
