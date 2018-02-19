@@ -75,6 +75,7 @@
   register: ldap_sync_enable
   # return code 20 means entry already exists
   failed_when: "ldap_sync_enable.rc!=0 and ldap_syn_enable.rc!=20"
+  changed_when: "ldap_syn_enable.rc!=20"
 
 - name: Check for presence of eduPerson ldif
   stat:
