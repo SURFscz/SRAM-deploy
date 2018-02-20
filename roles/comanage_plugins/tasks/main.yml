@@ -14,20 +14,6 @@
   with_items: "{{ packages  }}"
   become: Yes
 
-- name: Activate Service Token Plugin
-  file:
-    src: "{{ comanage_path }}/app/AvailablePlugin/CoServiceToken"
-    dest: "{{ comanage_path }}/local/Plugin/CoServiceToken"
-    state: link
-  become: Yes
-
-- name: Activate LDAP Service Token Plugin
-  file:
-    src: "{{ comanage_path }}/app/AvailablePlugin/LdapServiceTokenProvisioner"
-    dest: "{{ comanage_path }}/local/Plugin/LdapServiceTokenProvisioner"
-    state: link
-  become: Yes
-
 - name: Checkout the relevant Git based plugins
   git:
     repo: "{{ item.src }}"
