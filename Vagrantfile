@@ -212,7 +212,7 @@ Vagrant.configure("2") do |config|
                 m.vm.provision :ansible do |ansible|
                     # Note: recent versions of Vagrant need this, but older
                     # version choke on it
-                    ansible.compatibility_mode = "2.0"
+                    #ansible.compatibility_mode = "2.0"
                     ansible.playbook = "provision.yml"
                     ansible.inventory_path = "./environments/vm/inventory"
                     #ansible.verbose = 3
