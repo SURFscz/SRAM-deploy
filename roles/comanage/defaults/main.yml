@@ -2,8 +2,8 @@
 http_proto: https
 
 comanage_repo_url: "https://github.com/Internet2/comanage-registry"
-comanage_repo_version: "master"
-comanage_install_dir: "/opt/comanage/"
+comanage_repo_version: "tree/3.1.0"
+comanage_install_dir: "/opt/comanage"
 comanage_path: "{{ comanage_install_dir }}/comanage"
 # the comanage_root is the web-root. The default case is where we install in a registry
 # subdirectory (until COmanage is able to be installed in a proper root)
