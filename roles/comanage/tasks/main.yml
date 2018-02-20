@@ -10,11 +10,10 @@
 
 - name: Save and remove old comanage files
   archive:
-    dest: /opt/comanage/comanage-old.tar.gz
+    dest: "{{ comanage_path }}/comanage-old.tar.gz"
     path: [ "/var/www/comanage*", "/var/www/registry" ]
     remove: "true"
   when: comanage_old_files.matched > 0
-
 
 - name: Create target directories
   file:
@@ -27,7 +26,6 @@
     repo: "{{ comanage_repo_url }}"
     version: "{{ comanage_repo_version }}"
     dest: "{{ comanage_path }}"
-
 
 # comanage tmp directory needs a specific structure; copy it from the dist
 - name: Check for comanage tmp directory
