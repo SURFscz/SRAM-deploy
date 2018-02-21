@@ -1,7 +1,7 @@
 ---
 packages:
-  - mysql-client
-  - mysql-server
-  - mysql-common
+  - mariadb-client
+  - mariadb-server
+  - mariadb-common
   - python-mysqldb
 
