@@ -24,6 +24,9 @@ sp_test_port: 82
 oidc_test_port: 83
 google_test_port: 84
 
+# COmanage-ldap configuration
+comanage_ldap_host: "ldap.vm.scz-vm.net"
+
 # TODO: get rid of hardcoded ports for proxy vhosts
 loadbalancer:
   - hostname: "{{hostnames.proxy}}"

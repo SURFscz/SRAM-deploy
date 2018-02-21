@@ -27,5 +27,5 @@
     - restart haproxy
 
 - name: enable haproxy
-  service: name=haproxy.service state=started enabled=true
+  systemd: daemon_reload=yes name=haproxy state=started enabled=true
 

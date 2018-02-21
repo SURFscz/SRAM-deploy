@@ -1,4 +1,4 @@
 ---
 - name: restart haproxy
-  service: name=haproxy.service state=restarted
+  systemd: daemon_reload=yes name=haproxy state=restarted
 

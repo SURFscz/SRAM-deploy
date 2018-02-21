@@ -1,6 +1,7 @@
 ---
 - name: set up apt repo
   template: src=sources.list.j2 dest=/etc/apt/sources.list force=yes
+  when: ansible_virtualization_type != "docker"
 
 - name: Update apt cache
   apt: update_cache=yes
@@ -20,6 +21,7 @@
     - curl
     - net-tools
     - git
+    - acl
 
 - name: remove unneccessary packages
   apt: name={{ item }} state=absent

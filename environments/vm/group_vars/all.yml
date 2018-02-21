@@ -27,13 +27,14 @@ http_proto: "http{% if enable_https %}s{% endif %}"
 # dat niet in de inventory is gedefinieerd. (afhankelijk van je configuratie
 # van libvirt etc)
 iprange:
-  vpn:
-    vm:   "172.20.1.0/24"
-  vagrant: "192.168.121.0/24"
-  bastion:   "172.20.1.1"
-  lb:        "172.20.1.24"
-  comanage:  "172.20.1.21"
-  mgnt:      "172.20.1.0/24"
+  vm:
+    - "172.20.1.0/24"
+    - "10.0.0.0/16"
+    - "192.168.121.0/24"
+  bastion:    "172.20.1.1"
+  lb:         "172.20.1.24"
+  comanage:   "172.20.1.21"
+  mgnt:       "172.20.1.0/24"
 
 mail:
   relay_host: "172.20.1.1"
@@ -66,8 +67,7 @@ users:
 
 firewall_v4_incoming:
   - { name: bastion,  src: "{{iprange.bastion}}", dport: "22,80,443", proto: tcp }
-  - { name: vnet,     src: "{{iprange.vpn.vm}}",  dport: "22,80,443", proto: tcp }
-  - { name: vagrant,  src: "{{iprange.vagrant}}", dport: "22", proto: tcp }
+  - { name: vnet,     src: "{{iprange.vm}}",      dport: "22,80,443", proto: tcp }
 
 # LDAP definition is here, because we need it in both the Ldap and Comanage groups
 ldap_base:

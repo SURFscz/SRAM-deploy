@@ -9,7 +9,15 @@
 {% endif %}
 
 <VirtualHost *:{{ comanage_port }}>
-    ServerName {{ comanage_full_hostname }}
+{#
+    # by adding the protocol to the ServerName, we can
+    # fix the HTTP->HTTPS translation issue when we pass
+    # the LB. If we don't, the LB will connect using HTTP
+    # and mod_mellon will discern a mismatch between the
+    # incoming connection and the protocol specified in
+    # the SAML data
+#}
+    ServerName https://{{ comanage_full_hostname }}
     ServerAdmin {{ mail.admin_address }}
 
     DocumentRoot {{ comanage_root }}
@@ -67,7 +75,7 @@
         MellonEnable "auth"
         MellonVariable "cookie"
         MellonSecureCookie On
-        MellonCookieDomain {{ portal_hostname }}
+        MellonCookieDomain "{{sp_hostname}}"
         MellonCookiePath /
 
         MellonUser "{{ idp_attribute }}"

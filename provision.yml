@@ -1,6 +1,7 @@
 # vim:ts=2:sw=2:expandtab
 ---
 - hosts: all
+  serial: 20
   tasks:
     - name: Read vars from secrets file
       include_vars: "{{ secrets_file }}"
@@ -13,6 +14,7 @@
 # We need this here, because in the group vars, we rely on the hostvars for
 # the ip addresses of other hosts (e.g, mgnt1)
 - hosts: all
+  serial: 20
   pre_tasks:
     - name: Gather facts from mgnt hosts (regardless of limit or tags)
       setup:
@@ -22,23 +24,23 @@
       with_items: "{{ groups['all'] }}"
       tags: always
 
-#- hosts: all
-#  roles:
-#    - { role: debug,    tags: ['debug'] }
-
+# to run the debug target, specify --extra-vars="debug=true" / -e debug=1
 - hosts: all
   roles:
-    - { role: basic,    tags: ['common'] }
-    - { role: apt,      tags: ['common','apt']      }
-    - role: firewall
-      tags: ['common','firewall']
-      when: docker is not defined or docker.stdout_lines[0] != "docker"
-    - role: ntp
-      tags: ['common']
-      when: docker is not defined or docker.stdout_lines[0] != "docker"
-    - { role: users,    tags: ['common','users'] }
-    - { role: mail,     tags: ['common','mail'] }
-    - { role: syslog-client, tags: ['common','syslog'    ] }
+    - role: debug
+      tags: ['debug']
+      when: "debug | default('false') | bool"
+
+- hosts: all
+  serial: 20
+  roles:
+    - { role: basic,         tags: ['common']            }
+    - { role: apt,           tags: ['common','apt']      }
+    - { role: firewall,      tags: ['common','firewall'] }
+    - { role: ntp,           tags: ['common']            }
+    - { role: users,         tags: ['common','users']    }
+    - { role: mail,          tags: ['common','mail']     }
+    - { role: syslog-client, tags: ['common','syslog']   }
 
 - hosts: mgnt1
   roles:
@@ -97,4 +99,3 @@
   roles:
     - { role: http_dummy,  tags: ['http']      }
     - { role: metadata,    tags: ['metadata']  }
-
