@@ -24,7 +24,7 @@ rules:
   indentation:
     spaces: 2
     indent-sequences: true
-    check-multi-line-strings: true
+    check-multi-line-strings: false
   line-length:
     max: 100
     allow-non-breakable-words: false
