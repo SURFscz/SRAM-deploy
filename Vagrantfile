@@ -145,7 +145,7 @@ Vagrant.configure("2") do |config|
     N=machines.length
     (1..N).each do |machine_id|
         machine = machines["m#{machine_id}"]
-        machinename = "#{machine['name']}.#{domain}"
+        machinename = "#{machine['name']}"
 
         config.vm.define machinename, autostart: true do |m|
             m.vm.network :private_network, ip: machine["ip"]
