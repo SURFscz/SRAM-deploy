@@ -31,6 +31,13 @@
     state: present
 
 - name: Run the metadata cronjob now
-  shell: "{{ metadata_project_dir }}/create_metadata"
+  command: "{{ metadata_project_dir }}/create_metadata"
   args:
     chdir: "{{ metadata_project_dir }}"
+
+- name: Install logos
+  file: src={{item}} dest=/var/ww/html/{{item}} owner=www-data group=www-data
+  with_items:
+    - Light-Bulb_icon_by_Till_Teenck.svg
+    - Light-Bulb_icon_by_Till_Teenck_200px.png
+    - Light-Bulb_icon_by_Till_Teenck_1000px.png
