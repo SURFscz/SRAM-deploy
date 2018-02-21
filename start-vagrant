@@ -1,0 +1,13 @@
+#!/bin/bash
+set -e
+
+# bring up the VMs if they're not running
+num_running=$(vagrant status|grep -E '\brunning\b'|wc -l)
+if [ "$num_running" -ne 6 ]
+then
+	vagrant up --no-provision "$@"
+fi
+
+vagrant up --provision "$@"
+
+exit 0
