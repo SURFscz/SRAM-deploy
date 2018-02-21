@@ -38,6 +38,7 @@
         version: "{{ satosa_repo_version }}"
         accept_hostkey: "yes"
         force: "yes"
+      register: satosa_git
 
     - name: install SATOSA from {{ satosa_src_dir }} to {{ satosa_env_dir }}
       pip:
@@ -45,6 +46,7 @@
         virtualenv: "{{ satosa_env_dir }}"
         virtualenv_python: python3
         state: latest
+      when: satosa_git.changed
 
     - name: Create SATOSA  proxy_conf configuration
       template:

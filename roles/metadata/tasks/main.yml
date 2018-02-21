@@ -36,7 +36,7 @@
     chdir: "{{ metadata_project_dir }}"
 
 - name: Install logos
-  file: src={{item}} dest=/var/ww/html/{{item}} owner=www-data group=www-data
+  copy: src={{item}} dest=/var/www/html/{{item}} owner=www-data group=www-data
   with_items:
     - Light-Bulb_icon_by_Till_Teenck.svg
     - Light-Bulb_icon_by_Till_Teenck_200px.png
