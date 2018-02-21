@@ -114,12 +114,12 @@ Vagrant.configure("2") do |config|
         lv.video_type = "qxl"
     end
 
-    if Vagrant.has_plugin?("vagrant-cachier")
-        config.cache.scope = :box
-        config.cache.synced_folder_opts = {
-            type: :rsync,
-            owner: "_apt",
-        }
+    # use a proxy on the VM host to cache deb packages for the VMs
+    # to use this, install apt-cacher-ng on the host, and run
+    # vagrant plugin install vagrant-proxyconf
+    if Vagrant.has_plugin?("vagrant-proxyconf")
+        config.apt_proxy.http = "http://172.20.1.1:3142/"
+        config.proxy.no_proxy = "localhost,127.0.0.1,.#{domain}"
     end
 
     config.vm.provider "docker" do |dk, override|
@@ -130,6 +130,8 @@ Vagrant.configure("2") do |config|
                 --gateway 172.20.1.1 --subnet 172.20.1.0/24 scznet",
             :notify => [:stdout, :stderr]
         )
+        # disable proxying
+        override.proxy.enabled = false
     end
 
     # we add the key to authorized_keys instead of provisioning the entire file, to allow
