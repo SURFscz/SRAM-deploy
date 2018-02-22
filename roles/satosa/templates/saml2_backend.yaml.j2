@@ -1,13 +1,24 @@
+---
 module: satosa.backends.saml2.SAMLBackend
 name: SamlSP
 config:
   sp_config:
     key_file: certs/backend.key
     cert_file: certs/backend.crt
-    organization: {display_name: {{ environment_string }} Proxy SP, name: {{ environment_string }} Proxy SP, url: 'https://{{ hostnames.meta }}/'}
+    organization:
+      display_name: "{{ satosa_md.organisation.display_name }}"
+      name: "{{ satosa_md.organisation.name }}"
+      url: "{{ satosa_md.organisation.url }}"
     contact_person:
-    - {contact_type: technical, email_address: technical@{{ hostnames.proxy }}, given_name: Technical}
-    - {contact_type: support, email_address: support@{{ hostnames.proxy }}, given_name: Support}
+      - contact_type: technical
+        email_address: {{ satosa_md.contacts.technical.email_address }}
+        given_name: {{ satosa_md.contacts.technical.given_name }}
+      - contact_type: support
+        email_address: {{ satosa_md.contacts.support.email_address }}
+        given_name: {{ satosa_md.contacts.support.given_name }}
+      - contact_type: administrative
+        email_address: {{ satosa_md.contacts.administrative.email_address }}
+        given_name: {{ satosa_md.contacts.administrative.given_name }}
     metadata:
       local: ['metadata/idp-test.xml']
       mdq: ['http://localhost:{{ pyff_port }}']
@@ -15,13 +26,27 @@ config:
     service:
       sp:
         name: Proxy SP
+        ui_info:
+          display_name: "{{ satosa_mdui.sp.display_name }}"
+          description: "{{ satosa_mdui.sp.description }}"
+          information_url: "{{ satosa_mdui.sp.information_url }}"
+          privacy_statement_url: "{{ satosa_mdui.sp.privacy_statement_url }}"
+          keywords:
+            - lang: nl
+              text: {{ satosa_mdui.sp.keywords.nl | to_json }}
+            - lang: en
+              text: {{ satosa_mdui.sp.keywords.en | to_json }}
+          logo:
+            text: "{{ satosa_mdui.sp.logo.url }}"
+            width: "{{ satosa_mdui.sp.logo.width }}"
+            height: "{{ satosa_mdui.sp.logo.height }}"
         allow_unsolicited: true
         endpoints:
           assertion_consumer_service:
-          - [<base_url>/<name>/acs/post, 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST']
-          - [<base_url>/<name>/acs/redirect, 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect']
+            - [<base_url>/<name>/acs/post, 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST']
+            - [<base_url>/<name>/acs/redirect, 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect']
           discovery_response:
-          - [<base_url>/<name>/disco, 'urn:oasis:names:tc:SAML:profiles:SSO:idp-discovery-protocol']
+            - [<base_url>/<name>/disco, 'urn:oasis:names:tc:SAML:profiles:SSO:idp-discovery-protocol']
         name_id_format: 'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent'
         want_response_signed: false
     attribute_map_dir: '{{ satosa_env_dir }}/mapper'
