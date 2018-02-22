@@ -127,7 +127,7 @@
     owner: "{{ ldap_user }}"
     group: "{{ ldap_user }}"
     url: "{{ ldapPublicKeySchema_url }}"
-    dest: "{{ ldap_schema_dir }}"
+    dest: "{{ ldap_schema_dir }}/ {{ ldapPublicKey }}.schema"
   when: ldappkstat.stat.exists == False
 
 - name: Convert LdapPublicKey schema to ldif format
@@ -142,7 +142,7 @@
     owner: "{{ ldap_user }}"
     group: "{{ ldap_user }}"
     url: "{{ eduMemberSchema_url }}"
-    dest: "{{ ldap_schema_dir }}"
+    dest: "{{ ldap_schema_dir }}/{{ eduMember }}.schema"
   when: edumemberstat.stat.exists == False
 
 - name: Convert eduMember schema to ldif format
@@ -157,7 +157,7 @@
 - name: Check if eduPerson schema is already present
   shell: >
     ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// -b 'cn=schema,cn=config' '(cn=*)' dn
-    | grep 'cn={[0123456789]\+}eduperson,cn=schema,cn=config'
+    | grep -i 'cn={[0123456789]\+}eduperson,cn=schema,cn=config'
   failed_when: not [0, 1]
   register:
     eduPersonSchemaPresent
@@ -176,7 +176,7 @@
 - name: Check if the ldapPublicKey schema is already present
   shell: >
     ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// -b 'cn=schema,cn=config' '(cn=*)' dn
-    | grep 'cn={[0-9]\+}openssh-lpk-openldap,cn=schema,cn=config'
+    | grep -i 'cn={[0-9]\+}openssh-lpk-openldap,cn=schema,cn=config'
   failed_when: not [0, 1]
   register:
     ldapPublicKeyTask
@@ -192,7 +192,7 @@
 - name: Check if the eduMember schema is already present
   shell: >
     ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// -b 'cn=schema,cn=config' '(cn=*)' dn
-    | grep 'cn={[0-9]\+}eduMember,cn=schema,cn=config'
+    | grep -i 'cn={[0-9]\+}edumember,cn=schema,cn=config'
   failed_when: not [1, 2]
   register:
     eduMemberTask

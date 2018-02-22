@@ -16,7 +16,7 @@ ldapPKS1: https://raw.githubusercontent.com/AndriiGrytsenko/
 ldapPKS2: openssh-ldap-publickey/master/misc/openssh-lpk-openldap.schema
 ldapPublicKeySchema_url: "{{ ldapPKS1 }}{{ ldapPKS2 }}"
 
-eduMember: edumember
+eduMember: eduMember
 eduMember_ldif: "{{ eduMember }}.ldif"
 eduMember_host: https://raw.githubusercontent.com
 eduMember_path: /Internet2/grouper/master/apacheds-ldappc-schema/src/main/schema/eduMember.schema
