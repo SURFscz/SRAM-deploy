@@ -10,5 +10,5 @@ wget https://{{ hostnames.proxy }}/md/SamlSP.xml  -q -O proxy_sp.xml
 wget https://{{ hostnames.proxy }}/md/SamlIdP.xml -q -O proxy_idp.xml
 wget https://{{ hostnames.proxy }}/md/SamlSP.xml  -q -O proxy_sp.xml
 
-rm -f /var/www/html/*.xml
-mv *.xml /var/www/html
+#rm -f /var/www/html/*.xml
+cp *.xml /var/www/html
