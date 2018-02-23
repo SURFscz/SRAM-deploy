@@ -6,15 +6,15 @@ comanage_git_plugins:
   -
     name: "ZoneProvisioner"
     version: "HEAD"
-    src: "https://github.com/muisit/comanage-scz.git"
+    src: "https://github.com/SURFscz/COmanage-zoneprovisioner.git"
   -
     name: "LdapFixedProvisioner"
     version: "HEAD"
-    src: "https://github.com/muisit/comanage-ldapfixedprovisioner.git"
+    src: "https://github.com/SURFscz/COmanage-ldapfixedprovisioner.git"
   -
     name: "EmailProvisioner"
     version: "HEAD"
-    src: "https://github.com/muisit/comanage-emailprovisioner.git"
+    src: "https://github.com/SURFscz/COmanage-emailprovisioner.git"
 
 comanage_plugin_configurations:
   - { src: ldapfixedprovisioner.php.j2, dest: ldapfixedprovisioner.php }

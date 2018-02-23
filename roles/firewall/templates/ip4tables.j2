@@ -1,7 +1,7 @@
 # IPv4 firewall configuration
 
 *filter
-:INPUT REJECT [0:0]
+:INPUT DROP [0:0]
 :FORWARD DROP [0:0]
 :OUTPUT ACCEPT [0:0]
 
@@ -16,20 +16,44 @@
 -A INPUT -p icmp --icmp-type address-mask-reply  -j DROP
 -A INPUT -p icmp --icmp-type any -j ACCEPT
 
+##################################################
 # generated from group config firewall_v4_incoming
+##################################################
 {% if firewall_v4_incoming is defined %}
-{% for l in firewall_v4_incoming -%}
-  {{'# '}}{{l.name}}{{"\n"}}
-  {%- if True               -%} -A INPUT                      {%- endif %}
-  {%- if True                %} -p {{l.proto|default('tcp')}} {%- endif %}
-  {%- if l.src   is defined  %} -s {{l.src}}                  {%- endif %}
-  {%- if l.sport is defined  %} -m multiport                  {%- endif %}
-  {%- if l.sport is defined  %} --sports {{l.sport}}          {%- endif %}
-  {%- if l.dport is defined  %} -m multiport                  {%- endif %}
-  {%- if l.dport is defined  %} --dports {{l.dport}}          {%- endif %}
-  {%- if True                %} -j ACCEPT                     {%- endif %}
-  {{"\n"}}
-{% endfor %}
-{% endif %}
+{%- for l in firewall_v4_incoming %}
+{{'# '}}{{l.name}}{{"\n"}}
+  {#- first check if l.src is a string or a list                    -#}
+  {#- if it's a string, convert to a list, so we can iterate safely -#}
+  {%- if l.src is defined     -%}
+  {%-   if l.src is string    -%}
+  {%-     set src = [ l.src ] -%}
+  {%-   else                  -%}
+  {%-     set src = l.src     -%}
+  {%-   endif                 -%}
+  {%- else                    -%}
+  {%-   set src = [False]     -%}
+  {%- endif                   -%}
+  {#- now loop over all src addreses -#}
+  {%- for s in src %}
+    {%- if True               -%} -A INPUT                      {%- endif -%}
+    {%- if True                %} -p {{l.proto|default('tcp')}} {%- endif -%}
+    {%- if s                   %} -s {{s}}                      {%- endif -%}
+    {%- if l.sport is defined  %} -m multiport                  {%- endif -%}
+    {%- if l.sport is defined  %} --sports {{l.sport}}          {%- endif -%}
+    {%- if l.dport is defined  %} -m multiport                  {%- endif -%}
+    {%- if l.dport is defined  %} --dports {{l.dport}}          {%- endif -%}
+    {%- if True                %} -j ACCEPT                     {%- endif -%}
+    {{"\n"}}
+  {%- endfor -%}
+{%- endfor %}
+{%- endif %}
+
+# explicitly add a REJECT rule to prevent timeouts when connecting
+# note: REJECT is not a valid policy, but can only be used in targets
+-A INPUT -j REJECT
+
+# explicitly add a REJECT rule to prevent timeouts when connecting
+# note: REJECT is not a valid policy, but can only be used in targets
+-A INPUT -j REJECT
 
 COMMIT

@@ -5,8 +5,7 @@ firewall_v4_incoming:
   - { name: loadbalancer, src: "{{iprange.lb}}",      dport:  "{{idp_test_port}}", proto: tcp }
   - { name: loadbalancer, src: "{{iprange.lb}}",      dport:  "{{sp_test_port}}", proto: tcp }
   - { name: loadbalancer, src: "{{iprange.lb}}",      dport:  "{{oidc_test_port}}", proto: tcp }
-  - { name: vagrant,      src: "{{iprange.vagrant}}", dport:  "22", proto: tcp }
-  - { name: vnet,         src: "{{iprange.vpn.vm}}",  dport: "22,80,443", proto: tcp }
+  - { name: vnet,         src: "{{iprange.vm}}",      dport: "22,80,443", proto: tcp }
 
 # TODO: move to role default
 # SimpleSAMLphp

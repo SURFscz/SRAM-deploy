@@ -2,7 +2,7 @@
 http_proto: https
 
 # pyFF configuration
-pyff_repo_url: "https://github.com/leifj/pyFF.git"
+pyff_repo_url: "https://github.com/SURFscz/pyFF.git"
 pyff_repo_version: "master"
 pyff_project_dir: "/opt/pyff"
 pyff_src_dir: "{{ pyff_project_dir }}/pyff-src"
