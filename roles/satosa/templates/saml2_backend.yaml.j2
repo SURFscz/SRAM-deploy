@@ -27,10 +27,18 @@ config:
       sp:
         name: Proxy SP
         ui_info:
-          display_name: "{{ satosa_mdui.sp.display_name }}"
-          description: "{{ satosa_mdui.sp.description }}"
-          information_url: "{{ satosa_mdui.sp.information_url }}"
-          privacy_statement_url: "{{ satosa_mdui.sp.privacy_statement_url }}"
+          display_name:
+            - lang: en
+              text: "{{ satosa_mdui.sp.display_name.en }}"
+          description:
+            - lang: en
+              text: "{{ satosa_mdui.sp.description.en }}"
+          information_url:
+            - lang: en
+              text: "{{ satosa_mdui.sp.information_url.en }}"
+          privacy_statement_url:
+            - lang: en
+              text: "{{ satosa_mdui.sp.privacy_statement_url.en }}"
           keywords:
             - lang: nl
               text: {{ satosa_mdui.sp.keywords.nl | to_json }}

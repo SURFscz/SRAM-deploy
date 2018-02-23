@@ -27,10 +27,18 @@ config:
       idp:
         name: Proxy IdP
         ui_info:
-          display_name: "{{ satosa_mdui.idp.display_name }}"
-          description: "{{ satosa_mdui.idp.description }}"
-          information_url: "{{ satosa_mdui.idp.information_url }}"
-          privacy_statement_url: "{{ satosa_mdui.idp.privacy_statement_url }}"
+          display_name:
+            - lang: en
+              text: "{{ satosa_mdui.idp.display_name.en }}"
+          description:
+            - lang: en
+              text: "{{ satosa_mdui.idp.description.en }}"
+          information_url:
+            - lang: en
+              text: "{{ satosa_mdui.idp.information_url.en }}"
+          privacy_statement_url:
+            - lang: en
+              text: "{{ satosa_mdui.idp.privacy_statement_url.en }}"
           keywords:
             - lang: nl
               text: {{ satosa_mdui.idp.keywords.nl | to_json }}
