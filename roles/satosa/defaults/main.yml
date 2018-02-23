@@ -1,5 +1,6 @@
 ---
 http_proto: https
+mongodb_host: "127.0.0.1"
 
 # SATOSA configuration
 satosa_repo_url: "https://github.com/SURFscz/SATOSA.git"
@@ -13,4 +14,53 @@ satosa_port: "8080"
 satosa_state_encryption_key: "poikjh567"
 satosa_user_id_hash_salt: "59o3gaxfwg0svem1n1g3tk22i9mihcom"
 
-mongodb_host: "127.0.0.1"
+satosa_md:
+  organisation:
+    display_name: "{{ environment_string }} Proxy"
+    name: "{{ environment_string }} Proxy Org."
+    url: "https://{{ hostnames.meta }}/"
+  contacts:
+    technical:
+      email_address: "technical@{{ hostnames.proxy }}"
+      given_name: "Technical"
+    support:
+      email_address: "support@{{ hostnames.proxy }}"
+      given_name: "Support"
+    administrative:
+      email_address: "admin{{ hostnames.proxy }}"
+      given_name: "Admin"
+
+
+satosa_mdui:
+  idp:
+    display_name: "{{ environment_string }} IdP Display Name"
+    description: "{{ environment_string }} IdP Description"
+    information_url: "http://idp.information.url/"
+    privacy_statement_url: "http://idp.privacy.url/"
+    keywords:
+      nl:
+        - "{{ environment_string }} (NL)"
+        - IdP-NL
+      en:
+        - "{{ environment_string }} (EN)"
+        - IdP-EN
+    logo:
+      url: "http://idp.logo.url/"
+      width: "100"
+      height: "100"
+  sp:
+    display_name: "{{ environment_string }} SP Display Name"
+    description: "{{ environment_string }} SP Description"
+    information_url: "http://sp.information.url/"
+    privacy_statement_url: "http://sp.privacy.url/"
+    keywords:
+      nl:
+        - "{{ environment_string }} (NL)"
+        - SP-NL
+      en:
+        - "{{ environment_string }} (EN)"
+        - SP-EN
+    logo:
+      url: "http://sp.logo.url/"
+      width: "100"
+      height: "100"
