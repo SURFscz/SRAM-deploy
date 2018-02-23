@@ -3,18 +3,15 @@ packages:
   - git
 
 comanage_git_plugins:
-  -
-    name: "ZoneProvisioner"
-    version: "HEAD"
+  - name: "ZoneProvisioner"
     src: "https://github.com/SURFscz/COmanage-zoneprovisioner.git"
-  -
-    name: "LdapFixedProvisioner"
-    version: "HEAD"
+    version: "{{comanage_plugin_zoneprovisioner_version}}"
+  - name: "LdapFixedProvisioner"
     src: "https://github.com/SURFscz/COmanage-ldapfixedprovisioner.git"
-  -
-    name: "EmailProvisioner"
-    version: "HEAD"
+    version: "{{comanage_plugin_ldapfixedprovisioner_version}}"
+  - name: "EmailProvisioner"
     src: "https://github.com/SURFscz/COmanage-emailprovisioner.git"
+    version: "{{comanage_plugin_emailprovisioner_version}}"
 
 comanage_plugin_configurations:
   - { src: ldapfixedprovisioner.php.j2, dest: ldapfixedprovisioner.php }
