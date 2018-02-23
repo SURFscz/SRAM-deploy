@@ -74,8 +74,8 @@
   command: ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f "{{ ldap_ldif_dir }}/enable_syncprov.ldif"
   register: ldap_sync_enable
   # return code 20 means entry already exists
-  failed_when: "ldap_sync_enable.rc!=0 and ldap_syn_enable.rc!=20"
-  changed_when: "ldap_syn_enable.rc!=20"
+  failed_when: "ldap_sync_enable.rc!=0 and ldap_sync_enable.rc!=20"
+  changed_when: "ldap_sync_enable.rc!=20"
 
 - name: Check for presence of eduPerson ldif
   stat:
