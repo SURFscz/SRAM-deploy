@@ -84,6 +84,10 @@
                     'authproc' => array(
                             // Convert LDAP names to oids.
                             100 => array('class' => 'core:AttributeMap', 'google2urn'),
+                            110 => array('class' => 'saml:AttributeNameID',
+                                'attribute' => 'urn:mace:dir:attribute-def:eduPersonPrincipalName',
+                                'Format' => 'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent',
+                        ),
                     ),
             );
 
