@@ -1,10 +1,13 @@
 module: satosa.micro_services.attribute_filter.AttributeFilter
-name: AttributeFilter
+name: AttributeFilterPre
 config:
     attribute_allow:
         default:
             'http://{{hostnames.comanage}}/registry/auth/sp/metadata':
                 "":
+                   - ""
+            default:
+                "cmuid":
                    - ""
 #    attribute_deny:
 #        default:

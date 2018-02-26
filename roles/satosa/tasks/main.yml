@@ -113,10 +113,15 @@
         src: r_and_s_acl.yaml.j2
         dest: "{{ satosa_env_dir }}/plugins/micro_services/r_and_s_acl.yaml"
 
-    - name: Create attribute_filter.yaml definition
+    - name: Create attribute_filter_pre.yaml definition
       template:
-        src: attribute_filter.yaml.j2
-        dest: "{{ satosa_env_dir }}/plugins/micro_services/attribute_filter.yaml"
+        src: attribute_filter_pre.yaml.j2
+        dest: "{{ satosa_env_dir }}/plugins/micro_services/attribute_filter_pre.yaml"
+
+    - name: Create attribute_filter_post.yaml definition
+      template:
+        src: attribute_filter_post.yaml.j2
+        dest: "{{ satosa_env_dir }}/plugins/micro_services/attribute_filter_post.yaml"
 
     - name: Create custom_uid.yaml definition
       template:
