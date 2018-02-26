@@ -70,13 +70,12 @@
                         'Description' => array(
                             'en' => '{{ environment_string }} Google IdP description'
                         ),
-                        'Logo' => array(
-                            array(
-                                    'url' => 'https://{{ hostnames.google }}/saml/resources/icons/ssplogo-fish-small.png',
-                                    'width' => '60',
-                                    'height' => '41'
-                                )
-                        )
+                        'Logo' => array( array(
+                            'url' => 'https://{{ hostnames.google }}'
+                                    .'/saml/resources/icons/ssplogo-fish-small.png',
+                            'width' => '60',
+                            'height' => '41'
+                        ) )
                     ),
                     'privatekey' => 'server.pem',
                     'certificate' => 'server.crt',
