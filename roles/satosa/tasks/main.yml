@@ -182,11 +182,11 @@
       file: path="{{ satosa_env_dir }}/keys" state=directory mode=0755
 
     - name: Create satosa private key (for CMservice)
-      shell: >
-        openssl genpkey -algorithm RSA -out "{{ satosa_env_dir }}/keys/satosa.pem"
-        -pkeyopt rsa_keygen_bits:2048;
-        openssl rsa -pubout -in "{{ satosa_env_dir }}/keys/satosa.pem"
-        -out "{{ satosa_env_dir }}/keys/satosa.pub"
+      command: >
+        openssl req -newkey rsa:2048 -new -x509 -days 3652 -nodes
+          -subj '/CN=localhost'
+          -out "{{ satosa_env_dir }}/keys/satosa.pub"
+          -keyout "{{ satosa_env_dir }}/keys/satosa.pem"
       args:
         creates: "{{ satosa_env_dir }}/keys/satosa.pub"
 
