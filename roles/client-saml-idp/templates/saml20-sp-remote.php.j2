@@ -74,7 +74,7 @@ $metadata['https://{{ hostnames.proxy }}/md/SamlSP.xml'] = array (
   array (
     0 =>
     array (
-      'encryption' => false,
+      'encryption' => true,
       'signing' => true,
       'type' => 'X509Certificate',
       'X509Certificate' => '{{ saml_ts_cert.cert }}',
@@ -82,6 +82,7 @@ $metadata['https://{{ hostnames.proxy }}/md/SamlSP.xml'] = array (
   ),
   'validate.authnrequest' => false,
   'saml20.sign.assertion' => true,
+  'assertion.encryption' => true,
 );
 $metadata['https://{{ hostnames.proxy }}/md/SamlMirrorSP.xml/SamlIdP/aHR0cHM6Ly9zcC10ZXN0LnNjei12bS5uZXQvc2FtbC9tb2R1bGUucGhwL3NhbWwvc3AvbWV0YWRhdGEucGhwL2RlZmF1bHQtc3A='] = array (
   'entityid' => 'https://{{ hostnames.proxy }}/md/SamlMirrorSP.xml/SamlIdP/aHR0cHM6Ly9zcC10ZXN0LnNjei12bS5uZXQvc2FtbC9tb2R1bGUucGhwL3NhbWwvc3AvbWV0YWRhdGEucGhwL2RlZmF1bHQtc3A=',
