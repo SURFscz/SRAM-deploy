@@ -118,18 +118,4 @@ $config = array(
             'urn:mace:dir:attribute-def:postalAddress' => array('Antwoordnummer 1234')
         ),
     ),
-
-{% if google_client_id is defined %}
-    'oidc-google' => array(
-        'openidconnect:Connect',
-        'client_id'           => '{{ google_client_id }}',
-        'client_secret'       => '{{ google_client_secret }}',
-        'token_endpoint'      => 'https://www.googleapis.com/oauth2/v4/token',
-        'user_info_endpoint'  => 'https://www.googleapis.com/oauth2/v3/userinfo',
-        'auth_endpoint'       => 'https://accounts.google.com/o/oauth2/v2/auth',
-        'sslcapath'           => '/etc/ssl/certs',
-    ),
-{% endif %}
-
-
 );

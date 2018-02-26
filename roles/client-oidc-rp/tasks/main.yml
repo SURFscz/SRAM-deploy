@@ -1,0 +1,54 @@
+---
+- name: Ensure that packages are installed
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - libapache2-mod-auth-openidc
+
+- name: Create new SP test root index.php
+  template:
+    src: sp_index.php.j2
+    dest: /var/www/html/index.php
+    mode: 0644
+
+- name: Create OIDC RP test dir
+  file:
+    path: "/var/www/html/oidc"
+    state: directory
+    mode: 0755
+    owner: www-data
+    group: www-data
+
+- name: Create new OIDC RP test root index.php
+  copy:
+    src: oidc_index.php
+    dest: /var/www/html/oidc/index.php
+    mode: 0644
+
+- name: Add websites
+  template:
+    src: "{{ item }}.conf.j2"
+    dest: "/etc/apache2/sites-available/{{ item }}.conf"
+    mode: 0644
+  with_items:
+    - oidc
+
+- name: Enable websites
+  file:
+    src: "/etc/apache2/sites-available/{{ item }}.conf"
+    dest: "/etc/apache2/sites-enabled/00-{{ item }}.conf"
+    state: link
+  with_items:
+    - oidc
+
+- name: Listen to OIDC port
+  blockinfile:
+    path: "/etc/apache2/ports.conf"
+    insertafter: EOF
+    marker: "# {mark} ANSIBLE MANAGED BLOCK {{ hostnames.oidc }}"
+    block: |
+      Listen {{ oidc_test_port }}
+
+- name: restart Apache
+  systemd: daemon_reload=yes name=apache2 state=restarted enabled=yes
