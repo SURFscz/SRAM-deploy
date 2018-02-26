@@ -35,12 +35,16 @@ satosa_mdui:
   idp:
     display_name:
       en: "{{ environment_string }} IdP Display Name"
+      nl: "{{ environment_string }} IdP Display Name"
     description:
       en: "{{ environment_string }} IdP Description"
+      nl: "{{ environment_string }} IdP Description"
     information_url:
       en: "http://idp.information.url/"
+      nl: "http://idp.information.url/"
     privacy_statement_url:
       en: "http://idp.privacy.url/"
+      nl: "http://idp.privacy.url/"
     keywords:
       nl:
         - "{{ environment_string }} (NL)"
@@ -55,12 +59,16 @@ satosa_mdui:
   sp:
     display_name:
       en: "{{ environment_string }} SP Display Name"
+      nl: "{{ environment_string }} SP Display Name"
     description:
       en: "{{ environment_string }} SP Description"
+      nl: "{{ environment_string }} SP Description"
     information_url:
       en: "http://sp.information.url/"
+      nl: "http://sp.information.url/"
     privacy_statement_url:
       en: "http://sp.privacy.url/"
+      nl: "http://sp.privacy.url/"
     keywords:
       nl:
         - "{{ environment_string }} (NL)"
