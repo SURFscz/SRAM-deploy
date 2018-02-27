@@ -4,7 +4,7 @@
   template: src=resolv.conf.j2 dest=/etc/resolv.conf force=yes
   when: ansible_virtualization_type != "docker"
 
-- name: set timezone
+- name: set localtime
   file: state=link src=/usr/share/zoneinfo/{{timezone}} dest=/etc/localtime
 
 - name: set timezone
