@@ -27,3 +27,9 @@
     state: present
   notify:
     - Restart MySQL
+
+- name: Install backup script
+  template:
+    src: "satosa_mysql_backup.sh.j2"
+    dest: "{{backup_runparts}}/satosa_mysql_backup.sh"
+    mode: 0755

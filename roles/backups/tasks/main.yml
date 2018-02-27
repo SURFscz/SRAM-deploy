@@ -1,0 +1,28 @@
+---
+- name: Create backup dir {{backup_dir}}
+  file:
+    path: "{{backup_base}}"
+    state: directory
+    mode: 0755
+    owner: root
+
+# note: indivudual services can put their backup scripts in the
+# {{backup_runparts}} dir in order for them to run daily
+- name: Create run-parts dir for backup scripts
+  file:
+    path: "{{backup_runparts}}"
+    state: directory
+    mode: 0755
+    owner: root
+
+- name: Copy backup service files
+  template:
+    src: "{{item}}.j2"
+    dest: "/etc/systemd/system/{{item}}"
+  with_items:
+    - scz-backups.service
+    - scz-backups.timer
+  notify:
+    - enable backup job
+    - systemd daemon-reload
+
