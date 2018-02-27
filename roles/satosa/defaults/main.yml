@@ -14,6 +14,8 @@ satosa_port: "8080"
 satosa_state_encryption_key: "poikjh567"
 satosa_user_id_hash_salt: "59o3gaxfwg0svem1n1g3tk22i9mihcom"
 
+satosa_backup_dir: "{{backup_base}}/satosa"
+
 satosa_md:
   organisation:
     display_name: "{{ environment_string }} Proxy"

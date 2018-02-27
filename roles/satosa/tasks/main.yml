@@ -30,6 +30,12 @@
 - name: Enable and start mongoDB
   systemd: daemon_reload=yes name=mongodb state=started enabled=true
 
+- name: Install backup script
+  template:
+    src: "satosa_mongodb_backup.sh.j2"
+    dest: "{{backup_runparts}}/satosa_mongodb_backup.sh"
+    mode: 0755
+
 - block:
     - name: fetch SATOSA from {{ satosa_repo_url }}, version {{ satosa_repo_version }}
       git:
