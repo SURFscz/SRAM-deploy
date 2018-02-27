@@ -5,7 +5,7 @@ set -e
 num_running=$(vagrant status|grep -E '\brunning\b'|wc -l)
 if [ "$num_running" -ne 6 ]
 then
-	vagrant up --no-provision "$@"
+	vagrant up --provision "$@"
 fi
 
 vagrant up --provision "$@"
