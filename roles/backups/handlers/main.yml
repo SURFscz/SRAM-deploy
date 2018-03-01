@@ -1,0 +1,11 @@
+---
+- name: enable backup job
+  systemd:
+    name: scz-backups.timer
+    enabled: true
+    state: started
+    daemon_reload: true
+
+- name: systemd daemon-reload
+  systemd:
+    daemon_reload: true

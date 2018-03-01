@@ -231,3 +231,10 @@
     src: fb_slapd.yml.j2
     dest: /etc/filebeat/conf.d/fb_slap.yml
   notify: restart filebeat
+
+- name: Install backup script
+  template:
+    src: ldap-backup.sh.j2
+    dest: "{{backup_runparts}}/ldap-backup.sh"
+    mode: 0755
+

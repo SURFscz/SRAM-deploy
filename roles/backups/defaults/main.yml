@@ -1,0 +1,4 @@
+---
+backup_base: "/opt/backups"
+backup_runparts: "{{backup_base}}/run.d"
+

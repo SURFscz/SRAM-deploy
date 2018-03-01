@@ -6,3 +6,4 @@ ldap_ldif_dir: "{{ ldap_install_dir }}/schema"
 ldap_schema_dir: "{{ ldap_install_dir }}/schema"
 ldap_user: root
 
+ldap_backup_dir: "{{backup_base}}/ldap"

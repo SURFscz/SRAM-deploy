@@ -22,6 +22,7 @@
     - net-tools
     - git
     - acl
+    - bzip2
 
 - name: remove unneccessary packages
   apt: name={{ item }} state=absent
