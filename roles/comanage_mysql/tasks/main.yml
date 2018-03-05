@@ -12,3 +12,10 @@
     state: present
   notify:
     - Restart MySQL
+
+- name: Install backup script
+  template:
+    src: comanage-backup.sh.j2
+    dest: "{{backup_runparts}}/comanage-backup.sh"
+    mode: 0755
+

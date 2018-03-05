@@ -10,15 +10,12 @@ config:
       name: "{{ satosa_md.organisation.name }}"
       url: "{{ satosa_md.organisation.url }}"
     contact_person:
-      - contact_type: technical
-        email_address: {{ satosa_md.contacts.technical.email_address }}
-        given_name: {{ satosa_md.contacts.technical.given_name }}
-      - contact_type: support
-        email_address: {{ satosa_md.contacts.support.email_address }}
-        given_name: {{ satosa_md.contacts.support.given_name }}
-      - contact_type: administrative
-        email_address: {{ satosa_md.contacts.administrative.email_address }}
-        given_name: {{ satosa_md.contacts.administrative.given_name }}
+{% for type, attrs in satosa_md.contacts.items() %}
+      - contact_type: {{ type }}
+{% for attr, value in attrs.items() %}
+        {{ attr }}: {{ value }}
+{% endfor %}
+{% endfor %}
     metadata:
       local: ['metadata/idp-test.xml']
       mdq: ['http://localhost:{{ pyff_port }}']
@@ -28,26 +25,34 @@ config:
         name: Proxy SP
         ui_info:
           display_name:
-            - lang: en
-              text: "{{ satosa_mdui.sp.display_name.en }}"
+{% for lang, text in satosa_mdui.sp.display_name.items() %}
+            - lang: {{ lang }}
+              text: "{{ text }}"
+{% endfor %}
           description:
-            - lang: en
-              text: "{{ satosa_mdui.sp.description.en }}"
+{% for lang, text in satosa_mdui.sp.description.items() %}
+            - lang: {{ lang }}
+              text: "{{ text }}"
+{% endfor %}
           information_url:
-            - lang: en
-              text: "{{ satosa_mdui.sp.information_url.en }}"
+{% for lang, text in satosa_mdui.sp.information_url.items() %}
+            - lang: {{ lang }}
+              text: "{{ text }}"
+{% endfor %}
           privacy_statement_url:
-            - lang: en
-              text: "{{ satosa_mdui.sp.privacy_statement_url.en }}"
+{% for lang, text in satosa_mdui.sp.privacy_statement_url.items() %}
+            - lang: {{ lang }}
+              text: "{{ text }}"
+{% endfor %}
           keywords:
-            - lang: nl
-              text: {{ satosa_mdui.sp.keywords.nl | to_json }}
-            - lang: en
-              text: {{ satosa_mdui.sp.keywords.en | to_json }}
+{% for lang, text in satosa_mdui.sp.keywords.items() %}
+            - lang: {{ lang }}
+              text: {{ text | to_json }}
+{% endfor %}
           logo:
-            text: "{{ satosa_mdui.sp.logo.url }}"
-            width: "{{ satosa_mdui.sp.logo.width }}"
-            height: "{{ satosa_mdui.sp.logo.height }}"
+{% for attr, value in satosa_mdui.idp.logo.items() %}
+            {{ attr }}: "{{ value }}"
+{% endfor %}
         allow_unsolicited: true
         endpoints:
           assertion_consumer_service:

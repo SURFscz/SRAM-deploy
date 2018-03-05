@@ -14,6 +14,8 @@ satosa_port: "8080"
 satosa_state_encryption_key: "poikjh567"
 satosa_user_id_hash_salt: "59o3gaxfwg0svem1n1g3tk22i9mihcom"
 
+satosa_backup_dir: "{{backup_base}}/satosa"
+
 satosa_md:
   organisation:
     display_name: "{{ environment_string }} Proxy"
@@ -35,12 +37,16 @@ satosa_mdui:
   idp:
     display_name:
       en: "{{ environment_string }} IdP Display Name"
+      nl: "{{ environment_string }} IdP Display Name"
     description:
       en: "{{ environment_string }} IdP Description"
+      nl: "{{ environment_string }} IdP Description"
     information_url:
       en: "http://idp.information.url/"
+      nl: "http://idp.information.url/"
     privacy_statement_url:
       en: "http://idp.privacy.url/"
+      nl: "http://idp.privacy.url/"
     keywords:
       nl:
         - "{{ environment_string }} (NL)"
@@ -55,12 +61,16 @@ satosa_mdui:
   sp:
     display_name:
       en: "{{ environment_string }} SP Display Name"
+      nl: "{{ environment_string }} SP Display Name"
     description:
       en: "{{ environment_string }} SP Description"
+      nl: "{{ environment_string }} SP Description"
     information_url:
       en: "http://sp.information.url/"
+      nl: "http://sp.information.url/"
     privacy_statement_url:
       en: "http://sp.privacy.url/"
+      nl: "http://sp.privacy.url/"
     keywords:
       nl:
         - "{{ environment_string }} (NL)"
