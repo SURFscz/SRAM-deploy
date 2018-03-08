@@ -102,8 +102,8 @@ $config = array(
             'urn:mace:dir:attribute-def:mail' => array('some@mailaddress.org'),
             'urn:mace:terena.org:attribute-def:schacHomeOrganization' => array('surfnet.nl'),
             'urn:mace:dir:attribute-def:eduPersonPrincipalName' => array('eppn_student@surfnet.nl'),
-            'urn:mace:dir:attribute-def:eduPersonTargetedID' => array('eptid_student@surfnet.nl'),
-//             'urn:oid:1.3.6.1.4.1.5923.1.1.1.6' => array('eppn_student@surfnet.nl'),
+            'urn:mace:dir:attribute-def:eduPersonTargetedID' => array('<saml:NameID xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" SPNameQualifier="https://{{ hostnames.proxy }}/md/SamlSP.xml">eptid_student@surfnet.nl</saml:NameID>'),
+//             'urn:oid:1.3.6.1.4.1.5923.1.1.1.6' => array('<saml:NameID xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" SPNameQualifier="https://{{ hostnames.proxy }}/md/SamlSP.xml">eptid_student@surfnet.nl</saml:NameID>'),
             'urn:mace:dir:attribute-def:postalAddress' => array('Waar je huis woont')
         ),
         'employee:{{client_idp_users.employee}}' => array(
