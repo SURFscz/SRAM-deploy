@@ -111,16 +111,12 @@
     # in some way, which leads to chicken-and-egg problems.
     - name: Copy self-signed Token signing cert key
       copy:
-        content: |
-          -----BEGIN PRIVATE KEY-----
-          {{ saml_ts_cert.key }}-----END PRIVATE KEY-----
+        content: "{{client_saml_cert.priv}}"
         dest: "{{ simplesaml_project_dir }}/simplesaml/cert/server.pem"
 
     - name: Copy self-signed Token signing cert
       copy:
-        content: |
-          -----BEGIN CERTIFICATE-----
-          {{ saml_ts_cert.cert }}-----END CERTIFICATE-----
+        content: "{{client_saml_cert.pub}}"
         dest: "{{ simplesaml_project_dir }}/simplesaml/cert/server.crt"
 
   become: "yes"
