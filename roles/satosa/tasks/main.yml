@@ -161,38 +161,34 @@
     - name: Create certs directory
       file: path="{{ satosa_env_dir }}/certs" state=directory mode=0755
 
-    # use a fixed cert, instead of generating one dynamically
-    - name: Copy self-signed Token Signing SSL certs keys
+    - name: Copy Satosa certificates
       copy:
-        content: |
-          -----BEGIN PRIVATE KEY-----
-          {{ saml_ts_cert.key }}-----END PRIVATE KEY-----
-        dest: "{{ satosa_env_dir }}/certs/{{ item }}.key"
+        content: "{{ item.cert.pub }}"
+        dest: "{{ satosa_env_dir }}/certs/{{ item.dest }}.crt"
       with_items:
-        - frontend
-        - backend
-        - signing
+        - { dest: "signing",  cert: "{{ satosa_metadata_cert }}" }
+        - { dest: "frontend", cert: "{{ satosa_frontend_cert }}" }
+        - { dest: "backend",  cert: "{{ satosa_backend_cert }}"  }
 
-    - name: Copy self-signed Token Signing SSL certs
+    - name: Copy Satosa keys
       copy:
-        content: |
-          -----BEGIN CERTIFICATE-----
-          {{ saml_ts_cert.cert }}-----END CERTIFICATE-----
-        dest: "{{ satosa_env_dir }}/certs/{{ item }}.crt"
+        content: "{{item.cert.priv}}"
+        dest: "{{ satosa_env_dir }}/certs/{{ item.dest }}.key"
       with_items:
-        - frontend
-        - backend
-        - signing
+        - { dest: "signing",  cert: "{{ satosa_metadata_cert }}" }
+        - { dest: "frontend", cert: "{{ satosa_frontend_cert }}" }
+        - { dest: "backend",  cert: "{{ satosa_backend_cert }}"  }
+
 
     - name: Create keys directory
       file: path="{{ satosa_env_dir }}/keys" state=directory mode=0755
 
     - name: Create satosa private key (for CMservice)
-      shell: >
-        openssl genpkey -algorithm RSA -out "{{ satosa_env_dir }}/keys/satosa.pem"
-        -pkeyopt rsa_keygen_bits:2048;
-        openssl rsa -pubout -in "{{ satosa_env_dir }}/keys/satosa.pem"
-        -out "{{ satosa_env_dir }}/keys/satosa.pub"
+      command: >
+        openssl req -newkey rsa:2048 -new -x509 -days 3652 -nodes
+          -subj '/CN=localhost'
+          -out "{{ satosa_env_dir }}/keys/satosa.pub"
+          -keyout "{{ satosa_env_dir }}/keys/satosa.pem"
       args:
         creates: "{{ satosa_env_dir }}/keys/satosa.pub"
 
