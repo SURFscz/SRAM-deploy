@@ -5,15 +5,11 @@
   find:
     path: /var/www/
     patterns: [ 'comanage*','registry' ]
+    file_type: directory
     recurse: "true"
   register: comanage_old_files
+  failed_when: comanage_old_files.matched > 0
 
-- name: Save and remove old comanage files
-  archive:
-    dest: "{{ comanage_path }}/comanage-old.tar.gz"
-    path: [ "/var/www/comanage*", "/var/www/registry" ]
-    remove: "true"
-  when: comanage_old_files.matched > 0
 
 - name: Create target directories
   file:
