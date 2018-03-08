@@ -10,6 +10,13 @@
   register: comanage_old_files
   failed_when: comanage_old_files.matched > 0
 
+# TODO: this fails if the target is already a symlink
+# see https://github.com/ansible/ansible/issues/30797
+# so work around it for now
+- name: hack
+  shell: |
+    test -l "{{ comanage_install_dir }}" && rm "{{ comanage_install_dir }}"
+  changed_when: false
 
 - name: Create target directories
   file:
