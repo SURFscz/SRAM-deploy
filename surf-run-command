@@ -1,0 +1,33 @@
+#!/bin/bash
+# run command on all specified hosts
+set -e
+
+if [ "$#" -lt 2 ]
+then
+	echo "Please specify a host selector (i.e., 'all') and a command"
+	exit 1
+fi
+
+root=
+if [ "$1" = "-r" ]
+then
+	root="--become --ask-become-pass"
+	shift
+fi
+
+host=$1
+cmd=$2
+
+echo -n "Will run '$cmd' on host '$host'"
+if [ -n "$root" ]
+then
+	echo -n " as root"
+fi
+echo
+echo -n "Press enter to continue"
+read
+echo
+
+ansible -i environments/surf/inventory $root "$host" -a "$cmd"
+
+exit 0

@@ -1,6 +1,7 @@
 .ansible/
 .vagrant/
 provision.retry
+logs/
 *.pyc
 *~
 core

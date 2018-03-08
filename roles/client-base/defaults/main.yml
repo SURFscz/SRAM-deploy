@@ -2,6 +2,6 @@
 http_proto: https
 # SimpleSAMLphp
 simplesaml_download_url: "https://github.com/simplesamlphp/simplesamlphp/releases/download"
-simplesaml_version: "1.14.16"
+simplesaml_version: "1.15.3"
 simplesaml_project_dir: "/opt/simplesaml"
 
