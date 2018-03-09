@@ -2,9 +2,9 @@
 $config=array(
   'scz' => array(
     'scope_suffix'  => '{{ comanage_scope }}',
-    'uid' => 'cmuid',
+    'uid' => '{{ comanage_proxy_attribute }}',
     'attributes' => array(
-      'cmuid' => array('attribute'=>'uid','use_org'=>True, 'type'=>'eppn'),
+      '{{ comanage_proxy_attribute }}' => array('attribute'=>'uid','use_org'=>True, 'type'=>'eppn'),
       'cn' => array('multiple'=>'single'),
       'urn:oid:2.5.4.3' => array('attribute'=>'cn', 'multiple'=>'single'),
       'givenName'=>array('multiple'=>'single'),

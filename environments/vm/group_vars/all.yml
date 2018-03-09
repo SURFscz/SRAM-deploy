@@ -90,3 +90,5 @@ ldap:
 comanage_proxy_db: "{{ groups['proxy'][0] }}"
 comanage_proxy_db_user: "scz"
 comanage_proxy_db_name: "cotosa"
+comanage_proxy_attribute: "cmuid"
+

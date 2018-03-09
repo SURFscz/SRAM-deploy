@@ -6,7 +6,7 @@ config:
   db_schema: '{{ comanage_proxy_db_name }}'
   db_password: '{{ comanage_proxy_db_password }}'
   idp_identifiers:
-    - cmuid
+    - {{ comanage_proxy_attribute }}
     #- uid
 
   # Whether to clear values for attributes incoming
