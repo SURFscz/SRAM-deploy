@@ -21,3 +21,9 @@ eduMember_ldif: "{{ eduMember }}.ldif"
 eduMember_host: https://raw.githubusercontent.com
 eduMember_path: /Internet2/grouper/master/apacheds-ldappc-schema/src/main/schema/eduMember.schema
 eduMemberSchema_url: "{{ eduMember_host }}{{ eduMember_path }}"
+
+voPerson: voPerson
+voPerson_ldif: "{{ voPerson }}.ldif"
+voPerson_host: https://raw.githubusercontent.com
+voPerson_path: /voperson/voperson/master/schema/openldap/voperson.ldif
+voPersonLdif_url: "{{ voPerson_host }}{{ voPerson_path }}"
