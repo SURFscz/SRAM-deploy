@@ -14,10 +14,10 @@
 # see https://github.com/ansible/ansible/issues/30797
 # so work around it for now
 - name: hack
-  shell: |
-    test -L "{{ comanage_install_dir }}" && rm "{{ comanage_install_dir }}"
+  stat: "path={{ comanage_install_dir }}"
+  register: result
   changed_when: false
-  failed_when: false
+  failed_when: result.stat.islnk
 
 - name: Create target directories
   file:
