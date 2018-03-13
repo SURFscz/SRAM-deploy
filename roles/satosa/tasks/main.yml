@@ -60,8 +60,8 @@
         dest: "{{ satosa_env_dir }}/proxy_conf.yaml"
 
     - name: Copy internal_attributes.yaml definition
-      copy:
-        src: internal_attributes.yaml
+      template:
+        src: internal_attributes.yaml.j2
         dest: "{{ satosa_env_dir }}/internal_attributes.yaml"
 
     - name: Create backends directory
@@ -119,15 +119,10 @@
         src: r_and_s_acl.yaml.j2
         dest: "{{ satosa_env_dir }}/plugins/micro_services/r_and_s_acl.yaml"
 
-    - name: Create attribute_filter_pre.yaml definition
+    - name: Create attribute_filter.yaml definition
       template:
-        src: attribute_filter_pre.yaml.j2
-        dest: "{{ satosa_env_dir }}/plugins/micro_services/attribute_filter_pre.yaml"
-
-    - name: Create attribute_filter_post.yaml definition
-      template:
-        src: attribute_filter_post.yaml.j2
-        dest: "{{ satosa_env_dir }}/plugins/micro_services/attribute_filter_post.yaml"
+        src: attribute_filter.yaml.j2
+        dest: "{{ satosa_env_dir }}/plugins/micro_services/attribute_filter.yaml"
 
     - name: Create custom_uid.yaml definition
       template:
@@ -237,11 +232,13 @@
       get_url:
         url: https://{{ hostnames.sp }}/saml/module.php/saml/sp/metadata.php/default-sp
         dest: "{{ satosa_env_dir }}/metadata/sp-test.xml"
+        force: yes
 
     - name: Retreive Test IdP metadata
       get_url:
         url: https://{{ hostnames.idp }}/saml/saml2/idp/metadata.php
         dest: "{{ satosa_env_dir }}/metadata/idp-test.xml"
+        force: yes
 
     - name: Copy metadata generating script
       copy:
