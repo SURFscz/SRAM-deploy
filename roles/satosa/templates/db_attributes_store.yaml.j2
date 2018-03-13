@@ -6,9 +6,11 @@ config:
   db_schema: '{{ comanage_proxy_db_name }}'
   db_password: '{{ comanage_proxy_db_password }}'
   idp_identifiers:
-    - cmuid
-    #- uid
+    - not_used
 
   # Whether to clear values for attributes incoming
   # to this microservice. Default is no or false.
   clear_input_attributes: yes
+
+  # Use internal user_id as idp_identifier
+  user_id: true
