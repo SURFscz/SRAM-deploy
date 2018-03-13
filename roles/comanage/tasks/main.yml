@@ -15,7 +15,7 @@
 # so work around it for now
 - name: hack
   shell: |
-    test -l "{{ comanage_install_dir }}" && rm "{{ comanage_install_dir }}"
+    test -L "{{ comanage_install_dir }}" && rm "{{ comanage_install_dir }}"
   changed_when: false
 
 - name: Create target directories
