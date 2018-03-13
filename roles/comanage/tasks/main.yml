@@ -17,6 +17,7 @@
   shell: |
     test -L "{{ comanage_install_dir }}" && rm "{{ comanage_install_dir }}"
   changed_when: false
+  failed_when: false
 
 - name: Create target directories
   file:
