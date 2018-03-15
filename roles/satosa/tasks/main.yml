@@ -292,5 +292,10 @@
     dest=/etc/rsyslog.d/satosa.conf
   notify: "restart rsyslog"
 
+- name: Copy logrotate config
+  copy: >
+    src=logrotate_satosa
+    dest=/etc/logrotate.d/satosa
+
 - name: restart SATOSA
   systemd: daemon_reload=yes name=satosa state=restarted enabled=yes

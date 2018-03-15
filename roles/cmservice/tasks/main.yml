@@ -72,5 +72,16 @@
     dest: "/etc/systemd/system/cmservice.service"
     remote_src: yes
 
+- name: Copy rsyslog config
+  copy: >
+    src=rsyslog_cmservice.conf
+    dest=/etc/rsyslog.d/cmservice.conf
+  notify: "restart rsyslog"
+
+- name: Copy logrotate config
+  copy: >
+    src=logrotate_cmservice
+    dest=/etc/logrotate.d/cmservice
+
 - name: restart CMservice
   systemd: daemon_reload=yes name=cmservice state=restarted enabled=yes
