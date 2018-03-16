@@ -1,8 +1,12 @@
 module: satosa.micro_services.custom_uid.CustomUID
 name: CustomUID
 config:
+    # internal attributes used to create custom uid
     select:
         - eduPersonPrincipalName
         - eduPersonTargetedID
-    couid: cmuid
+    # internal custom uid transport attribute
+    custom_attribute: cmuid
 
+    # Set user_id to custom uid
+    user_id: true

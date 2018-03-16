@@ -1,0 +1,24 @@
+module: satosa.micro_services.attribute_filter.AttributeFilter
+name: AttributeFilter
+config:
+    attribute_allow:
+        default:
+            # Allow all to comanage SP ("" matches everything)
+            "https://{{hostnames.comanage}}/registry/auth/sp/metadata":
+                "":
+                   - ""
+            # Block everything to other SP's ("^$" matches nothing)
+            default:
+                "^$":
+                    - ""
+    attribute_deny:
+        default:
+            # Skip deny for comanage SP ("^$" matches nothing)
+            "https://{{hostnames.comanage}}/registry/auth/sp/metadata":
+                "^$":
+                    - ""
+            # Remove custom uid internal transport attribute
+            # (cmuid) for remaining SP's
+            #default:
+            #    "^cmuid$":
+            #        - ""

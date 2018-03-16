@@ -29,5 +29,4 @@ comanage_scope: "{{base_domain}}"
 
 idp_mellon_path: /etc/apache2/mellon/satosa
 idp_metadata_url: "https://proxy.{{base_domain}}/md/SamlIdP.xml"
-idp_attribute: "cmuid"
 idp_extract_certificate: True
