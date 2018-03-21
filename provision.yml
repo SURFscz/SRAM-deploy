@@ -69,7 +69,7 @@
     - role: tls_fixed_cert
       tags: ['lb','tls_fixedcert']
       when: enable_https and use_fixed_cert
-    - { role: https_haproxy,   tags: ['lb','https_haproxy'] }
+    - { role: https_haproxy,   tags: ['lb','haproxy'] }
 
 - hosts: ldap
   roles:
