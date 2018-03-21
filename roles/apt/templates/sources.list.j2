@@ -1,8 +1,19 @@
+{% if ansible_distribution == 'Debian' %}
 {%   set sections = "main" %}
-
 deb {{debian.mirror}} {{debian.dist}} {{sections}}
 deb {{debian.mirror}} {{debian.dist}}-updates {{sections}}
 deb {{debian.security_mirror}} {{debian.dist}}/updates {{sections}}
 {% if ansible_virtualization_type == "virtualbox" %}
 deb {{debian.mirror}} {{debian.dist}}-backports main contrib
+{% endif -%}
+{% endif -%}
+{% if ansible_distribution == 'Ubuntu' %}
+deb     http://de.archive.ubuntu.com/ubuntu xenial           main restricted universe multiverse
+deb-src http://de.archive.ubuntu.com/ubuntu xenial           main restricted universe multiverse
+deb     http://de.archive.ubuntu.com/ubuntu xenial-updates   main restricted universe multiverse
+deb-src http://de.archive.ubuntu.com/ubuntu xenial-updates   main restricted universe multiverse
+deb     http://de.archive.ubuntu.com/ubuntu xenial-backports main restricted universe multiverse
+deb-src http://de.archive.ubuntu.com/ubuntu xenial-backports main restricted universe multiverse
+deb     http://security.ubuntu.com/ubuntu   xenial-security  main restricted universe multiverse
+deb-src http://security.ubuntu.com/ubuntu   xenial-security  main restricted
 {% endif -%}

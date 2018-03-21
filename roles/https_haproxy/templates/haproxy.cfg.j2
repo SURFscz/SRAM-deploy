@@ -82,9 +82,18 @@ frontend fe_https
 	http-request set-header Forwarded "for=%[src]; proto=http; by=%[dst]"
 {% endif %}
 
+{% if iprange.vpn is defined %}
+	acl vpn src {% for vpnname in iprange.vpn %}{{iprange.vpn[vpnname]}} {% endfor %}
+
+{% endif %}
+
 {% for host in lb_http %}
 	#acl acl_{{host.hostname}} ssl_fc_sni -i {{host.hostname}}
 	acl acl_{{host.hostname}} hdr(host) -i {{host.hostname}}
+{% if host.acl is defined %}
+	acl acl_ip_{{host.hostname}} src 127.0.0.1 ::1 {{host.acl}}
+	http-request deny if acl_{{host.hostname}} !acl_ip_{{host.hostname}}
+{% endif %}
 	use_backend be_{{host.hostname}} if acl_{{host.hostname}}
 
 {% endfor %}
