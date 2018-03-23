@@ -129,7 +129,7 @@
     owner: "{{ ldap_user }}"
     group: "{{ ldap_user }}"
     url: "{{ ldapPublicKeySchema_url }}"
-    dest: "{{ ldap_schema_dir }}/ {{ ldapPublicKey }}.schema"
+    dest: "{{ ldap_schema_dir }}/{{ ldapPublicKey }}.schema"
   when: ldappkstat.stat.exists == False
 
 - name: Convert LdapPublicKey schema to ldif format
