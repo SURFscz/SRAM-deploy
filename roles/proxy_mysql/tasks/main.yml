@@ -7,6 +7,7 @@
   notify:
     - Restart MySQL
 
+# Create COManage-Poxy linkup database
 - name: Copy create_db file
   copy:
     src: "create_db.sql"
@@ -24,6 +25,28 @@
     host: "%"
     password: "{{ comanage_proxy_db_password }}"
     priv: "{{ comanage_proxy_db_name }}.*:ALL"
+    state: present
+  notify:
+    - Restart MySQL
+
+# Create Attribues Hash database
+- name: Copy hash_db file
+  copy:
+    src: "create_attributes_hash_db.sql"
+    dest: /tmp/create_attributes_hash_db.sql
+
+- name: create satosa attributes_hash table
+  mysql_db:
+    name: "{{ satosa_db_name }}"
+    state: import
+    target: /tmp/create_attributes_hash_db.sql
+
+- name: create user for mysql with all privilege
+  mysql_user:
+    name: "{{ satosa_db_user }}"
+    host: "%"
+    password: "{{ satosa_db_password }}"
+    priv: "{{ satosa_db_name }}.*:ALL"
     state: present
   notify:
     - Restart MySQL

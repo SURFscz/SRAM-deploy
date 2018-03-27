@@ -1,0 +1,9 @@
+---
+module: satosa.micro_services.attribute_check.AttributeCheck
+name: AttributeCheck
+config:
+  db_host: {{ satosa_db }}
+  db_schema: {{ satosa_db_name }}
+  db_user: {{ satosa_db_user }}
+  db_password: {{ satosa_db_password }}
+  changed: "/static/changed"
