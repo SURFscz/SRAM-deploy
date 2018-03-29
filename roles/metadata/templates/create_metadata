@@ -1,12 +1,18 @@
 #!/bin/sh
 cd {{ metadata_project_dir }}
 wget https://wayf.surfnet.nl/metadata/edugain/downstream.xml -q -O sc_edugain.xml
-xsltproc rs_coco_nosc.xsl sc_edugain.xml              > sc_edugain_rs_coco_nosc.xml
-xsltproc idps.xsl         sc_edugain_rs_coco_nosc.xml > sc_edugain_rs_coco_nosc_idps.xml
-xsltproc sps.xsl          sc_edugain_rs_coco_nosc.xml > sc_edugain_rs_coco_nosc_sps.xml
 
-wget https://{{ hostnames.proxy }}/md/SamlIdP.xml -q -O proxy_idp.xml
-wget https://{{ hostnames.proxy }}/md/SamlSP.xml  -q -O proxy_sp.xml
+# Select R&S and COCO entityID's but not SURFConext
+xsltproc rs_coco_nosc.xsl sc_edugain.xml > sc_edugain_rs_coco_nosc.xml
+
+# Remove logos
+xsltproc nologo.xsl sc_edugain_rs_coco_nosc.xml > sc_edugain_rs_coco_nosc_nologo.xml
+
+# Split SP's and IdP's
+xsltproc idps.xsl sc_edugain_rs_coco_nosc_nologo.xml > sc_edugain_rs_coco_nosc_nologo_idps.xml
+xsltproc sps.xsl  sc_edugain_rs_coco_nosc_nologo.xml > sc_edugain_rs_coco_nosc_nologo_sps.xml
+
+# Retrieve SATOSA generated md
 wget https://{{ hostnames.proxy }}/md/SamlIdP.xml -q -O proxy_idp.xml
 wget https://{{ hostnames.proxy }}/md/SamlSP.xml  -q -O proxy_sp.xml
 
