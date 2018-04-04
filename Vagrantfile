@@ -229,4 +229,12 @@ Vagrant.configure("2") do |config|
             #end
         end
     end
+
+    config.vm.provider "libvirt" do |lv,override|
+        # workaround for Vagrant bug https://github.com/hashicorp/vagrant/issues/9592
+        override.vm.provision :shell do |shell|
+            shell.inline = "cd /etc/systemd/network && mv -v 99-dhcp.network 99Z-dhcp.network && systemctl restart systemd-networkd || true"
+        end
+    end
+
 end
