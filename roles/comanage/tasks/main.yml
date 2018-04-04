@@ -10,14 +10,19 @@
   register: comanage_old_files
   failed_when: comanage_old_files.matched > 0
 
-# TODO: this fails if the target is already a symlink
+# TODO: the "create target dir" below doesn't do anything
+# if the target is already a symlink
 # see https://github.com/ansible/ansible/issues/30797
-# so work around it for now
-- name: hack
+# so explicitly remove any leftover symlinks
+- name: "Check if {{comanage_install_dir}} is a symlink"
   stat: "path={{ comanage_install_dir }}"
   register: result
-  changed_when: false
-  failed_when: result.stat.islnk
+
+- name: "Remove symlink {{comanage_install_dir}}"
+  file:
+    path: "{{ comanage_install_dir }}"
+    state: absent
+  when: "result.stat.exists and result.stat.islnk"
 
 - name: Create target directories
   file:
