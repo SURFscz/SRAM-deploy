@@ -5,7 +5,7 @@
 ## handle generation of dh params
 ##
 - name: install openssl
-  apt: name=openssl state=installed
+  apt: name=openssl state=present
   when: enable_https and haproxy.custom_dhparam
 
 - name: generate Diffie-Hellman group

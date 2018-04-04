@@ -2,7 +2,7 @@
 # {{maiL_relayhost}}
 ---
 - name: install nullmailer
-  apt: name=nullmailer state=installed
+  apt: name=nullmailer state=present
 
 - name: start nullmailer
   service: name=nullmailer state=started enabled=true

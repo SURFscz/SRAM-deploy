@@ -1,6 +1,6 @@
 ---
 - name: install postfix
-  apt: name=postfix state=installed
+  apt: name=postfix state=present
 
 - name: remove ssmtp
   apt: name=ssmtp state=absent purge=true

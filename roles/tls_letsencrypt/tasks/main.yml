@@ -12,7 +12,7 @@
 
 
 - name: install certbot
-  apt: name=certbot state=installed
+  apt: name=certbot state=present
 
 - name: write certbot config for all domains
   template: src=certbot.conf.j2 dest=/etc/letsencrypt/cli.ini
