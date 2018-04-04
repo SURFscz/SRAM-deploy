@@ -18,6 +18,7 @@
     - idps.xsl
     - sps.xsl
     - rs_coco_nosc.xsl
+    - nologo.xsl
 
 - name: Copy xsl processing script script in place
   template: src=create_metadata dest={{ metadata_project_dir }}/create_metadata mode=0755
