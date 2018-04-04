@@ -10,7 +10,7 @@
 
 # first gather facts from all hosts that we're actually deploying to
 - hosts: all
-  sudo: yes
+  become: yes
   serial: 20
   gather_facts: true
 
