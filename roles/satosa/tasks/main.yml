@@ -46,6 +46,17 @@
         force: "yes"
       register: satosa_git
 
+    - name: >
+        fetch SATOSA micro_services from {{ satosa_microservices_repo_url }},
+        version {{ satosa_microservices_repo_version }}
+      git:
+        repo: "{{ satosa_microservices_repo_url }}"
+        dest: "{{ satosa_microservices_src_dir }}"
+        version: "{{ satosa_microservices_repo_version }}"
+        accept_hostkey: "yes"
+        force: "yes"
+      register: satosa_microservices_git
+
     - name: install SATOSA from {{ satosa_src_dir }} to {{ satosa_env_dir }}
       pip:
         name: "{{ satosa_src_dir }}"
@@ -53,6 +64,16 @@
         virtualenv_python: python3
         state: latest
       when: satosa_git.changed
+
+    - name: >
+        install SATOSA microservices from {{ satosa_microservices_src_dir }}
+        to {{ satosa_env_dir }}
+      pip:
+        name: "{{ satosa_microservices_src_dir }}"
+        virtualenv: "{{ satosa_env_dir }}"
+        virtualenv_python: python3
+        state: latest
+      when: satosa_microservices_git.changed
 
     - name: Create SATOSA  proxy_conf configuration
       template:
