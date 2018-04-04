@@ -7,6 +7,29 @@ LOG=$LOGDIR/surf-deploy.$(date '+%Y%m%d_%H%M').log
 
 mkdir -p $LOGDIR || true
 
+# first check that deploy and deploy-surf are using the same version
+if ! git diff-index --quiet HEAD --
+then
+	echo "SCZ-deploy repo is not clean:"
+	git status
+	exit 1
+fi
+branch_deploy=$(git symbolic-ref --short HEAD)
+cd environments/surf
+if ! git diff-index --quiet HEAD --
+then
+	echo "SCZ-deploy-surf repo is not clean:"
+	git status
+	exit 1
+fi
+branch_surf=$(git symbolic-ref --short HEAD)
+cd ../..
+if [ "$branch_deploy" != "$branch_surf" ]
+then
+	echo "Deploy branch is '$branch_deploy', but surf branch is '$branch_surf', exiting"
+	exit 1
+fi
+
 
 if [ "$1" = "--pilot" ]
 then
