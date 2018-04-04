@@ -14,4 +14,7 @@ ansible-playbook provision.yml \
 	--limit=comanage,ldap,proxy,meta,lb,client \
 	--extra-vars="secrets_file=environments/vm/secrets/all.yml"
 
+# restart proxy to reload all metadata (chicken finds eggs)
+ansible -i ./environments/vm/inventory -m command -a 'systemctl restart pyff' proxy
+
 exit 0
