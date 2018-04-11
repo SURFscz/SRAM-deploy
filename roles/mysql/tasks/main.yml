@@ -8,13 +8,21 @@
   with_items: "{{ packages  }}"
   become: Yes
 
+- name: listen mysql on 0.0.0.0
+  copy:
+    src="99-myserver.cnf"
+    dest="/etc/mysql/mariadb.conf.d/99-myserver.cnf"
+    mode=0644
+  notify:
+    - Restart MySQL
+
 - name: Start the MySQL service
   service:
     name: mariadb
     state: started
     enabled: true
 
-# TODO: replac ethis by a normale SQL query, because mysql_user refuse s
+# TODO: replace this by a normale SQL query, because mysql_user refuses
 #       to update the host for a fixe user, or to create multiple entries for
 #       the some user on multiple hosts
 - name: Create MySQL users
