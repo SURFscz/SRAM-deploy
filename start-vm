@@ -1,18 +1,45 @@
 #!/bin/bash
 set -e
 
+# helper script to start vagrant and runa nsible on the host
+# run line this:
+#   ./start-vm [ [vagrant_arg [vagrant_arg2 [...]]] -- [ansible_arg1 [ansible_arg2 [...]]] ]
+
+# parse command line vars
+declare -a vagrant_args
+declare -a ansible_args
+seen_marker=0
+while [ $# -gt 0 ]
+do
+	arg=$1
+	shift
+
+	if [ "$arg" = "--" ]
+	then
+		seen_marker=1
+		continue
+	fi
+	if [ $seen_marker -eq 0 ] # still processing vagrant args
+	then
+		vagrant_args+=($arg)
+	else
+		ansible_args+=($arg)
+	fi
+done
+
 # bring up the VMs if they're not running
 num_running=$(vagrant status|grep -E '\brunning\b'|wc -l)
 if [ "$num_running" -ne 6 ]
 then
-	vagrant up --provision "$@"
+	vagrant up --provision ${vagrant_args[*]}
 fi
 
 #vagrant up --provision "$@"
 ansible-playbook provision.yml \
 	-i ./environments/vm/inventory \
 	--limit=comanage,ldap,proxy,meta,lb,client \
-	--extra-vars="secrets_file=environments/vm/secrets/all.yml"
+	--extra-vars="secrets_file=environments/vm/secrets/all.yml" \
+	${ansible_args[*]}
 
 # restart proxy to reload all metadata (chicken finds eggs)
 ansible -i ./environments/vm/inventory -m command -a 'systemctl restart pyff' proxy
