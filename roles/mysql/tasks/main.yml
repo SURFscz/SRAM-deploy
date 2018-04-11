@@ -22,12 +22,10 @@
     state: started
     enabled: true
 
-# TODO: replace this by a normale SQL query, because mysql_user refuses
-#       to update the host for a fixe user, or to create multiple entries for
-#       the some user on multiple hosts
 - name: Create MySQL users
   mysql_user:
     name: "{{item.name}}"
+    host: "{{item.host}}"
     password: "{{item.hash}}"
     encrypted: true
     priv: "{{item.priv}}"
