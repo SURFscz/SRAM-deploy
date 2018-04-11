@@ -100,7 +100,7 @@
   file:
     path: "{{item}}"
     group: "www-data"
-    mode: 0664
+    mode: 0775
   with_items:
     - "{{simplesaml_project_dir}}/simplesaml/log"
 
