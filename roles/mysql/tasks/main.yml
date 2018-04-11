@@ -14,12 +14,16 @@
     state: started
     enabled: true
 
+# TODO: replac ethis by a normale SQL query, because mysql_user refuse s
+#       to update the host for a fixe user, or to create multiple entries for
+#       the some user on multiple hosts
 - name: Create MySQL users
   mysql_user:
-    name: '{{item.name}}'
-    password: '{{item.hash}}'
+    name: "{{item.name}}"
+    password: "{{item.hash}}"
     encrypted: true
-    priv: '{{item.priv}}'
+    priv: "{{item.priv}}"
+    append_privs: true
     state: present
   with_items: "{{mysql_users}}"
 
