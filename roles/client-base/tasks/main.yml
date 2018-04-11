@@ -76,10 +76,19 @@
     owner: www-data
     group: www-data
 
+# todo: add checksum
 - name: Download SimpleSamlPHP
-  unarchive: "src={{ simplesaml_download_url }}/v{{ simplesaml_version }}/\
-              simplesamlphp-{{ simplesaml_version }}.tar.gz \
-              dest={{ simplesaml_project_dir }} remote_src=yes"
+  get_url:
+    url: "{{ simplesaml_download_url }}/v{{ simplesaml_version }}/\
+          simplesamlphp-{{ simplesaml_version }}.tar.gz"
+    dest: "{{ simplesaml_project_dir }}/simplesamlphp-{{ simplesaml_version }}.tar.gz"
+  register: ssp_download
+
+- name: Unpack SimpleSamlPHP
+  unarchive:
+    dest: "{{ simplesaml_project_dir }}"
+    src: "{{ simplesaml_project_dir }}/simplesamlphp-{{ simplesaml_version }}.tar.gz"
+  when: ssp_download.changed
 
 - name: Link simplesaml
   file:
