@@ -86,8 +86,9 @@
 
 - name: Unpack SimpleSamlPHP
   unarchive:
-    dest: "{{ simplesaml_project_dir }}"
     src: "{{ simplesaml_project_dir }}/simplesamlphp-{{ simplesaml_version }}.tar.gz"
+    dest: "{{ simplesaml_project_dir }}"
+    remote_src: true
   when: ssp_download.changed
 
 - name: Link simplesaml
