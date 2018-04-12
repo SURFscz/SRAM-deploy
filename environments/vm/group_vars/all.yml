@@ -66,11 +66,11 @@ users:
     sshkey: ""
 
 mysql_users:
-  - name: scz
+  - name: scz_ro
     hash: "*8E0BCAC26AAA6C79D77D9F8FDDA6DCDD03BDB93F"
     priv: "*.*:ALL,GRANT"
     host: localhost
-  - name: scz
+  - name: scz_ro
     hash: "*8E0BCAC26AAA6C79D77D9F8FDDA6DCDD03BDB93F"
     priv: "*.*:ALL,GRANT"
     host: "%"
