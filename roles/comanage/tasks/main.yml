@@ -159,6 +159,13 @@
     -u {{ comanage_db_user }} "--password={{ comanage_db_password }}"
   when: comanage_api_user_exists.stdout == "0"
 
+- name: Tune ldap connections for LdapProvisioner
+  lineinfile:
+    path: "/etc/ldap/ldap.conf"
+    line: "TLS_REQCERT allow"
+    regexp: '^tls_reqcert\s.*(?i)'
+    state: present
+
 - name: Create a crontab entry
   cron:
     name: "Cake Job Cleaning"
