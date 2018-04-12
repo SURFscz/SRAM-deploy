@@ -1,8 +1,5 @@
 # -*- mode: ruby -*- vi:ft=ruby:sw=4:ts=4:expandtab:
 
-# Vagrant boxes location has changed
-Vagrant::DEFAULT_SERVER_URL.replace('https://vagrantcloud.com')
-
 # Generate a single new ssh key to use for all VMs
 # By default, vagrant generates a key for each VM, but put is in a
 # provider-dependent location.  Here, we want to support both vbox and
@@ -80,38 +77,22 @@ Vagrant.configure("2") do |config|
     # atop our current OS) we put box information inside the providers that actually
     # need to download the box
     config.vm.provider "virtualbox" do |vb, override|
-        # being paranoid and all, we don't trust random updated images without
-        # manually checking sha256sums against https://cloud.alioth.debian.org/vagrantboxes/
-        # and vagrant, being stupid and all, refuses to check checksums for regular vargantcloud downloads
-        # so we simply specify everything manually
-        override.vm.box = "Debian 9 (Stretch)"
-        override.vm.box_url = "https://vagrantcloud.com/debian/boxes/stretch64/versions/9.3.0/providers/virtualbox.box"
-        override.vm.box_download_checksum_type = "sha256"
-        override.vm.box_download_checksum = "22620dd2b655db09ea991d156353dac35969e798fe3d031638d7316a5f570989"
-
-        # install a swap daemon (needed for php/composer)
-        override.vm.provision "shell", inline: "sudo env DEBIAN_FRONTEND=noninteractive apt-get -qq -y install swapspace > /dev/null"
-
+        override.vm.box = "debian/stretch64"
         vb.cpus = "1"
         vb.memory = "768"
-    end
-    config.vm.provider "libvirt" do |lv, override|
-        # being paranoid and all, we don't trust random updated images without
-        # manually checking sha256sums against https://cloud.alioth.debian.org/vagrantboxes/
-        # and vagrant, being stupid and all, refuses to check checksums for regular vargantcloud downloads
-        # so we simply specify everything manually
-        override.vm.box = "Debian 9 (Stretch)"
-        override.vm.box_url = "https://vagrantcloud.com/debian/boxes/stretch64/versions/9.3.0/providers/libvirt.box"
-        override.vm.box_download_checksum_type = "sha256"
-        override.vm.box_download_checksum = "33f9f97fa8a4bbf9828a2609b386a6696126ddc29be9e03656a22108c9e425f2"
 
         # install a swap daemon (needed for php/composer)
         override.vm.provision "shell", inline: "sudo env DEBIAN_FRONTEND=noninteractive apt-get -qq -y install swapspace > /dev/null"
-
+    end
+    config.vm.provider "libvirt" do |lv, override|
+        override.vm.box = "debian/stretch64"
         lv.cpus = "1"
         lv.memory = "768"
         lv.graphics_type = "spice"
         lv.video_type = "qxl"
+
+        # install a swap daemon (needed for php/composer)
+        override.vm.provision "shell", inline: "sudo env DEBIAN_FRONTEND=noninteractive apt-get -qq -y install swapspace > /dev/null"
     end
 
     # use a proxy on the VM host to cache deb packages for the VMs
