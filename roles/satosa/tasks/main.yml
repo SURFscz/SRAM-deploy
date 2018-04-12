@@ -200,12 +200,14 @@
       file: path="{{ satosa_env_dir }}/keys" state=directory mode=0755
 
     - name: Create satosa private key (for CMservice)
-      command: >
-         shell: >
-           openssl genpkey -algorithm RSA -out "{{ satosa_env_dir }}/keys/satosa.pem"
-             -pkeyopt rsa_keygen_bits:2048  &&
-           openssl rsa -pubout -in "{{ satosa_env_dir }}/keys/satosa.pem"
-             -out "{{ satosa_env_dir }}/keys/satosa.pub"
+      shell: "openssl genpkey -algorithm RSA -out '{{ satosa_env_dir }}/keys/satosa.pem' \
+                              -pkeyopt rsa_keygen_bits:2048"
+      args:
+        creates: "{{ satosa_env_dir }}/keys/satosa.pem"
+
+    - name: Extract satosa public key (for CMservice)
+      shell: "openssl rsa -pubout -in '{{ satosa_env_dir }}/keys/satosa.pem' \
+                          -out '{{ satosa_env_dir }}/keys/satosa.pub'"
       args:
         creates: "{{ satosa_env_dir }}/keys/satosa.pub"
 
