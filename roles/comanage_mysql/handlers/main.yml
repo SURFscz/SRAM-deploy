@@ -1,0 +1,6 @@
+---
+# handlers file for generic
+- name: Restart MySQL
+  service:
+    name: mariadb
+    state: restarted
