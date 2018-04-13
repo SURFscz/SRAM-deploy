@@ -112,7 +112,9 @@ Vagrant.configure("2") do |config|
             :notify => [:stdout, :stderr]
         )
         # disable proxying
-        override.proxy.enabled = false
+        if Vagrant.has_plugin?("vagrant-proxyconf")
+            override.proxy.enabled = false
+        end
     end
 
     # we add the key to authorized_keys instead of provisioning the entire file, to allow
