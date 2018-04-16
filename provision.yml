@@ -7,9 +7,6 @@
       include_vars: "{{ secrets_file }}"
       tags: always
       check_mode: "no"
-    - name: Write the new instance host key to known hosts
-      connection: local
-      shell: "ssh-keyscan -H {{ inventory_hostname }} >> ~/.ssh/known_hosts"
 
 # first gather facts from all hosts that we're actually deploying to
 - hosts: all
