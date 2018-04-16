@@ -39,8 +39,10 @@ install:
   - pip install jinja2
   - sudo wget https://releases.hashicorp.com/vagrant/2.0.3/vagrant_2.0.3_x86_64.deb -P /tmp
   - sudo dpkg -i /tmp/vagrant_2.0.3_x86_64.deb
-#  - sudo apt update
-#  - sudo apt upgrade
+  - sudo apt-get update
+  - sudo apt-get install software-properties-common
+  - sudo apt-add-repository ppa:ansible/ansible
+  - sudo apt-get update
   - sudo apt install ansible
 
 script:
