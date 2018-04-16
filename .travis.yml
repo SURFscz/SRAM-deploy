@@ -39,6 +39,9 @@ install:
   - pip install jinja2
   - sudo wget https://releases.hashicorp.com/vagrant/2.0.3/vagrant_2.0.3_x86_64.deb -P /tmp
   - sudo dpkg -i /tmp/vagrant_2.0.3_x86_64.deb
+#  - sudo apt update
+#  - sudo apt upgrade
+  - sudo apt install ansible
 
 script:
   - "./scripts/syntax-check"
