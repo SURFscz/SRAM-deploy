@@ -34,6 +34,9 @@ then
 	vagrant up --provision ${vagrant_args[*]}
 fi
 
+ifconfig -a
+brctl show
+
 #vagrant up --provision "$@"
 ansible-playbook provision.yml \
 	-i ./environments/vm/inventory \

@@ -48,4 +48,4 @@ install:
 script:
   - "./scripts/syntax-check"
   - yamllint .
-  - ./start-vm --provider docker
+  - sudo ./start-vm --provider docker
