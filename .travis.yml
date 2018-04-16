@@ -1,6 +1,10 @@
 ---
 # Use containers instead of full VMs for faster startup.
-sudo: false
+sudo: required
+
+services:
+  - docker
+
 notifications:
   email:
     recipients:
@@ -33,7 +37,10 @@ git:
 install:
   - pip install yamllint
   - pip install jinja2
+  - sudo wget https://releases.hashicorp.com/vagrant/2.0.3/vagrant_2.0.3_x86_64.deb -P /tmp
+  - sudo dpkg -i /tmp/vagrant_2.0.3_x86_64.deb
 
 script:
   - "./scripts/syntax-check"
   - yamllint .
+  - ./start-vm --provider docker
