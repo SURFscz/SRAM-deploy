@@ -1,17 +1,22 @@
 FROM debian:stretch
 MAINTAINER SURFnet <info@surfnet.nl>
 
+ENV DEBIAN_FRONTEND noninteractive
+ENV TERM linux
+RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
+
 # add the backports repository so we get the right version of systemd
 ADD sources.list /etc/apt/sources.list
 
 # clean out, update and install systemd from backports
-RUN apt-get -y update && apt-get -y -t stretch-backports install systemd
+RUN apt-get -y update && apt-get -y dist-upgrade
+RUN apt-get -y -t stretch-backports install systemd
 
 VOLUME [ "/sys/fs/cgroup", "/run", "/run/lock", "/tmp" ]
 CMD ["/lib/systemd/systemd"]
 
 # Install base tools: sshd, python
-RUN apt-get update
+# RUN apt-get update
 RUN apt-get install -y openssh-server python2.7 python3 python sudo
 RUN systemctl enable ssh.service
 
