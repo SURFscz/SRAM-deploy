@@ -36,6 +36,7 @@ fi
 
 ifconfig -a
 brctl show
+docker network ls
 
 #vagrant up --provision "$@"
 ansible-playbook provision.yml \
