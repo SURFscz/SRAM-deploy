@@ -34,9 +34,15 @@ then
 	vagrant up --provision ${vagrant_args[*]}
 fi
 
+sleep 10
 ifconfig -a
 brctl show
 docker network ls
+docker inspect `docker ps | grep 'proxy'  | awk '{print $1}'`
+docker exec -ti `docker ps | grep "Up" | awk '{print $1}' | head -1` cat /var/log/syslog
+ping -i4 172.20.1.1
+ping -i4 172.20.1.20
+
 
 #vagrant up --provision "$@"
 ansible-playbook provision.yml \
