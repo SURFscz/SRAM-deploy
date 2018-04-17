@@ -21,7 +21,7 @@ CMD ["/lib/systemd/systemd"]
 
 # Install base tools: sshd, python
 # RUN apt-get update
-RUN apt-get install -y openssh-server python2.7 python3 python sudo
+RUN apt-get install -y openssh-server python2.7 python3 python sudo locales
 RUN update-locale
 RUN systemctl enable ssh.service
 
