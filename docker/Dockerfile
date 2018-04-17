@@ -2,7 +2,7 @@ FROM debian:stretch
 MAINTAINER SURFnet <info@surfnet.nl>
 
 ARG DEBIAN_FRONTEND=noninteractive
-ARG export RUNLEVEL=1
+ARG RUNLEVEL=1
 ENV TERM linux
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 

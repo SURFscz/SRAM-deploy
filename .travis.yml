@@ -51,6 +51,7 @@ install:
 script:
   - "./scripts/syntax-check"
   - yamllint .
-  - sudo service wicd stop
+  - sudo service network-manager stop
+  - sudo service dhclient stop
   - sudo service docker restart
   - sudo ./start-vm --provider docker
