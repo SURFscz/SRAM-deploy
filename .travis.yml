@@ -3,7 +3,7 @@
 sudo: required
 
 #services:
-  #- docker
+#  - docker
 
 notifications:
   email:
