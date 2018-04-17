@@ -12,9 +12,9 @@ ADD sources.list /etc/apt/sources.list
 RUN echo "exit 0" > /usr/sbin/policy-rc.d
 
 # clean out, update and install systemd from backports
-RUN apt-get -y update && apt-get -y dist-upgrade
-RUN apt-get -y -t stretch-backports install systemd
-RUN apt-get -y remove cgmanager
+RUN apt-get update -y && apt-get dist-upgrade -y
+RUN apt-get -t stretch-backports install -y systemd
+RUN apt-get remove -y cgmanager
 
 VOLUME [ "/sys/fs/cgroup", "/run", "/run/lock", "/tmp" ]
 CMD ["/lib/systemd/systemd"]
