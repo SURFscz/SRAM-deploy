@@ -160,7 +160,6 @@ Vagrant.configure("2") do |config|
                     "--add-host", "outgoing.#{domain}:172.20.1.1",
                     # add options to get systemd to run properly
                     "--privileged",
-                    "--systemd",
                     "--cap-add", "SYS_ADMIN",
                     "--cap-add", "SYS_RESOURCE",
                     "-v", "/sys/fs/cgroup:/sys/fs/cgroup:ro",
