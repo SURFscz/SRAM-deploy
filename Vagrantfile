@@ -159,6 +159,7 @@ Vagrant.configure("2") do |config|
                     # (unused) interface for outgoing mail
                     "--add-host", "outgoing.#{domain}:172.20.1.1",
                     # add options to get systemd to run properly
+                    "--privileged",
                     "-v", "/sys/fs/cgroup:/sys/fs/cgroup:ro",
                     "--tmpfs", "/run",
                     "--tmpfs", "/tmp:exec" # need exec for vagrant
