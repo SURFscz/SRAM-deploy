@@ -46,7 +46,7 @@ docker exec -ti `docker ps | grep "Up" | awk '{print $1}' | head -1` cat /var/lo
 docker exec -ti `docker ps | grep "Up" | awk '{print $1}' | head -1` cat /var/log/daemon.log || true
 docker exec -ti `docker ps | grep "Up" | awk '{print $1}' | head -1` cat /var/log/auth.log || true
 docker exec -ti `docker ps | grep "Up" | awk '{print $1}' | head -1` ip a || true
-docker exec -ti `docker ps | grep "Up" | awk '{print $1}' | head -1` journalctl -x
+docker exec -ti `docker ps | grep "Up" | awk '{print $1}' | head -1` journalctl -x --no-pager
 
 
 #vagrant up --provision "$@"
