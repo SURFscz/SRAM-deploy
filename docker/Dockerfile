@@ -1,12 +1,14 @@
 FROM debian:stretch
 MAINTAINER SURFnet <info@surfnet.nl>
 
-ENV DEBIAN_FRONTEND noninteractive
+ARG DEBIAN_FRONTEND noninteractive
 ENV TERM linux
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 
 # add the backports repository so we get the right version of systemd
 ADD sources.list /etc/apt/sources.list
+
+RUN echo "exit 0" > /usr/sbin/policy-rc.d
 
 # clean out, update and install systemd from backports
 RUN apt-get -y update && apt-get -y dist-upgrade
