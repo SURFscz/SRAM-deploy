@@ -38,10 +38,13 @@ sleep 10
 ifconfig -a
 brctl show
 docker network ls
-docker inspect `docker ps | grep 'proxy'  | awk '{print $1}'`
-docker exec -ti `docker ps | grep "Up" | awk '{print $1}' | head -1` cat /var/log/syslog
 ping -i4 172.20.1.1
 ping -i4 172.20.1.20
+docker inspect `docker ps | grep 'proxy'  | awk '{print $1}'`
+docker exec -ti `docker ps | grep "Up" | awk '{print $1}' | head -1` cat /var/log/syslog || true
+docker exec -ti `docker ps | grep "Up" | awk '{print $1}' | head -1` cat /var/log/daemon.log || true
+docker exec -ti `docker ps | grep "Up" | awk '{print $1}' | head -1` cat /var/log/auth.log || true
+docker exec -ti `docker ps | grep "Up" | awk '{print $1}' | head -1` ip a || true
 
 
 #vagrant up --provision "$@"
