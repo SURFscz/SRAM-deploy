@@ -1,7 +1,7 @@
 FROM debian:stretch
 MAINTAINER SURFnet <info@surfnet.nl>
 
-ARG DEBIAN_FRONTEND noninteractive
+ARG DEBIAN_FRONTEND=noninteractive
 ENV TERM linux
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 
