@@ -13,7 +13,6 @@ RUN echo "exit 0" > /usr/sbin/policy-rc.d
 
 # clean out, update and install systemd from backports
 RUN apt-get update -y && apt-get dist-upgrade -y
-#RUN apt-get remove -y cgmanager
 RUN apt-get -t stretch-backports install -y systemd
 
 VOLUME [ "/sys/fs/cgroup", "/run", "/run/lock", "/tmp" ]
