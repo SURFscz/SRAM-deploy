@@ -14,7 +14,7 @@
   copy:
     src: slapd.service
     dest: /etc/systemd/system
-  notify: systemctl daemon-reload
+  notify: systemd daemon-reload
   when: ansible_virtualization_type == "docker"
 
 - name: Ensure that a number of directories exist
