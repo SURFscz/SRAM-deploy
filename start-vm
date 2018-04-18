@@ -31,7 +31,7 @@ done
 num_running=$(vagrant status|grep -E '\brunning\b'|wc -l)
 if [ "$num_running" -ne 6 ]
 then
-	VAGRANT_LOG=error vagrant up --provision ${vagrant_args[*]}
+	VAGRANT_LOG=error vagrant up --provision ${vagrant_args[*]} > /dev/null 2>&1
 fi
 
 # sleep 10
