@@ -2,7 +2,7 @@
 
 The Science Collaboration Zone (SCZ) project offers ann Identity Management solution
 for research collaborations.  It is a middleware solution for
-researchers, which allows them to 
+researchers, which allows them to
 
 - log in using credentials from their university;
 - handle (Identity and Access Management (IAM) for their collaborations;
@@ -63,7 +63,7 @@ To get started, do the following:
     - libvirt: `vagrant up --provider libvirt --provision` 
     - virtualbox: `vagrant up --provider virtualbox --provision`
 
-    This will start 5 VMs (each requires 786MB of memory) and run the ansible
+    This will start 6 VMs (each requires 786MB of memory) and run the ansible
     playbook to install the SCZ on those VMs.
 - when the deploy finishes, you should be able to browse to
   <https://comanage.scz-vm.net> and login using the default platform admin
