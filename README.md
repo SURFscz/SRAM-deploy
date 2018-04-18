@@ -49,11 +49,12 @@ To get started, do the following:
     - virtualbox (openSUSE Tumbleweed): `zypper install virtualbox`
     - libvirt and qemu: `apt install libvirt-daemon-system virt-manager
      gir1.2-spice-client-gtk-3.0 qemu qemu-kvm`
-    - docker (openSUSE Tumbleweed): `zypper install docker docker-compose`.
+    - docker (openSUSE Tumbleweed): `sudo zypper install docker docker-compose` and
+      if you want the docker deamon to start automatically: `sudo systemctl enable docker`
       If you are on a btrfs system and using snapshots (snapper for example),
       you might want to consider making `/var/lib/docker` a subvolume.
 - (libvirt only) add your user to the libvirt group: `adduser $(whoami) libvirt`
-- openSUSE Tumbleweed with docker: either use YaST, or `sudo usermod -a -G docker
+- openSUSE Tumbleweed with docker: either use YaST, or `sudo usermod -a -G docker`
 - add the following entries to `/etc/hosts`:
     ```
     172.20.1.24 lb.vm.scz-vm.net oidc-test.scz-vm.net sp-test.scz-vm.net idp-test.scz-vm.net proxy.scz-vm.net mdq.scz-vm.net cm.scz-vm.net comanage.scz-vm.net ldap.scz-vm.net meta.scz-vm.net
