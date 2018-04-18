@@ -1,0 +1,205 @@
+#!/bin/bash
+
+trap "tput sgr0; tput setaf 7; exit" SIGINT SIGTERM EXIT
+
+container_names="lb proxy ldap comanage client meta"
+
+GetFilterNameArguments() {
+    local filter_names
+
+    filter_names=""
+    for name in $container_names; do
+        filter_names="$filter_names --filter name=$name "
+    done
+
+    echo $filter_names
+}
+
+DetermineMaxLength() {
+    local string
+    local max_length
+
+    for string in "$@"; do
+        if [[ "${#string}" -gt "$max_length" ]]; then
+            max_length=${#string}
+        fi
+    done
+
+    echo $max_length
+}
+
+
+PrintSpaces() {
+    local spaces
+
+    if [[ $# -ne 1 ]]; then
+        echo "Expecting one argument, got $#."
+        exit 1
+    fi
+
+    spaces=$1
+
+    while [[ $spaces -gt 0 ]]; do
+        let spaces--
+        echo -n " "
+    done
+}
+
+StopRunningContainers() {
+    local container
+    local containers
+    local filter_names
+    local max_length
+    local spaces
+
+    filter_names=$(GetFilterNameArguments)
+    containers=$(docker ps --filter "status=running" $filter_names --format "{{$formatting}}" | sort)
+
+    if [[ -z $containers ]]; then
+        return
+    fi
+
+    max_length=$(DetermineMaxLength $containers)
+
+    echo "Stop running containers."
+    echo "------------------------"
+    display_header=0
+
+    for container in $containers; do
+        echo -n "Stopping container: "
+        tput bold
+        echo -n "$container..."
+        docker stop $container 2>&1 >/dev/null
+        tput sgr0
+        tput setaf 2
+        echo -n -e "\b\b\b"
+        let spaces=$max_length-${#container}
+        PrintSpaces $spaces
+        echo " [done]"
+        tput setaf 7
+    done
+}
+
+RemoveContainers() {
+    local containers
+    local container
+    local filter_names
+    local max_length
+    local spaces
+
+    filter_names=$(GetFilterNameArguments)
+    containers=$(docker ps --filter "status=exited" $filter_names --format "{{$formatting}}" | sort)
+
+    if [[ -z $containers ]]; then
+        return
+    fi
+
+    max_length=$(DetermineMaxLength $containers)
+
+    echo
+    echo "Remove containers."
+    echo "------------------"
+
+    for container in $containers; do
+        echo -n "Removing container: "
+        tput bold
+        echo -n "$container..."
+        docker rm $container 2>&1 >/dev/null
+        tput sgr0
+        tput setaf 2
+        echo -n -e "\b\b\b"
+        let spaces=$max_length-${#container}
+        PrintSpaces $spaces
+        echo " [done]"
+        tput setaf 7
+    done
+}
+
+RemoveImages() {
+    local images
+
+    images=$@
+
+    if [[ -z "$images" ]]; then
+        return
+    fi
+
+    echo
+    echo "Remove containers."
+    echo "------------------"
+
+    for image in $images; do
+        echo -n "Removing image: "
+        tput bold
+        echo -n "$image..."
+        docker rmi $image 2>&1 >/dev/null
+        tput sgr0
+        tput setaf 2
+        echo -e "\b\b\b [done]"
+        tput setaf 7
+    done
+}
+
+GatherImages() {
+    local images
+    local dangling
+    local containers
+    local filter_names
+
+    filter_names=$(GetFilterNameArguments)
+    containers=$(docker ps $filter_names --format "{{$formatting}}")
+
+    if [[ -n "$containers" ]]; then
+        images=$(docker inspect --format='{{.Config.Image}}' $containers | uniq)
+
+    fi
+
+    dangling=$(docker images -f "dangling=true" -q)
+    images="$images $dangling"
+
+    if [[ $include_debian_image == 1 ]]; then
+        deb=$(docker images debian:stretch --format="{{.ID}}")
+        images="$images $deb"
+    fi
+
+    echo $(echo $images | tr " " "\n" | sort | uniq)
+}
+
+ShowHelp() {
+    base=$(basename $1)
+    cat<<EOM
+$base [options]
+    --name        Show container names instead of IDs.
+    --scz-debbia  When removing images, remove the debian stretch image as well.
+    --help        Show this help.
+EOM
+}
+
+
+formatting='.ID'
+include_debian_image=0
+
+for i in $@; do
+    case $i in
+        --names)
+            formatting='.Names'
+            ;;
+        --scz-debian)
+            include_debian_image=1
+            ;;
+        --help)
+            ShowHelp $0
+            exit 0
+            ;;
+    esac
+done
+images=$(GatherImages)
+
+if [[ -z "$images" ]]; then
+    echo "Nothing to do."
+    exit 0
+fi
+
+StopRunningContainers
+RemoveContainers
+RemoveImages $images
