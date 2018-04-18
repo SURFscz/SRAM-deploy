@@ -164,7 +164,9 @@ Vagrant.configure("2") do |config|
                     "--cap-add", "SYS_RESOURCE",
                     "-v", "/sys/fs/cgroup:/sys/fs/cgroup:ro",
                     "--tmpfs", "/run",
-                    "--tmpfs", "/tmp:exec" # need exec for vagrant
+                    "--tmpfs", "/tmp:exec", # need exec for vagrant
+                    "--loglevel", "fatal",
+                    "--quiet"
                 ]
                 if machine['name'] == "lb"
                     # for the loadbalancer, make sure we point to the right hosts
