@@ -1,5 +1,5 @@
 ---
-ansible_ssh_common_args: '-o StrictHostKeyChecking=accept-new'
+ansible_ssh_common_args: '-o StrictHostKeyChecking=false'
 # note: {{playbook_dir}} would probably be nicer, but it turns out that that is
 # a relative path, which ssh doesn't understand
 ansible_ssh_user: "vagrant"
