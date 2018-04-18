@@ -165,7 +165,6 @@ Vagrant.configure("2") do |config|
                     "-v", "/sys/fs/cgroup:/sys/fs/cgroup:ro",
                     "--tmpfs", "/run",
                     "--tmpfs", "/tmp:exec", # need exec for vagrant
-                    "--log-level", "fatal",
                     "--quiet"
                 ]
                 if machine['name'] == "lb"
