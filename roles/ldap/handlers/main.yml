@@ -13,5 +13,5 @@
   listen: "restart slapd"
 
 - name: systemd daemon-reload
-  systemd: daemon_reload=yes
+  systemd: name=slapd daemon_reload=yes
 
