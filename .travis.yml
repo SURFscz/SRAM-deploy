@@ -51,6 +51,6 @@ install:
   - sudo apt -y install bridge-utils
 
 script:
-  - "./scripts/syntax-check"
-  - yamllint .
+  - scripts/syntax-check
+  #- yamllint .
   - sudo ./start-vm --provider docker
