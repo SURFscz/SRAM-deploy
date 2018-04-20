@@ -7,8 +7,8 @@
   apt: update_cache=yes
   changed_when: "false"
 
-- name: Upgrade packages
-  apt: upgrade=dist
+#- name: Upgrade packages
+#  apt: upgrade=dist
 
 - name: Install common tools / clients
   apt: name={{ item }} state=present
