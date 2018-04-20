@@ -28,13 +28,17 @@ do
 done
 
 # build single docker image before vagrant starts
-docker build -t scz docker/
+scz_image=$(docker image list scz -q)
+if [ -z "$scz_image" ]
+then
+	docker build -t scz docker/
+fi
 
 # bring up the VMs if they're not running
 num_running=$(vagrant status|grep -E '\brunning\b'|wc -l)
 if [ "$num_running" -ne 6 ]
 then
-	VAGRANT_LOG=error vagrant up --provision ${vagrant_args[*]} > vagrant.log 2>&1
+	vagrant up --provision ${vagrant_args[*]} > vagrant.log 2>&1 || docker start $(docker ps -aq --filter "ancestor=${scz_image}")
 fi
 
 # sleep 10
