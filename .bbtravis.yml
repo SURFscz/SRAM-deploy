@@ -35,7 +35,7 @@ python:
 git:
   submodules: false
 
-install:
+#install:
 #- pip install yamllint
 #- pip install jinja2
 #- sudo wget https://releases.hashicorp.com/vagrant/2.0.3/vagrant_2.0.3_x86_64.deb -P /tmp
