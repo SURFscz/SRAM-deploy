@@ -160,7 +160,7 @@ Vagrant.configure("2") do |config|
                     # (unused) interface for outgoing mail
                     "--add-host", "outgoing.#{domain}:172.20.1.1",
                     # add options to get systemd to run properly
-                    "--privileged",
+                    #"--privileged",
                     "--cap-add", "SYS_ADMIN",
                     "--cap-add", "SYS_RESOURCE",
                     "-v", "/sys/fs/cgroup:/sys/fs/cgroup:ro",
@@ -178,7 +178,8 @@ Vagrant.configure("2") do |config|
                         "--add-host", "meta.#{domain}:#{machines['m4']['ip']}",
                         "--add-host", "oidc-test.#{domain}:#{machines['m6']['ip']}",
                         "--add-host", "sp-test.#{domain}:#{machines['m6']['ip']}",
-                        "--add-host", "idp-test.#{domain}:#{machines['m6']['ip']}"
+                        "--add-host", "idp-test.#{domain}:#{machines['m6']['ip']}",
+                        "--add-host", "google-test.#{domain}:#{machines['m6']['ip']}",
                     ]
                 else
                     # external interfaces are routed through the LB
@@ -192,6 +193,7 @@ Vagrant.configure("2") do |config|
                         "--add-host", "oidc-test.#{domain}:#{machines['m5']['ip']}",
                         "--add-host", "sp-test.#{domain}:#{machines['m5']['ip']}",
                         "--add-host", "idp-test.#{domain}:#{machines['m5']['ip']}",
+                        "--add-host", "google-test.#{domain}:#{machines['m5']['ip']}",
                     ]
                 end
                 dk.create_args = create_args
