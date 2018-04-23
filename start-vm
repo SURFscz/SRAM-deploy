@@ -38,24 +38,8 @@ fi
 num_running=$(vagrant status|grep -E '\brunning\b'|wc -l)
 if [ "$num_running" -ne 6 ]
 then
-	#vagrant up --provision ${vagrant_args[*]} > vagrant.log 2>&1 || docker start $(docker ps -aq --filter "ancestor=${scz_image}")
 	vagrant up --provision ${vagrant_args[*]} > vagrant.log 2>&1 || vagrant up
 fi
-
-# sleep 10
-# ifconfig -a
-# brctl show
-# docker network ls
-# ping -c4 172.20.1.1
-# ping -c4 172.20.1.20
-# docker inspect `docker ps | grep 'proxy'  | awk '{print $1}'`
-# docker exec -ti `docker ps | grep "Up" | awk '{print $1}' | head -1` ls -1 /var/log
-# docker exec -ti `docker ps | grep "Up" | awk '{print $1}' | head -1` cat /var/log/syslog || true
-# docker exec -ti `docker ps | grep "Up" | awk '{print $1}' | head -1` cat /var/log/daemon.log || true
-# docker exec -ti `docker ps | grep "Up" | awk '{print $1}' | head -1` cat /var/log/auth.log || true
-# docker exec -ti `docker ps | grep "Up" | awk '{print $1}' | head -1` ip a || true
-# docker exec -ti `docker ps | grep "Up" | awk '{print $1}' | head -1` journalctl -x --no-pager
-
 
 #vagrant up --provision "$@"
 ansible-playbook provision.yml \
