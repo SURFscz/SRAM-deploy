@@ -148,7 +148,7 @@ Vagrant.configure("2") do |config|
                 dk.has_ssh = true
                 create_args = [
                     #"-d", "-t", "-i",
-                    "-t", "-i",
+                    #"-t", "-i",
                     "--network", "scznet",
                     "--ip", "#{machine['ip']}",
                     # internal names (used for LB rerouting)
@@ -162,7 +162,7 @@ Vagrant.configure("2") do |config|
                     "--add-host", "outgoing.#{domain}:172.20.1.1",
                     # add options to get systemd to run properly
                     #"--privileged",
-                    #"--cap-add", "SYS_ADMIN",
+                    "--cap-add", "SYS_ADMIN",
                     #"--cap-add", "SYS_RESOURCE",
                     "-v", "/sys/fs/cgroup:/sys/fs/cgroup:ro",
                     "--tmpfs", "/run",
