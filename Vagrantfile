@@ -144,10 +144,10 @@ Vagrant.configure("2") do |config|
                 dk.name = machinename
                 dk.build_dir ="./docker"
                 dk.build_args = ["-t", "scz" ]
-                dk.remains_running = true
+                #dk.remains_running = true
                 dk.has_ssh = true
                 create_args = [
-                    "-d", "-t", "-i",
+                    #"-d", "-t", "-i",
                     "--network", "scznet",
                     "--ip", "#{machine['ip']}",
                     # internal names (used for LB rerouting)
