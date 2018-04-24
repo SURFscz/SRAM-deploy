@@ -2,11 +2,6 @@
 # Use containers instead of full VMs for faster startup.
 sudo: false
 notifications:
-  email:
-    recipients:
-      - scz@list.surfnet.nl
-    on_success: change
-    on_failure: change
   slack:
     on_success: change
     on_failure: change
