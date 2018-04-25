@@ -30,7 +30,7 @@ done
 # generate ssh key if it doesn't exist
 if ! [ -e ".vagrant/id_rsa" ]
 then
-	test -d .vagrant && mkdir .vagrant || true
+	test -d .vagrant || mkdir .vagrant
 	ssh-keygen -N '' -b 2048 -t rsa -f .vagrant/id_rsa
 fi
 
