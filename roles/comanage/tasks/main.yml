@@ -51,7 +51,8 @@
   file:
     path: "{{comanage_tmp_dir}}"
     owner: www-data
-    mode: 0755
+    group: root
+    mode: u=rwX,go=rX
     state: directory
     recurse: yes
 
