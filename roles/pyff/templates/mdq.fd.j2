@@ -9,7 +9,7 @@
 # TODO: make matadata feeds configurable from environments
 - when update:
     - load:
-       - {{http_proto}}://{{ hostnames.meta }}/sc_edugain.xml
+       - {{http_proto}}://{{ hostnames.meta }}/sc_edugain_rs_coco_nosc_nologo_idps.xml
        - {{http_proto}}://{{ hostnames.proxy }}/md/SamlSP.xml
        - {{http_proto}}://{{ hostnames.sp }}/saml/module.php/saml/sp/metadata.php/default-sp
        - {{http_proto}}://{{ hostnames.idp }}/saml/saml2/idp/metadata.php
