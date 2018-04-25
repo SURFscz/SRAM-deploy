@@ -11,6 +11,8 @@ admin_email: "admin@{{base_domain}}"
 servers:
   dns:
     - 8.8.8.8
+  search:
+    - vm.scz-vm.net
   ntp:
     - 0.pool.ntp.org
     - 1.pool.ntp.org
