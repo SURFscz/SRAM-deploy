@@ -6,11 +6,6 @@ services:
   - docker
 
 notifications:
-  email:
-    recipients:
-      - scz@list.surfnet.nl
-    on_success: change
-    on_failure: change
   slack:
     on_success: change
     on_failure: change
