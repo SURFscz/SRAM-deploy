@@ -27,11 +27,18 @@ do
 	fi
 done
 
+# generate ssh key if it doesn't exist
+if ! [ -e ".vagrant/id_rsa" ]
+then
+	ssh-keygen -N '' -b 2048 -t rsa -f .vagrant/id_rsa
+fi
+
 # build single docker image before vagrant starts
 scz_image=$(docker image list scz -q)
 if [ -z "$scz_image" ]
 then
-	docker build -t scz docker/
+	ssh_pubkey=$(cat .ssh/id_rsa.pub)
+	docker build -t scz --build-arg "ssh_pub_key=${ssh_pubkey}" docker/
 fi
 
 # bring up the VMs if they're not running
