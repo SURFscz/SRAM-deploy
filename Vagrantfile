@@ -12,7 +12,7 @@ sshkeypub  = Pathname.new(env.local_data_path) + 'id_rsa.pub'
 if ARGV[0] == "up"  and  ( !sshkeypriv.exist?  or  !sshkeypub.exist? )
     # see https://github.com/mitchellh/vagrant/blob/master/plugins/communicators/ssh/communicator.rb#L183-L193
     puts "Generating new ssh key to use"
-    pub, priv, openssh = Vagrant::Util::Keypair.create
+    _, priv, openssh = Vagrant::Util::Keypair.create
     sshkeypriv.open("w+").write(priv)
     sshkeypub.open("w+").write(openssh)
 
