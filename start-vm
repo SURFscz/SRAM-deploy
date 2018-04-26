@@ -54,7 +54,7 @@ then
 	for ip in 20 21 22 23 24 25
 	do
 		ssh-keygen -f ~/.ssh/known_hosts -R "$net.$ip"
-		ssh -i ./.vagrant/id_rsa -o "StrictHostKeyChecking accept-new" vagrant@$net.$ip 'echo'
+		ssh -i ./.vagrant/id_rsa -o "StrictHostKeyChecking no" vagrant@$net.$ip 'echo'
 	done
 fi
 
