@@ -9,7 +9,7 @@
 
 - name: Upgrade packages
   apt: upgrade=dist
-  when: "{{environment_name}} != 'vm'"
+  when: "environment_name != 'vm'"
 
 - name: Install common tools / clients
   apt: name={{ item }} state=present
