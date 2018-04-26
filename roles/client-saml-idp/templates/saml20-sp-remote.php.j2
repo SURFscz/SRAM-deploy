@@ -3,6 +3,12 @@
   * SURFnet {{ environment_string }} backend metadata
   **/
 
+{% set entity_test_sp     = "https://" ~ hostnames.sp ~ "/saml/module.php/saml/sp/metadata.php/default-sp" %}
+{% set entity_test_sp_b64 = entity_test_sp | b64encode                                %}
+
+# entity_test_sp: {{entity_test_sp}}
+# entity_test_sp_b64: {{entity_test_sp_b64}}
+
 $metadata['https://{{ hostnames.proxy }}/md/SamlSP.xml'] = array (
   'entityid' => 'https://{{ hostnames.proxy }}/md/SamlSP.xml',
   'description' =>
@@ -84,8 +90,9 @@ $metadata['https://{{ hostnames.proxy }}/md/SamlSP.xml'] = array (
   'saml20.sign.assertion' => true,
   'assertion.encryption' => true,
 );
-$metadata['https://{{ hostnames.proxy }}/md/SamlMirrorSP.xml/SamlIdP/aHR0cHM6Ly9zcC10ZXN0LnNjei12bS5uZXQvc2FtbC9tb2R1bGUucGhwL3NhbWwvc3AvbWV0YWRhdGEucGhwL2RlZmF1bHQtc3A='] = array (
-  'entityid' => 'https://{{ hostnames.proxy }}/md/SamlMirrorSP.xml/SamlIdP/aHR0cHM6Ly9zcC10ZXN0LnNjei12bS5uZXQvc2FtbC9tb2R1bGUucGhwL3NhbWwvc3AvbWV0YWRhdGEucGhwL2RlZmF1bHQtc3A=',
+
+$metadata['https://{{ hostnames.proxy }}/md/SamlMirrorSP.xml/SamlIdP/{{ entity_test_sp_b64 }}'] = array (
+  'entityid' => 'https://{{ hostnames.proxy }}/md/SamlMirrorSP.xml/SamlIdP/{{ entity_test_sp_b64 }}',
   'description' =>
   array (
     'en' => '{{ environment_string }} Proxy Mirror SP',
@@ -181,8 +188,9 @@ $metadata['https://{{ hostnames.proxy }}/md/SamlMirrorSP.xml/SamlIdP/aHR0cHM6Ly9
     ),
   ),
 );
-$metadata['https://{{ hostnames.proxy }}/md/SamlMirrorSP.xml/SamlMirrorIdP/aHR0cHM6Ly9zcC10ZXN0LnNjei12bS5uZXQvc2FtbC9tb2R1bGUucGhwL3NhbWwvc3AvbWV0YWRhdGEucGhwL2RlZmF1bHQtc3A='] = array (
-  'entityid' => 'https://{{ hostnames.proxy }}/md/SamlMirrorSP.xml/SamlMirrorIdP/aHR0cHM6Ly9zcC10ZXN0LnNjei12bS5uZXQvc2FtbC9tb2R1bGUucGhwL3NhbWwvc3AvbWV0YWRhdGEucGhwL2RlZmF1bHQtc3A=',
+
+$metadata['https://{{ hostnames.proxy }}/md/SamlMirrorSP.xml/SamlMirrorIdP/{{ entity_test_sp_b64 }}'] = array (
+  'entityid' => 'https://{{ hostnames.proxy }}/md/SamlMirrorSP.xml/SamlMirrorIdP/{{ entity_test_sp_b64 }}',
   'description' =>
   array (
     'en' => '{{ environment_string }} Proxy Mirror SP',

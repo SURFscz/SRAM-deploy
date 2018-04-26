@@ -1,4 +1,11 @@
 ---
+- name: Ensure that packages are installed
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - jq
+
 - name: Add Google IdP vhost
   template:
     src: "{{ item }}.conf.j2"
@@ -27,11 +34,27 @@
       Listen {{ google_test_port }}
   notify: restart Apache
 
+- name: Checkout fork of openidconnect module
+  git:
+    repo: "{{ simplesaml_oidc_repo_url }}"
+    dest: "{{ simplesaml_oidc_src_dir }}"
+    version: "{{ simplesaml_oidc_repo_version }}"
+    accept_hostkey: "yes"
+    force: "yes"
+
+- name: Add local openidconnect module repository
+  shell: >
+    { rm composer.json;
+    jq '.["repositories"] = [{"type": "vcs", "url": "{{ simplesaml_oidc_src_dir }}"}]' >
+    composer.json; } < composer.json
+  args:
+    chdir: "{{ simplesaml_project_dir }}/simplesaml"
+
 - name: Install OIDC module
   composer:
     working_dir: "{{ simplesaml_project_dir }}/simplesaml"
     command: require
-    arguments: bradjonesllc/simplesamlphp-module-openidconnect dev-master
+    arguments: scz/simplesamlphp-module-openidconnect dev-master
     optimize_autoloader: False
 
 - name: Insert Google authsource

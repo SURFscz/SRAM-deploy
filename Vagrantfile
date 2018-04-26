@@ -19,6 +19,8 @@ if ARGV[0] == "up"  and  ( !sshkeypriv.exist?  or  !sshkeypub.exist? )
     File.chmod(0600,sshkeypriv)
 end
 
+ssh_pub_key = sshkeypub.open("r").read()
+
 ENV['COMPOSE_PROJECT_NAME']="scz"
 
 domain = "scz-vm.net"
@@ -143,7 +145,7 @@ Vagrant.configure("2") do |config|
             m.vm.provider "docker" do |dk|
                 dk.name = machinename
                 dk.build_dir ="./docker"
-                dk.build_args = ["-t", "scz" ]
+                dk.build_args = ["-t", "scz", "--build-arg", "ssh_pub_key=#{ssh_pub_key}" ]
                 #dk.remains_running = true
                 dk.has_ssh = true
                 create_args = [
