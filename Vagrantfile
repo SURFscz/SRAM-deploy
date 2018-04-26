@@ -86,6 +86,7 @@ Vagrant.configure("2") do |config|
         # install a swap daemon (needed for php/composer)
         override.vm.provision "shell", inline: "sudo env DEBIAN_FRONTEND=noninteractive apt-get -qq -y install swapspace > /dev/null"
     end
+
     config.vm.provider "libvirt" do |lv, override|
         override.vm.box = "debian/stretch64"
         lv.cpus = "1"
@@ -145,10 +146,10 @@ Vagrant.configure("2") do |config|
                 dk.name = machinename
                 dk.build_dir ="./docker"
                 dk.build_args = ["-t", "scz", "--build-arg", "ssh_pub_key=#{ssh_pub_key}" ]
-                dk.remains_running = true
+                #dk.remains_running = true
                 dk.has_ssh = true
                 create_args = [
-                    "-d", "-t", "-i",
+                    #"-d", "-t", "-i",
                     "--network", "scznet",
                     "--ip", "#{machine['ip']}",
                     # internal names (used for LB rerouting)
@@ -161,6 +162,9 @@ Vagrant.configure("2") do |config|
                     # (unused) interface for outgoing mail
                     "--add-host", "outgoing.#{domain}:172.20.1.1",
                     # add options to get systemd to run properly
+                    "--privileged", #slapd will not restart without :(
+                    #"--cap-add", "SYS_ADMIN",
+                    #"--cap-add", "SYS_RESOURCE",
                     "-v", "/sys/fs/cgroup:/sys/fs/cgroup:ro",
                     "--tmpfs", "/run",
                     "--tmpfs", "/tmp:exec" # need exec for vagrant

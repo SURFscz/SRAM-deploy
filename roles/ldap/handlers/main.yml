@@ -12,6 +12,6 @@
   service:  name=slapd state=restarted enabled=yes
   listen: "restart slapd"
 
-- name: systemctl daemon-reload
-  systemd: daemon_reload=yes
+- name: systemd daemon-reload
+  systemd: name=slapd daemon_reload=yes
 

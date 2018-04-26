@@ -1,7 +1,7 @@
 #######################################################################
 {{ ansible_managed | comment('plain') }}
 #######################################################################
-{% if comanage_port is equalto 443 %}
+{% if comanage_port == 443 %}
 <VirtualHost *:80>
     ServerName {{ comanage_full_hostname }}
     Redirect / https://{{ comanage_full_hostname }}/
@@ -23,7 +23,7 @@
     DocumentRoot {{ comanage_root }}
 
     RewriteEngine on
-{% if sp_home is not equalto "" %}
+{% if sp_home != "" %}
     RewriteCond %{REQUEST_URI} "^/(?!registry)" [NC]
     RewriteRule "^(.*)" "/registry$1" [R,L]
 {% endif %}
@@ -100,7 +100,7 @@
 
     </Location>
 
-{% if comanage_port is equalto 443 %}
+{% if comanage_port == 443 %}
     # enabling SSL access, which is normally terminated at the LB
     SSLEngine on
     SSLCertificateFile      /etc/ssl/certs/ssl-cert-snakeoil.pem

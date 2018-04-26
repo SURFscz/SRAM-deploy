@@ -1,12 +1,6 @@
 ---
 - include_vars: comanage_idp.yml
 
-- name: perform apt-get update
-  apt:
-    update_cache: yes
-    cache_valid_time: 1
-  become: Yes
-
 - name: ensure that packages are installed
   apt:
     name: "{{ item }}"
