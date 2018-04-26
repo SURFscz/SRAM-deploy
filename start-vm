@@ -38,7 +38,7 @@ fi
 scz_image=$(docker image list scz -q)
 if [ -z "$scz_image" ]
 then
-	ssh_pubkey=$(cat .ssh/id_rsa.pub)
+	ssh_pubkey=$(cat .vagrant/id_rsa.pub)
 	docker build -t scz --build-arg "ssh_pub_key=${ssh_pubkey}" docker/
 fi
 
