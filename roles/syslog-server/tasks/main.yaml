@@ -45,13 +45,6 @@
     dest: /etc/kibana/kibana.yml
   notify: restart kibana
 
-- name: restart Services
-  systemd: daemon_reload=yes name={{ item }} state=restarted enabled=yes
-  with_items:
-    - elasticsearch
-    - logstash
-    - kibana
-
 - name: install nginx
   apt: name=nginx
 
