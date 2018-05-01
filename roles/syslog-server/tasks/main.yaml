@@ -28,19 +28,22 @@
   file: path=/var/elasticsearch state=directory mode=0750 owner=elasticsearch
 
 - name: Copy elasticsearch configuration file
-  copy: >
-    src=elasticsearch.yml
-    dest=/etc/elasticsearch/elasticsearch.yml
+  copy:
+    src: elasticsearch.yml
+    dest: /etc/elasticsearch/elasticsearch.yml
+  notify: restart elasticsearch
 
 - name: Copy logstash configuration file
-  copy: >
-    src=logstash.conf
-    dest=/etc/logstash/conf.d/logstash.conf
+  copy:
+    src: logstash.conf
+    dest: /etc/logstash/conf.d/logstash.conf
+  notify: restart logstash
 
 - name: Copy kibana configuration file
-  copy: >
-    src=kibana.yml
-    dest=/etc/kibana/kibana.yml
+  copy:
+    src: kibana.yml
+    dest: /etc/kibana/kibana.yml
+  notify: restart kibana
 
 - name: restart Services
   systemd: daemon_reload=yes name={{ item }} state=restarted enabled=yes
