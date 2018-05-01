@@ -51,3 +51,14 @@
     - elasticsearch
     - logstash
     - kibana
+
+- name: install nginx
+  apt: name=nginx
+
+- name: remove default config
+  file: path=/etc/nginx/sites-enabled/default state=absent
+  notify: restart nginx
+
+- name: copy nginx template
+  template: src=nginx.j2 dest=/etc/nginx/sites-enabled/kibana
+  notify: restart nginx
