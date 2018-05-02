@@ -45,4 +45,3 @@
     dest: /etc/kibana/kibana.yml
   notify: restart kibana
 
-
