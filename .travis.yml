@@ -13,31 +13,8 @@ notifications:
   slack:
     on_success: change
     on_failure: always
-    secure: "DTgBggmvvq0eWtCAG7N/ij3gKN2OOna/kjRBRTbk4Zm9Q7x\
-             E5j1+d8li46b1oO91l2cz0EhdjkPwusX5LHcoy0xoVQcYpqSGOwGX/MShOdl\
-             /ZjuyiorvzMHYD2aL/s7ZlTJWXGppoiUy1Vhl0aEQ/o2Rx8wYT7BANPdSVIM\
-             ImfhhzenC1pnD+wMeqnsSn6Go/vpdUUrhakeJmTEGsJ9rdWiqjXlB/5hrTiy\
-             2/d4e0dqZAawbhLn19oZc7BVUfiFpF9HMd2dZ1H25gkUV7yW4c4lisdF6zGS\
-             tfB6JmK5YBQuyoyqr1wgEYtkhKWQDMuhY0EOCjCwInF7huljCWassp5CFUqV\
-             WOzAJRTGxdrGhzeNB/jBI7KnS+KaI0AhFvGlqWrDT7UW1dldLyph1DzD7upH\
-             BFRGLFtIbdj7dAWxsQjprVdbsz7hwbGRX9STHzBwzZ3UXbnWQKUTJ/iBsNI9\
-             h6c0Oxu4QeqpdX2Gp5F9dshpdjb9utHlbQTlLMI9bTEsnYHPk9YFFKKPNgxx\
-             2H5hrlKEZxACGDbQQ0kjre7539hHBbg52fOhht5bI+aAhFzKMACfO4D6pkKU\
-             WFMhTWjTFanJbalMzHF2REvN5BgA6GWiC4E9sDV0ws7LV0BzBfkP5+QFZmUo\
-             ztqB75HZQFtsaIiLmxlSRtFN22fW++1y/t6I="
     rooms:
-      secure: "HcTE4WGelIBEJTL3snklhDPC7cwj1LEYoOtcWBP+9hjX38\
-               r6YpVG4tueZtNCV6q87OLs6w8cylYUNZ73p7s2MvcJeRSs0q9BrxR+U0KWdy\
-               oW2zLkCkhB7VUL6PfFoq45XueCF5mQwEtWMgGN1r2SVpmMGEOf1ZdNyMSmiL\
-               9BwTUSC7ytQgQWgzUZk5oJExa0i/kV5iFTxU0a57EnDPJjaTmyADqPAJ7z/P\
-               Fn+4jfNszWCQE4tT2HVAvztl/TVCrngZ+8mG7lnmCBr96a5ZUnSL2ViQHCbE\
-               Dw76FApHTgyjBTi/LLSJ+08kkDXbKqN3lT/0/wK8vv8mYakYnlFQUHNMDnIS\
-               Or8QdsTMMpD4DhSrxNdFGfSa7S+QY1/OeSnC5tiII5Meqk36yhMdDk8YSVt7\
-               XZI5d0jQ8D4Yyajf/+lYHDxENnuBK8at/F97LaN8ozBsN5PRwkG+fgdgw7O3\
-               OaVy3+2Vy8geQNUQmVFXqSak51g3YwjjsXtrE43Xpi1V0g44lmGefxwRH886\
-               aR1VKfffEz6h5Vg41VHedHNDgtMKGbi9xqtoy+NwmLbl6odlmyQFl47NJ/of\
-               mIlEcWosLgNdqihWUJipoALm7bDvtxgAgkq5VWcJYbDYJY66K5Can/f0GG4t\
-               MTvkpb83YFttBVfbFPBlNfKYzuQjFU4Hgv6KI="
+      secure: "GwjWmymXdHh3pyaDtriIrGyBqQGpFvS2sCa9yrO5xKrnPh0OZtJdVCNKCYREaSsdMp6NYL6EqoQgzABdl8ErK9VQ7ErpUZMuDKhaPZL4LTZ4CfuSdytD7g58Kmx1JYfLe7wuc3iiZi3XXpklK1TScHDyUFFR24imDXHGf2E/DPSsB6AJGrtqsHtjDE6u6f8XTuq5oEIXGinM50kgzjZamnpgD8Hzms/Jon4wIADy0iabIKaJeNZYsvVgWDP5lckIgRo6YmanTETiUCvOp3NIdcOAjilsEUiJbCAIB/aJ1TaRu3z5R295shgfBpPaz/a47zTCbeeqXMQJ604Mtg4CHRe7S54Fv+whIDGejA3LcEcM4/cxjG3kS3iyXRb6sHMpS7gqUgamjEd2EImcigElsxat4bKkKU13IPNbB4seVDdyXoAIBlkmJTNtzt1vH5DAFU5WHRO+qyOc3YxgX63cYJBcNxFZyZe63UuUSll20/5njpCBGyVE1YW8rD2iMO/V+HxMY0wQiMyS855q5v9ayi7T5r7oaj98DfXUzzAP8VMKIITAYGiZpQeT5dDO63Ula3eJBTYTcHdpb37KrowB731sox8cBH9A5uAufdgxgUE/c3xo+kBVVLgt13lmBjmMqEdEN6pr8wSueSeIWIdQczg4EOJTLEMVgFBdCmd8f04="
 
 # the syntax check scripts as well as yamllint need python3
 language: python
