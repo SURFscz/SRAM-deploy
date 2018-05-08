@@ -58,7 +58,7 @@ $config=array(
 #     'employeeNumber' => 'enterprise', # optional
 #     'employeeType' => TRUE,        # optional
 #     'roomNumber' => TRUE,          # optional
-     'uid' => 'uid',                # optional
+     'uid' => 'uid;person',                # optional
     ),
     'eduPerson' => array(
 #     'eduPersonAffiliation' => TRUE,               # optional
@@ -79,7 +79,7 @@ $config=array(
     ),
     'ldapPublicKey' => array(
       'sshPublicKey' => TRUE,  # required
-      'uid' => 'uid'           # required
+      'uid' => 'uid;person'           # required
     ),
     'groupOfNames' => array(
       'cn' => TRUE,          # required
@@ -89,7 +89,7 @@ $config=array(
     ),
     'eduMember' => array(
       'isMemberOf' => TRUE,   # optional
-      'hasMember' => 'uid',   # optional
+      'hasMember' => 'uid;person',   # optional
     ),
   )
 );
