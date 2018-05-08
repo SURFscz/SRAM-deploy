@@ -14,7 +14,15 @@ notifications:
     on_success: change
     on_failure: always
     rooms:
-      secure: "GwjWmymXdHh3pyaDtriIrGyBqQGpFvS2sCa9yrO5xKrnPh0OZtJdVCNKCYREaSsdMp6NYL6EqoQgzABdl8ErK9VQ7ErpUZMuDKhaPZL4LTZ4CfuSdytD7g58Kmx1JYfLe7wuc3iiZi3XXpklK1TScHDyUFFR24imDXHGf2E/DPSsB6AJGrtqsHtjDE6u6f8XTuq5oEIXGinM50kgzjZamnpgD8Hzms/Jon4wIADy0iabIKaJeNZYsvVgWDP5lckIgRo6YmanTETiUCvOp3NIdcOAjilsEUiJbCAIB/aJ1TaRu3z5R295shgfBpPaz/a47zTCbeeqXMQJ604Mtg4CHRe7S54Fv+whIDGejA3LcEcM4/cxjG3kS3iyXRb6sHMpS7gqUgamjEd2EImcigElsxat4bKkKU13IPNbB4seVDdyXoAIBlkmJTNtzt1vH5DAFU5WHRO+qyOc3YxgX63cYJBcNxFZyZe63UuUSll20/5njpCBGyVE1YW8rD2iMO/V+HxMY0wQiMyS855q5v9ayi7T5r7oaj98DfXUzzAP8VMKIITAYGiZpQeT5dDO63Ula3eJBTYTcHdpb37KrowB731sox8cBH9A5uAufdgxgUE/c3xo+kBVVLgt13lmBjmMqEdEN6pr8wSueSeIWIdQczg4EOJTLEMVgFBdCmd8f04="
+      secure: "GwjWmymXdHh3pyaDtriIrGyBqQGpFvS2sCa9yrO5xKrnPh0OZtJdVCNKCYREaSsdMp6NYL6EqoQgzABdl8\
+               ErK9VQ7ErpUZMuDKhaPZL4LTZ4CfuSdytD7g58Kmx1JYfLe7wuc3iiZi3XXpklK1TScHDyUFFR24imDXHG\
+               f2E/DPSsB6AJGrtqsHtjDE6u6f8XTuq5oEIXGinM50kgzjZamnpgD8Hzms/Jon4wIADy0iabIKaJeNZYsv\
+               VgWDP5lckIgRo6YmanTETiUCvOp3NIdcOAjilsEUiJbCAIB/aJ1TaRu3z5R295shgfBpPaz/a47zTCbeeq\
+               XMQJ604Mtg4CHRe7S54Fv+whIDGejA3LcEcM4/cxjG3kS3iyXRb6sHMpS7gqUgamjEd2EImcigElsxat4b\
+               KkKU13IPNbB4seVDdyXoAIBlkmJTNtzt1vH5DAFU5WHRO+qyOc3YxgX63cYJBcNxFZyZe63UuUSll20/5n\
+               jpCBGyVE1YW8rD2iMO/V+HxMY0wQiMyS855q5v9ayi7T5r7oaj98DfXUzzAP8VMKIITAYGiZpQeT5dDO63\
+               Ula3eJBTYTcHdpb37KrowB731sox8cBH9A5uAufdgxgUE/c3xo+kBVVLgt13lmBjmMqEdEN6pr8wSueSeI\
+               WIdQczg4EOJTLEMVgFBdCmd8f04="
 
 # the syntax check scripts as well as yamllint need python3
 language: python
