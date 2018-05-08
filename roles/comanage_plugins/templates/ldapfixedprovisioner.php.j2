@@ -29,10 +29,10 @@ $config=array(
       'organizationalPerson',   # required
       'inetOrgPerson',          # required
       'eduPerson',              # optional
-      'groupOfNames',           # optional
-      'eduMember',              # optional
       'posixAccount',           # optional
       'ldapPublicKey',          # optional
+      'posixGroup',             # optional
+      'eduMember',              # optional
     ),
     'person' => array(
       'sn' => 'official',              # required
@@ -70,6 +70,17 @@ $config=array(
 #     'eduPersonScopedAffiliation' => TRUE,         # optional
 #     'eduPersonUniqueId' => 'enterprise',          # optional
     ),
+    'posixAccount' => array(
+      'uidNumber' => TRUE,     # required
+      'gidNumber' => TRUE,     # required
+      'homeDirectory' => TRUE, # required
+#     'loginShell' => TRUE,    # optional
+#     'gecos' => TRUE,         # optional
+    ),
+    'ldapPublicKey' => array(
+      'sshPublicKey' => TRUE,  # required
+      'uid' => 'uid'           # required
+    ),
     'groupOfNames' => array(
       'cn' => TRUE,          # required
       'member' => TRUE,      # required
@@ -80,16 +91,5 @@ $config=array(
       'isMemberOf' => TRUE,   # optional
       'hasMember' => 'uid',   # optional
     ),
-    'posixAccount' => array(
-      'uidNumber' => TRUE,     # required
-      'gidNumber' => TRUE,     # required
-      'homeDirectory' => TRUE, # required
-#     'loginShell' => TRUE,    # optional
-#     'gecos' => TRUE,         # optional
-    ),
-    'ldapPublicKey' => array(
-      'sshPublicKey' => TRUE,  # required
-      'uid' => 'uid'            # required
-    )
   )
 );
