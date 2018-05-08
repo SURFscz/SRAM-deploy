@@ -64,5 +64,3 @@ echo "Will execute: $CMD"
 stdbuf --output=0 --error=0 $CMD |& tee "$LOG"
 
 exit 0
-
-
