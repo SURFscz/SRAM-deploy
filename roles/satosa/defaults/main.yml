@@ -59,7 +59,7 @@ satosa_mdui:
         - "{{ environment_string }} (EN)"
         - IdP-EN
     logo:
-      url: "http://idp.logo.url/"
+      text: "http://idp.logo.url/"
       width: "100"
       height: "100"
   sp:
@@ -83,6 +83,6 @@ satosa_mdui:
         - "{{ environment_string }} (EN)"
         - SP-EN
     logo:
-      url: "http://sp.logo.url/"
+      text: "http://sp.logo.url/"
       width: "100"
       height: "100"
