@@ -85,7 +85,7 @@ $metadata['https://{{ hostnames.proxy }}/md/SamlMirrorIdP.xml/SamlSP/{{ entity_t
       'encryption' => false,
       'signing' => true,
       'type' => 'X509Certificate',
-      'X509Certificate' => '{{ satosa_backend_cert.pub | barepem }}',
+      'X509Certificate' => '{{ satosa_frontend_cert.pub | barepem }}',
     ),
   ),
   'UIInfo' =>
@@ -194,7 +194,7 @@ $metadata['https://{{ hostnames.proxy }}/md/SamlMirrorIdP.xml/SamlMirrorSP/{{ en
       'encryption' => false,
       'signing' => true,
       'type' => 'X509Certificate',
-      'X509Certificate' => '{{ satosa_backend_cert.pub | barepem }}',
+      'X509Certificate' => '{{ satosa_frontend_cert.pub | barepem }}',
     ),
   ),
   'UIInfo' =>
@@ -313,7 +313,7 @@ $metadata['https://{{ hostnames.proxy }}/md/SamlIdP.xml'] = array (
       'encryption' => false,
       'signing' => true,
       'type' => 'X509Certificate',
-      'X509Certificate' => '{{ satosa_backend_cert.pub | barepem }}',
+      'X509Certificate' => '{{ satosa_frontend_cert.pub | barepem }}',
     ),
   ),
 );
