@@ -27,13 +27,13 @@ satosa_md:
     url: "https://{{ hostnames.meta }}/"
   contacts:
     technical:
-      email_address: "technical@{{ hostnames.proxy }}"
+      email_address: "mailto:technical@{{ hostnames.proxy }}"
       given_name: "Technical"
     support:
-      email_address: "support@{{ hostnames.proxy }}"
+      email_address: "mailto:support@{{ hostnames.proxy }}"
       given_name: "Support"
     administrative:
-      email_address: "admin{{ hostnames.proxy }}"
+      email_address: "mailto:admin{{ hostnames.proxy }}"
       given_name: "Admin"
 
 
