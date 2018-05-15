@@ -51,6 +51,7 @@ CMD="ansible-playbook provision.yml \
     -i ./environments/surf/inventory \
     --limit=${ENV} \
     --ask-become \
+    --diff \
     ${EXTRA} \
     "$@"
 "

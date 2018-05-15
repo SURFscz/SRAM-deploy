@@ -66,6 +66,7 @@ ansible-playbook provision.yml \
 	-i ./environments/vm/inventory \
 	--limit=comanage,ldap,proxy,meta,lb,client \
 	--extra-vars="secrets_file=environments/vm/secrets/all.yml" \
+	--diff \
 	${ansible_args[*]}
 
 # restart proxy to reload all metadata (chicken finds eggs)
