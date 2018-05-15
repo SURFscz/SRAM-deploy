@@ -10,49 +10,49 @@ mkdir -p $LOGDIR || true
 # first check that deploy and deploy-surf are using the same version
 if ! git diff-index --quiet HEAD --
 then
-	echo "SCZ-deploy repo is not clean:"
-	git status
-	exit 1
+    echo "SCZ-deploy repo is not clean:"
+    git status
+    exit 1
 fi
 branch_deploy=$(git symbolic-ref --short HEAD)
 cd environments/surf
 if ! git diff-index --quiet HEAD --
 then
-	echo "SCZ-deploy-surf repo is not clean:"
-	git status
-	exit 1
+    echo "SCZ-deploy-surf repo is not clean:"
+    git status
+    exit 1
 fi
 branch_surf=$(git symbolic-ref --short HEAD)
 cd ../..
 if [ "$branch_deploy" != "$branch_surf" ]
 then
-	echo "Deploy branch is '$branch_deploy', but surf branch is '$branch_surf', exiting"
-	exit 1
+    echo "Deploy branch is '$branch_deploy', but surf branch is '$branch_surf', exiting"
+    exit 1
 fi
 
 
 if [ "$1" = "--pilot" ]
 then
-	ENV=pilot
-	EXTRA="${EXTRA} --ask-vault-pass"
-	shift
+    ENV=pilot
+    EXTRA="${EXTRA} --ask-vault-pass"
+    shift
 elif [ "$1" = "--mgnt" ]
 then
-	ENV=mgnt
-	EXTRA="${EXTRA} --ask-vault-pass"
-	shift
+    ENV=mgnt
+    EXTRA="${EXTRA} --ask-vault-pass"
+    shift
 elif [ "$1" = "--test" ]
 then
-	ENV=test
-	shift
+    ENV=test
+    shift
 fi
 
 CMD="ansible-playbook provision.yml \
-		-i ./environments/surf/inventory \
-		--limit=${ENV} \
-		--ask-become \
-		${EXTRA} \
-		"$@"
+    -i ./environments/surf/inventory \
+    --limit=${ENV} \
+    --ask-become \
+    ${EXTRA} \
+    "$@"
 "
 
 CMD=$( echo $CMD | sed 's/\s\+/ /g' )
