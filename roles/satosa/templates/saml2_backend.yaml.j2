@@ -6,8 +6,8 @@ config:
     key_file: certs/backend.key
     cert_file: certs/backend.crt
     encryption_keypairs:
-      - key_file : certs/frontend.key
-        cert_file : certs/frontend.crt
+      - key_file : certs/backend.key
+        cert_file : certs/backend.crt
     organization:
       display_name: "{{ satosa_md.organisation.display_name }}"
       name: "{{ satosa_md.organisation.name }}"
