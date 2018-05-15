@@ -4,7 +4,8 @@
     name: "{{ item }}"
     state: present
   with_items:
-    - xsltproc
+    - xalan
+    - wget
 
 - name: Create project directory
   file: path="{{ metadata_project_dir }}" state=directory mode=0755
