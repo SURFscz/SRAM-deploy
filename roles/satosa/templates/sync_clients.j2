@@ -28,13 +28,15 @@ for clientid, value in file_coll.items():
         print("Update " + clientid)
         mongo_coll.update_many({ "lookup_key": clientid }, { "$set": { "data": value } } )
 
-# Cleanup removed ID's
-print("Removing ID's")
-cursor = mongo_coll.find({})
-for doc in cursor:
-    clientid = doc["lookup_key"]
-    if clientid not in file_coll:
-        print(clientid)
-        mongo_coll.delete_many({'lookup_key': clientid})
+# removed for now, to make OIDC clients persistent
+# see https://www.pivotaltracker.com/story/show/157655246
+## Cleanup removed ID's
+#print("Removing ID's")
+#cursor = mongo_coll.find({})
+#for doc in cursor:
+#    clientid = doc["lookup_key"]
+#    if clientid not in file_coll:
+#        print(clientid)
+#        mongo_coll.delete_many({'lookup_key': clientid})
 
- 
+
