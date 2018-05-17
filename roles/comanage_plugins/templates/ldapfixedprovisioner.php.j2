@@ -81,6 +81,13 @@ $config=array(
       'sshPublicKey' => TRUE,  # required
       'uid' => 'uid;person'           # required
     ),
+    'posixGroup' => array(
+      'cn' => TRUE,            # required
+      'gidNumber' => TRUE,     # required
+#     'userPassword' => TRUE,  # optional
+#     'memberUID' => TRUE,     # optional
+#     'description' => TRUE,   # optional
+    ),
     'groupOfNames' => array(
       'cn' => TRUE,          # required
       'member' => TRUE,      # required
