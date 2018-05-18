@@ -87,12 +87,23 @@
                 'auth' => 'oidc-google',
                 'signature.algorithm' => 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256',
                 'authproc' => array(
-                        // Convert LDAP names to oids.
-                        100 => array('class' => 'core:AttributeMap', 'google2urn'),
-                        110 => array('class' => 'saml:AttributeNameID',
+                        // First scope sub
+                        100 => array('class' => 'core:PHP',
+                                'code' => '
+                                        if (empty($attributes["sub"])) {
+                                                throw new Exception("Missing sub attribute.");
+                                        }
+                                        $sub = $attributes["sub"][0];
+                                        $sub .= "@{{hostnames.google}}";
+                                        $attributes["sub"] = array($sub);
+                                '),
+                        // Convert OIDC names to SAML.
+                        110 => array('class' => 'core:AttributeMap', 'google2urn'),
+                        // Set NameID to eppn
+                        120 => array('class' => 'saml:AttributeNameID',
                             'attribute' => 'urn:mace:dir:attribute-def:eduPersonPrincipalName',
                             'Format' => 'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent',
-                    ),
+                        ),
                 ),
         );
 
