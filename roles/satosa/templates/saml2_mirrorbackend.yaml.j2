@@ -2,6 +2,7 @@ module: satosa.backends.saml2.SAMLMirrorBackend
 name: SamlMirrorSP
 config:
   sp_config:
+    name: ["{{ satosa_md.organisation.name }}", "en"]
     key_file: certs/backend.key
     cert_file: certs/backend.crt
     organization: {display_name: {{ environment_string }} Proxy Mirror SP, name: {{ environment_string }} Proxy Mirror SP, url: 'https://{{ hostnames.meta }}/'}

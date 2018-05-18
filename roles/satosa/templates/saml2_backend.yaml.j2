@@ -3,6 +3,7 @@ module: satosa.backends.saml2.SAMLBackend
 name: SamlSP
 config:
   sp_config:
+    name: ["{{ satosa_md.organisation.name }}", "en"]
     key_file: certs/backend.key
     cert_file: certs/backend.crt
     encryption_keypairs:
