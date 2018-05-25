@@ -1,0 +1,17 @@
+---
+ldap_install_dir: /etc/ldap
+ldap_ldif_dir: "{{ ldap_install_dir }}/schema"
+ldap_schema_dir: "{{ ldap_install_dir }}/schema"
+
+lsc_install_dir: /etc/lsc
+
+client_ldap_dbdir: "/var/lib/ldap/client"
+
+client_ldap:
+  dc: "dc=client,dc=vnet"
+  o: "Clients"
+  binddn: "cn=admin,dc=client,dc=vnet"
+
+test_organization:
+  o: "Foobar"
+  lsc_dir: "{{ lsc_install_dir }}/foobar"

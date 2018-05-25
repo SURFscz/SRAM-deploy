@@ -74,6 +74,7 @@
 - hosts: ldap
   roles:
     - { role: ldap, tags: ['ldap'] }
+    - { role: ldap_clients, tags: ['ldap', 'ldap_clients'] }
 
 - hosts:
     - proxy

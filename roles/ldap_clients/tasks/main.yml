@@ -1,0 +1,123 @@
+---
+- name: Ensure that apt-transport-https and java are installed
+  apt:
+    name: "{{ item }}"
+  with_items:
+    - apt-transport-https
+    - openjdk-8-jdk
+
+- name: Add LSC repository key
+  apt_key:
+    url: http://ltb-project.org/wiki/lib/RPM-GPG-KEY-LTB-project
+
+- name: Add LSC repository
+  apt_repository:
+    repo: "deb https://lsc-project.org/debian lsc main"
+    update_cache: yes
+
+- name: Ensure that packages are installed
+  apt:
+    name: "{{ item }}"
+    install_recommends: no
+  with_items:
+    - lsc
+
+- name: Generating password hash for Client LDAP admin
+  command:
+    slappasswd -h {SSHA} -s {{ client_ldap_password }}
+  register:
+    client_ldap_root_hash
+
+- name: Generating password hash for Test org
+  command:
+    slappasswd -h {SSHA} -s {{ test_organization_password }}
+  register:
+    test_organization_password_hash
+
+- name: Generate ldif from template
+  become_user: "{{ ldap_user }}"
+  become: true
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ ldap_ldif_dir }}/{{ item.dest }}"
+    mode: 0644
+  with_items:
+    - { src: "add_client_mdb.ldif.j2", dest: "add_client_mdb.ldif" }
+    - { src: "add_client_mdb_admin.ldif.j2", dest: "add_client_mdb_admin.ldif" }
+    - { src: "add_test_organization.ldif.j2", dest: "add_test_organization.ldif" }
+
+- name: Make sure client ldap db directory exists
+  file:
+    path: "{{ client_ldap_dbdir }}"
+    state: directory
+    owner: "{{ ldap_user }}"
+    group: "{{ ldap_group }}"
+    mode: 0755
+
+- name: Check if client MDB database already exists
+  shell: >
+    ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///
+    -b 'cn=config' olcSuffix
+  register: olcSuffix
+
+- name: Set up client MDB database
+  command: >
+    ldapadd -Y EXTERNAL -H ldapi:///
+    -f "{{ ldap_ldif_dir }}/add_client_mdb.ldif"
+  when: olcSuffix.stdout.find(client_ldap.dc) == -1
+
+- name: Add client DB admin user
+  command: >
+    ldapadd -c -x -D "{{ client_ldap.binddn }}" -w "{{ client_ldap_password }}"
+    -f "{{ ldap_ldif_dir }}/add_client_mdb_admin.ldif"
+  register: result
+  failed_when: "(result.rc not in [0, 68])"
+  when: olcSuffix.stdout.find(client_ldap.dc) == -1
+
+- name: Check if client test organization already exists
+  shell: >
+    ldapsearch -c -x -D "{{ client_ldap.binddn }}" -w "{{ client_ldap_password }}"
+    -H ldapi:/// -b 'dc=client,dc=vnet'
+    -b '{{ client_ldap.dc }}' o
+  register: org
+
+- name: Add client test organization
+  command: >
+    ldapadd -c -x -D "{{ client_ldap.binddn }}" -w "{{ client_ldap_password }}"
+    -f "{{ ldap_ldif_dir }}/add_test_organization.ldif"
+  register: result
+  failed_when: "(result.rc not in [0, 68])"
+  when: org.stdout.find(test_organization.o) == -1
+
+- name: Make sure test org LSC directory exists
+  file:
+    path: "{{ test_organization.lsc_dir }}"
+    state: directory
+    mode: 0755
+
+- name: Prepare LSC test org directory
+  copy: >
+    src="{{ lsc_install_dir }}/logback.xml"
+    dest="{{ test_organization.lsc_dir }}"
+    remote_src=yes
+
+- name: Copy LSC test org configuration
+  template: >
+    src="lsc_test.xml.j2"
+    dest="{{ test_organization.lsc_dir }}/lsc.xml"
+
+- name: Copy run_lsc batchfile
+  copy: >
+    src="run_lsc_tasks"
+    dest="/usr/local/bin"
+    mode=0755
+
+- name: Copy LSC service files
+  template:
+    src: "{{item}}.j2"
+    dest: "/etc/systemd/system/{{item}}"
+  with_items:
+    - lsc.service
+    - lsc.timer
+  notify:
+    - enable lsc job

@@ -1,0 +1,7 @@
+#!/bin/sh
+
+echo "Running MySyncTask"
+/usr/bin/lsc -f /etc/lsc/foobar -s MySyncTask      -c MySyncTask >/dev/null
+
+echo "Running MyGroupSyncTask"
+/usr/bin/lsc -f /etc/lsc/foobar -s MyGroupSyncTask -c MyGroupSyncTask >/dev/null

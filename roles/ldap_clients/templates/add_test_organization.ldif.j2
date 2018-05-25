@@ -1,0 +1,28 @@
+# Create the client Test organization
+dn: o={{ test_organization.o}},{{ client_ldap.dc }}
+o: {{ test_organization.o }}
+objectClass: organization
+
+# Create the admin identity
+dn: cn=admin,o={{ test_organization.o}},{{ client_ldap.dc }}
+cn: admin
+userPassword: {{ test_organization_password_hash.stdout }}
+objectClass: simpleSecurityObject
+objectClass: organizationalRole
+
+dn: ou=People,o={{ test_organization.o}},{{ client_ldap.dc }}
+ou: People
+objectClass: organizationalUnit
+
+dn: ou=Groups,o={{ test_organization.o}},{{ client_ldap.dc }}
+ou: Groups
+objectClass: organizationalUnit
+
+dn: ou=Sequence,o={{ test_organization.o}},{{ client_ldap.dc }}
+ou: Sequence
+objectClass: organizationalUnit
+
+dn: cn=uidNumberSequence,ou=Sequence,o={{ test_organization.o}},{{ client_ldap.dc }}
+cn: uidNumberSequence
+serialNumber: 1
+objectClass: device
