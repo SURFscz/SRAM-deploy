@@ -4,6 +4,7 @@ ldap_ldif_dir: "{{ ldap_install_dir }}/schema"
 ldap_schema_dir: "{{ ldap_install_dir }}/schema"
 
 lsc_install_dir: /etc/lsc
+lsc_config_dir: "{{ lsc_install_dir }}/config.d"
 
 client_ldap_dbdir: "/var/lib/ldap/client"
 
@@ -14,4 +15,4 @@ client_ldap:
 
 test_organization:
   o: "Foobar"
-  lsc_dir: "{{ lsc_install_dir }}/foobar"
+  lsc_dir: "{{ lsc_config_dir }}/foobar"

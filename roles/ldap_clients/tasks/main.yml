@@ -103,7 +103,7 @@
 
 - name: Copy LSC test org configuration
   template: >
-    src="lsc_test.xml.j2"
+    src="lsc.xml.j2"
     dest="{{ test_organization.lsc_dir }}/lsc.xml"
 
 - name: Copy run_lsc batchfile

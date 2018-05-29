@@ -1,7 +1,8 @@
 #!/bin/sh
-
-echo "Running MySyncTask"
-/usr/bin/lsc -f /etc/lsc/foobar -s MySyncTask      -c MySyncTask >/dev/null
-
-echo "Running MyGroupSyncTask"
-/usr/bin/lsc -f /etc/lsc/foobar -s MyGroupSyncTask -c MyGroupSyncTask >/dev/null
+for CONF in /etc/lsc/config.d/*/; do
+  echo $CONF
+  echo "Running Sync Tasks"
+  /usr/bin/lsc -f $CONF -s all >/dev/null
+  echo "Running Cleanup Tasks"
+  /usr/bin/lsc -f $CONF -c all >/dev/null
+done

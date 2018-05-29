@@ -19,7 +19,7 @@
     <ldapConnection>
       <name>ldap-src-conn</name>
 <!--  ./url mandatory, the JNDI URL -->
-      <url>ldap://ldap.vm.scz-vm.net:389/dc=scz,dc=vnet</url>
+      <url>ldap://localhost:389/{{ ldap_base.dc }}</url>
 <!--  ./username mandatory, the DN to bind with -->
       <username>{{ ldap.binddn }}</username>
 <!--  ./password mandatory, credentials to bind with -->
@@ -43,7 +43,7 @@
     <ldapConnection>
       <name>ldap-dst-conn</name>
 <!--  ./url mandatory, the JNDI URL -->
-      <url>ldap://ldap.vm.scz-vm.net:389/dc=client,dc=vnet</url>
+      <url>ldap://localhost:389/{{ client_ldap.dc }}</url>
 <!--  ./username mandatory, the DN to bind with -->
       <username>{{ client_ldap.binddn }}</username>
 <!--  ./password mandatory, credentials to bind with -->
@@ -90,7 +90,7 @@
 <!--  ./task Task node, this is the main node, in which synchronization is defined -->
     <task>
 <!--  ./name mandatory task node this is the main node, in which synchronization is defined -->
-      <name>MySyncTask</name>
+      <name>AA_PeopleSyncTask</name>
 <!--  ./bean optional bean node, default to org.lsc.beans.SimpleBean, define the pivot object used to store datasets and values -->
       <bean>org.lsc.beans.SimpleBean</bean>
 <!--  ./sourceService mandatory node containing definition of the source service settings
@@ -212,10 +212,10 @@
       </propertiesBasedSyncOptions>
     </task>
     <task>
-      <name>MyGroupSyncTask</name>
+      <name>AB_COSyncTask</name>
       <bean>org.lsc.beans.SimpleBean</bean>
       <ldapSourceService>
-        <name>openldap-src-groups</name>
+        <name>openldap-src-cos</name>
         <connection reference="ldap-src-conn" />
         <baseDn>ou=Groups,o=Foobar,{{ ldap_base.dc }}</baseDn>
         <pivotAttributes>
@@ -223,29 +223,37 @@
         </pivotAttributes>
         <fetchedAttributes>
           <string>cn</string>
+          <string>o</string>
           <string>member</string>
         </fetchedAttributes>
-        <getAllFilter><![CDATA[(objectClass=groupOfNames)]]></getAllFilter>
+        <getAllFilter><![CDATA[(&(objectClass=groupOfNames)(cn=CO:*:active))]]></getAllFilter>
         <getOneFilter><![CDATA[(&(objectClass=groupOfNames)(cn={cn}))]]></getOneFilter>
-        <cleanFilter><![CDATA[(&(objectClass=groupOfNames)(cn={cn}))]]></cleanFilter>
+        <cleanFilter><![CDATA[(&(objectClass=groupOfNames)(cn={description}))]]></cleanFilter>
       </ldapSourceService>
       <ldapDestinationService>
-        <name>ldap-dst-groups</name>
+        <name>ldap-dst-cos</name>
         <connection reference="ldap-dst-conn" />
         <baseDn>ou=Groups,o={{ test_organization.o}},{{ client_ldap.dc }}</baseDn>
         <pivotAttributes>
-          <string>cn</string>
+          <string>description</string>
         </pivotAttributes>
         <fetchedAttributes>
           <string>objectClass</string>
-          <string>cn</string>
           <string>member</string>
+          <string>description</string>
         </fetchedAttributes>
         <getAllFilter>(objectClass=groupOfNames)</getAllFilter>
-        <getOneFilter>(&amp;(objectClass=groupOfNames)(cn={cn}))</getOneFilter>
+        <getOneFilter>(&amp;(objectClass=groupOfNames)(description={cn}))</getOneFilter>
       </ldapDestinationService>
       <propertiesBasedSyncOptions>
-        <mainIdentifier>"cn=" + srcBean.getDatasetFirstValueById("cn") + ",ou=Groups,o={{ test_organization.o}},{{ client_ldap.dc }}"</mainIdentifier>
+        <mainIdentifier><!--https://regex101.com/r/A4i95l/1-->
+          <![CDATA[rjs:
+            var co = srcBean.getDatasetFirstValueById("o");
+            var cn = srcBean.getDatasetFirstValueById("cn");
+            var group = cn.match(/^(?:CO:)?(?:COU:)?([^:]*?):?(members:active)?$/);
+            "cn=" + co + (group[1]?"_" + group[1]:"") + ",ou=Groups,o={{ test_organization.o}},{{ client_ldap.dc }}";
+          ]]>
+        </mainIdentifier>
         <defaultDelimiter>;</defaultDelimiter>
         <defaultPolicy>FORCE</defaultPolicy>
         <conditions>
@@ -265,32 +273,143 @@
           <delimiter>,</delimiter>
         </dataset>
         <dataset>
+          <name>description</name>
+          <policy>FORCE</policy>
+          <defaultValues></defaultValues>
+          <forceValues></forceValues>
+          <createValues>
+            <string>srcBean.getDatasetFirstValueById("cn")</string>
+          </createValues>
+        </dataset>
+        <dataset>
           <name>member</name>
           <policy>FORCE</policy>
           <defaultValues></defaultValues>
           <forceValues>
-                <string>
-           <![CDATA[rjs:
+            <string>
+            <![CDATA[rjs:
                 var membersSrcDn = srcBean.getDatasetValuesById("member");
                 var membersDstDn = [];
                 for  (var i=0; i<membersSrcDn.size(); i++) {
                         var memberSrcDn = membersSrcDn.get(i);
                         var uid = "";
                         try {
-                                uid = srcLdap.attribute(memberSrcDn, "uid").get(0);
+                           uid = srcLdap.attribute(memberSrcDn, "uid").get(0);
                         } catch(e) {
-                                continue;
+                           continue;
                         }
                         var destDn = ldap.search("ou=People,o={{ test_organization.o }}", "(uid=" + uid + ")");
                         if (!destDn || destDn.size() == 0 || destDn.size() > 1) {
-                                continue;
+                           continue;
                         }
                         var destMemberDn = destDn.get(0) + "," +  ldap.getContextDn();
                         membersDstDn.push(destMemberDn);
                 }
                 membersDstDn
-                ]]>
-                </string>
+            ]]>
+            </string>
+          </forceValues>
+          <createValues></createValues>
+          <delimiter>,</delimiter>
+        </dataset>
+      </propertiesBasedSyncOptions>
+    </task>
+    <task>
+      <name>AC_GroupSyncTask</name>
+      <bean>org.lsc.beans.SimpleBean</bean>
+      <ldapSourceService>
+        <name>openldap-src-groups</name>
+        <connection reference="ldap-src-conn" />
+        <baseDn>ou=Groups,o=Foobar,{{ ldap_base.dc }}</baseDn>
+        <pivotAttributes>
+          <string>cn</string>
+        </pivotAttributes>
+        <fetchedAttributes>
+          <string>cn</string>
+          <string>o</string>
+          <string>member</string>
+        </fetchedAttributes>
+        <getAllFilter><![CDATA[(&(objectClass=groupOfNames)(!(cn=CO:*)))]]></getAllFilter>
+        <getOneFilter><![CDATA[(&(objectClass=groupOfNames)(cn={cn}))]]></getOneFilter>
+        <cleanFilter><![CDATA[(&(objectClass=groupOfNames)(cn={description}))]]></cleanFilter>
+      </ldapSourceService>
+      <ldapDestinationService>
+        <name>ldap-dst-groups</name>
+        <connection reference="ldap-dst-conn" />
+        <baseDn>ou=Groups,o={{ test_organization.o}},{{ client_ldap.dc }}</baseDn>
+        <pivotAttributes>
+          <string>description</string>
+        </pivotAttributes>
+        <fetchedAttributes>
+          <string>objectClass</string>
+          <string>member</string>
+          <string>description</string>
+        </fetchedAttributes>
+        <getAllFilter>(objectClass=groupOfNames)</getAllFilter>
+        <getOneFilter>(&amp;(objectClass=groupOfNames)(description={cn}))</getOneFilter>
+      </ldapDestinationService>
+      <propertiesBasedSyncOptions>
+        <mainIdentifier><!--https://regex101.com/r/A4i95l/1-->
+          <![CDATA[rjs:
+            var co = srcBean.getDatasetFirstValueById("o");
+            var cn = srcBean.getDatasetFirstValueById("cn");
+            "cn=" + co + "-" + cn + ",ou=Groups,o={{ test_organization.o}},{{ client_ldap.dc }}";
+          ]]>
+        </mainIdentifier>
+        <defaultDelimiter>;</defaultDelimiter>
+        <defaultPolicy>FORCE</defaultPolicy>
+        <conditions>
+                <create>true</create>
+                <update>true</update>
+                <delete>true</delete>
+                <changeId>false</changeId>
+        </conditions>
+        <dataset>
+          <name>objectClass</name>
+          <policy>KEEP</policy>
+          <defaultValues></defaultValues>
+          <forceValues></forceValues>
+          <createValues>
+            <string>"groupOfNames"</string>
+          </createValues>
+          <delimiter>,</delimiter>
+        </dataset>
+        <dataset>
+          <name>description</name>
+          <policy>FORCE</policy>
+          <defaultValues></defaultValues>
+          <forceValues></forceValues>
+          <createValues>
+            <string>srcBean.getDatasetFirstValueById("cn")</string>
+          </createValues>
+        </dataset>
+        <dataset>
+          <name>member</name>
+          <policy>FORCE</policy>
+          <defaultValues></defaultValues>
+          <forceValues>
+            <string>
+            <![CDATA[rjs:
+                var membersSrcDn = srcBean.getDatasetValuesById("member");
+                var membersDstDn = [];
+                for  (var i=0; i<membersSrcDn.size(); i++) {
+                        var memberSrcDn = membersSrcDn.get(i);
+                        var uid = "";
+                        try {
+                           uid = srcLdap.attribute(memberSrcDn, "uid").get(0);
+                        } catch(e) {
+                           continue;
+                        }
+                        var destDn = ldap.search("ou=People,o={{ test_organization.o }}", "(uid=" + uid + ")");
+                        if (!destDn || destDn.size() == 0 || destDn.size() > 1) {
+                           continue;
+                        }
+                        var destMemberDn = destDn.get(0) + "," +  ldap.getContextDn();
+                        membersDstDn.push(destMemberDn);
+                }
+                membersDstDn
+            ]]>
+            </string>
           </forceValues>
           <createValues></createValues>
           <delimiter>,</delimiter>
