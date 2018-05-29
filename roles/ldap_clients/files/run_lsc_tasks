@@ -1,5 +1,6 @@
 #!/bin/sh
 for CONF in /etc/lsc/config.d/*/; do
+  CONF=${CONF%*/}
   echo $CONF
   echo "Running Sync Tasks"
   /usr/bin/lsc -f $CONF -s all >/dev/null
