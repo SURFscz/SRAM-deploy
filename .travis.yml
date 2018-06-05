@@ -11,7 +11,7 @@ notifications:
     on_success: change
     on_failure: always
   slack:
-    on_success: change
+    on_success: always
     on_failure: always
     rooms:
       secure: "GwjWmymXdHh3pyaDtriIrGyBqQGpFvS2sCa9yrO5xKrnPh0OZtJdVCNKCYREaSsdMp6NYL6EqoQgzABdl8\
