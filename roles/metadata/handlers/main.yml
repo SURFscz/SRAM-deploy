@@ -1,0 +1,7 @@
+---
+- name: enable metadata job
+  systemd:
+    name: metadata.timer
+    enabled: true
+    state: started
+    daemon_reload: true
