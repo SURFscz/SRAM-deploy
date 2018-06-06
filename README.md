@@ -67,11 +67,10 @@ To get started, do the following:
     172.20.1.25 client.vm.scz-vm.net
     ```
 - set up the VMs and start the deploy:
-    - libvirt: `vagrant up --provider libvirt --no-provision` 
-    - virtualbox: `vagrant up --provider virtualbox --no-provision`
+    - libvirt: `vagrant up --provider libvirt; ./start-vm` 
+    - virtualbox: `vagrant up --provider virtualbox; ./start-vm`
 
-    This will start 6 unprovisioned VMs (each requires 786MB of memory). In order to
-    provision each of the, run `./start-vm` to start the provisioning the VMs with SCZ.
+    This will boot 6 VMs (each of which requires 786MB of memory) and run ansible to deploy SCZ to these 6 hosts.
 
 - when the deploy finishes, you should be able to browse to
   <https://comanage.scz-vm.net> and login using the default platform admin
