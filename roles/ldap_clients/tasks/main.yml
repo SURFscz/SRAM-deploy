@@ -58,6 +58,7 @@
     ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///
     -b 'cn=config' olcSuffix
   register: olcSuffix
+  changed_when: false
 
 - name: Set up client MDB database
   command: >
@@ -79,6 +80,7 @@
     -H ldapi:/// -b 'dc=client,dc=vnet'
     -b '{{ client_ldap.dc }}' o
   register: org
+  changed_when: false
 
 - name: Add client test organization
   command: >
