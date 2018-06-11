@@ -77,8 +77,7 @@
 - name: Check if client test organization already exists
   shell: >
     ldapsearch -c -x -D "{{ client_ldap.binddn }}" -w "{{ client_ldap_password }}"
-    -H ldapi:/// -b 'dc=client,dc=vnet'
-    -b '{{ client_ldap.dc }}' o
+    -H ldapi:/// -b '{{ client_ldap.dc }}' o
   register: org
   changed_when: false
 
