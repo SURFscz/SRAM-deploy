@@ -107,9 +107,9 @@
     dest="{{ test_organization.lsc_dir }}/lsc.xml"
 
 - name: Copy run_lsc batchfile
-  copy: >
-    src="run_lsc_tasks"
-    dest="/usr/local/bin"
+  template: >
+    src="run_lsc_tasks.j2"
+    dest="{{lsc_install_dir}}/run_lsc_tasks"
     mode=0755
 
 - name: Copy LSC service files
