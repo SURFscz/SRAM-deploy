@@ -9,9 +9,9 @@ lsc_config_dir: "{{ lsc_install_dir }}/config.d"
 client_ldap_dbdir: "/var/lib/ldap/client"
 
 client_ldap:
-  dc: "dc=client,{{ldap.base_dn}}"
+  dc: "dc=client,{{ldap.basedn}}"
   o: "Clients"
-  binddn: "cn=admin,dc=client,{{ldap.base_dn}}"
+  binddn: "cn=admin,dc=client,{{ldap.basedn}}"
 
 test_organization:
   o: "Foobar"
