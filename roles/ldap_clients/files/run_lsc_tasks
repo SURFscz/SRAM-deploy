@@ -1,0 +1,9 @@
+#!/bin/sh
+for CONF in /etc/lsc/config.d/*/; do
+  CONF=${CONF%*/}
+  echo $CONF
+  echo "Running Sync Tasks"
+  /usr/bin/lsc -f $CONF -s all >/dev/null
+  echo "Running Cleanup Tasks"
+  /usr/bin/lsc -f $CONF -c all >/dev/null
+done

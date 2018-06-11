@@ -1,0 +1,11 @@
+# Create the client base dc
+dn: {{ client_ldap.dc }}
+o: {{ client_ldap.o }}
+dc: {{ client_ldap.dc | regex_replace('^dc=([^,]+).*', '\\1') }}
+objectClass: dcObject
+objectClass: organization
+
+# Create the admin identity
+dn: {{ client_ldap.binddn }}
+cn: {{ client_ldap.binddn | regex_replace('^cn=([^,]+).*', '\\1') }}
+objectClass: organizationalRole
