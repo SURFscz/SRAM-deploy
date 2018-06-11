@@ -24,6 +24,7 @@
     - git
     - acl
     - bzip2
+    - apt-transport-https
 
 - name: remove unneccessary packages
   apt: name={{ item }} state=absent
