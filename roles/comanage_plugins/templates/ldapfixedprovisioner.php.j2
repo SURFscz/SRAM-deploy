@@ -8,9 +8,6 @@ $config=array(
     # set an optional scope suffix
     'scope_suffix' => '{{ comanage_scope }}',
 
-    # remove unused attributes (default FALSE)
-    'remove_unused' => TRUE,
-
     'server' => array(
       'url' => '{{ comanage_ldap_host }}',
       'binddn' => '{{ ldap.binddn }}',
@@ -33,6 +30,7 @@ $config=array(
       'ldapPublicKey',          # optional
       'posixGroup',             # optional
       'eduMember',              # optional
+      'voPerson',               # optional
     ),
     'person' => array(
       'sn' => 'official',              # required
@@ -96,7 +94,7 @@ $config=array(
     ),
     'eduMember' => array(
       'isMemberOf' => TRUE,   # optional
-      'hasMember' => 'uid;person',   # optional
+      'hasMember' => TRUE,   # optional
     ),
   )
 );
