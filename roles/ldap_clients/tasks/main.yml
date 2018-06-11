@@ -1,9 +1,8 @@
 ---
-- name: Ensure that apt-transport-https and java are installed
+- name: Ensure that java is installed
   apt:
     name: "{{ item }}"
   with_items:
-    - apt-transport-https
     - openjdk-8-jdk
 
 - name: Add LSC repository key
