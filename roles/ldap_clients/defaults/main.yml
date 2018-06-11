@@ -11,7 +11,7 @@ client_ldap_dbdir: "/var/lib/ldap/client"
 client_ldap:
   dc: "dc=client,{{ldap.base_dn}}"
   o: "Clients"
-  binddn: "cn=admin,{{client_ldap.dc}}"
+  binddn: "cn=admin,dc=client,{{ldap.base_dn}}"
 
 test_organization:
   o: "Foobar"
