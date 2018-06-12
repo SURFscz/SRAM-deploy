@@ -97,7 +97,7 @@
 
 - name: Prepare LSC test org directory
   copy: >
-    src="{{ lsc_install_dir }}/logback.xml"
+    src="/etc/lsc/logback.xml"
     dest="{{ test_organization.lsc_dir }}"
     remote_src=yes
 
