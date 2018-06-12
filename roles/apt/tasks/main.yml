@@ -12,45 +12,50 @@
   when: "environment_name != 'vm'"
 
 - name: Install common tools / clients
-  apt: name={{ item }} state=present
-  with_items:
-    - sudo
-    - bash
-    - zsh
-    - vim
-    - locales-all
-    - curl
-    - net-tools
-    - git
-    - acl
-    - bzip2
-    - apt-transport-https
+  apt:
+    state: present
+    name:
+      - sudo
+      - bash
+      - zsh
+      - vim
+      - locales-all
+      - curl
+      - net-tools
+      - git
+      - acl
+      - bzip2
+      - apt-transport-https
 
 - name: remove unneccessary packages
-  apt: name={{ item }} state=absent
-  with_items:
-    - nfs-common
-    - rpcbind
-    - cloud-init
+  apt:
+    state: absent
+    name:
+      - nfs-common
+      - rpcbind
+      - cloud-init
 
 - name: install VMware clients
-  apt: name={{item}} state=present
-  with_items:
-    - open-vm-tools
-    - open-vm-tools-dkms
+  apt:
+    state: present
+    name:
+      - open-vm-tools
+      - open-vm-tools-dkms
   when: ansible_virtualization_type == "VMware"
 
 - name: install Qemu clients
-  apt: name={{item}} state=present
-  with_items:
-    - qemu-guest-agent
+  apt:
+    state: present
+    name:
+      - qemu-guest-agent
   when: ansible_virtualization_type == "kvm"
 
 - name: install VirtualBox clients
-  apt: name={{item}} state=present
-  with_items:
-    - virtualbox-guest-dkms
-    - virtualbox-guest-utils
+  apt:
+    state: present
+    name:
+      - virtualbox-guest-dkms
+      - virtualbox-guest-utils
   when: ansible_virtualization_type == "virtualbox"
 
 # apt module doesn't support autoremove very well, yet

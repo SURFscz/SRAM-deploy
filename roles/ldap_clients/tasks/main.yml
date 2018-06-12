@@ -1,11 +1,4 @@
 ---
-- name: Install packages
-  apt:
-    name: "{{ item }}"
-  with_items:
-    - openjdk-8-jdk
-    - python-ldap
-
 - name: Add LSC repository key
   apt_key:
     data: "{{ lookup('file', 'GPG-KEY-lsc') }}"
@@ -17,10 +10,10 @@
 
 - name: Ensure that packages are installed
   apt:
-    name: "{{ item }}"
+    name:
+      - lsc
+      - openjdk-8-jdk
     install_recommends: no
-  with_items:
-    - lsc
 
 - name: Generate ldif from template
   become_user: "{{ ldap_user }}"
