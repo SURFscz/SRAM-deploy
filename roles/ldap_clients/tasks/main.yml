@@ -21,18 +21,6 @@
   with_items:
     - lsc
 
-- name: Generating password hash for Client LDAP admin
-  command:
-    slappasswd -h {SHA} -s {{ client_ldap_password }}
-  register:
-    client_ldap_root_hash
-
-- name: Generating password hash for Test org
-  command:
-    slappasswd -h {SHA} -s {{ test_organization_password }}
-  register:
-    test_organization_password_hash
-
 - name: Generate ldif from template
   become_user: "{{ ldap_user }}"
   become: true

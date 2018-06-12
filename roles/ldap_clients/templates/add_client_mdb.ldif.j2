@@ -6,7 +6,7 @@ olcDatabase: mdb
 olcSuffix: {{ client_ldap.dc }}
 olcDbDirectory: {{ client_ldap_dbdir }}
 olcRootDN: {{ client_ldap.binddn }}
-olcRootPW: {{ client_ldap_root_hash.stdout }}
+olcRootPW: {{ client_ldap_password | slapd_hash }}
 olcDbIndex: objectClass eq
 olcDbIndex: cn,uid eq
 olcDbIndex: uidNumber,gidNumber eq

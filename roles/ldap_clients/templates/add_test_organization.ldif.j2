@@ -6,7 +6,7 @@ objectClass: organization
 # Create the admin identity
 dn: cn=admin,o={{ test_organization.o}},{{ client_ldap.dc }}
 cn: admin
-userPassword: {{ test_organization_password_hash.stdout }}
+userPassword: {{ test_organization_password | slapd_hash }}
 objectClass: simpleSecurityObject
 objectClass: organizationalRole
 
