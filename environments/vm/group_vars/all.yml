@@ -87,14 +87,12 @@ backup_runparts: "{{backup_base}}/run.d"
 
 # LDAP definition is here, because we need it in both the Ldap and Comanage groups
 ldap:
-  dc:     "dc=scz,dc=vnet"
   basedn: "dc=scz,dc=vnet"
   o:      "SCZ"
-  cn:     "John Doe"
   binddn: "cn=John Doe,dc=scz,dc=vnet"
 
 client_ldap:
-  dc:     "dc=client,dc=vnet"
+  basedn: "dc=client,dc=vnet"
   o:      "Clients"
   binddn: "cn=admin,dc=client,dc=vnet"
 

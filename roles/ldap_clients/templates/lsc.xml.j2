@@ -19,7 +19,7 @@
     <ldapConnection>
       <name>ldap-src-conn</name>
 <!--  ./url mandatory, the JNDI URL -->
-      <url>ldap://localhost:389/{{ ldap.dc }}</url>
+      <url>ldap://localhost:389/{{ ldap.basedn }}</url>
 <!--  ./username mandatory, the DN to bind with -->
       <username>{{ ldap.binddn }}</username>
 <!--  ./password mandatory, credentials to bind with -->
@@ -43,7 +43,7 @@
     <ldapConnection>
       <name>ldap-dst-conn</name>
 <!--  ./url mandatory, the JNDI URL -->
-      <url>ldap://localhost:389/{{ client_ldap.dc }}</url>
+      <url>ldap://localhost:389/{{ client_ldap.basedn }}</url>
 <!--  ./username mandatory, the DN to bind with -->
       <username>{{ client_ldap.binddn }}</username>
 <!--  ./password mandatory, credentials to bind with -->
@@ -101,7 +101,7 @@
       <ldapSourceService>
         <name>openldap-src-service</name>
         <connection reference="ldap-src-conn" />
-        <baseDn>ou=People,o=Foobar,{{ ldap.dc }}</baseDn>
+        <baseDn>ou=People,o=Foobar,{{ ldap.basedn }}</baseDn>
         <pivotAttributes>
           <string>uid</string>
         </pivotAttributes>
@@ -129,7 +129,7 @@
         <name>ldap-dst-service</name>
         <connection reference="ldap-dst-conn" />
 <!--    ./baseDn This mandatory node provide the directory base branch that will be used to look for entries (list and get) -->
-        <baseDn>ou=People,o={{ test_organization.o}},{{ client_ldap.dc }}</baseDn>
+        <baseDn>ou=People,o={{ test_organization.o}},{{ client_ldap.basedn }}</baseDn>
 <!--    ./pivotAttributes This mandatory node must include string nodes with attributes name that will be used with their values
                         as pivot datasets (used to get the corresponding entry and to identify the counter-part object, here in the source database
                         used during the clean phase to delete the corresponding entry if no corresponding object is found)-->
@@ -161,7 +161,7 @@
                         It may contains synchronization conditions, a default delimiter and datasets synchronization rules (attribute nodes) -->
       <propertiesBasedSyncOptions>
 <!--    ./mainIdentifier This mandatory node must contain a string Javascript expression that will enforce the object main identifier.-->
-        <mainIdentifier>"uid=" + srcBean.getDatasetFirstValueById("uid") + ",ou=People,o={{ test_organization.o}},{{ client_ldap.dc }}"</mainIdentifier>
+        <mainIdentifier>"uid=" + srcBean.getDatasetFirstValueById("uid") + ",ou=People,o={{ test_organization.o}},{{ client_ldap.basedn }}"</mainIdentifier>
 <!--    ./defaultDelimiter This mandatory node must contain a string Javascript expression that will enforce the object main identifier.-->
         <defaultDelimiter>;</defaultDelimiter>
 <!--    ./defaultPolicy This mandatory node must contain a string Javascript expression that will enforce the object main identifier.-->
@@ -206,7 +206,7 @@
           <name>uidNumber</name>
           <policy>KEEP</policy>
           <forceValues>
-            <string>SequencesFactory.getInstance(ldap.getJndiServices()).getNextValue("cn=uidNumberSequence,ou=Sequence,o={{ test_organization.o}},{{ client_ldap.dc }}", "serialNumber")</string>
+            <string>SequencesFactory.getInstance(ldap.getJndiServices()).getNextValue("cn=uidNumberSequence,ou=Sequence,o={{ test_organization.o}},{{ client_ldap.basedn }}", "serialNumber")</string>
           </forceValues>
         </dataset>
       </propertiesBasedSyncOptions>
@@ -217,7 +217,7 @@
       <ldapSourceService>
         <name>openldap-src-cos</name>
         <connection reference="ldap-src-conn" />
-        <baseDn>ou=Groups,o=Foobar,{{ ldap.dc }}</baseDn>
+        <baseDn>ou=Groups,o=Foobar,{{ ldap.basedn }}</baseDn>
         <pivotAttributes>
           <string>cn</string>
         </pivotAttributes>
@@ -233,7 +233,7 @@
       <ldapDestinationService>
         <name>ldap-dst-cos</name>
         <connection reference="ldap-dst-conn" />
-        <baseDn>ou=Groups,o={{ test_organization.o}},{{ client_ldap.dc }}</baseDn>
+        <baseDn>ou=Groups,o={{ test_organization.o}},{{ client_ldap.basedn }}</baseDn>
         <pivotAttributes>
           <string>description</string>
         </pivotAttributes>
@@ -251,7 +251,7 @@
             var co = srcBean.getDatasetFirstValueById("o");
             var cn = srcBean.getDatasetFirstValueById("cn");
             var group = cn.match(/^(?:CO:)?(?:COU:)?([^:]*?):?(members:active)?$/);
-            "cn=" + co + (group[1]?"_" + group[1]:"") + ",ou=Groups,o={{ test_organization.o}},{{ client_ldap.dc }}";
+            "cn=" + co + (group[1]?"_" + group[1]:"") + ",ou=Groups,o={{ test_organization.o}},{{ client_ldap.basedn }}";
           ]]>
         </mainIdentifier>
         <defaultDelimiter>;</defaultDelimiter>
@@ -320,7 +320,7 @@
       <ldapSourceService>
         <name>openldap-src-groups</name>
         <connection reference="ldap-src-conn" />
-        <baseDn>ou=Groups,o=Foobar,{{ ldap.dc }}</baseDn>
+        <baseDn>ou=Groups,o=Foobar,{{ ldap.basedn }}</baseDn>
         <pivotAttributes>
           <string>cn</string>
         </pivotAttributes>
@@ -336,7 +336,7 @@
       <ldapDestinationService>
         <name>ldap-dst-groups</name>
         <connection reference="ldap-dst-conn" />
-        <baseDn>ou=Groups,o={{ test_organization.o}},{{ client_ldap.dc }}</baseDn>
+        <baseDn>ou=Groups,o={{ test_organization.o}},{{ client_ldap.basedn }}</baseDn>
         <pivotAttributes>
           <string>description</string>
         </pivotAttributes>
@@ -353,7 +353,7 @@
           <![CDATA[rjs:
             var co = srcBean.getDatasetFirstValueById("o");
             var cn = srcBean.getDatasetFirstValueById("cn");
-            "cn=" + co + "-" + cn + ",ou=Groups,o={{ test_organization.o}},{{ client_ldap.dc }}";
+            "cn=" + co + "-" + cn + ",ou=Groups,o={{ test_organization.o}},{{ client_ldap.basedn }}";
           ]]>
         </mainIdentifier>
         <defaultDelimiter>;</defaultDelimiter>
