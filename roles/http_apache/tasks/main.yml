@@ -4,9 +4,10 @@
   apt: name=nginx state=absent purge=true
 
 - name: Install apache
-  apt: name={{ item }} state=present
-  with_items:
-    - apache2
+  apt:
+    state: present
+    name:
+      - apache2
 
 # Apache mpm modules need to be handled separately, see
 - name: Change apache worker
