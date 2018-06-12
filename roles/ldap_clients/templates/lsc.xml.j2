@@ -19,7 +19,7 @@
     <ldapConnection>
       <name>ldap-src-conn</name>
 <!--  ./url mandatory, the JNDI URL -->
-      <url>ldap://localhost:389/{{ ldap_base.dc }}</url>
+      <url>ldap://localhost:389/{{ ldap.dc }}</url>
 <!--  ./username mandatory, the DN to bind with -->
       <username>{{ ldap.binddn }}</username>
 <!--  ./password mandatory, credentials to bind with -->
@@ -101,7 +101,7 @@
       <ldapSourceService>
         <name>openldap-src-service</name>
         <connection reference="ldap-src-conn" />
-        <baseDn>ou=People,o=Foobar,{{ ldap_base.dc }}</baseDn>
+        <baseDn>ou=People,o=Foobar,{{ ldap.dc }}</baseDn>
         <pivotAttributes>
           <string>uid</string>
         </pivotAttributes>
@@ -217,7 +217,7 @@
       <ldapSourceService>
         <name>openldap-src-cos</name>
         <connection reference="ldap-src-conn" />
-        <baseDn>ou=Groups,o=Foobar,{{ ldap_base.dc }}</baseDn>
+        <baseDn>ou=Groups,o=Foobar,{{ ldap.dc }}</baseDn>
         <pivotAttributes>
           <string>cn</string>
         </pivotAttributes>
@@ -320,7 +320,7 @@
       <ldapSourceService>
         <name>openldap-src-groups</name>
         <connection reference="ldap-src-conn" />
-        <baseDn>ou=Groups,o=Foobar,{{ ldap_base.dc }}</baseDn>
+        <baseDn>ou=Groups,o=Foobar,{{ ldap.dc }}</baseDn>
         <pivotAttributes>
           <string>cn</string>
         </pivotAttributes>

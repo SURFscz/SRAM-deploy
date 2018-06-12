@@ -86,17 +86,18 @@ backup_base: "/opt/backups"
 backup_runparts: "{{backup_base}}/run.d"
 
 # LDAP definition is here, because we need it in both the Ldap and Comanage groups
-ldap_base:
-  cn: "John Doe"
-  dc: "dc=scz,dc=vnet"
-  o: "SCZ"
-
 ldap:
-  cn: "{{ ldap_base.cn }}"
-  dc: "{{ ldap_base.dc }}"
-  o: "{{ ldap_base.o }}"
-  basedn: "{{ ldap_base.dc }}"
-  binddn: "cn={{ ldap_base.cn }},{{ ldap_base.dc }}"
+  dc:     "dc=scz,dc=vnet"
+  basedn: "dc=scz,dc=vnet"
+  o:      "SCZ"
+  cn:     "John Doe"
+  binddn: "cn=John Doe,dc=scz,dc=vnet"
+
+client_ldap:
+  dc:     "dc=client,dc=vnet"
+  o:      "Clients"
+  binddn: "cn=admin,dc=client,dc=vnet"
+
 
 # Comanage-Proxy database configuration is here, because it is needed in both the
 # Proxy and Comanage groups.
