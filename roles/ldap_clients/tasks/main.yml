@@ -7,7 +7,7 @@
 
 - name: Add LSC repository key
   apt_key:
-    url: http://ltb-project.org/wiki/lib/RPM-GPG-KEY-LTB-project
+    data: "{{ lookup('file', 'GPG-KEY-lsc') }}"
 
 - name: Add LSC repository
   apt_repository:

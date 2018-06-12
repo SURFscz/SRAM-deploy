@@ -12,7 +12,6 @@
 
     - name: Add Elesticsearch key
       apt_key:
-        #url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
         data: "{{ lookup('file', 'GPG-KEY-elasticsearch') }}"
 
     - name: Add Elastic Search repository
