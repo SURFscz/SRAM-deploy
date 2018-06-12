@@ -37,7 +37,7 @@
 
 - name: Generating password hash for LDAP admin
   command:
-    slappasswd -h {SSHA} -s {{ ldap_password }}
+    slappasswd -h {SHA} -s {{ ldap_password }}
   register:
     ldap_root_hash
 

@@ -23,13 +23,13 @@
 
 - name: Generating password hash for Client LDAP admin
   command:
-    slappasswd -h {SSHA} -s {{ client_ldap_password }}
+    slappasswd -h {SHA} -s {{ client_ldap_password }}
   register:
     client_ldap_root_hash
 
 - name: Generating password hash for Test org
   command:
-    slappasswd -h {SSHA} -s {{ test_organization_password }}
+    slappasswd -h {SHA} -s {{ test_organization_password }}
   register:
     test_organization_password_hash
 
