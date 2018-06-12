@@ -1,28 +1,28 @@
 # Create the client Test organization
-dn: o={{ test_organization.o}},{{ client_ldap.dc }}
+dn: o={{ test_organization.o}},{{ client_ldap.basedn }}
 o: {{ test_organization.o }}
 objectClass: organization
 
 # Create the admin identity
-dn: cn=admin,o={{ test_organization.o}},{{ client_ldap.dc }}
+dn: cn=admin,o={{ test_organization.o}},{{ client_ldap.basedn }}
 cn: admin
-userPassword: {{ test_organization_password_hash.stdout }}
+userPassword: {{ test_organization_password | slapd_hash }}
 objectClass: simpleSecurityObject
 objectClass: organizationalRole
 
-dn: ou=People,o={{ test_organization.o}},{{ client_ldap.dc }}
+dn: ou=People,o={{ test_organization.o}},{{ client_ldap.basedn }}
 ou: People
 objectClass: organizationalUnit
 
-dn: ou=Groups,o={{ test_organization.o}},{{ client_ldap.dc }}
+dn: ou=Groups,o={{ test_organization.o}},{{ client_ldap.basedn }}
 ou: Groups
 objectClass: organizationalUnit
 
-dn: ou=Sequence,o={{ test_organization.o}},{{ client_ldap.dc }}
+dn: ou=Sequence,o={{ test_organization.o}},{{ client_ldap.basedn }}
 ou: Sequence
 objectClass: organizationalUnit
 
-dn: cn=uidNumberSequence,ou=Sequence,o={{ test_organization.o}},{{ client_ldap.dc }}
+dn: cn=uidNumberSequence,ou=Sequence,o={{ test_organization.o}},{{ client_ldap.basedn }}
 cn: uidNumberSequence
 serialNumber: 1
 objectClass: device

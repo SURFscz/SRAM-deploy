@@ -7,7 +7,7 @@
 
 - name: Add LSC repository key
   apt_key:
-    url: http://ltb-project.org/wiki/lib/RPM-GPG-KEY-LTB-project
+    data: "{{ lookup('file', 'GPG-KEY-lsc') }}"
 
 - name: Add LSC repository
   apt_repository:
@@ -20,18 +20,6 @@
     install_recommends: no
   with_items:
     - lsc
-
-- name: Generating password hash for Client LDAP admin
-  command:
-    slappasswd -h {SSHA} -s {{ client_ldap_password }}
-  register:
-    client_ldap_root_hash
-
-- name: Generating password hash for Test org
-  command:
-    slappasswd -h {SSHA} -s {{ test_organization_password }}
-  register:
-    test_organization_password_hash
 
 - name: Generate ldif from template
   become_user: "{{ ldap_user }}"
@@ -64,7 +52,7 @@
   command: >
     ldapadd -Y EXTERNAL -H ldapi:///
     -f "{{ ldap_ldif_dir }}/add_client_mdb.ldif"
-  when: olcSuffix.stdout.find(client_ldap.dc) == -1
+  when: olcSuffix.stdout.find(client_ldap.basedn) == -1
 
 - name: Add client DB admin user
   command: >
@@ -72,13 +60,12 @@
     -f "{{ ldap_ldif_dir }}/add_client_mdb_admin.ldif"
   register: result
   failed_when: "(result.rc not in [0, 68])"
-  when: olcSuffix.stdout.find(client_ldap.dc) == -1
+  when: olcSuffix.stdout.find(client_ldap.basedn) == -1
 
 - name: Check if client test organization already exists
   shell: >
     ldapsearch -c -x -D "{{ client_ldap.binddn }}" -w "{{ client_ldap_password }}"
-    -H ldapi:/// -b 'dc=client,dc=vnet'
-    -b '{{ client_ldap.dc }}' o
+    -H ldapi:/// -b '{{ client_ldap.basedn }}' o
   register: org
   changed_when: false
 
@@ -98,7 +85,7 @@
 
 - name: Prepare LSC test org directory
   copy: >
-    src="{{ lsc_install_dir }}/logback.xml"
+    src="/etc/lsc/logback.xml"
     dest="{{ test_organization.lsc_dir }}"
     remote_src=yes
 

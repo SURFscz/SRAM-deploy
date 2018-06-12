@@ -23,7 +23,6 @@
     DocumentRoot {{ comanage_root }}
 
     RewriteEngine on
-    RewriteRule '"' - [redirect=500,last]
 {% if sp_home != "" %}
     RewriteCond %{REQUEST_URI} "^/(?!registry)" [NC]
     RewriteRule "^(.*)" "/registry$1" [R,L]

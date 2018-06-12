@@ -51,8 +51,8 @@ $config = array(
      * When errorreporting is enabled, a form will be presented for the user to report
      * the error to technicalcontact_email.
      */
-    'showerrors' => true,
-    'errorreporting' => true,
+    'showerrors' => false,
+    'errorreporting' => false,
 
     /**
      * Custom error show function called from SimpleSAML_Error_Error::show.
@@ -75,7 +75,7 @@ $config = array(
      * You can also put a hash here; run "bin/pwgen.php" to generate one.
      */
     'auth.adminpassword' => '{{ client_ssp_admin_pass }}',
-    'admin.protectindexpage' => false,
+    'admin.protectindexpage' => true,
     'admin.protectmetadata' => false,
 
     /**
