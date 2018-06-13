@@ -3,16 +3,15 @@
   template: src=sources.list.j2 dest=/etc/apt/sources.list force=yes
   when: ansible_virtualization_type != "docker"
 
-- name: Update apt cache
-  apt: update_cache=yes
-  changed_when: "false"
-
 - name: Upgrade packages
-  apt: upgrade=dist
+  apt:
+    upgrade: dist
+    cache_valid_time: 86400
   when: "environment_name != 'vm'"
 
 - name: Install common tools / clients
   apt:
+    cache_valid_time: 86400
     state: present
     name:
       - sudo
