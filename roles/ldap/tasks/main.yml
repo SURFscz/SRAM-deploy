@@ -7,7 +7,6 @@
     state: present
     name:
       - slapd
-      - unzip
       - ldap-utils
 
 - name: Copying alternative service script

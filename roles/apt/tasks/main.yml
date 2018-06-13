@@ -25,6 +25,7 @@
       - git
       - acl
       - bzip2
+      - unzip
       - apt-transport-https
 
 - name: remove unneccessary packages
