@@ -1,4 +1,4 @@
-<?xml version="1.0" ?>
+﻿<?xml version="1.0" ?>
 <!--
         In the following file, comments are describing each node. Elements are
         referenced through XPath expression, whereas attributes are prefixed with
@@ -246,11 +246,14 @@
         </pivotAttributes>
         <fetchedAttributes>
           <string>objectClass</string>
-          <string>member</string>
+          <!--<string>member</string>-->
+          <string>memberUid</string>
           <string>description</string>
         </fetchedAttributes>
-        <getAllFilter>(objectClass=groupOfNames)</getAllFilter>
-        <getOneFilter>(&amp;(objectClass=groupOfNames)(description={cn}))</getOneFilter>
+        <!--<getAllFilter>(objectClass=groupOfNames)</getAllFilter>
+        <getOneFilter>(&amp;(objectClass=groupOfNames)(description={cn}))</getOneFilter>-->
+        <getAllFilter>(objectClass=posixGroup)</getAllFilter>
+        <getOneFilter>(&amp;(objectClass=posixGroup)(description={cn}))</getOneFilter>
       </ldapDestinationService>
       <propertiesBasedSyncOptions>
         <mainIdentifier><!--https://regex101.com/r/A4i95l/1-->
@@ -273,9 +276,11 @@
           <name>objectClass</name>
           <policy>KEEP</policy>
           <defaultValues></defaultValues>
-          <forceValues></forceValues>
+          <forceValues>
+            <!--<string>"groupOfNames"</string>-->
+            <string>"posixGroup"</string>
+          </forceValues>
           <createValues>
-            <string>"groupOfNames"</string>
           </createValues>
           <delimiter>,</delimiter>
         </dataset>
@@ -289,7 +294,8 @@
           </createValues>
         </dataset>
         <dataset>
-          <name>member</name>
+          <!--<name>member</name>-->
+          <name>memberUid</name>
           <policy>FORCE</policy>
           <defaultValues></defaultValues>
           <forceValues>
@@ -305,7 +311,8 @@
                        uid = srcLdap.attribute(memberSrcDn, "uid").get(0);
                        memberDstRdn = ldap.search("ou=People,o={{ client.name }}", "(uid=" + uid + ")");
                        memberDstDn = memberDstRdn.get(0) + "," + ldap.getContextDn();
-                       memberDstDns.push(memberDstDn);
+                       //memberDstDns.push(memberDstDn);
+                       memberDstDns.push(uid);
                     } catch(e) {
                        continue;
                     }
@@ -348,11 +355,14 @@
         </pivotAttributes>
         <fetchedAttributes>
           <string>objectClass</string>
-          <string>member</string>
+          <!--<string>member</string>-->
+          <string>memberUid</string>
           <string>description</string>
         </fetchedAttributes>
-        <getAllFilter>(objectClass=groupOfNames)</getAllFilter>
-        <getOneFilter>(&amp;(objectClass=groupOfNames)(description={cn}:members:active))</getOneFilter>
+        <!--<getAllFilter>(objectClass=groupOfNames)</getAllFilter>
+        <getOneFilter>(&amp;(objectClass=groupOfNames)(description={cn}:members:active))</getOneFilter>-->
+        <getAllFilter>(objectClass=posixGroup)</getAllFilter>
+        <getOneFilter>(&amp;(objectClass=posixGroup)(description={cn}:members:active))</getOneFilter>
       </ldapDestinationService>
       <propertiesBasedSyncOptions>
         <mainIdentifier><!--https://regex101.com/r/A4i95l/1-->
@@ -375,9 +385,11 @@
           <name>objectClass</name>
           <policy>KEEP</policy>
           <defaultValues></defaultValues>
-          <forceValues></forceValues>
+          <forceValues>
+            <!--<string>"groupOfNames"</string>-->
+            <string>"posixGroup"</string>
+          </forceValues>
           <createValues>
-            <string>"groupOfNames"</string>
           </createValues>
           <delimiter>,</delimiter>
         </dataset>
@@ -391,7 +403,8 @@
           </createValues>
         </dataset>
         <dataset>
-          <name>member</name>
+          <!--<name>member</name>-->
+          <name>memberUid</name>
           <policy>MERGE</policy>
           <defaultValues>
           </defaultValues>
@@ -420,7 +433,8 @@
                        memberDstDn = memberDstRdn.get(0) + "," +  ldap.getContextDn();
                        java.lang.System.out.println("memberDstDn: " + memberDstDn);
                        if (memberDstDn == dstDn) continue;
-                       membersDstDns.push(memberDstDn);
+                       //membersDstDns.push(memberDstDn);
+                       membersDstDns.push(memberDstCn.get(0));
                     } catch(e) {
                        continue;
                     }
@@ -466,8 +480,10 @@
           <string>member</string>
           <string>description</string>
         </fetchedAttributes>
-        <getAllFilter>(objectClass=groupOfNames)</getAllFilter>
-        <getOneFilter>(&amp;(objectClass=groupOfNames)(description={cn}))</getOneFilter>
+        <!--<getAllFilter>(objectClass=groupOfNames)</getAllFilter>
+        <getOneFilter>(&amp;(objectClass=groupOfNames)(description={cn}))</getOneFilter>-->
+        <getAllFilter>(objectClass=posixGroup)</getAllFilter>
+        <getOneFilter>(&amp;(objectClass=posixGroup)(description={cn}))</getOneFilter>
       </ldapDestinationService>
       <propertiesBasedSyncOptions>
         <mainIdentifier><!--https://regex101.com/r/A4i95l/1-->
@@ -489,9 +505,11 @@
           <name>objectClass</name>
           <policy>KEEP</policy>
           <defaultValues></defaultValues>
-          <forceValues></forceValues>
+          <forceValues>
+            <!--<string>"groupOfNames"</string>-->
+            <string>"posixGroup"</string>
+          </forceValues>
           <createValues>
-            <string>"groupOfNames"</string>
           </createValues>
           <delimiter>,</delimiter>
         </dataset>
@@ -505,7 +523,8 @@
           </createValues>
         </dataset>
         <dataset>
-          <name>member</name>
+          <!--<name>member</name>-->
+          <name>memberUid</name>
           <policy>FORCE</policy>
           <defaultValues></defaultValues>
           <forceValues>
@@ -526,7 +545,8 @@
                            continue;
                         }
                         var destMemberDn = destDn.get(0) + "," +  ldap.getContextDn();
-                        membersDstDn.push(destMemberDn);
+                        //membersDstDn.push(destMemberDn);
+                        membersDstDn.push(uid);
                 }
                 membersDstDn
             ]]>
