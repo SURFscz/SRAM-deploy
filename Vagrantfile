@@ -62,6 +62,8 @@ machines = {
         "limit"     => ['client'],
         "ports"     => [ '2722:22' ] }
 }
+cpus = "1"
+memory = "512"
 
 # All Vagrant configuration is done below. The "2" in Vagrant.configure
 # configures the configuration version (we support older styles for
@@ -80,8 +82,8 @@ Vagrant.configure("2") do |config|
     # need to download the box
     config.vm.provider "virtualbox" do |vb, override|
         override.vm.box = "debian/stretch64"
-        vb.cpus = "1"
-        vb.memory = "768"
+        vb.cpus = cpus
+        vb.memory = memory
 
         # install a swap daemon (needed for php/composer)
         override.vm.provision "shell", inline: "sudo env DEBIAN_FRONTEND=noninteractive apt-get -qq -y install swapspace > /dev/null"
@@ -89,8 +91,8 @@ Vagrant.configure("2") do |config|
 
     config.vm.provider "libvirt" do |lv, override|
         override.vm.box = "debian/stretch64"
-        lv.cpus = "1"
-        lv.memory = "768"
+        lv.cpus = cpus
+        lv.memory = memory
         lv.graphics_type = "spice"
         lv.video_type = "qxl"
 
