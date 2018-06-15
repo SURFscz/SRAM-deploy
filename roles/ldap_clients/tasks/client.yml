@@ -19,8 +19,9 @@
 
 - name: "Create the client {{client.name}} organization"
   ldap_entry:
-    bind_dn: "{{ client_ldap.binddn }}"
-    bind_pw: "{{ client_ldap_password }}"
+    # SASL EXTERNAL Should work
+    #bind_dn: "{{ client_ldap.binddn }}"
+    #bind_pw: "{{ client_ldap_password }}"
     dn: "o={{ client.name}},{{ client_ldap.basedn }}"
     objectClass: organization
     attributes:
@@ -28,8 +29,8 @@
 
 - name: "Create the admin identity for {{client.name}}"
   ldap_entry:
-    bind_dn: "{{ client_ldap.binddn }}"
-    bind_pw: "{{ client_ldap_password }}"
+    #bind_dn: "{{ client_ldap.binddn }}"
+    #bind_pw: "{{ client_ldap_password }}"
     dn: "cn=admin,o={{ client.name }},{{ client_ldap.basedn }}"
     objectClass:
       - simpleSecurityObject
@@ -40,8 +41,8 @@
 
 - name: "Add database skeleton to client db"
   ldap_entry:
-    bind_dn: "{{ client_ldap.binddn }}"
-    bind_pw: "{{ client_ldap_password }}"
+    #bind_dn: "{{ client_ldap.binddn }}"
+    #bind_pw: "{{ client_ldap_password }}"
     dn: "ou={{item}},o={{ client.name }},{{ client_ldap.basedn }}"
     objectClass: organizationalUnit
     attributes:
@@ -53,8 +54,8 @@
 
 - name: "Set default sequence for client {{client.name}}"
   ldap_entry:
-    bind_dn: "{{ client_ldap.binddn }}"
-    bind_pw: "{{ client_ldap_password }}"
+    #bind_dn: "{{ client_ldap.binddn }}"
+    #bind_pw: "{{ client_ldap_password }}"
     dn: "cn=uidNumberSequence,ou=Sequence,o={{ client.name }},{{ client_ldap.basedn }}"
     objectClass: device
     attributes:
