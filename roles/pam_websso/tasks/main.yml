@@ -1,0 +1,61 @@
+---
+- name: Ensure that packages are installed
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - libnss-ldap
+    - libpam-python
+    - python-pip
+    - libxml2-dev
+    - libxmlsec1-dev
+    - pamtester
+
+- name: fetch PAM WebSSO from {{ pam_websso.repo_url }}, version {{ pam_websso.repo_version }}
+  git:
+    repo: "{{ pam_websso.repo_url }}"
+    dest: "{{ pam_websso.project_dir }}"
+    version: "{{ pam_websso.repo_version }}"
+    accept_hostkey: "yes"
+    force: "yes"
+  register: pam_websso_git
+
+- name: install PAM WebSSO
+  pip:
+    name: "{{ pam_websso.project_dir }}"
+    state: latest
+  when: pam_websso_git.changed
+
+- name: install PAM WebSSO configuration
+  template:
+    src: "pam-websso.j2"
+    dest: "/etc/pam.d/pam-websso"
+
+- name: install PAM WebSSO settings
+  template:
+    src: "settings.json.j2"
+    dest: "{{ pam_websso.project_dir }}/settings.json"
+
+- name: install NSS LDAP settings
+  template:
+    src: "libnss-ldap.conf.j2"
+    dest: "/etc/libnss-ldap.conf"
+
+- name: Copy PAM mkhomedir conf
+  copy:
+    src: "mkhomedir"
+    dest: "/usr/share/pam-configs"
+
+- name: Add LDAP nsswitch lookup
+  replace:
+    path: /etc/nsswitch.conf
+    regexp: '^(passwd:.*compat)$'
+    replace: '\1 ldap'
+    backup: yes
+
+- name: Add LDAP nsswitch lookup
+  replace:
+    path: /etc/nsswitch.conf
+    regexp: '^(group:.*compat)$'
+    replace: '\1 ldap'
+    backup: yes

@@ -89,6 +89,8 @@
     - { role: client-saml-idp,    tags: ['client','client-idp'   ] }
     - { role: client-google-idp,  tags: ['client','client-google'] }
     - { role: client-oidc-rp,     tags: ['client','client-rp'    ] }
+    - { role: pam_websso,         tags: ['client','pam-websso'   ] }
+    - { role: pam_websso_daemon,  tags: ['client','websso-daemon'] }
 
 - hosts: proxy
   roles:
