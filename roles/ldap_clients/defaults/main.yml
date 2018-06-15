@@ -13,6 +13,10 @@ client_ldap:
   o: "Clients"
   binddn: "cn=admin,dc=client,{{ldap.base_dn}}"
 
-test_organization:
-  o: "Foobar"
-  lsc_dir: "{{ lsc_config_dir }}/foobar"
+client_ldap_clients:
+  - name: "Rebel Alliance"
+    lsc_dir: "{{ lsc_config_dir }}/rebel_alliance"
+    password: "{{ test_organization_password }}"
+  - name: "Second Client"
+    lsc_dir: "{{ lsc_config_dir }}/second_client"
+    password: "{{ test_organization_password }}"
