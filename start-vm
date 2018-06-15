@@ -56,8 +56,9 @@ then
     net=172.20.1
     for ip in 20 21 22 23 24 25
     do
-        ssh-keygen -f ~/.ssh/known_hosts -R "$net.$ip"
-        ssh -i ./.vagrant/id_rsa -o "StrictHostKeyChecking no" vagrant@$net.$ip 'echo'
+        ssh -Oexit vagrant@$net.$ip >/dev/null 2>&1 || true
+        ssh-keygen -f ~/.ssh/known_hosts -R "$net.$ip" > /dev/null
+        ssh -Nf -i ./.vagrant/id_rsa -o "StrictHostKeyChecking no" vagrant@$net.$ip
     done
 fi
 
