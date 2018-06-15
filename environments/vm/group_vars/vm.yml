@@ -65,8 +65,8 @@ loadbalancer:
     http: true
     backend_hosts: "{{groups['vm-client']}}"
     backend_port: "{{google_test_port}}"
-  - hostname: "{{hostnames.google}}"
+  - hostname: "{{hostnames.ldap}}"
     http: false
-    frontend_port: 389
+    frontend_port: 636
     backend_hosts: "{{groups['vm-ldap']}}"
     backend_port: 389
