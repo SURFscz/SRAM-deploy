@@ -74,7 +74,7 @@ loadbalancer:
     backend_port: "{{pam_web_port}}"
   - hostname: "{{hostnames.ldap}}"
     http: false
-    frontend_port: 389
+    frontend_port: 636
     backend_hosts: "{{groups['vm-ldap']}}"
     backend_port: 389
   - hostname: "{{hostnames.pam}}"
