@@ -145,6 +145,7 @@
           <string>sn</string>
           <string>uid</string>
           <string>homeDirectory</string>
+          <string>loginShell</string>
           <string>uidNumber</string>
           <string>gidNumber</string>
         </fetchedAttributes>
@@ -200,6 +201,12 @@
           <name>homeDirectory</name>
           <forceValues>
                 <string>"/home/"+srcBean.getDatasetFirstValueById("uid")</string>
+          </forceValues>
+        </dataset>
+        <dataset>
+          <name>loginShell</name>
+          <forceValues>
+                <string>"/bin/bash"</string>
           </forceValues>
         </dataset>
         <dataset>

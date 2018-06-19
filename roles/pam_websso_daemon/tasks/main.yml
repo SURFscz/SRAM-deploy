@@ -17,16 +17,16 @@
     force: "yes"
   register: pam_websso_git
 
-- name: install PAM WebSSO
+- name: install WebSSO daemon
   pip:
     name: "{{ pam_websso.project_dir }}"
     state: latest
   when: pam_websso_git.changed
 
-- name: install PAM WebSSO settings
+- name: install WebSSO daemon settings
   template:
-    src: "settings.json.j2"
-    dest: "{{ pam_websso.project_dir }}/settings.json"
+    src: "websso_daemon.json.j2"
+    dest: "{{ pam_websso.project_dir }}/websso_daemon.json"
 
 - name: Create WebSSO daemon systemd service file
   template:
@@ -34,7 +34,7 @@
     dest: "{{ pam_websso.project_dir }}/websso-daemon.service"
     mode: 0644
 
-- name: Copy to satosa.service in /etc/systemd/system
+- name: Copy to websso-daemon.service in /etc/systemd/system
   copy:
     src: "{{ pam_websso.project_dir }}/websso-daemon.service"
     dest: /etc/systemd/system/websso-daemon.service

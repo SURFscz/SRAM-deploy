@@ -4,17 +4,17 @@
         "command": {{ pam_websso.daemon.ports.command }},
         "web": {{ pam_websso.daemon.ports.web }}
         },
-    "sso_server": "localhost",
+    "user_attribute": "{{ pam_websso.daemon.user_attribute }}",
     "strict": false,
     "debug": true,
     "sp": {
-        "entityId": "https://localhost/md",
+        "entityId": "http://{{hostnames.pam}}/md",
         "assertionConsumerService": {
-            "url": "http://localhost:8125/login/acs",
+            "url": "http://{{hostnames.pam}}/login/acs",
             "binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
         },
         "singleLogoutService": {
-            "url": "http://localhost:8125/login/sls",
+            "url": "http://{{hostnames.pam}}/login/sls",
             "binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
         },
         "NameIDFormat": "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified",
@@ -23,16 +23,12 @@
     },
 
     "idp": {
-        "entityId": "https://idp.example.com/saml/saml2/idp/metadata.php",
+        "entityId": "https://{{hostnames.proxy}}/md/SamlIdP.xml",
         "singleSignOnService": {
-            "url": "https://idp.example.com/saml/saml2/idp/SSOService.php",
+            "url": "https://{{hostnames.proxy}}/SamlSP/sso/redirect",
             "binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
         },
-        "singleLogoutService": {
-            "url": "https://idp.example.com/saml/saml2/idp/SingleLogoutService.php",
-            "binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
-        },
-        "x509cert": "-- PEM cert as one line, no header/footer --"
+        "x509cert": "{{satosa_frontend_cert.pub.replace('\n','')}}"
     }
 }
 

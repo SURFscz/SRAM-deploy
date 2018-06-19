@@ -75,6 +75,7 @@
   roles:
     - { role: ldap, tags: ['ldap'] }
     - { role: ldap_clients, tags: ['ldap', 'ldap_clients'] }
+    - { role: pam_websso_daemon,  tags: ['client','websso-daemon'] }
 
 - hosts:
     - proxy
@@ -89,8 +90,6 @@
     - { role: client-saml-idp,    tags: ['client','client-idp'   ] }
     - { role: client-google-idp,  tags: ['client','client-google'] }
     - { role: client-oidc-rp,     tags: ['client','client-rp'    ] }
-    - { role: pam_websso,         tags: ['client','pam-websso'   ] }
-    - { role: pam_websso_daemon,  tags: ['client','websso-daemon'] }
 
 - hosts: proxy
   roles:
@@ -114,3 +113,7 @@
   roles:
     - { role: http_dummy,  tags: ['meta','http']     }
     - { role: metadata,    tags: ['meta','metadata'] }
+
+- hosts: sandbox1
+  roles:
+    - { role: pam_websso,         tags: ['client','pam-websso'   ] }

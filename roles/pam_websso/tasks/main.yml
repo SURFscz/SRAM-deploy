@@ -33,13 +33,18 @@
 
 - name: install PAM WebSSO settings
   template:
-    src: "settings.json.j2"
-    dest: "{{ pam_websso.project_dir }}/settings.json"
+    src: "pam_websso.json.j2"
+    dest: "{{ pam_websso.project_dir }}/pam_websso.json"
 
 - name: install NSS LDAP settings
   template:
     src: "libnss-ldap.conf.j2"
     dest: "/etc/libnss-ldap.conf"
+
+- name: install NSS LDAP root pwd
+  template:
+    src: "pam_ldap.secret.j2"
+    dest: "/etc/pam_ldap.secret"
 
 - name: Copy PAM mkhomedir conf
   copy:
@@ -58,4 +63,20 @@
     path: /etc/nsswitch.conf
     regexp: '^(group:.*compat)$'
     replace: '\1 ldap'
+    backup: yes
+
+- name: Install sshd PAM WebSSO module
+  replace:
+    path: /etc/pam.d/sshd
+    regexp: '\n(\n.*\n@include common-auth\n)'
+    replace: >-
+      \n\nauth sufficient pam_python.so /opt/pam-websso/pam_websso.py\1
+    backup: yes
+
+- name: Install sshd mkhomedir module
+  replace:
+    path: /etc/pam.d/sshd
+    regexp: '\n(\n.*\n@include common-session\n)'
+    replace: >-
+      \n\nsession required pam_mkhomedir.so umask=0022 skel=/etc/skel\1
     backup: yes
