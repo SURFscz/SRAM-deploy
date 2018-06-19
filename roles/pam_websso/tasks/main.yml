@@ -81,3 +81,6 @@
     replace: >-
       \n\nsession required pam_mkhomedir.so umask=0022 skel=/etc/skel\1
     backup: yes
+
+- name: Restart nscd server
+  service: name=nscd state=restarted
