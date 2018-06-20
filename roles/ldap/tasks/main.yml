@@ -3,18 +3,18 @@
 - include_vars: "ldap.yml"
 
 - name: Install LDAP
-  apt: name={{ item }} state=present
-  with_items:
-    - slapd
-    - unzip
-    - ldap-utils
+  apt:
+    state: present
+    name:
+      - slapd
+      - ldap-utils
 
 - name: Copying alternative service script
   become: true
   copy:
     src: slapd.service
     dest: /etc/systemd/system
-  notify: systemctl daemon-reload
+  notify: systemd daemon-reload
   when: ansible_virtualization_type == "docker"
 
 - name: Ensure that a number of directories exist
@@ -34,12 +34,6 @@
 
 - name: Enable LDAP
   service: name=slapd state=restarted enabled=yes
-
-- name: Generating password hash for LDAP admin
-  command:
-    slappasswd -h {SSHA} -s {{ ldap_password }}
-  register:
-    ldap_root_hash
 
 - name: Copy schema2ldif
   become_user: "{{ ldap_user }}"

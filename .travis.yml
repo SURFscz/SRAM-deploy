@@ -1,24 +1,28 @@
 ---
 # Use containers instead of full VMs for faster startup.
-sudo: false
+sudo: required
+
+services:
+  - docker
+
 notifications:
+  # default: send to commiter
   email:
-    recipients:
-      - scz@list.surfnet.nl
     on_success: change
-    on_failure: change
+    on_failure: always
   slack:
-    on_success: change
-    on_failure: change
-    secure: "DTgBggmvvq0eWtCAG7N/ij3gKN2OOna/kjRBRTbk4Zm9Q7xE5j1+d8li46b1oO91l2cz0EhdjkPwusX5LHcoy\
-             0xoVQcYpqSGOwGX/MShOdl/ZjuyiorvzMHYD2aL/s7ZlTJWXGppoiUy1Vhl0aEQ/o2Rx8wYT7BANPdSVIMImf\
-             hhzenC1pnD+wMeqnsSn6Go/vpdUUrhakeJmTEGsJ9rdWiqjXlB/5hrTiy2/d4e0dqZAawbhLn19oZc7BVUfiF\
-             pF9HMd2dZ1H25gkUV7yW4c4lisdF6zGStfB6JmK5YBQuyoyqr1wgEYtkhKWQDMuhY0EOCjCwInF7huljCWass\
-             p5CFUqVWOzAJRTGxdrGhzeNB/jBI7KnS+KaI0AhFvGlqWrDT7UW1dldLyph1DzD7upHBFRGLFtIbdj7dAWxsQ\
-             jprVdbsz7hwbGRX9STHzBwzZ3UXbnWQKUTJ/iBsNI9h6c0Oxu4QeqpdX2Gp5F9dshpdjb9utHlbQTlLMI9bTE\
-             snYHPk9YFFKKPNgxx2H5hrlKEZxACGDbQQ0kjre7539hHBbg52fOhht5bI+aAhFzKMACfO4D6pkKUWFMhTWjT\
-             FanJbalMzHF2REvN5BgA6GWiC4E9sDV0ws7LV0BzBfkP5+QFZmUoztqB75HZQFtsaIiLmxlSRtFN22fW++1y/\
-             t6I="
+    on_success: always
+    on_failure: always
+    rooms:
+      secure: "GwjWmymXdHh3pyaDtriIrGyBqQGpFvS2sCa9yrO5xKrnPh0OZtJdVCNKCYREaSsdMp6NYL6EqoQgzABdl8\
+               ErK9VQ7ErpUZMuDKhaPZL4LTZ4CfuSdytD7g58Kmx1JYfLe7wuc3iiZi3XXpklK1TScHDyUFFR24imDXHG\
+               f2E/DPSsB6AJGrtqsHtjDE6u6f8XTuq5oEIXGinM50kgzjZamnpgD8Hzms/Jon4wIADy0iabIKaJeNZYsv\
+               VgWDP5lckIgRo6YmanTETiUCvOp3NIdcOAjilsEUiJbCAIB/aJ1TaRu3z5R295shgfBpPaz/a47zTCbeeq\
+               XMQJ604Mtg4CHRe7S54Fv+whIDGejA3LcEcM4/cxjG3kS3iyXRb6sHMpS7gqUgamjEd2EImcigElsxat4b\
+               KkKU13IPNbB4seVDdyXoAIBlkmJTNtzt1vH5DAFU5WHRO+qyOc3YxgX63cYJBcNxFZyZe63UuUSll20/5n\
+               jpCBGyVE1YW8rD2iMO/V+HxMY0wQiMyS855q5v9ayi7T5r7oaj98DfXUzzAP8VMKIITAYGiZpQeT5dDO63\
+               Ula3eJBTYTcHdpb37KrowB731sox8cBH9A5uAufdgxgUE/c3xo+kBVVLgt13lmBjmMqEdEN6pr8wSueSeI\
+               WIdQczg4EOJTLEMVgFBdCmd8f04="
 
 # the syntax check scripts as well as yamllint need python3
 language: python
@@ -33,7 +37,19 @@ git:
 install:
   - pip install yamllint
   - pip install jinja2
+  - sudo wget https://releases.hashicorp.com/vagrant/2.0.3/vagrant_2.0.3_x86_64.deb -P /tmp
+  - sudo dpkg -i /tmp/vagrant_2.0.3_x86_64.deb
+  #- sudo wget >
+  #  https://download.docker.com/linux/ubuntu/dists/trusty/pool/
+  #  stable/amd64/docker-ce_18.03.0~ce-0~ubuntu_amd64.deb -P /tmp
+  #- sudo dpkg -i /tmp/docker-ce_18.03.0~ce-0~ubuntu_amd64.deb
+  #- sudo apt -y update
+  - sudo apt -y install software-properties-common
+  - sudo apt-add-repository -y ppa:ansible/ansible
+  - sudo apt -y update
+  - sudo apt -y install ansible
+  - sudo apt -y install bridge-utils
 
 script:
-  - "./scripts/syntax-check"
-  - yamllint .
+  - scripts/syntax-check
+  - sudo ./start-vm --provider docker

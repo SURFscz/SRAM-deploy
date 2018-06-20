@@ -1,0 +1,432 @@
+<?xml version="1.0" ?>
+<!--
+        In the following file, comments are describing each node. Elements are
+        referenced through XPath expression, whereas attributes are prefixed with
+        '@'
+
+        //lsc Root node of the XML configuration file
+        @xmlns XML Schema validation is not ready yet (Reserved for futur use)
+        @id optional, added by XML API
+        @revision mandatory, used by the Web Administration Interface to version
+                                this file
+         -->
+<lsc xmlns="http://lsc-project.org/XSD/lsc-core-2.1.xsd" revision="0">
+
+<!--  ./connections Connections list node, must contain at least two connections -->
+
+  <connections>
+
+    <ldapConnection>
+      <name>ldap-src-conn</name>
+<!--  ./url mandatory, the JNDI URL -->
+      <url>ldap://localhost:389/{{ ldap.basedn }}</url>
+<!--  ./username mandatory, the DN to bind with -->
+      <username>{{ ldap.binddn }}</username>
+<!--  ./password mandatory, credentials to bind with -->
+      <password>{{ ldap_password }}</password>
+<!--  ./authentication mandatory, must contain either ANONYMOUS, SIMPLE, SASL, GSSAPI or DIGEST_MD5 -->
+      <authentication>SIMPLE</authentication>
+<!--  ./referral mandatory, must contain either IGNORE, THROUGH, THROW or FOLLOW -->
+      <referral>IGNORE</referral>
+<!--  ./derefAliases mandatory, must contain either NEVER, SEARCH, FIND, ALWAYS -->
+      <derefAliases>NEVER</derefAliases>
+<!--  ./version mandatory, must contain either VERSION_2, VERSION_3 -->
+      <version>VERSION_3</version>
+<!--  ./pageSize optional, specify the paged size when searching -->
+      <pageSize>-1</pageSize>
+<!--  ./factory mandatory, points to LDAP Context Factory, com.sun.jndi.ldap.LdapCtxFactory for a SUN JDK -->
+      <factory>com.sun.jndi.ldap.LdapCtxFactory</factory>
+<!--  ./tlsActivated optional, specify if SSL/TLS is activated to connect to the LDAP server -->
+      <tlsActivated>false</tlsActivated>
+    </ldapConnection>
+
+    <ldapConnection>
+      <name>ldap-dst-conn</name>
+<!--  ./url mandatory, the JNDI URL -->
+      <url>ldap://localhost:389/{{ client_ldap.basedn }}</url>
+<!--  ./username mandatory, the DN to bind with -->
+      <username>{{ client_ldap.binddn }}</username>
+<!--  ./password mandatory, credentials to bind with -->
+      <password>{{ client_ldap_password }}</password>
+<!--  ./authentication mandatory, must contain either ANONYMOUS, SIMPLE, SASL, GSSAPI or DIGEST_MD5 -->
+      <authentication>SIMPLE</authentication>
+<!--  ./referral mandatory, must contain either IGNORE, THROUGH, THROW or FOLLOW -->
+      <referral>IGNORE</referral>
+<!--  ./derefAliases mandatory, must contain either NEVER, SEARCH, FIND, ALWAYS -->
+      <derefAliases>NEVER</derefAliases>
+<!--  ./version mandatory, must contain either VERSION_2, VERSION_3 -->
+      <version>VERSION_3</version>
+<!--  ./pageSize optional, specify the paged size when searching -->
+      <pageSize>-1</pageSize>
+<!--  ./factory mandatory, points to LDAP Context Factory, com.sun.jndi.ldap.LdapCtxFactory for a SUN JDK -->
+      <factory>com.sun.jndi.ldap.LdapCtxFactory</factory>
+<!--  ./tlsActivated optional, specify if SSL/TLS is activated to connect to the LDAP server -->
+      <tlsActivated>false</tlsActivated>
+    </ldapConnection>
+  </connections>
+
+<!--  ./audits Audits list node -->
+  <audits>
+
+<!--./audit Audit node, here a CSV audit, may also be a LDIF or any contributed audit type -->
+        <csvAudit>
+<!--    ./name mandatory, audit name -->
+                <name>csv</name>
+<!--    ./append optional, default to false, specify to create a new log file or to append to the existing one  -->
+                <append>true</append>
+<!--    ./operations optional, comma separated list of operations (create, delete, update or rename) -->
+                <operations>create, delete</operations>
+<!--    ./file mandatory, define the location of the file where the CSV data will be written -->
+                <file>/tmp/dump.csv</file>
+<!--    ./datasets optional, comma separated list of datasets modification to log -->
+                <datasets>cn, dn</datasets>
+<!--    ./separator optional, default to ";", specify the values separator -->
+                <separator>,</separator>
+        </csvAudit>
+  </audits>
+
+<!--  ./tasks Task list node, must contain at least one task -->
+  <tasks>
+<!--  ./task Task node, this is the main node, in which synchronization is defined -->
+    <task>
+<!--  ./name mandatory task node this is the main node, in which synchronization is defined -->
+      <name>AA_PeopleSyncTask</name>
+<!--  ./bean optional bean node, default to org.lsc.beans.SimpleBean, define the pivot object used to store datasets and values -->
+      <bean>org.lsc.beans.SimpleBean</bean>
+<!--  ./sourceService mandatory node containing definition of the source service settings
+                possible builtin types are :
+                databaseSourceService, ldapSourceService
+                Plugins also provides: syncreplSourceService, nisSourceService
+        -->
+      <ldapSourceService>
+        <name>openldap-src-service</name>
+        <connection reference="ldap-src-conn" />
+        <baseDn>ou=People,o=Foobar,{{ ldap.basedn }}</baseDn>
+        <pivotAttributes>
+          <string>uid</string>
+        </pivotAttributes>
+        <fetchedAttributes>
+          <string>cn</string>
+          <string>sn</string>
+          <string>uid</string>
+          <string>homeDirectory</string>
+          <string>uidNumber</string>
+          <string>gidNumber</string>
+        </fetchedAttributes>
+        <getAllFilter><![CDATA[(objectClass=inetOrgPerson)]]></getAllFilter>
+        <getOneFilter><![CDATA[(&(objectClass=inetOrgPerson)(uid={uid}))]]></getOneFilter>
+        <cleanFilter><![CDATA[(&(objectClass=inetOrgPerson)(uid={uid}))]]></cleanFilter>
+      </ldapSourceService>
+
+<!--  ./destinationService mandatory node containing definition of the source service settings
+                @class define the implementation, possible builtin types are :
+                databaseDestinationService, ldapDestinationService
+                Plugins also provides: jndiExecDstService
+                -->
+      <ldapDestinationService>
+<!--    A ldap destination service will have to contain at least a name, a connection reference, a base DN, a filter to list
+                        entries, a filter to get a particular entry, a list of pivot attributes and a list of fetched attributes -->
+        <name>ldap-dst-service</name>
+        <connection reference="ldap-dst-conn" />
+<!--    ./baseDn This mandatory node provide the directory base branch that will be used to look for entries (list and get) -->
+        <baseDn>ou=People,o={{ test_organization.o}},{{ client_ldap.basedn }}</baseDn>
+<!--    ./pivotAttributes This mandatory node must include string nodes with attributes name that will be used with their values
+                        as pivot datasets (used to get the corresponding entry and to identify the counter-part object, here in the source database
+                        used during the clean phase to delete the corresponding entry if no corresponding object is found)-->
+        <pivotAttributes>
+          <string>uid</string>
+        </pivotAttributes>
+<!--    ./fetchedAttributes This mandatory node must include string nodes with attributes name that will fill the full object.
+                        In a LDAP destination service, fetched attributes will be written to the target directory, whereas source provided datasets
+                        that are not listed their will silently be canceled, i.e. not synchronized with the directory. -->
+        <fetchedAttributes>
+          <string>objectClass</string>
+          <string>cn</string>
+          <string>sn</string>
+          <string>uid</string>
+          <string>homeDirectory</string>
+          <string>uidNumber</string>
+          <string>gidNumber</string>
+        </fetchedAttributes>
+<!--    ./getAllFilter This mandatory node must include the filter that will be used to list all target objects. In a LDAP destination service
+                                        this value is used during the clean phase to look for every object that it has a corresponding object in the source database -->
+        <getAllFilter>(objectClass=inetorgperson)</getAllFilter>
+<!--    ./getOneFilter This mandatory node must include the filter that will be used to get a particular entry. In a LDAP destination service
+                                        this value is used during the synchronization phase to get the object - in conjonction with fetchedAttributes to synchronize them -->
+        <getOneFilter>(&amp;(objectClass=inetorgperson)(uid={uid}))</getOneFilter>
+      </ldapDestinationService>
+
+<!--  ./syncOptions This mandatory node describes how to handle the various situations encountered while synchronizing datasets.
+                        It must contains a main identifier construction rule and a default policy.
+                        It may contains synchronization conditions, a default delimiter and datasets synchronization rules (attribute nodes) -->
+      <propertiesBasedSyncOptions>
+<!--    ./mainIdentifier This mandatory node must contain a string Javascript expression that will enforce the object main identifier.-->
+        <mainIdentifier>"uid=" + srcBean.getDatasetFirstValueById("uid") + ",ou=People,o={{ test_organization.o}},{{ client_ldap.basedn }}"</mainIdentifier>
+<!--    ./defaultDelimiter This mandatory node must contain a string Javascript expression that will enforce the object main identifier.-->
+        <defaultDelimiter>;</defaultDelimiter>
+<!--    ./defaultPolicy This mandatory node must contain a string Javascript expression that will enforce the object main identifier.-->
+        <defaultPolicy>FORCE</defaultPolicy>
+<!--    ./conditions This optional node may contain one or more of the four node : create, update, delete and changeId -->
+        <conditions>
+<!--       ./create This optional node may contain a boolean Javascript expression that will indicate whenever a new entry must be created or not -->
+                <create>true</create>
+<!--       ./update This optional node may contain a boolean Javascript expression that will indicate whenever a existing entry must be updated or not -->
+                <update>true</update>
+<!--       ./delete This optional node may contain a boolean Javascript expression that will indicate whenever a existing entry must be deleted or not -->
+                <delete>true</delete>
+<!--       ./changeId This optional node may contain a boolean Javascript expression that will indicate whenever an existing object main identifier must be changed or not -->
+                <changeId>false</changeId>
+        </conditions>
+<!--    ./dataset This multi-valued node may contain a structure that will describe how to synchronize the corresponding dataset -->
+        <dataset>
+<!--      ./name Mandatory node containing the dataset name -->
+          <name>objectClass</name>
+<!--      ./policy Mandatory node containing the policy to apply to this dataset. Contains KEEP, FORCE or MERGE value -->
+          <policy>FORCE</policy>
+<!--      ./defaultValues Optional node containing a list of string values that will be used if noone is provided by datasource -->
+          <defaultValues></defaultValues>
+<!--      ./forceValues Optional node containing a list of string values that will be used to force destination service dataset values -->
+          <forceValues>
+            <string>"person"</string>
+            <string>"inetOrgPerson"</string>
+            <string>"posixAccount"</string>
+          </forceValues>
+<!--      ./createValues Optional node containing a list of string values that will be used to force destination service dataset values when creating object -->
+          <createValues></createValues>
+<!--      ./delimiter Used when multiples values are provided in a single joined value -->
+          <delimiter>,</delimiter>
+        </dataset>
+        <dataset>
+          <name>homeDirectory</name>
+          <forceValues>
+                <string>"/home/"+srcBean.getDatasetFirstValueById("uid")</string>
+          </forceValues>
+        </dataset>
+        <dataset>
+          <name>uidNumber</name>
+          <policy>KEEP</policy>
+          <forceValues>
+            <string>SequencesFactory.getInstance(ldap.getJndiServices()).getNextValue("cn=uidNumberSequence,ou=Sequence,o={{ test_organization.o}},{{ client_ldap.basedn }}", "serialNumber")</string>
+          </forceValues>
+        </dataset>
+      </propertiesBasedSyncOptions>
+    </task>
+    <task>
+      <name>AB_COSyncTask</name>
+      <bean>org.lsc.beans.SimpleBean</bean>
+      <ldapSourceService>
+        <name>openldap-src-cos</name>
+        <connection reference="ldap-src-conn" />
+        <baseDn>ou=Groups,o=Foobar,{{ ldap.basedn }}</baseDn>
+        <pivotAttributes>
+          <string>cn</string>
+        </pivotAttributes>
+        <fetchedAttributes>
+          <string>cn</string>
+          <string>o</string>
+          <string>member</string>
+        </fetchedAttributes>
+        <getAllFilter><![CDATA[(&(objectClass=groupOfNames)(cn=CO:*:active))]]></getAllFilter>
+        <getOneFilter><![CDATA[(&(objectClass=groupOfNames)(cn={cn}))]]></getOneFilter>
+        <cleanFilter><![CDATA[(&(objectClass=groupOfNames)(cn={description}))]]></cleanFilter>
+      </ldapSourceService>
+      <ldapDestinationService>
+        <name>ldap-dst-cos</name>
+        <connection reference="ldap-dst-conn" />
+        <baseDn>ou=Groups,o={{ test_organization.o}},{{ client_ldap.basedn }}</baseDn>
+        <pivotAttributes>
+          <string>description</string>
+        </pivotAttributes>
+        <fetchedAttributes>
+          <string>objectClass</string>
+          <string>member</string>
+          <string>description</string>
+        </fetchedAttributes>
+        <getAllFilter>(objectClass=groupOfNames)</getAllFilter>
+        <getOneFilter>(&amp;(objectClass=groupOfNames)(description={cn}))</getOneFilter>
+      </ldapDestinationService>
+      <propertiesBasedSyncOptions>
+        <mainIdentifier><!--https://regex101.com/r/A4i95l/1-->
+          <![CDATA[rjs:
+            var co = srcBean.getDatasetFirstValueById("o");
+            var cn = srcBean.getDatasetFirstValueById("cn");
+            var group = cn.match(/^(?:CO:)?(?:COU:)?([^:]*?):?(members:active)?$/);
+            "cn=" + co + (group[1]?"_" + group[1]:"") + ",ou=Groups,o={{ test_organization.o}},{{ client_ldap.basedn }}";
+          ]]>
+        </mainIdentifier>
+        <defaultDelimiter>;</defaultDelimiter>
+        <defaultPolicy>FORCE</defaultPolicy>
+        <conditions>
+                <create>true</create>
+                <update>true</update>
+                <delete>true</delete>
+                <changeId>false</changeId>
+        </conditions>
+        <dataset>
+          <name>objectClass</name>
+          <policy>KEEP</policy>
+          <defaultValues></defaultValues>
+          <forceValues></forceValues>
+          <createValues>
+            <string>"groupOfNames"</string>
+          </createValues>
+          <delimiter>,</delimiter>
+        </dataset>
+        <dataset>
+          <name>description</name>
+          <policy>FORCE</policy>
+          <defaultValues></defaultValues>
+          <forceValues></forceValues>
+          <createValues>
+            <string>srcBean.getDatasetFirstValueById("cn")</string>
+          </createValues>
+        </dataset>
+        <dataset>
+          <name>member</name>
+          <policy>FORCE</policy>
+          <defaultValues></defaultValues>
+          <forceValues>
+            <string>
+            <![CDATA[rjs:
+                var membersSrcDn = srcBean.getDatasetValuesById("member");
+                var membersDstDn = [];
+                for  (var i=0; i<membersSrcDn.size(); i++) {
+                        var memberSrcDn = membersSrcDn.get(i);
+                        var uid = "";
+                        try {
+                           uid = srcLdap.attribute(memberSrcDn, "uid").get(0);
+                        } catch(e) {
+                           continue;
+                        }
+                        var destDn = ldap.search("ou=People,o={{ test_organization.o }}", "(uid=" + uid + ")");
+                        if (!destDn || destDn.size() == 0 || destDn.size() > 1) {
+                           continue;
+                        }
+                        var destMemberDn = destDn.get(0) + "," +  ldap.getContextDn();
+                        membersDstDn.push(destMemberDn);
+                }
+                membersDstDn
+            ]]>
+            </string>
+          </forceValues>
+          <createValues></createValues>
+          <delimiter>,</delimiter>
+        </dataset>
+      </propertiesBasedSyncOptions>
+    </task>
+    <task>
+      <name>AC_GroupSyncTask</name>
+      <bean>org.lsc.beans.SimpleBean</bean>
+      <ldapSourceService>
+        <name>openldap-src-groups</name>
+        <connection reference="ldap-src-conn" />
+        <baseDn>ou=Groups,o=Foobar,{{ ldap.basedn }}</baseDn>
+        <pivotAttributes>
+          <string>cn</string>
+        </pivotAttributes>
+        <fetchedAttributes>
+          <string>cn</string>
+          <string>o</string>
+          <string>member</string>
+        </fetchedAttributes>
+        <getAllFilter><![CDATA[(&(objectClass=groupOfNames)(!(cn=CO:*)))]]></getAllFilter>
+        <getOneFilter><![CDATA[(&(objectClass=groupOfNames)(cn={cn}))]]></getOneFilter>
+        <cleanFilter><![CDATA[(&(objectClass=groupOfNames)(cn={description}))]]></cleanFilter>
+      </ldapSourceService>
+      <ldapDestinationService>
+        <name>ldap-dst-groups</name>
+        <connection reference="ldap-dst-conn" />
+        <baseDn>ou=Groups,o={{ test_organization.o}},{{ client_ldap.basedn }}</baseDn>
+        <pivotAttributes>
+          <string>description</string>
+        </pivotAttributes>
+        <fetchedAttributes>
+          <string>objectClass</string>
+          <string>member</string>
+          <string>description</string>
+        </fetchedAttributes>
+        <getAllFilter>(objectClass=groupOfNames)</getAllFilter>
+        <getOneFilter>(&amp;(objectClass=groupOfNames)(description={cn}))</getOneFilter>
+      </ldapDestinationService>
+      <propertiesBasedSyncOptions>
+        <mainIdentifier><!--https://regex101.com/r/A4i95l/1-->
+          <![CDATA[rjs:
+            var co = srcBean.getDatasetFirstValueById("o");
+            var cn = srcBean.getDatasetFirstValueById("cn");
+            "cn=" + co + "-" + cn + ",ou=Groups,o={{ test_organization.o}},{{ client_ldap.basedn }}";
+          ]]>
+        </mainIdentifier>
+        <defaultDelimiter>;</defaultDelimiter>
+        <defaultPolicy>FORCE</defaultPolicy>
+        <conditions>
+                <create>true</create>
+                <update>true</update>
+                <delete>true</delete>
+                <changeId>false</changeId>
+        </conditions>
+        <dataset>
+          <name>objectClass</name>
+          <policy>KEEP</policy>
+          <defaultValues></defaultValues>
+          <forceValues></forceValues>
+          <createValues>
+            <string>"groupOfNames"</string>
+          </createValues>
+          <delimiter>,</delimiter>
+        </dataset>
+        <dataset>
+          <name>description</name>
+          <policy>FORCE</policy>
+          <defaultValues></defaultValues>
+          <forceValues></forceValues>
+          <createValues>
+            <string>srcBean.getDatasetFirstValueById("cn")</string>
+          </createValues>
+        </dataset>
+        <dataset>
+          <name>member</name>
+          <policy>FORCE</policy>
+          <defaultValues></defaultValues>
+          <forceValues>
+            <string>
+            <![CDATA[rjs:
+                var membersSrcDn = srcBean.getDatasetValuesById("member");
+                var membersDstDn = [];
+                for  (var i=0; i<membersSrcDn.size(); i++) {
+                        var memberSrcDn = membersSrcDn.get(i);
+                        var uid = "";
+                        try {
+                           uid = srcLdap.attribute(memberSrcDn, "uid").get(0);
+                        } catch(e) {
+                           continue;
+                        }
+                        var destDn = ldap.search("ou=People,o={{ test_organization.o }}", "(uid=" + uid + ")");
+                        if (!destDn || destDn.size() == 0 || destDn.size() > 1) {
+                           continue;
+                        }
+                        var destMemberDn = destDn.get(0) + "," +  ldap.getContextDn();
+                        membersDstDn.push(destMemberDn);
+                }
+                membersDstDn
+            ]]>
+            </string>
+          </forceValues>
+          <createValues></createValues>
+          <delimiter>,</delimiter>
+        </dataset>
+      </propertiesBasedSyncOptions>
+    </task>
+  </tasks>
+<!-- ./security This mandatory node contains the security settings used by LSC -->
+  <security>
+<!-- ./encryption This optional node contains the encryption settings -->
+    <encryption>
+<!--  ./keyfile This optional node contains the keyfile location -->
+      <keyfile>etc/lsc.key</keyfile>
+<!--  ./algorithm This optional node contains the encryption algorithm -->
+      <algorithm>AES</algorithm>
+<!--  ./strength This optional node contains the algorithm key length -->
+      <strength>128</strength>
+    </encryption>
+  </security>
+</lsc>

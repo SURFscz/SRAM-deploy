@@ -5,3 +5,5 @@ simplesaml_download_url: "https://github.com/simplesamlphp/simplesamlphp/release
 simplesaml_version: "1.15.3"
 simplesaml_project_dir: "/opt/simplesaml"
 
+client_ssp_admin_pass: "admin"
+client_ssp_salt: "ThisIsNotASecretSalt,PleaseChangeMe!"

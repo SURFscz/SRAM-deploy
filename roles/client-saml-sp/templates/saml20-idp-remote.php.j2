@@ -3,8 +3,11 @@
  * SURFnet {{ environment_string }} frontend metadata
  **/
 
-$metadata['https://{{ hostnames.proxy }}/md/SamlMirrorIdP.xml/SamlSP/aHR0cHM6Ly9pZHAtdGVzdC5zY3otdm0ubmV0L3NhbWwvc2FtbDIvaWRwL21ldGFkYXRhLnBocA=='] = array (
-  'entityid' => 'https://{{ hostnames.proxy }}/md/SamlMirrorIdP.xml/SamlSP/aHR0cHM6Ly9pZHAtdGVzdC5zY3otdm0ubmV0L3NhbWwvc2FtbDIvaWRwL21ldGFkYXRhLnBocA==',
+{% set entity_test_idp     = "https://" ~ hostnames.idp ~ "/saml/saml2/idp/metadata.php" %}
+{% set entity_test_idp_b64 = entity_test_idp | b64encode                                 %}
+
+$metadata['https://{{ hostnames.proxy }}/md/SamlMirrorIdP.xml/SamlSP/{{ entity_test_idp_b64 }}'] = array (
+  'entityid' => 'https://{{ hostnames.proxy }}/md/SamlMirrorIdP.xml/SamlSP/{{ entity_test_idp_b64 }}',
   'description' =>
   array (
     'en' => '{{ environment_string }} Mirrored Proxy Normal SP Org.',
@@ -56,12 +59,12 @@ $metadata['https://{{ hostnames.proxy }}/md/SamlMirrorIdP.xml/SamlSP/aHR0cHM6Ly9
     0 =>
     array (
       'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
-      'Location' => 'https://{{ hostnames.proxy }}/SamlSP/aHR0cHM6Ly9pZHAtdGVzdC5zY3otdm0ubmV0L3NhbWwvc2FtbDIvaWRwL21ldGFkYXRhLnBocA==/sso/redirect',
+      'Location' => 'https://{{ hostnames.proxy }}/SamlSP/{{ entity_test_idp_b64 }}/sso/redirect',
     ),
     1 =>
     array (
       'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
-      'Location' => 'https://{{ hostnames.proxy }}/SamlSP/aHR0cHM6Ly9pZHAtdGVzdC5zY3otdm0ubmV0L3NhbWwvc2FtbDIvaWRwL21ldGFkYXRhLnBocA==/sso/post',
+      'Location' => 'https://{{ hostnames.proxy }}/SamlSP/{{ entity_test_idp_b64 }}/sso/post',
     ),
   ),
   'SingleLogoutService' =>
@@ -82,7 +85,7 @@ $metadata['https://{{ hostnames.proxy }}/md/SamlMirrorIdP.xml/SamlSP/aHR0cHM6Ly9
       'encryption' => false,
       'signing' => true,
       'type' => 'X509Certificate',
-      'X509Certificate' => '{{ satosa_backend_cert.pub | barepem }}',
+      'X509Certificate' => '{{ satosa_frontend_cert.pub | barepem }}',
     ),
   ),
   'UIInfo' =>
@@ -112,8 +115,8 @@ $metadata['https://{{ hostnames.proxy }}/md/SamlMirrorIdP.xml/SamlSP/aHR0cHM6Ly9
     ),
   ),
 );
-$metadata['https://{{ hostnames.proxy }}/md/SamlMirrorIdP.xml/SamlMirrorSP/aHR0cHM6Ly9pZHAtdGVzdC5zY3otdm0ubmV0L3NhbWwvc2FtbDIvaWRwL21ldGFkYXRhLnBocA=='] = array (
-  'entityid' => 'https://{{ hostnames.proxy }}/md/SamlMirrorIdP.xml/SamlMirrorSP/aHR0cHM6Ly9pZHAtdGVzdC5zY3otdm0ubmV0L3NhbWwvc2FtbDIvaWRwL21ldGFkYXRhLnBocA==',
+$metadata['https://{{ hostnames.proxy }}/md/SamlMirrorIdP.xml/SamlMirrorSP/{{ entity_test_idp_b64 }}'] = array (
+  'entityid' => 'https://{{ hostnames.proxy }}/md/SamlMirrorIdP.xml/SamlMirrorSP/{{ entity_test_idp_b64 }}',
   'description' =>
   array (
     'en' => '{{ environment_string }} Mirrored Proxy Mirrored SP Org.',
@@ -165,12 +168,12 @@ $metadata['https://{{ hostnames.proxy }}/md/SamlMirrorIdP.xml/SamlMirrorSP/aHR0c
     0 =>
     array (
       'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
-      'Location' => 'https://{{ hostnames.proxy }}/SamlMirrorSP/aHR0cHM6Ly9pZHAtdGVzdC5zY3otdm0ubmV0L3NhbWwvc2FtbDIvaWRwL21ldGFkYXRhLnBocA==/sso/redirect',
+      'Location' => 'https://{{ hostnames.proxy }}/SamlMirrorSP/{{ entity_test_idp_b64 }}/sso/redirect',
     ),
     1 =>
     array (
       'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
-      'Location' => 'https://{{ hostnames.proxy }}/SamlMirrorSP/aHR0cHM6Ly9pZHAtdGVzdC5zY3otdm0ubmV0L3NhbWwvc2FtbDIvaWRwL21ldGFkYXRhLnBocA==/sso/post',
+      'Location' => 'https://{{ hostnames.proxy }}/SamlMirrorSP/{{ entity_test_idp_b64 }}/sso/post',
     ),
   ),
   'SingleLogoutService' =>
@@ -191,7 +194,7 @@ $metadata['https://{{ hostnames.proxy }}/md/SamlMirrorIdP.xml/SamlMirrorSP/aHR0c
       'encryption' => false,
       'signing' => true,
       'type' => 'X509Certificate',
-      'X509Certificate' => '{{ satosa_backend_cert.pub | barepem }}',
+      'X509Certificate' => '{{ satosa_frontend_cert.pub | barepem }}',
     ),
   ),
   'UIInfo' =>
@@ -310,7 +313,7 @@ $metadata['https://{{ hostnames.proxy }}/md/SamlIdP.xml'] = array (
       'encryption' => false,
       'signing' => true,
       'type' => 'X509Certificate',
-      'X509Certificate' => '{{ satosa_backend_cert.pub | barepem }}',
+      'X509Certificate' => '{{ satosa_frontend_cert.pub | barepem }}',
     ),
   ),
 );

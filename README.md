@@ -1,8 +1,10 @@
 # Science Collaboration Zone
+[![Build Status](https://travis-ci.org/SURFscz/SCZ-deploy.svg?branch=travis-docker)](https://travis-ci.org/SURFscz/SCZ-deploy)
+
 
 The Science Collaboration Zone (SCZ) project offers ann Identity Management solution
 for research collaborations.  It is a middleware solution for
-researchers, which allows them to 
+researchers, which allows them to
 
 - log in using credentials from their university;
 - handle (Identity and Access Management (IAM) for their collaborations;
@@ -31,25 +33,30 @@ SCZ-platform.  The easiest way to get started is using Vagrant, which will
 create a number of VMs on your local machine, en run the Ansible playbook to
 install the different components onto the VMs.
 
-We support this on both Linux (tested on Ubuntu 17.10 and 18.04) and OSX/MacOS
-(tested on High Sierra).  For VM backends, both libvirt/qemu and virtualbox
-are supported.  We are working on Docker support, but this is currently
-broken.
-
-
+We support this on both Linux (tested on Ubuntu 17.10 and 18.04, experimental on
+openSUSE Tumbleweed) and OSX/MacOS (tested on High Sierra).  For VM backends,
+both libvirt/qemu and virtualbox are supported.  We are working on Docker
+support, but this is currently broken (works on openSUSE Tumbleweed).
 
 To get started, do the following:
 
 - install Vagrant (>=1.9) and Ansible (>=2.4.3)
     - Ubuntu/Debian: `apt install ansible vagrant`
+    - OpenSUSE Tumbleweed: `zypper install ansible vagrant`
     - MacOS: see
       <http://docs.ansible.com/ansible/latest/intro_installation.html#latest-releases-on-mac-osx>
       and <https://www.vagrantup.com/downloads.html>
 - install either one of:
     - virtualbox: `apt install virtualbox`
+    - virtualbox (openSUSE Tumbleweed): `zypper install virtualbox`
     - libvirt and qemu: `apt install libvirt-daemon-system virt-manager
      gir1.2-spice-client-gtk-3.0 qemu qemu-kvm`
+    - docker (openSUSE Tumbleweed): `sudo zypper install docker docker-compose` and
+      if you want the docker deamon to start automatically: `sudo systemctl enable docker`
+      If you are on a btrfs system and using snapshots (snapper for example),
+      you might want to consider making `/var/lib/docker` a subvolume.
 - (libvirt only) add your user to the libvirt group: `adduser $(whoami) libvirt`
+- openSUSE Tumbleweed with docker: either use YaST, or `sudo usermod -a -G docker`
 - add the following entries to `/etc/hosts`:
     ```
     172.20.1.24 lb.vm.scz-vm.net oidc-test.scz-vm.net sp-test.scz-vm.net idp-test.scz-vm.net proxy.scz-vm.net mdq.scz-vm.net cm.scz-vm.net comanage.scz-vm.net ldap.scz-vm.net meta.scz-vm.net
@@ -60,11 +67,11 @@ To get started, do the following:
     172.20.1.25 client.vm.scz-vm.net
     ```
 - set up the VMs and start the deploy:
-    - libvirt: `vagrant up --provider libvirt --provision` 
-    - virtualbox: `vagrant up --provider virtualbox --provision`
+    - libvirt: `vagrant up --provider libvirt; ./start-vm` 
+    - virtualbox: `vagrant up --provider virtualbox; ./start-vm`
 
-    This will start 5 VMs (each requires 786MB of memory) and run the ansible
-    playbook to install the SCZ on those VMs.
+    This will boot 6 VMs (each of which requires 786MB of memory) and run ansible to deploy SCZ to these 6 hosts.
+
 - when the deploy finishes, you should be able to browse to
   <https://comanage.scz-vm.net> and login using the default platform admin
   credentials `baas`/`baas`

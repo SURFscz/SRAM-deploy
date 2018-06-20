@@ -1,3 +1,4 @@
 {% for ns in servers.dns %}
 nameserver {{ns}}
 {% endfor %}
+search{% for d in servers.search %} {{d}}{% endfor %}

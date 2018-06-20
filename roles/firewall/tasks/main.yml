@@ -3,11 +3,12 @@
   block:
 
     - name: Install iptables
-      apt: name={{item}} state=present
-      with_items:
-        - iptables
-        - netfilter-persistent
-        - iptables-persistent
+      apt:
+        state: present
+        name:
+          - iptables
+          - netfilter-persistent
+          - iptables-persistent
 
     - name: Put ip4tables
       template: src=ip4tables.j2 dest='/etc/iptables/rules.v4'

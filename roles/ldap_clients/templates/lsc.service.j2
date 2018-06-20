@@ -1,0 +1,10 @@
+[Unit]
+Description=LSC Runner
+
+[Service]
+User=root
+Group=root
+Type=oneshot
+WorkingDirectory={{ lsc_install_dir }}
+ExecStart={{ lsc_install_dir }}/run_lsc_tasks
+

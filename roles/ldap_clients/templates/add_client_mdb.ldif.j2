@@ -1,0 +1,21 @@
+# Add Client mdb
+dn: olcDatabase=mdb,cn=config
+objectClass: olcDatabaseConfig
+objectClass: olcMdbConfig
+olcDatabase: mdb
+olcSuffix: {{ client_ldap.basedn }}
+olcDbDirectory: {{ client_ldap_dbdir }}
+olcRootDN: {{ client_ldap.binddn }}
+olcRootPW: {{ client_ldap_password | slapd_hash }}
+olcDbIndex: objectClass eq
+olcDbIndex: cn,uid eq
+olcDbIndex: uidNumber,gidNumber eq
+olcDbIndex: member,memberUid eq
+olcAccess: to attrs=userPassword
+   by anonymous auth
+   by dn.exact="{{ client_ldap.binddn }}" write
+   by * none
+olcAccess: to dn.regex="(.+,)?(o=[^,]+,{{ client_ldap.basedn }})$"
+   by dn.exact="{{ client_ldap.binddn }}" write
+   by dn.exact,expand="cn=admin,$2" read
+   by * none

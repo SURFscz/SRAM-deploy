@@ -10,14 +10,19 @@
   register: comanage_old_files
   failed_when: comanage_old_files.matched > 0
 
-# TODO: this fails if the target is already a symlink
+# TODO: the "create target dir" below doesn't do anything
+# if the target is already a symlink
 # see https://github.com/ansible/ansible/issues/30797
-# so work around it for now
-- name: hack
+# so explicitly remove any leftover symlinks
+- name: "Check if {{comanage_install_dir}} is a symlink"
   stat: "path={{ comanage_install_dir }}"
   register: result
-  changed_when: false
-  failed_when: result.stat.islnk
+
+- name: "Remove symlink {{comanage_install_dir}}"
+  file:
+    path: "{{ comanage_install_dir }}"
+    state: absent
+  when: "result.stat.exists and result.stat.islnk"
 
 - name: Create target directories
   file:
@@ -46,7 +51,8 @@
   file:
     path: "{{comanage_tmp_dir}}"
     owner: www-data
-    mode: 0700
+    group: root
+    mode: u=rwX,go=rX
     state: directory
     recurse: yes
 
@@ -56,6 +62,44 @@
     dest: "{{ comanage_path }}/local/tmp"
     state: link
     force: "true"
+
+- name: Check if old log dir exists
+  stat: "path={{comanage_tmp_dir}}/logs"
+  register: logdir
+
+- name: Check if old log files exists
+  find: "paths={{comanage_tmp_dir}}/logs"
+  when: logdir.stat.islnk is defined and logdir.stat.islnk == False
+  register: logfiles
+
+- name: Save old log files
+  archive:
+    path: "{{comanage_tmp_dir}}/logs"
+    dest: "{{comanage_tmp_dir}}/old-{{ansible_date_time.iso8601}}.tar.gz"
+    remove: true
+  when: logdir.stat.islnk is defined and logdir.stat.islnk == False and logfiles.matched > 0
+
+- name: Remove old log directory
+  file:
+    path: "{{comanage_tmp_dir}}/logs"
+    follow: false
+    state: absent
+  when: logdir.stat.islnk is defined and logdir.stat.islnk == False
+
+- name: Create new log dir
+  file:
+    path: "/var/log/comanage"
+    state: directory
+    owner: root
+    group: www-data
+    mode: 0775
+
+- name: Make a symlink to the new log dir
+  file:
+    path: "{{comanage_tmp_dir}}/logs"
+    src: "/var/log/comanage"
+    state: link
+  when: logdir.stat.islnk is defined and logdir.stat.islnk == False
 
 # TODO: cache must be cleared, because otherwise Comanage will look for
 # plugins which haven't been instlled yet.  Real solution is probably to move
@@ -114,6 +158,7 @@
 
 # sometimes, when reinstalling to an existing database, the salt and seed are
 # not recreated
+# TODO: these chown be writable for www-data
 - name: Setup Cake salt
   shell: >
     dd if=/dev/urandom bs=1 count=4000 | tr -dc 'a-zA-Z0-9' | fold -w 40
@@ -153,6 +198,13 @@
     SHA1("{{ comanage_salt.stdout }}{{ comanage_api_password }}"), NULL, NULL);'
     -u {{ comanage_db_user }} "--password={{ comanage_db_password }}"
   when: comanage_api_user_exists.stdout == "0"
+
+- name: Tune ldap connections for LdapProvisioner
+  lineinfile:
+    path: "/etc/ldap/ldap.conf"
+    line: "TLS_REQCERT allow"
+    regexp: '^tls_reqcert\s.*(?i)'
+    state: present
 
 - name: Create a crontab entry
   cron:

@@ -1,0 +1,4 @@
+---
+simplesaml_oidc_repo_url: https://github.com/SURFscz/simplesamlphp-module-openidconnect.git
+simplesaml_oidc_repo_version: master
+simplesaml_oidc_src_dir: "{{ simplesaml_project_dir }}/module-oidc"

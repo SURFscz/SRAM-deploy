@@ -1,5 +1,6 @@
 .ansible/
 .vagrant/
+vagrant.log
 provision.retry
 logs/
 *.pyc

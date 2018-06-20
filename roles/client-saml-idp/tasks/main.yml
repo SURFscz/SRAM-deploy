@@ -1,11 +1,8 @@
 ---
-- block:
-    - name: SimpleSaml {{ environment_string }} metadata
-      template:
-        src: "{{ item }}.j2"
-        dest: "{{ simplesaml_project_dir }}/simplesaml/metadata/{{ item }}"
-      with_items:
-        - saml20-sp-remote.php
-
-  become: "yes"
-  become_user: www-data
+- name: SimpleSaml {{ environment_string }} metadata
+  template:
+    src: "{{ item }}.j2"
+    dest: "{{ simplesaml_project_dir }}/simplesaml/metadata/{{ item }}"
+    owner: "www-data"
+  with_items:
+    - saml20-sp-remote.php
