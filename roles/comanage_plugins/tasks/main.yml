@@ -44,18 +44,6 @@
   with_items: "{{ comanage_plugin_configurations }}"
   become: yes
 
-- name: Configure JsonLog for ZoneProvisioner
-  blockinfile:
-    path: "{{ comanage_path }}/app/Config/bootstrap.php"
-    follow: yes
-    insertbefore: "CakeLog::config\\('debug'"
-    marker: // {mark} ANSIBLE MANAGED BLOCK"
-    block: |
-      CakeLog::config('json', array(
-        'engine' => 'ZoneProvisioner.JsonLog',
-        'types' => array('json_err','json_not'),
-        'path' => '{{ comanage_path }}/local/tmp/logs',
-      ));
 
 - name: Set Database configuration for external Proxy database
   blockinfile:
@@ -86,3 +74,16 @@
   become_user: "{{ comanage_www_user }}"
   args:
     chdir: "{{ comanage_path }}/app"
+
+- name: Configure JsonLog for ZoneProvisioner
+  blockinfile:
+    path: "{{ comanage_path }}/app/Config/bootstrap.php"
+    follow: yes
+    insertbefore: "CakeLog::config\\('debug'"
+    marker: // {mark} ANSIBLE MANAGED BLOCK"
+    block: |
+      CakeLog::config('json', array(
+        'engine' => 'ZoneProvisioner.JsonLog',
+        'types' => array('json_err','json_not'),
+        'path' => '{{ comanage_path }}/local/tmp/logs',
+      ));
