@@ -18,11 +18,13 @@ hostnames:
   sp:       sp-test.{{base_domain}}
   idp:      idp-test.{{base_domain}}
   google:   google-test.{{base_domain}}
+  orcid:    orcid.{{base_domain}}
 
 idp_test_port: 81
 sp_test_port: 82
 oidc_test_port: 83
 google_test_port: 84
+orcid_test_port: 85
 
 # COmanage-ldap configuration
 comanage_ldap_host: "ldap.vm.scz-vm.net"

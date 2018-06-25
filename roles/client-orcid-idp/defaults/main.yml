@@ -1,0 +1,4 @@
+---
+orcid_repo_url: https://github.com/rciam/simplesamlphp-module-authorcid.git
+orcid_repo_version: master
+orcid_repo_dst_dir: "{{ simplesaml_project_dir }}/simplesaml/modules/authorcid"
