@@ -102,7 +102,7 @@
   when: logdir.stat.islnk is defined and logdir.stat.islnk == False
 
 # TODO: cache must be cleared, because otherwise Comanage will look for
-# plugins which haven't been instlled yet.  Real solution is probably to move
+# plugins which haven't been installed yet.  Real solution is probably to move
 # plugin installation here
 - name: Clear comanage cache
   command: ./Console/clearcache
@@ -143,6 +143,14 @@
   args:
     chdir: "{{ comanage_path }}/app"
   when: comanage_cm_users_table_exists.stdout == "0"
+
+- name: Upgrade Cake database
+  command: >
+    ./Console/cake upgrade_version
+  become: true
+  become_user: "{{ comanage_www_user }}"
+  args:
+    chdir: "{{ comanage_path }}/app"
 
 - name: Setup Cake for login
   command: >
