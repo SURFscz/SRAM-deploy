@@ -56,11 +56,14 @@
   ldap_entry:
     #bind_dn: "{{ client_ldap.binddn }}"
     #bind_pw: "{{ client_ldap_password }}"
-    dn: "cn=uidNumberSequence,ou=Sequence,o={{ client.name }},{{ client_ldap.basedn }}"
+    dn: "cn={{ item }},ou=Sequence,o={{ client.name }},{{ client_ldap.basedn }}"
     objectClass: device
     attributes:
-      cn: uidNumberSequence
+      cn: "{{ item }}"
       serialNumber: 1
+  with_items:
+    - uidNumberSequence
+    - gidNumberSequence
 
 
 # LSC config
