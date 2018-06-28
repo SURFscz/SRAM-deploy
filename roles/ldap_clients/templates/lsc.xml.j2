@@ -250,8 +250,8 @@
           <string>description</string>
           <string>gidNumber</string>
         </fetchedAttributes>
-        <getAllFilter>(objectClass=groupOfNames)</getAllFilter>
-        <getOneFilter>(&amp;(objectClass=groupOfNames)(description={cn}))</getOneFilter>
+        <getAllFilter>(objectClass=posixGroup)</getAllFilter>
+        <getOneFilter>(&amp;(objectClass=posixGroup)(description={cn}))</getOneFilter>
       </ldapDestinationService>
       <propertiesBasedSyncOptions>
         <mainIdentifier><!--https://regex101.com/r/A4i95l/1-->
@@ -298,7 +298,7 @@
             <![CDATA[rjs:
                 java.lang.System.out.println("srcCn:"+srcBean.getDatasetFirstValueById("cn"));
                 var memberSrcDns = srcBean.getDatasetValuesById("member");
-                var memberDstDns = [];
+                var memberDstUids = [];
                 for  (var i=0; i<memberSrcDns.size(); i++) {
                     try {
                        memberSrcDn = memberSrcDns.get(i);
@@ -306,13 +306,14 @@
                        uid = srcLdap.attribute(memberSrcDn, "uid").get(0);
                        memberDstRdn = ldap.search("ou=People,o={{ client.name }}", "(uid=" + uid + ")");
                        memberDstDn = memberDstRdn.get(0) + "," + ldap.getContextDn();
-                       memberDstDns.push(memberDstDn);
+                       memberDstUid = ldap.attribute(memberDstDn, "uid").get(0);
+                       memberDstUids.push(memberDstUid);
                     } catch(e) {
                        continue;
                     }
                 }
-                java.lang.System.out.println("membersDstDns:" + memberDstDns);
-                memberDstDns
+                java.lang.System.out.println("membersDstUids:" + memberDstUids);
+                memberDstUids
             ]]>
             </string>
           </forceValues>
