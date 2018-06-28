@@ -95,7 +95,7 @@
                         100 => array('class' => 'core:PHP',
                                 'code' => '
                                         if (empty($attributes["orcid.path"])) {
-                                                throw new Exception("Missing orcid.path attribute.");
+                                          throw new Exception("Missing orcid.path attribute.");
                                         }
                                         $path = $attributes["orcid.path"][0];
                                         $path .= "@{{hostnames.orcid}}";
