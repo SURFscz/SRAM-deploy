@@ -37,7 +37,7 @@
       - organizationalRole
     attributes:
       cn: admin
-      userPassword: "{{ client.password | slapd_hash }}"
+      userPassword: "{{ '%s' |  format(client.password) | slapd_hash }}"
 
 - name: "Add database skeleton to client db"
   ldap_entry:
