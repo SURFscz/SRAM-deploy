@@ -18,7 +18,7 @@ hostnames:
   sp:       sp-test.{{base_domain}}
   idp:      idp-test.{{base_domain}}
   google:   google-test.{{base_domain}}
-  orcid:    orcid.{{base_domain}}
+  orcid:    orcid-test.{{base_domain}}
 
 idp_test_port: 81
 sp_test_port: 82
@@ -67,6 +67,10 @@ loadbalancer:
     http: true
     backend_hosts: "{{groups['vm-client']}}"
     backend_port: "{{google_test_port}}"
+  - hostname: "{{hostnames.orcid}}"
+    http: true
+    backend_hosts: "{{groups['vm-client']}}"
+    backend_port: "{{orcid_test_port}}"
   - hostname: "{{hostnames.ldap}}"
     http: false
     frontend_port: 636
