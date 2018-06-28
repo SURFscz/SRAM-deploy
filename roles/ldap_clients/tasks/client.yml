@@ -1,0 +1,87 @@
+---
+- set_fact: client="{{item_client}}"
+
+#- name: Check if client test organization already exists
+#  shell: >
+#    ldapsearch -c -x -D "{{ client_ldap.binddn }}" -w "{{ client_ldap_password }}"
+#    -H ldapi:/// -b '{{ client_ldap.basedn }}' o
+#  register: org
+#  changed_when: false
+
+#- name: Add client test organization
+#  command: >
+#    ldapadd -c -x -D "{{ client_ldap.binddn }}" -w "{{ client_ldap_password }}"
+#    -f "{{ ldap_ldif_dir }}/add_test_organization.ldif"
+#  register: result
+#  failed_when: "(result.rc not in [0, 68])"
+#  when: org.stdout.find(test_organization.o) == -1
+
+
+- name: "Create the client {{client.name}} organization"
+  ldap_entry:
+    # SASL EXTERNAL Should work
+    #bind_dn: "{{ client_ldap.binddn }}"
+    #bind_pw: "{{ client_ldap_password }}"
+    dn: "o={{ client.name}},{{ client_ldap.basedn }}"
+    objectClass: organization
+    attributes:
+      o: "{{ client.name }}"
+
+- name: "Create the admin identity for {{client.name}}"
+  ldap_entry:
+    #bind_dn: "{{ client_ldap.binddn }}"
+    #bind_pw: "{{ client_ldap_password }}"
+    dn: "cn=admin,o={{ client.name }},{{ client_ldap.basedn }}"
+    objectClass:
+      - simpleSecurityObject
+      - organizationalRole
+    attributes:
+      cn: admin
+      userPassword: "{{ '%s' |  format(client.password) | slapd_hash }}"
+
+- name: "Add database skeleton to client db"
+  ldap_entry:
+    #bind_dn: "{{ client_ldap.binddn }}"
+    #bind_pw: "{{ client_ldap_password }}"
+    dn: "ou={{item}},o={{ client.name }},{{ client_ldap.basedn }}"
+    objectClass: organizationalUnit
+    attributes:
+      ou: "{{item}}"
+  with_items:
+    - People
+    - Groups
+    - Sequence
+
+- name: "Set default sequence for client {{client.name}}"
+  ldap_entry:
+    #bind_dn: "{{ client_ldap.binddn }}"
+    #bind_pw: "{{ client_ldap_password }}"
+    dn: "cn={{ item }},ou=Sequence,o={{ client.name }},{{ client_ldap.basedn }}"
+    objectClass: device
+    attributes:
+      cn: "{{ item }}"
+      serialNumber: 1
+  with_items:
+    - uidNumberSequence
+    - gidNumberSequence
+
+
+# LSC config
+- name: Make sure test org LSC directory exists
+  file:
+    path: "{{ client.lsc_dir }}"
+    state: directory
+    mode: 0755
+
+- name: Prepare LSC test org directory
+  copy:
+    src: "/etc/lsc/logback.xml"
+    dest: "{{ client.lsc_dir }}"
+    remote_src: yes
+    force: false
+
+- name: Copy LSC test org configuration
+  template:
+    src: "lsc.xml.j2"
+    dest: "{{ client.lsc_dir }}/lsc.xml"
+    force: false
