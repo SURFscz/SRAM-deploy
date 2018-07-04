@@ -249,7 +249,7 @@
 
 - name: Rotate conf for slapd log file
   copy:
-    src: lograte_slapd
+    src: logrotate_slapd
     dest: /etc/logrotate.d/slapd
 
 - name: Install filebeat configuration
