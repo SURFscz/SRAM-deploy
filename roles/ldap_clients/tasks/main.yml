@@ -12,6 +12,7 @@
   apt:
     name:
       - lsc
+      - python-ldap
       - openjdk-8-jdk
     install_recommends: no
 
