@@ -45,7 +45,6 @@
     dn: "cn=admin,o={{ client.name }},{{ client_ldap.basedn }}"
     name: userPassword
     values: "{{ '%s' |  format(client.password) | slapd_hash }}"
-    state: exact
 
 - name: "Add database skeleton to client db"
   ldap_entry:
