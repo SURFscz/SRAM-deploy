@@ -2,16 +2,23 @@
 from pymongo import MongoClient
 import json
 import sys
+import os
 
 if len(sys.argv) < 2:
-    sys.exit("%s <clients.json" % sys.argv[0])
+    sys.exit("%s <clients.d>" % sys.argv[0])
 
 client = MongoClient("mongodb://localhost:27017")
 db = client['satosa']
 mongo_coll = db['clients']
+location = sys.argv[1]
+file_coll = {}
 
-with open(sys.argv[1]) as source:
-    file_coll = json.load(source)
+for source in os.listdir(location):
+    with open("{}/{}".format(location,source)) as clients:
+        file_coll.update(json.load(clients))
+
+# Debug collected clients
+print("clients: {}".format(json.dumps(file_coll, indent=2)))
 
 # Insert new clientID's (or update if different)
 print("Inserting ID's")
