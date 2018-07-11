@@ -15,7 +15,10 @@ file_coll = {}
 
 for source in os.listdir(location):
     with open("{}/{}".format(location,source)) as clients:
-        file_coll.update(json.load(clients))
+        try:
+            file_coll.update(json.load(clients))
+        except:
+            sys.exit("Error loading {}".format(source))
 
 # Debug collected clients
 print("clients: {}".format(json.dumps(file_coll, indent=2)))
