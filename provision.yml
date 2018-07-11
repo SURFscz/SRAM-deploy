@@ -75,6 +75,7 @@
   roles:
     - { role: ldap, tags: ['ldap'] }
     - { role: ldap_clients, tags: ['ldap', 'ldap_clients'] }
+    - { role: pam_websso_daemon,  tags: ['client','websso-daemon'] }
 
 - hosts:
     - proxy
@@ -112,3 +113,7 @@
   roles:
     - { role: http_dummy,  tags: ['meta','http']     }
     - { role: metadata,    tags: ['meta','metadata'] }
+
+- hosts: sandbox1
+  roles:
+    - { role: pam_websso,         tags: ['client','pam-websso'   ] }

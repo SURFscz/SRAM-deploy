@@ -52,7 +52,7 @@
     - Groups
     - Sequence
 
-- name: "Set default sequence for client {{client.name}}"
+- name: "Set default uidNumer sequence for client {{client.name}}"
   ldap_entry:
     #bind_dn: "{{ client_ldap.binddn }}"
     #bind_pw: "{{ client_ldap_password }}"
@@ -65,6 +65,15 @@
     - uidNumberSequence
     - gidNumberSequence
 
+- name: "Set default giNumber sequence for client {{client.name}}"
+  ldap_entry:
+    #bind_dn: "{{ client_ldap.binddn }}"
+    #bind_pw: "{{ client_ldap_password }}"
+    dn: "cn=gidNumberSequence,ou=Sequence,o={{ client.name }},{{ client_ldap.basedn }}"
+    objectClass: device
+    attributes:
+      cn: gidNumberSequence
+      serialNumber: 1
 
 # LSC config
 - name: Make sure test org LSC directory exists

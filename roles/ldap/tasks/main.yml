@@ -3,11 +3,12 @@
 - include_vars: "ldap.yml"
 
 - name: Install LDAP
-  apt: name={{ item }} state=present
-  with_items:
-    - slapd
-    - unzip
-    - ldap-utils
+  apt:
+    state: present
+    name:
+      - slapd
+      - unzip
+      - ldap-utils
 
 - name: Copying alternative service script
   become: true

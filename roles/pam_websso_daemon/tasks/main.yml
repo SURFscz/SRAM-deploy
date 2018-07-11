@@ -1,0 +1,44 @@
+---
+- name: Ensure that packages are installed
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - python-pip
+    - libxml2-dev
+    - libxmlsec1-dev
+
+- name: fetch PAM WebSSO from {{ pam_websso.repo_url }}, version {{ pam_websso.repo_version }}
+  git:
+    repo: "{{ pam_websso.repo_url }}"
+    dest: "{{ pam_websso.project_dir }}"
+    version: "{{ pam_websso.repo_version }}"
+    accept_hostkey: "yes"
+    force: "yes"
+  register: pam_websso_git
+
+- name: install WebSSO daemon
+  pip:
+    name: "{{ pam_websso.project_dir }}"
+    state: latest
+  when: pam_websso_git.changed
+
+- name: install WebSSO daemon settings
+  template:
+    src: "websso_daemon.json.j2"
+    dest: "{{ pam_websso.project_dir }}/websso_daemon.json"
+
+- name: Create WebSSO daemon systemd service file
+  template:
+    src: websso-daemon.service.j2
+    dest: "{{ pam_websso.project_dir }}/websso-daemon.service"
+    mode: 0644
+
+- name: Copy to websso-daemon.service in /etc/systemd/system
+  copy:
+    src: "{{ pam_websso.project_dir }}/websso-daemon.service"
+    dest: /etc/systemd/system/websso-daemon.service
+    remote_src: yes
+
+- name: restart WebSSO daemon
+  systemd: daemon_reload=yes name=websso-daemon state=restarted enabled=yes
