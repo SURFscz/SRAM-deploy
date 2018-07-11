@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" ?>
+<?xml version="1.0" ?>
 <!--
         In the following file, comments are describing each node. Elements are
         referenced through XPath expression, whereas attributes are prefixed with
@@ -145,7 +145,6 @@
           <string>sn</string>
           <string>uid</string>
           <string>homeDirectory</string>
-          <string>loginShell</string>
           <string>uidNumber</string>
           <string>gidNumber</string>
         </fetchedAttributes>
@@ -204,12 +203,6 @@
           </forceValues>
         </dataset>
         <dataset>
-          <name>loginShell</name>
-          <forceValues>
-                <string>"/bin/bash"</string>
-          </forceValues>
-        </dataset>
-        <dataset>
           <name>uidNumber</name>
           <policy>KEEP</policy>
           <forceValues>
@@ -226,238 +219,7 @@
       </propertiesBasedSyncOptions>
     </task>
     <task>
-      <name>AB_COActiveSyncTask</name>
-      <bean>org.lsc.beans.SimpleBean</bean>
-      <ldapSourceService>
-        <name>openldap-src-activecos</name>
-        <connection reference="ldap-src-conn" />
-        <baseDn>ou=Groups,o={{ client.name }},{{ ldap.basedn }}</baseDn>
-        <pivotAttributes>
-          <string>cn</string>
-        </pivotAttributes>
-        <fetchedAttributes>
-          <string>cn</string>
-          <string>o</string>
-          <string>member</string>
-        </fetchedAttributes>
-        <getAllFilter><![CDATA[(&(objectClass=groupOfNames)(cn=CO:*:active))]]></getAllFilter>
-        <getOneFilter><![CDATA[(&(objectClass=groupOfNames)(cn={cn}))]]></getOneFilter>
-        <cleanFilter><![CDATA[(&(objectClass=groupOfNames)(cn={description}))]]></cleanFilter>
-      </ldapSourceService>
-      <ldapDestinationService>
-        <name>ldap-dst-activecos</name>
-        <connection reference="ldap-dst-conn" />
-        <baseDn>ou=Groups,o={{ client.name }},{{ client_ldap.basedn }}</baseDn>
-        <pivotAttributes>
-          <string>description</string>
-        </pivotAttributes>
-        <fetchedAttributes>
-          <string>objectClass</string>
-          <!--<string>member</string>-->
-          <string>memberUid</string>
-          <string>description</string>
-        </fetchedAttributes>
-        <!--<getAllFilter>(objectClass=groupOfNames)</getAllFilter>
-        <getOneFilter>(&amp;(objectClass=groupOfNames)(description={cn}))</getOneFilter>-->
-        <getAllFilter>(objectClass=posixGroup)</getAllFilter>
-        <getOneFilter>(&amp;(objectClass=posixGroup)(description={cn}))</getOneFilter>
-      </ldapDestinationService>
-      <propertiesBasedSyncOptions>
-        <mainIdentifier><!--https://regex101.com/r/A4i95l/1-->
-          <![CDATA[rjs:
-            var co = srcBean.getDatasetFirstValueById("o");
-            var cn = srcBean.getDatasetFirstValueById("cn");
-            var group = cn.match(/^(?:CO:)?(?:COU:)?([^:]*?):?(members:active)?$/);
-            "cn=" + co + (group[1]?"_" + group[1]:"") + ",ou=Groups,o={{ client.name }},{{ client_ldap.basedn }}";
-          ]]>
-        </mainIdentifier>
-        <defaultDelimiter>;</defaultDelimiter>
-        <defaultPolicy>FORCE</defaultPolicy>
-        <conditions>
-                <create>true</create>
-                <update>true</update>
-                <delete>true</delete>
-                <changeId>false</changeId>
-        </conditions>
-        <dataset>
-          <name>objectClass</name>
-          <policy>KEEP</policy>
-          <defaultValues></defaultValues>
-          <forceValues>
-            <!--<string>"groupOfNames"</string>-->
-            <string>"posixGroup"</string>
-          </forceValues>
-          <createValues>
-          </createValues>
-          <delimiter>,</delimiter>
-        </dataset>
-        <dataset>
-          <name>description</name>
-          <policy>FORCE</policy>
-          <defaultValues></defaultValues>
-          <forceValues></forceValues>
-          <createValues>
-            <string>srcBean.getDatasetFirstValueById("cn")</string>
-          </createValues>
-        </dataset>
-        <dataset>
-          <!--<name>member</name>-->
-          <name>memberUid</name>
-          <policy>FORCE</policy>
-          <defaultValues></defaultValues>
-          <forceValues>
-            <string>
-            <![CDATA[rjs:
-                java.lang.System.out.println("srcCn:"+srcBean.getDatasetFirstValueById("cn"));
-                var memberSrcDns = srcBean.getDatasetValuesById("member");
-                var memberDstDns = [];
-                for  (var i=0; i<memberSrcDns.size(); i++) {
-                    try {
-                       memberSrcDn = memberSrcDns.get(i);
-                       java.lang.System.out.println("memberSrcDn:" + memberSrcDn);
-                       uid = srcLdap.attribute(memberSrcDn, "uid").get(0);
-                       memberDstRdn = ldap.search("ou=People,o={{ client.name }}", "(uid=" + uid + ")");
-                       memberDstDn = memberDstRdn.get(0) + "," + ldap.getContextDn();
-                       //memberDstDns.push(memberDstDn);
-                       memberDstDns.push(uid);
-                    } catch(e) {
-                       continue;
-                    }
-                }
-                java.lang.System.out.println("membersDstDns:" + memberDstDns);
-                memberDstDns
-            ]]>
-            </string>
-          </forceValues>
-          <createValues></createValues>
-          <delimiter>;</delimiter>
-        </dataset>
-      </propertiesBasedSyncOptions>
-    </task>
-    <task>
-      <name>AC_COSyncTask</name>
-      <bean>org.lsc.beans.SimpleBean</bean>
-      <ldapSourceService>
-        <name>openldap-src-cos</name>
-        <connection reference="ldap-src-conn" />
-        <baseDn>ou=Groups,o={{ client.name }},{{ ldap.basedn }}</baseDn>
-        <pivotAttributes>
-          <string>cn</string>
-        </pivotAttributes>
-        <fetchedAttributes>
-          <string>cn</string>
-          <string>o</string>
-          <string>member</string>
-        </fetchedAttributes>
-        <getAllFilter><![CDATA[(&(objectClass=groupOfNames)(cn=CO:COU:*))]]></getAllFilter>
-        <getOneFilter><![CDATA[(&(objectClass=groupOfNames)(cn={cn}))]]></getOneFilter>
-        <cleanFilter><![CDATA[(&(objectClass=groupOfNames)(cn={description}))]]></cleanFilter>
-      </ldapSourceService>
-      <ldapDestinationService>
-        <name>ldap-dst-cos</name>
-        <connection reference="ldap-dst-conn" />
-        <baseDn>ou=Groups,o={{ client.name }},{{ client_ldap.basedn }}</baseDn>
-        <pivotAttributes>
-          <string>description</string>
-        </pivotAttributes>
-        <fetchedAttributes>
-          <string>objectClass</string>
-          <!--<string>member</string>-->
-          <string>memberUid</string>
-          <string>description</string>
-        </fetchedAttributes>
-        <!--<getAllFilter>(objectClass=groupOfNames)</getAllFilter>
-        <getOneFilter>(&amp;(objectClass=groupOfNames)(description={cn}:members:active))</getOneFilter>-->
-        <getAllFilter>(objectClass=posixGroup)</getAllFilter>
-        <getOneFilter>(&amp;(objectClass=posixGroup)(description={cn}:members:active))</getOneFilter>
-      </ldapDestinationService>
-      <propertiesBasedSyncOptions>
-        <mainIdentifier><!--https://regex101.com/r/A4i95l/1-->
-          <![CDATA[rjs:
-            var co = srcBean.getDatasetFirstValueById("o");
-            var cn = srcBean.getDatasetFirstValueById("cn");
-            var group = cn.match(/^(?:CO:)?(?:COU:)?([^:]*?):?(members:active)?$/);
-            "cn=" + co + (group[1]?"_" + group[1]:"") + ",ou=Groups,o={{ client.name }},{{ client_ldap.basedn }}";
-          ]]>
-        </mainIdentifier>
-        <defaultDelimiter>;</defaultDelimiter>
-        <defaultPolicy>FORCE</defaultPolicy>
-        <conditions>
-                <create>srcBean.getDatasetFirstValueById("cn").match(/CO:COU:([^:]*?)(?!members:.[^:])$/)?true:false;</create>
-                <update>srcBean.getDatasetFirstValueById("cn").match(/CO:COU:([^:]*?)(?!members:.[^:])$/)?true:false;</update>
-                <delete>srcBean.getDatasetFirstValueById("cn").match(/CO:COU:([^:]*?)(?!members:.[^:])$/)?true:false;</delete>
-                <changeId>false</changeId>
-        </conditions>
-        <dataset>
-          <name>objectClass</name>
-          <policy>KEEP</policy>
-          <defaultValues></defaultValues>
-          <forceValues>
-            <!--<string>"groupOfNames"</string>-->
-            <string>"posixGroup"</string>
-          </forceValues>
-          <createValues>
-          </createValues>
-          <delimiter>,</delimiter>
-        </dataset>
-        <dataset>
-          <name>description</name>
-          <policy>KEEP</policy>
-          <defaultValues></defaultValues>
-          <forceValues></forceValues>
-          <createValues>
-            <string>srcBean.getDatasetFirstValueById("cn")+":members:active"</string>
-          </createValues>
-        </dataset>
-        <dataset>
-          <!--<name>member</name>-->
-          <name>memberUid</name>
-          <policy>MERGE</policy>
-          <defaultValues>
-          </defaultValues>
-          <forceValues>
-            <string>
-            <![CDATA[rjs:
-                var srcCn = srcBean.getDatasetFirstValueById("cn");
-                java.lang.System.out.println("\nsrcCn: " + srcCn);
-                if (typeof(dstBean)!='undefined') {
-                  dstDn = dstBean.getMainIdentifier();
-                  java.lang.System.out.println("dstMI: " + dstDn);
-                }
-                var memberSrcDns = srcBean.getDatasetValuesById("member");
-                java.lang.System.out.println("memberSrcDns: " + memberSrcDns);
-                var membersDstDns = [];
-                for  (var i=0; i<memberSrcDns.size(); i++) {
-                    try {
-                       memberSrcDn = memberSrcDns.get(i);
-                       java.lang.System.out.println("memberSrcDn: " + memberSrcDn);
-                       cn = srcLdap.attribute(memberSrcDn, "cn").get(0);
-                       java.lang.System.out.println("cn: " + cn);
-                       memberDstRdn = ldap.search("ou=Groups,o={{ client.name }}", "(description=" + cn + ":members:active)");
-                       java.lang.System.out.println("memberDstRdn: " + memberDstRdn.get(0));
-                       memberDstCn = ldap.attribute(memberDstRdn.get(0), "cn");
-                       java.lang.System.out.println("memberDstCn: " + memberDstCn.get(0));
-                       memberDstDn = memberDstRdn.get(0) + "," +  ldap.getContextDn();
-                       java.lang.System.out.println("memberDstDn: " + memberDstDn);
-                       if (memberDstDn == dstDn) continue;
-                       //membersDstDns.push(memberDstDn);
-                       membersDstDns.push(memberDstCn.get(0));
-                    } catch(e) {
-                       continue;
-                    }
-                }
-                java.lang.System.out.println("membersDstDns: " + membersDstDns);
-                membersDstDns
-            ]]>
-            </string>
-          </forceValues>
-          <createValues></createValues>
-          <delimiter>;</delimiter>
-        </dataset>
-      </propertiesBasedSyncOptions>
-    </task>
-    <task>
-      <name>AD_GroupSyncTask</name>
+      <name>AB_GroupsSyncTask</name>
       <bean>org.lsc.beans.SimpleBean</bean>
       <ldapSourceService>
         <name>openldap-src-groups</name>
@@ -468,10 +230,10 @@
         </pivotAttributes>
         <fetchedAttributes>
           <string>cn</string>
-          <string>o</string>
+          <string>ou</string>
           <string>member</string>
         </fetchedAttributes>
-        <getAllFilter><![CDATA[(&(objectClass=groupOfNames)(!(cn=CO:*)))]]></getAllFilter>
+        <getAllFilter><![CDATA[(&(objectClass=groupOfNames)(!(cn=GRP:CO:*)))]]></getAllFilter>
         <getOneFilter><![CDATA[(&(objectClass=groupOfNames)(cn={cn}))]]></getOneFilter>
         <cleanFilter><![CDATA[(&(objectClass=groupOfNames)(cn={description}))]]></cleanFilter>
       </ldapSourceService>
@@ -484,20 +246,20 @@
         </pivotAttributes>
         <fetchedAttributes>
           <string>objectClass</string>
-          <string>member</string>
+          <string>memberUid</string>
           <string>description</string>
+          <string>gidNumber</string>
         </fetchedAttributes>
-        <!--<getAllFilter>(objectClass=groupOfNames)</getAllFilter>
-        <getOneFilter>(&amp;(objectClass=groupOfNames)(description={cn}))</getOneFilter>-->
         <getAllFilter>(objectClass=posixGroup)</getAllFilter>
         <getOneFilter>(&amp;(objectClass=posixGroup)(description={cn}))</getOneFilter>
       </ldapDestinationService>
       <propertiesBasedSyncOptions>
         <mainIdentifier><!--https://regex101.com/r/A4i95l/1-->
           <![CDATA[rjs:
-            var co = srcBean.getDatasetFirstValueById("o");
+            var type = srcBean.getDatasetFirstValueById("ou");
             var cn = srcBean.getDatasetFirstValueById("cn");
-            "cn=" + co + "-" + cn + ",ou=Groups,o={{ client.name }},{{ client_ldap.basedn }}";
+            var group = cn.match(/^(?:GRP)?(?:CO)?(?:COU)?:(.*?)$/);
+            "cn=" + type + (group[1]?"_" + group[1]:"") + ",ou=Groups,o={{ client.name }},{{ client_ldap.basedn }}";
           ]]>
         </mainIdentifier>
         <defaultDelimiter>;</defaultDelimiter>
@@ -512,11 +274,9 @@
           <name>objectClass</name>
           <policy>KEEP</policy>
           <defaultValues></defaultValues>
-          <forceValues>
-            <!--<string>"groupOfNames"</string>-->
-            <string>"posixGroup"</string>
-          </forceValues>
+          <forceValues></forceValues>
           <createValues>
+            <string>"posixGroup"</string>
           </createValues>
           <delimiter>,</delimiter>
         </dataset>
@@ -530,37 +290,42 @@
           </createValues>
         </dataset>
         <dataset>
-          <!--<name>member</name>-->
           <name>memberUid</name>
           <policy>FORCE</policy>
           <defaultValues></defaultValues>
           <forceValues>
             <string>
             <![CDATA[rjs:
-                var membersSrcDn = srcBean.getDatasetValuesById("member");
-                var membersDstDn = [];
-                for  (var i=0; i<membersSrcDn.size(); i++) {
-                        var memberSrcDn = membersSrcDn.get(i);
-                        var uid = "";
-                        try {
-                           uid = srcLdap.attribute(memberSrcDn, "uid").get(0);
-                        } catch(e) {
-                           continue;
-                        }
-                        var destDn = ldap.search("ou=People,o={{ client.name }}", "(uid=" + uid + ")");
-                        if (!destDn || destDn.size() == 0 || destDn.size() > 1) {
-                           continue;
-                        }
-                        var destMemberDn = destDn.get(0) + "," +  ldap.getContextDn();
-                        //membersDstDn.push(destMemberDn);
-                        membersDstDn.push(uid);
+                java.lang.System.out.println("srcCn:"+srcBean.getDatasetFirstValueById("cn"));
+                var memberSrcDns = srcBean.getDatasetValuesById("member");
+                var memberDstUids = [];
+                for  (var i=0; i<memberSrcDns.size(); i++) {
+                    try {
+                       memberSrcDn = memberSrcDns.get(i);
+                       java.lang.System.out.println("memberSrcDn:" + memberSrcDn);
+                       uid = srcLdap.attribute(memberSrcDn, "uid").get(0);
+                       memberDstRdn = ldap.search("ou=People,o={{ client.name }}", "(uid=" + uid + ")");
+                       memberDstDn = memberDstRdn.get(0) + "," + ldap.getContextDn();
+                       memberDstUid = ldap.attribute(memberDstDn, "uid").get(0);
+                       memberDstUids.push(memberDstUid);
+                    } catch(e) {
+                       continue;
+                    }
                 }
-                membersDstDn
+                java.lang.System.out.println("membersDstUids:" + memberDstUids);
+                memberDstUids
             ]]>
             </string>
           </forceValues>
           <createValues></createValues>
-          <delimiter>,</delimiter>
+          <delimiter>;</delimiter>
+        </dataset>
+        <dataset>
+          <name>gidNumber</name>
+          <policy>KEEP</policy>
+          <forceValues>
+            <string>SequencesFactory.getInstance(ldap.getJndiServices()).getNextValue("cn=gidNumberSequence,ou=Sequence,o={{ client.name }},{{ client_ldap.basedn }}", "serialNumber")</string>
+          </forceValues>
         </dataset>
       </propertiesBasedSyncOptions>
     </task>

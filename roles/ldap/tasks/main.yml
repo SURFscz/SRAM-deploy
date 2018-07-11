@@ -248,6 +248,11 @@
     dest: /etc/rsyslog.d/slapd.conf
   notify: restart rsyslog
 
+- name: Rotate conf for slapd log file
+  copy:
+    src: logrotate_slapd
+    dest: /etc/logrotate.d/slapd
+
 - name: Install filebeat configuration
   template:
     src: fb_slapd.yml.j2

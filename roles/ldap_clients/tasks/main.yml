@@ -78,3 +78,10 @@
     - lsc.timer
   notify:
     - enable lsc job
+
+- name: Install backup script
+  template:
+    src: ldap-clients-backup.sh.j2
+    dest: "{{backup_runparts}}/ldap-clients-backup.sh"
+    mode: 0755
+
