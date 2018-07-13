@@ -14,13 +14,8 @@
   apt_repository:
     repo: "{{ item }}"
     state: present
-  with_items: "{{ repositories }}"
-  become: Yes
-
-- name: perform apt-get update
-  apt:
     update_cache: yes
-    cache_valid_time: 1
+  with_items: "{{ repositories }}"
   become: Yes
 
 - name: ensure that packages are installed

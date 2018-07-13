@@ -85,11 +85,12 @@
 
 - hosts: client
   roles:
-    - { role: client-base,        tags: ['client'                ] }
-    - { role: client-saml-sp,     tags: ['client','client-sp'    ] }
-    - { role: client-saml-idp,    tags: ['client','client-idp'   ] }
-    - { role: client-google-idp,  tags: ['client','client-google'] }
-    - { role: client-oidc-rp,     tags: ['client','client-rp'    ] }
+    - { role: client-base,          tags: ['client'                ] }
+    - { role: client-saml-sp,       tags: ['client','client-sp'    ] }
+    - { role: client-saml-idp,      tags: ['client','client-idp'   ] }
+    - { role: client-google-idp,    tags: ['client','client-google'] }
+    - { role: client-microsoft-idp, tags: ['client','client-ms'] }
+    - { role: client-oidc-rp,       tags: ['client','client-rp'    ] }
 
 - hosts: proxy
   roles:

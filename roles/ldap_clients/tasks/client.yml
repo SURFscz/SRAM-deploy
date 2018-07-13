@@ -39,6 +39,15 @@
       cn: admin
       userPassword: "{{ '%s' |  format(client.password) | slapd_hash }}"
 
+# set the password separately from creating the admin entry, because
+# we want the password to update when it changes in ansible
+- name: "Set admin password for {{client.name}}"
+  ldap_attr:
+    dn: "cn=admin,o={{ client.name }},{{ client_ldap.basedn }}"
+    name: userPassword
+    values: "{{ '%s' |  format(client.password) | slapd_hash }}"
+    state: exact
+
 - name: "Add database skeleton to client db"
   ldap_entry:
     #bind_dn: "{{ client_ldap.binddn }}"
