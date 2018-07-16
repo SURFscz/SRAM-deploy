@@ -6,11 +6,14 @@ olcDatabase: mdb
 olcSuffix: {{ client_ldap.basedn }}
 olcDbDirectory: {{ client_ldap_dbdir }}
 olcRootDN: {{ client_ldap.binddn }}
-olcRootPW: {{ client_ldap_password | slapd_hash }}
+olcRootPW: {{ '%s' | format(client_ldap_password) | slapd_hash }}
 olcDbIndex: objectClass eq
 olcDbIndex: cn,uid eq
 olcDbIndex: uidNumber,gidNumber eq
 olcDbIndex: member,memberUid eq
+olcAccess: to *
+   by dn.exact=gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth manage
+   by * break
 olcAccess: to attrs=userPassword
    by anonymous auth
    by dn.exact="{{ client_ldap.binddn }}" write

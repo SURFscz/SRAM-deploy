@@ -235,10 +235,13 @@
     - name: Create metadata directory
       file: path="{{ satosa_env_dir }}/metadata" state=directory mode=0755
 
+    - name: Create clients.d directory
+      file: path="{{ satosa_env_dir }}/oidc_clients" state=directory mode=0755
+
     - name: Copy clients.json example file
       template:
         src: clients.json.j2
-        dest: "{{ satosa_env_dir }}/metadata/clients.json"
+        dest: "{{ satosa_env_dir }}/oidc_clients/default.json"
         mode: 0755
 
     - name: Create sync_clients script
@@ -248,7 +251,7 @@
         mode: 0755
 
     - name: Insert OIDC clients
-      shell: ./sync_clients metadata/clients.json
+      shell: ./sync_clients oidc_clients
       args:
         chdir: "{{ satosa_env_dir }}"
 

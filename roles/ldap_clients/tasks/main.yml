@@ -12,6 +12,7 @@
   apt:
     name:
       - lsc
+      - python-ldap
       - openjdk-8-jdk
       - python-ldap
     install_recommends: no
@@ -26,7 +27,7 @@
   with_items:
     - { src: "add_client_mdb.ldif.j2", dest: "add_client_mdb.ldif" }
     - { src: "add_client_mdb_admin.ldif.j2", dest: "add_client_mdb_admin.ldif" }
-    - { src: "add_test_organization.ldif.j2", dest: "add_test_organization.ldif" }
+    #- { src: "add_test_organization.ldif.j2", dest: "add_test_organization.ldif" }
 
 - name: Make sure client ldap db directory exists
   file:
@@ -57,37 +58,11 @@
   failed_when: "(result.rc not in [0, 68])"
   when: olcSuffix.stdout.find(client_ldap.basedn) == -1
 
-- name: Check if client test organization already exists
-  shell: >
-    ldapsearch -c -x -D "{{ client_ldap.binddn }}" -w "{{ client_ldap_password }}"
-    -H ldapi:/// -b '{{ client_ldap.basedn }}' o
-  register: org
-  changed_when: false
-
-- name: Add client test organization
-  command: >
-    ldapadd -c -x -D "{{ client_ldap.binddn }}" -w "{{ client_ldap_password }}"
-    -f "{{ ldap_ldif_dir }}/add_test_organization.ldif"
-  register: result
-  failed_when: "(result.rc not in [0, 68])"
-  when: org.stdout.find(test_organization.o) == -1
-
-- name: Make sure test org LSC directory exists
-  file:
-    path: "{{ test_organization.lsc_dir }}"
-    state: directory
-    mode: 0755
-
-- name: Prepare LSC test org directory
-  copy: >
-    src="/etc/lsc/logback.xml"
-    dest="{{ test_organization.lsc_dir }}"
-    remote_src=yes
-
-- name: Copy LSC test org configuration
-  template: >
-    src="lsc.xml.j2"
-    dest="{{ test_organization.lsc_dir }}/lsc.xml"
+- name: Configure clients
+  include: client.yml
+  with_items: "{{ client_ldap_clients }}"
+  loop_control:
+    loop_var: item_client
 
 - name: Copy run_lsc batchfile
   template: >
@@ -104,3 +79,10 @@
     - lsc.timer
   notify:
     - enable lsc job
+
+- name: Install backup script
+  template:
+    src: ldap-clients-backup.sh.j2
+    dest: "{{backup_runparts}}/ldap-clients-backup.sh"
+    mode: 0755
+
