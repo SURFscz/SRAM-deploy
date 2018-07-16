@@ -19,6 +19,7 @@
 {% endif %}
 {% if hostnames.orcid is defined %}
        - {{http_proto}}://{{ hostnames.orcid }}/saml/saml2/idp/metadata.php
+{% endif %}
 {% if hostnames.ms is defined %}
        - {{http_proto}}://{{ hostnames.ms }}/saml/saml2/idp/metadata.php
 {% endif %}
