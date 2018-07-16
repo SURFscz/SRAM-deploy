@@ -12,6 +12,9 @@ comanage_git_plugins:
   - name: "EmailProvisioner"
     src: "https://github.com/SURFscz/COmanage-emailprovisioner.git"
     version: "{{comanage_plugin_emailprovisioner_version}}"
+  - name: "SamlSource"
+    src: "https://github.com/SURFscz/COmanage-samlsource.git"
+    version: "{{comanage_plugin_samlsource_version}}"
 
 comanage_plugin_configurations:
   - { src: ldapfixedprovisioner.php.j2, dest: ldapfixedprovisioner.php }

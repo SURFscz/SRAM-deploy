@@ -18,11 +18,13 @@ hostnames:
   sp:       sp-test.{{base_domain}}
   idp:      idp-test.{{base_domain}}
   google:   google-test.{{base_domain}}
+  ms:       ms-test.{{base_domain}}
 
 idp_test_port: 81
 sp_test_port: 82
 oidc_test_port: 83
 google_test_port: 84
+ms_test_port: 86
 
 # COmanage-ldap configuration
 comanage_ldap_host: "ldap.vm.scz-vm.net"
@@ -65,8 +67,12 @@ loadbalancer:
     http: true
     backend_hosts: "{{groups['vm-client']}}"
     backend_port: "{{google_test_port}}"
-  - hostname: "{{hostnames.google}}"
+  - hostname: "{{hostnames.ms}}"
+    http: true
+    backend_hosts: "{{groups['vm-client']}}"
+    backend_port: "{{ms_test_port}}"
+  - hostname: "{{hostnames.ldap}}"
     http: false
-    frontend_port: 389
+    frontend_port: 636
     backend_hosts: "{{groups['vm-ldap']}}"
     backend_port: 389

@@ -1,4 +1,5 @@
 ---
+ansible_ssh_common_args: '-o StrictHostKeyChecking=false'
 # note: {{playbook_dir}} would probably be nicer, but it turns out that that is
 # a relative path, which ssh doesn't understand
 ansible_ssh_user: "vagrant"
@@ -11,6 +12,8 @@ admin_email: "admin@{{base_domain}}"
 servers:
   dns:
     - 8.8.8.8
+  search:
+    - vm.scz-vm.net
   ntp:
     - 0.pool.ntp.org
     - 1.pool.ntp.org
@@ -65,6 +68,16 @@ users:
               pRvP88TEgaNAXrKMD9qbWYvnSLeDOe."
     sshkey: ""
 
+mysql_users:
+  - name: scz_ro
+    hash: "*8E0BCAC26AAA6C79D77D9F8FDDA6DCDD03BDB93F"
+    priv: "*.*:ALL,GRANT"
+    host: localhost
+  - name: scz_ro
+    hash: "*8E0BCAC26AAA6C79D77D9F8FDDA6DCDD03BDB93F"
+    priv: "*.*:ALL,GRANT"
+    host: "%"
+
 firewall_v4_incoming:
   - { name: bastion,  src: "{{iprange.bastion}}", dport: "22,80,443", proto: tcp }
   - { name: vnet,     src: "{{iprange.vm}}",      dport: "22,80,443", proto: tcp }
@@ -73,17 +86,16 @@ backup_base: "/opt/backups"
 backup_runparts: "{{backup_base}}/run.d"
 
 # LDAP definition is here, because we need it in both the Ldap and Comanage groups
-ldap_base:
-  cn: "John Doe"
-  dc: "dc=scz,dc=vnet"
-  o: "SCZ"
-
 ldap:
-  cn: "{{ ldap_base.cn }}"
-  dc: "{{ ldap_base.dc }}"
-  o: "{{ ldap_base.o }}"
-  basedn: "{{ ldap_base.dc }}"
-  binddn: "cn={{ ldap_base.cn }},{{ ldap_base.dc }}"
+  basedn: "dc=scz,dc=vnet"
+  o:      "SCZ"
+  binddn: "cn=John Doe,dc=scz,dc=vnet"
+
+client_ldap:
+  basedn: "dc=client,dc=vnet"
+  o:      "Clients"
+  binddn: "cn=admin,dc=client,dc=vnet"
+
 
 # Comanage-Proxy database configuration is here, because it is needed in both the
 # Proxy and Comanage groups.

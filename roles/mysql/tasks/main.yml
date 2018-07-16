@@ -8,8 +8,28 @@
   with_items: "{{ packages  }}"
   become: Yes
 
+- name: listen mysql on 0.0.0.0
+  copy:
+    src="99-myserver.cnf"
+    dest="/etc/mysql/mariadb.conf.d/99-myserver.cnf"
+    mode=0644
+  notify:
+    - Restart MySQL
+
 - name: Start the MySQL service
   service:
     name: mariadb
     state: started
+    enabled: true
+
+- name: Create MySQL users
+  mysql_user:
+    name: "{{item.name}}"
+    host: "{{item.host}}"
+    password: "{{item.hash}}"
+    encrypted: true
+    priv: "{{item.priv}}"
+    append_privs: true
+    state: present
+  with_items: "{{mysql_users}}"
 

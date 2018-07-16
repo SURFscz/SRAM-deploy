@@ -10,7 +10,7 @@
 
 # first gather facts from all hosts that we're actually deploying to
 - hosts: all
-  sudo: yes
+  become: yes
   serial: 20
   gather_facts: true
 
@@ -74,27 +74,33 @@
 - hosts: ldap
   roles:
     - { role: ldap, tags: ['ldap'] }
+    - { role: ldap_clients, tags: ['ldap', 'ldap_clients'] }
+
+- hosts:
+    - proxy
+    - comanage
+  roles:
+    - { role: mysql, tags: ['mysql'] }
 
 - hosts: client
   roles:
-    - { role: client-base,        tags: ['client']    }
-    - { role: client-saml-sp,     tags: ['clientsp']    }
-    - { role: client-saml-idp,    tags: ['clientidp']    }
-    - { role: client-google-idp,  tags: ['clientgoogle']    }
-    - { role: client-oidc-rp,     tags: ['clientrp']    }
+    - { role: client-base,          tags: ['client'                ] }
+    - { role: client-saml-sp,       tags: ['client','client-sp'    ] }
+    - { role: client-saml-idp,      tags: ['client','client-idp'   ] }
+    - { role: client-google-idp,    tags: ['client','client-google'] }
+    - { role: client-microsoft-idp, tags: ['client','client-ms'] }
+    - { role: client-oidc-rp,       tags: ['client','client-rp'    ] }
 
 - hosts: proxy
   roles:
     - { role: pyff,          tags: ['proxy','pyff'      ] }
     - { role: satosa,        tags: ['proxy','satosa'    ] }
     - { role: cmservice,     tags: ['proxy','cmservice' ] }
-    - { role: mysql,         tags: ['proxy','mysql'     ] }
     - { role: proxy_mysql,   tags: ['proxy','mysql'     ] }
 
 - hosts: comanage
   roles:
     - { role: http_apache,      tags: ['comanage', 'web'] }
-    - { role: mysql,            tags: ['comanage', 'db' ] }
     - { role: comanage_mysql,   tags: ['comanage', 'db' ] }
     - { role: php56,            tags: ['comanage', 'web'] }
     - { role: auth_mellon,      tags: ['comanage', 'web'] }

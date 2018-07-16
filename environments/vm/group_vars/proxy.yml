@@ -14,6 +14,10 @@ satosa_project_dir: "/opt/satosa"
 satosa_src_dir: "{{ satosa_project_dir }}/satosa-src"
 satosa_env_dir: "{{ satosa_project_dir }}/satosa-env"
 
+satosa_microservices_repo_url: "https://github.com/SURFscz/SATOSA-micro_services.git"
+satosa_microservices_repo_version: "master"
+satosa_microservices_src_dir: "{{ satosa_project_dir }}/satosa-microservices"
+
 satosa_host: "0.0.0.0"
 satosa_port: "8080"
 satosa_state_encryption_key: "poikjh567"

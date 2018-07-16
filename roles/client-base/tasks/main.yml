@@ -38,6 +38,7 @@
     - "default.conf"
     - "00-default.conf"
     - "000-default.conf"
+  notify: restart Apache
 
 - name: Add websites
   template:
@@ -46,6 +47,7 @@
     mode: 0644
   with_items:
     - idp
+  notify: restart Apache
 
 - name: Enable websites
   file:
@@ -54,6 +56,7 @@
     state: link
   with_items:
     - idp
+  notify: restart Apache
 
 - name: Listen to IdP port
   blockinfile:
@@ -63,6 +66,7 @@
     create: yes
     block: |
       Listen {{ idp_test_port }}
+  notify: restart Apache
 
 - name: Create simplesaml project dir
   file:
@@ -72,55 +76,73 @@
     owner: www-data
     group: www-data
 
-- block:
-    - name: Download SimpleSamlPHP
-      unarchive: "src={{ simplesaml_download_url }}/v{{ simplesaml_version }}/\
-                  simplesamlphp-{{ simplesaml_version }}.tar.gz \
-                  dest={{ simplesaml_project_dir }} remote_src=yes"
+# todo: add checksum
+- name: Download SimpleSamlPHP
+  get_url:
+    url: "{{ simplesaml_download_url }}/v{{ simplesaml_version }}/\
+          simplesamlphp-{{ simplesaml_version }}.tar.gz"
+    dest: "{{ simplesaml_project_dir }}/simplesamlphp-{{ simplesaml_version }}.tar.gz"
+  register: ssp_download
 
-    - name: Link simplesaml
-      file:
-        src: "{{ simplesaml_project_dir }}/simplesamlphp-{{ simplesaml_version }}"
-        dest: "{{ simplesaml_project_dir }}/simplesaml"
-        state: link
+- name: Check SimpleSamlPHP dest dir
+  stat: "path={{ simplesaml_project_dir }}/simplesamlphp-{{ simplesaml_version }}"
+  register: ssp_destdir
 
-    - name: SimpleSaml configuration
-      template:
-        src: config.php.j2
-        dest: "{{ simplesaml_project_dir }}/simplesaml/config/config.php"
+- name: Unpack SimpleSamlPHP
+  unarchive:
+    src: "{{ simplesaml_project_dir }}/simplesamlphp-{{ simplesaml_version }}.tar.gz"
+    dest: "{{ simplesaml_project_dir }}"
+    remote_src: true
+  when: ssp_download.changed or not ssp_destdir.stat.exists
 
-    - name: SimpleSaml test authsources
-      template:
-        src: authsources.php.j2
-        dest: "{{ simplesaml_project_dir }}/simplesaml/config/authsources.php"
+- name: Link simplesaml
+  file:
+    src: "{{ simplesaml_project_dir }}/simplesamlphp-{{ simplesaml_version }}"
+    dest: "{{ simplesaml_project_dir }}/simplesaml"
+    state: link
 
-    - name: SimpleSaml enable authcrypt
-      file:
-        dest: "{{ simplesaml_project_dir }}/simplesaml/modules/authcrypt/enable"
-        state: touch
+- name: SimpleSaml permissions
+  file:
+    path: "{{item}}"
+    group: "www-data"
+    mode: 0775
+  with_items:
+    - "{{simplesaml_project_dir}}/simplesaml/log"
 
-    - name: SimpleSaml {{ environment_string }} metadata
-      template:
-        src: "{{ item }}.j2"
-        dest: "{{ simplesaml_project_dir }}/simplesaml/metadata/{{ item }}"
-      with_items:
-        - saml20-idp-hosted.php
+- name: SimpleSaml configuration
+  template:
+    src: config.php.j2
+    dest: "{{ simplesaml_project_dir }}/simplesaml/config/config.php"
 
-    # before, we used to generate a certificate dynamically, but that was
-    # annoying, because then we would need to exchange the metadata over https
-    # in some way, which leads to chicken-and-egg problems.
-    - name: Copy self-signed Token signing cert key
-      copy:
-        content: "{{client_saml_cert.priv}}"
-        dest: "{{ simplesaml_project_dir }}/simplesaml/cert/server.pem"
+- name: SimpleSaml test authsources
+  template:
+    src: authsources.php.j2
+    dest: "{{ simplesaml_project_dir }}/simplesaml/config/authsources.php"
 
-    - name: Copy self-signed Token signing cert
-      copy:
-        content: "{{client_saml_cert.pub}}"
-        dest: "{{ simplesaml_project_dir }}/simplesaml/cert/server.crt"
+- name: SimpleSaml enable authcrypt
+  file:
+    dest: "{{ simplesaml_project_dir }}/simplesaml/modules/authcrypt/enable"
+    state: touch
 
-  become: "yes"
-  become_user: www-data
+- name: SimpleSaml {{ environment_string }} metadata
+  template:
+    src: "{{ item }}.j2"
+    dest: "{{ simplesaml_project_dir }}/simplesaml/metadata/{{ item }}"
+  with_items:
+    - saml20-idp-hosted.php
 
-- name: restart Apache
-  systemd: daemon_reload=yes name=apache2 state=restarted enabled=yes
+# before, we used to generate a certificate dynamically, but that was
+# annoying, because then we would need to exchange the metadata over https
+# in some way, which leads to chicken-and-egg problems.
+- name: Copy self-signed Token signing cert key
+  copy:
+    content: "{{client_saml_cert.priv}}"
+    dest: "{{ simplesaml_project_dir }}/simplesaml/cert/server.pem"
+    group: "www-data"
+    mode: 0640
+
+- name: Copy self-signed Token signing cert
+  copy:
+    content: "{{client_saml_cert.pub}}"
+    dest: "{{ simplesaml_project_dir }}/simplesaml/cert/server.crt"
+

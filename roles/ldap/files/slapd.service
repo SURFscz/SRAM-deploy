@@ -2,10 +2,13 @@
 Description = LDAP server
 
 [Service]
-; -d0 stops slapd from forking
-ExecStart = /usr/sbin/slapd -F /etc/ldap/slapd.d -u openldap -g openldap -h 'ldap:/// ldapi:///' -d0
+Type = forking
+ExecStartPre=-/bin/mkdir -p /var/run/slapd
+ExecStartPre=-/bin/chown openldap. /var/run/slapd
+ExecStart = /usr/sbin/slapd -F /etc/ldap/slapd.d -u openldap -g openldap -h 'ldap:/// ldapi:///'
 Restart = always
 RestartSec = 30
+PIDFile = /var/run/slapd/slapd.pid
 
 [Install]
 WantedBy = multi-user.target

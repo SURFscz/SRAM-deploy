@@ -3,51 +3,59 @@
   template: src=sources.list.j2 dest=/etc/apt/sources.list force=yes
   when: ansible_virtualization_type != "docker"
 
-- name: Update apt cache
-  apt: update_cache=yes
-  changed_when: "false"
-
 - name: Upgrade packages
-  apt: upgrade=dist
+  apt:
+    upgrade: dist
+    cache_valid_time: 86400
+  when: "environment_name != 'vm'"
 
 - name: Install common tools / clients
-  apt: name={{ item }} state=present
-  with_items:
-    - sudo
-    - bash
-    - zsh
-    - vim
-    - locales-all
-    - curl
-    - net-tools
-    - git
-    - acl
-    - bzip2
+  apt:
+    cache_valid_time: 86400
+    state: present
+    name:
+      - sudo
+      - bash
+      - zsh
+      - vim
+      - locales-all
+      - curl
+      - net-tools
+      - git
+      - acl
+      - bzip2
+      - unzip
+      - apt-transport-https
 
 - name: remove unneccessary packages
-  apt: name={{ item }} state=absent
-  with_items:
-    - nfs-common
-    - cloud-init
+  apt:
+    state: absent
+    name:
+      - nfs-common
+      - rpcbind
+      - cloud-init
 
 - name: install VMware clients
-  apt: name={{item}} state=present
-  with_items:
-    - open-vm-tools
-    - open-vm-tools-dkms
+  apt:
+    state: present
+    name:
+      - open-vm-tools
+      - open-vm-tools-dkms
   when: ansible_virtualization_type == "VMware"
 
 - name: install Qemu clients
-  apt: name={{item}} state=present
-  with_items:
-    - qemu-guest-agent
+  apt:
+    state: present
+    name:
+      - qemu-guest-agent
   when: ansible_virtualization_type == "kvm"
 
 - name: install VirtualBox clients
-  apt: name={{item}} state=present
-  with_items:
-    - virtualbox-guest-dkms
-    - virtualbox-guest-utils
+  apt:
+    state: present
+    name:
+      - virtualbox-guest-dkms
+      - virtualbox-guest-utils
   when: ansible_virtualization_type == "virtualbox"
 
 # apt module doesn't support autoremove very well, yet

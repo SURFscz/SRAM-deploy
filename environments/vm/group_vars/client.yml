@@ -13,3 +13,7 @@ firewall_v4_incoming:
 simplesaml_download_url: "https://github.com/simplesamlphp/simplesamlphp/releases/download"
 simplesaml_version: "1.15.3"
 simplesaml_project_dir: "/opt/simplesaml"
+
+simplesaml_oidc_repo_url: https://github.com/SURFscz/simplesamlphp-module-openidconnect.git
+simplesaml_oidc_repo_version: master
+simplesaml_oidc_src_dir: "{{ simplesaml_project_dir }}/module-oidc"

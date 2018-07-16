@@ -1,0 +1,22 @@
+---
+ldap_install_dir: /etc/ldap
+ldap_ldif_dir: "{{ ldap_install_dir }}/schema"
+ldap_schema_dir: "{{ ldap_install_dir }}/schema"
+
+lsc_install_dir: /opt/lsc
+lsc_config_dir: "{{ lsc_install_dir }}/config.d"
+
+client_ldap_dbdir: "/var/lib/ldap/client"
+
+client_ldap:
+  basedn: "dc=client,dc=vnet"
+  o: "Clients"
+  binddn: "cn=admin,dc=client,{{ldap.base_dn}}"
+
+client_ldap_clients:
+  - name: "Rebel Alliance"
+    lsc_dir: "{{ lsc_config_dir }}/rebel_alliance"
+    password: "{{ test_organization_password }}"
+  - name: "Second Client"
+    lsc_dir: "{{ lsc_config_dir }}/second_client"
+    password: "{{ test_organization_password }}"

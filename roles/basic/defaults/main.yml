@@ -1,7 +1,10 @@
 ---
-timezone: UTC
+timezone: Etc/UTC
 enable_ipv6: false
 
 # set this to true if you are using internal hostnames that are not published
 # in DNS (e.g., for vagrant)
 fake_hostnames: false
+
+sudo_groups: [ ]
+sudo_groups_nopasswd: [ ]

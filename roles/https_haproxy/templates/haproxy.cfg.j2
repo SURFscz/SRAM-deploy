@@ -42,7 +42,7 @@ defaults
 	errorfile 504 /etc/haproxy/errors/504.http
 
 #--------------------------------------------------------------------
-#  frontend 
+#  frontend
 # -------------------------------------------------------------------
 frontend fe_https
 {% if enable_https %}
@@ -88,7 +88,6 @@ frontend fe_https
 {% endif %}
 
 {% for host in lb_http %}
-	#acl acl_{{host.hostname}} ssl_fc_sni -i {{host.hostname}}
 	acl acl_{{host.hostname}} hdr(host) -i {{host.hostname}}
 {% if host.acl is defined %}
 	acl acl_ip_{{host.hostname}} src 127.0.0.1 ::1 {{host.acl}}

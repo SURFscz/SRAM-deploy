@@ -8,9 +8,6 @@ $config=array(
     # set an optional scope suffix
     'scope_suffix' => '{{ comanage_scope }}',
 
-    # remove unused attributes (default FALSE)
-    'remove_unused' => TRUE,
-
     'server' => array(
       'url' => '{{ comanage_ldap_host }}',
       'binddn' => '{{ ldap.binddn }}',
@@ -29,10 +26,12 @@ $config=array(
       'organizationalPerson',   # required
       'inetOrgPerson',          # required
       'eduPerson',              # optional
-      'groupOfNames',           # optional
-      'eduMember',              # optional
-#     'posixAccount',           # optional
+      'posixAccount',           # optional
       'ldapPublicKey',          # optional
+      'groupOfNames',           # optional
+#     'posixGroup',             # optional
+      'eduMember',              # optional
+      'voPerson',               # optional
     ),
     'person' => array(
       'sn' => 'official',              # required
@@ -50,35 +49,25 @@ $config=array(
 #     'postalCode' => 'office',             # optional
     ),
     'inetOrgPerson' => array(
-#     'givenName' => 'official',     # optional
-     'displayName' => 'preferred',  # optional
-     'o' => TRUE,                   # optional
-     'mail' => TRUE,                # optional
-#     'mobile' => 'mobile',          # optional
+#     'givenName' => 'official',        # optional
+      'displayName' => 'preferred',     # optional
+      'o' => TRUE,                      # optional
+      'mail' => TRUE,                   # optional
+#     'mobile' => 'mobile',             # optional
 #     'employeeNumber' => 'enterprise', # optional
-#     'employeeType' => TRUE,        # optional
-#     'roomNumber' => TRUE,          # optional
-#     'uid' => 'uid',                # optional
+#     'employeeType' => TRUE,           # optional
+#     'roomNumber' => TRUE,             # optional
+      'uid' => 'uid;person',            # optional
     ),
     'eduPerson' => array(
-#     'eduPersonAffiliation' => TRUE,               # optional
+#     'eduPersonAffiliation' => TRUE,              # optional
      'eduPersonEntitlement' => TRUE,               # optional
-#     'eduPersonNickname' => 'official',            # optional
-#     'eduPersonOrcid' => TRUE   ,                   # optional
+#     'eduPersonNickname' => 'official',           # optional
+#     'eduPersonOrcid' => TRUE   ,                 # optional
      'eduPersonPrincipalName' => 'eppn;org',       # optional
-#     'eduPersonPrincipalNamePrior' => 'eppn;org',  # optional
-#     'eduPersonScopedAffiliation' => TRUE,         # optional
-#     'eduPersonUniqueId' => 'enterprise',          # optional
-    ),
-    'groupOfNames' => array(
-      'cn' => TRUE,          # required
-      'member' => TRUE,      # required
-#     'owner' => TRUE,       # optional
-     'description' => TRUE, # optional
-    ),
-    'eduMember' => array(
-      'isMemberOf' => TRUE,   # optional
-      'hasMember' => 'uid',   # optional
+#     'eduPersonPrincipalNamePrior' => 'eppn;org', # optional
+#     'eduPersonScopedAffiliation' => TRUE,        # optional
+#     'eduPersonUniqueId' => 'enterprise',         # optional
     ),
     'posixAccount' => array(
       'uidNumber' => TRUE,     # required
@@ -89,7 +78,26 @@ $config=array(
     ),
     'ldapPublicKey' => array(
       'sshPublicKey' => TRUE,  # required
-      'uid' => 'uid'            # required
-    )
+      'uid' => 'uid;person'           # required
+    ),
+    'posixGroup' => array(
+      'cn' => TRUE,            # required
+      'gidNumber' => TRUE,     # required
+#     'userPassword' => TRUE,  # optional
+      'memberUID' => TRUE,     # optional
+#     'description' => TRUE,   # optional
+    ),
+    'groupOfNames' => array(
+      'cn' => TRUE,          # required
+      'member' => TRUE,      # required
+      'o' => TRUE,           # optional
+      'ou' => TRUE,          # optional
+      'owner' => TRUE,       # optional
+      'description' => TRUE, # optional
+    ),
+    'eduMember' => array(
+      'isMemberOf' => TRUE,   # optional
+      'hasMember' => TRUE,   # optional
+    ),
   )
 );

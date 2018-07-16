@@ -9,11 +9,11 @@ ff02::1 ip6-allnodes
 ff02::2 ip6-allrouters
 
 {% if fake_hostnames %}
-{% for h in groups['all'] -%}
+{% for h in groups['all'] | sort -%}
 {{hostvars[h].ansible_host}} {{h}}
 {% endfor %}
 
 {{hostvars[ groups['lb'][0] ].ansible_host}}
-{%- for h in hostnames %} {{hostnames[h]}}{% endfor %}
+{%- for h in hostnames | sort %} {{hostnames[h]}}{% endfor %}
 {% endif %}
 

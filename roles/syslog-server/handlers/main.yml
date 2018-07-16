@@ -1,0 +1,9 @@
+---
+- name: restart elasticsearch
+  systemd: name=elasticsearch daemon_reload=yes state=restarted enabled=yes
+
+- name: restart logstash
+  systemd: name=logstash daemon_reload=yes state=restarted enabled=yes
+
+- name: restart kibana
+  systemd: name=kibana daemon_reload=yes state=restarted enabled=yes

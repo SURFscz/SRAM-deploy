@@ -1,4 +1,11 @@
 ---
+- name: Ensure that packages are installed
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - jq
+
 - name: Add Google IdP vhost
   template:
     src: "{{ item }}.conf.j2"
@@ -6,6 +13,7 @@
     mode: 0644
   with_items:
     - google
+  notify: restart Apache
 
 - name: Enable Google IdP vhost
   file:
@@ -14,6 +22,7 @@
     state: link
   with_items:
     - google
+  notify: restart Apache
 
 - name: Listen to Google IdP port
   when: google_client_id is defined
@@ -23,81 +32,83 @@
     marker: "# {mark} ANSIBLE MANAGED BLOCK {{ hostnames.google }}"
     block: |
       Listen {{ google_test_port }}
+  notify: restart Apache
 
-- block:
-    - name: Install OIDC module
-      composer:
-        working_dir: "{{ simplesaml_project_dir }}/simplesaml"
-        command: require
-        arguments: bradjonesllc/simplesamlphp-module-openidconnect dev-master
-        optimize_autoloader: False
-      # Composer wants to write cache to ~/.composer, but for www-data its
-      # home (/var/www) is owned by root
-      environment:
-        COMPOSER_CACHE_DIR: /tmp/composer
+- name: Install OIDC module
+  composer:
+    working_dir: "{{ simplesaml_project_dir }}/simplesaml"
+    command: require
+    arguments: bradjonesllc/simplesamlphp-module-openidconnect dev-master
+    optimize_autoloader: False
 
-    - name: Insert Google authsource
-      when: google_client_id is defined
-      blockinfile:
-        path: "{{ simplesaml_project_dir }}/simplesaml/config/authsources.php"
-        insertbefore: "\\);"
-        block: |
-            'oidc-google' => array(
-                'openidconnect:Connect',
-                'client_id'           => '{{ google_client_id }}',
-                'client_secret'       => '{{ google_client_secret }}',
-                'token_endpoint'      => 'https://www.googleapis.com/oauth2/v4/token',
-                'user_info_endpoint'  => 'https://www.googleapis.com/oauth2/v3/userinfo',
-                'auth_endpoint'       => 'https://accounts.google.com/o/oauth2/v2/auth',
-                'sslcapath'           => '/etc/ssl/certs',
-            ),
+- name: Insert Google authsource
+  when: google_client_id is defined
+  blockinfile:
+    path: "{{ simplesaml_project_dir }}/simplesaml/config/authsources.php"
+    insertbefore: "\\);"
+    block: |
+        'oidc-google' => array(
+            'openidconnect:Connect',
+            'client_id'           => '{{ google_client_id }}',
+            'client_secret'       => '{{ google_client_secret }}',
+            'token_endpoint'      => 'https://www.googleapis.com/oauth2/v4/token',
+            'user_info_endpoint'  => 'https://www.googleapis.com/oauth2/v3/userinfo',
+            'auth_endpoint'       => 'https://accounts.google.com/o/oauth2/v2/auth',
+            'sslcapath'           => '/etc/ssl/certs',
+        ),
 
-    - name: Insert Google IdP hosted
-      when: google_client_id is defined
-      blockinfile:
-        path: "{{ simplesaml_project_dir }}/simplesaml/metadata/saml20-idp-hosted.php"
-        insertafter: EOF
-        block: |
-            $metadata['__DYNAMIC:2__'] = array(
-                    'host' => '{{ hostnames.google }}',
-                    'OrganizationName' => '{{ environment_string }} Google IdP',
-                    'OrganizationDisplayName' => '{{ environment_string }} Google IdP',
-                    'OrganizationURL' => '{{ hostnames.google }}',
-                    'UIInfo' => array(
-                    'DisplayName' => array(
-                            'en' => '{{ environment_string }} Google IdP'
-                        ),
-                        'Description' => array(
-                            'en' => '{{ environment_string }} Google IdP description'
-                        ),
-                        'Logo' => array( array(
-                            'url' => 'https://{{ hostnames.google }}'
-                                    .'/saml/resources/icons/ssplogo-fish-small.png',
-                            'width' => '60',
-                            'height' => '41'
-                        ) )
+- name: Insert Google IdP hosted
+  when: google_client_id is defined
+  blockinfile:
+    path: "{{ simplesaml_project_dir }}/simplesaml/metadata/saml20-idp-hosted.php"
+    insertafter: EOF
+    block: |
+        $metadata['__DYNAMIC:2__'] = array(
+                'host' => '{{ hostnames.google }}',
+                'OrganizationName' => '{{ environment_string }} Google IdP',
+                'OrganizationDisplayName' => '{{ environment_string }} Google IdP',
+                'OrganizationURL' => '{{ hostnames.google }}',
+                'UIInfo' => array(
+                'DisplayName' => array(
+                        'en' => '{{ environment_string }} Google IdP'
                     ),
-                    'privatekey' => 'server.pem',
-                    'certificate' => 'server.crt',
-                    'auth' => 'oidc-google',
-                    'signature.algorithm' => 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256',
-                    'authproc' => array(
-                            // Convert LDAP names to oids.
-                            100 => array('class' => 'core:AttributeMap', 'google2urn'),
-                            110 => array('class' => 'saml:AttributeNameID',
-                                'attribute' => 'urn:mace:dir:attribute-def:eduPersonPrincipalName',
-                                'Format' => 'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent',
-                        ),
+                    'Description' => array(
+                        'en' => '{{ environment_string }} Google IdP description'
                     ),
-            );
+                    'Logo' => array( array(
+                        'url' => 'https://{{ hostnames.google }}'
+                                .'/saml/resources/icons/ssplogo-fish-small.png',
+                        'width' => '60',
+                        'height' => '41'
+                    ) )
+                ),
+                'privatekey' => 'server.pem',
+                'certificate' => 'server.crt',
+                'auth' => 'oidc-google',
+                'signature.algorithm' => 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256',
+                'authproc' => array(
+                        // First scope sub
+                        100 => array('class' => 'core:PHP',
+                                'code' => '
+                                        if (empty($attributes["sub"])) {
+                                                throw new Exception("Missing sub attribute.");
+                                        }
+                                        $sub = $attributes["sub"][0];
+                                        $sub .= "@{{hostnames.google}}";
+                                        $attributes["sub"] = array($sub);
+                                '),
+                        // Convert OIDC names to SAML.
+                        110 => array('class' => 'core:AttributeMap', 'google2urn'),
+                        // Set NameID to eppn
+                        120 => array('class' => 'saml:AttributeNameID',
+                            'attribute' => 'urn:mace:dir:attribute-def:eduPersonPrincipalName',
+                            'Format' => 'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent',
+                        ),
+                ),
+        );
 
-    - name: Copy Google attribute map
-      copy:
-        src: "google2urn.php"
-        dest: "{{ simplesaml_project_dir }}/simplesaml/attributemap"
+- name: Copy Google attribute map
+  copy:
+    src: "google2urn.php"
+    dest: "{{ simplesaml_project_dir }}/simplesaml/attributemap"
 
-  become: "yes"
-  become_user: www-data
-
-- name: restart Apache
-  systemd: daemon_reload=yes name=apache2 state=restarted enabled=yes

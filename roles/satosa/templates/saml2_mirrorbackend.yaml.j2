@@ -2,6 +2,7 @@ module: satosa.backends.saml2.SAMLMirrorBackend
 name: SamlMirrorSP
 config:
   sp_config:
+    name: ["{{ satosa_mdui.sp.display_name.en }}", "en"]
     key_file: certs/backend.key
     cert_file: certs/backend.crt
     organization: {display_name: {{ environment_string }} Proxy Mirror SP, name: {{ environment_string }} Proxy Mirror SP, url: 'https://{{ hostnames.meta }}/'}
@@ -12,6 +13,7 @@ config:
       local: ['metadata/idp-test.xml']
       mdq: ['http://localhost:{{ pyff_port }}']
     entityid: <base_url>/md/<name>.xml
+    entity_category: ['http://www.geant.net/uri/dataprotection-code-of-conduct/v1']
     service:
       sp:
         name: Proxy Mirror SP
@@ -19,7 +21,6 @@ config:
         endpoints:
           assertion_consumer_service:
           - [<base_url>/<name>/acs/post, 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST']
-          - [<base_url>/<name>/acs/redirect, 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect']
           discovery_response:
           - [<base_url>/<name>/disco, 'urn:oasis:names:tc:SAML:profiles:SSO:idp-discovery-protocol']
 

@@ -1,0 +1,42 @@
+#!/bin/bash
+set -e
+
+if [ $# -ne 2 ]
+then
+	echo "Syntax: $0 <secrets.yml> <variable_name>"
+	exit 1
+fi
+
+SECRETS=$1
+VAR=$2
+
+if [ ! -e $SECRETS ]
+then
+	echo "Can't find file $SECRETS"
+	exit 1
+fi
+# expand path
+SECRETS=$(readlink -f "$SECRETS")
+
+PLAYBOOK=$(mktemp -t)
+function cleanup {
+	rm -rf $PLAYBOOK
+}
+trap cleanup EXIT
+
+cat > $PLAYBOOK <<-'EOF'
+	---
+	- hosts: localhost
+	  tasks:
+	  - include_vars: "{{ secrets }}"
+	  - debug: "var={{ var }}"
+EOF
+
+ansible-playbook \
+	--ask-vault-pass \
+	--become-method=enable \
+	--extra-vars="secrets=$SECRETS" \
+	--extra-vars="var=$VAR" \
+	$PLAYBOOK
+
+exit 0

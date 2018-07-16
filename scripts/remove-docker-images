@@ -1,0 +1,289 @@
+#!/bin/bash
+
+# (C) Copyright 2018 by Gerben Vebekamp. SCZ and others.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# Contributors:
+#  - Gerben Venekamp
+#
+
+# This script is meant for cleaning up the docker environment. It only
+# removes containers and images that have been created by the SCZ
+# depolyment of docker containers.
+
+
+
+trap "tput sgr0; tput setaf 7; exit" SIGINT SIGTERM EXIT
+
+container_names="lb proxy ldap comanage client meta"
+
+GetFilterNameArguments() {
+    local filter_names
+
+    filter_names=""
+    for name in $container_names; do
+        filter_names="$filter_names --filter name=$name "
+    done
+
+    echo $filter_names
+}
+
+DetermineMaxLength() {
+    local string
+    local max_length
+
+    for string in "$@"; do
+        if [[ "${#string}" -gt "$max_length" ]]; then
+            max_length=${#string}
+        fi
+    done
+
+    echo $max_length
+}
+
+
+PrintSpaces() {
+    local spaces
+
+    if [[ $# -ne 1 ]]; then
+        echo "Expecting one argument, got $#."
+        exit 1
+    fi
+
+    spaces=$1
+
+    while [[ $spaces -gt 0 ]]; do
+        let spaces--
+        echo -n " "
+    done
+}
+
+StopRunningContainers() {
+    local container
+    local containers
+    local filter_names
+    local max_length
+    local spaces
+
+    filter_names=$(GetFilterNameArguments)
+    containers=$(docker ps --filter "status=running" $filter_names --format "{{$formatting}}" | sort)
+
+    if [[ -z $containers ]]; then
+        return
+    fi
+
+    max_length=$(DetermineMaxLength $containers)
+
+    echo "Stop running containers."
+    echo "------------------------"
+    display_header=0
+
+    for container in $containers; do
+        echo -n "Stopping container: "
+        tput bold
+        echo -n "$container..."
+        if [[ $dry_run == 0 ]]; then
+            docker stop $container 2>&1 >/dev/null
+        fi
+        tput sgr0
+        tput setaf 2
+        echo -n -e "\b\b\b"
+        let spaces=$max_length-${#container}
+        PrintSpaces $spaces
+        echo " [done]"
+        tput setaf 7
+    done
+}
+
+RemoveContainers() {
+    local containers
+    local container
+    local filter_names
+    local max_length
+    local spaces
+
+    filter_names=$(GetFilterNameArguments)
+    containers=$(docker ps --filter "status=exited" $filter_names --format "{{$formatting}}" | sort)
+
+    if [[ -z $containers ]]; then
+        return
+    fi
+
+    max_length=$(DetermineMaxLength $containers)
+
+    echo
+    echo "Remove containers."
+    echo "------------------"
+
+    for container in $containers; do
+        echo -n "Removing container: "
+        tput bold
+        echo -n "$container..."
+        if [[ $dry_run == 0 ]]; then
+            docker rm $container 2>&1 >/dev/null
+        fi
+        tput sgr0
+        tput setaf 2
+        echo -n -e "\b\b\b"
+        let spaces=$max_length-${#container}
+        PrintSpaces $spaces
+        echo " [done]"
+        tput setaf 7
+    done
+}
+
+RemoveImages() {
+    local images
+
+    images=$@
+
+    if [[ -z "$images" ]]; then
+        return
+    fi
+
+    echo
+    echo "Remove containers."
+    echo "------------------"
+
+    for image in $images; do
+        echo -n "Removing image: "
+        tput bold
+        echo -n "$image..."
+        if [[ $dry_run == 0 ]]; then
+            docker rmi $image 2>&1 >/dev/null
+        fi
+        tput sgr0
+        tput setaf 2
+        echo -e "\b\b\b [done]"
+        tput setaf 7
+    done
+}
+
+GatherImages() {
+    local image
+    local images
+    local dangling
+    local containers
+    local filter_names
+
+    filter_names=$(GetFilterNameArguments)
+    containers=$(docker ps $filter_names --format "{{$formatting}}")
+
+    if [[ -n "$containers" ]]; then
+        images=$(docker inspect --format='{{.Config.Image}}' $containers | uniq)
+
+    fi
+
+    dangling=$(docker images -f "dangling=true" -q)
+    images="$images $dangling"
+
+    images=$(echo $images | tr " " "\n" | sort | uniq)
+
+    # If the base image of SCZ, i.e. Debian Strech for example, needs to
+    # be deleted as well, make sure it is last in the list of images as
+    # other images depend on it. Docker does not resolve the
+    # dependancies.
+    if [[ $remove_scz_image == 1 ]]; then
+        image="$rm_image"
+        if [[ -n ${rm_tag+x}} ]]; then
+            image="$image:$rm_tag"
+        fi
+        deb=$(docker images debian:stretch --format="{{.ID}}")
+        images="$images $deb"
+    fi
+
+    echo $images
+}
+
+ShowHelp() {
+    base=$(basename $1)
+    cat<<EOM
+Usage: $base [option] [--rm-image <image> | rm-tag <tag>]
+    --name        Show container names instead of IDs.
+    --dry-run     Do not stop or remove any running containers, nor remove any 
+                  image.
+    --rm-scz      When removing images, remove the used debian image as well.
+                  Current defaults are: $default_rm_image:$default_rm_tag
+    --rm-image    Remove the specified image as well.
+    --rm-tag      Remove the specified tag as well. The image name must be set.
+    --help        Show this help.
+EOM
+}
+
+
+prog=$(basename $0)
+formatting='.ID'
+default_rm_image="debian"
+default_rm_tag="strech"
+dry_run=0
+
+while [[ "$#" -gt 0 ]]; do
+    case $1 in
+        --names)
+            formatting='.Names'
+            shift
+            ;;
+        --rm-scz)
+            rm_image=$default_rm_image
+            rm_tag=$default_rm_tag
+            remove_scz_image=1
+            shift
+            ;;
+        --rm-image)
+            if [[ -z "$2" ]]; then
+                echo "$1 expects an image name. See $prog --help."
+                exit 1
+            fi
+            image_name=$2
+            remove_scz_image=1
+            shift 2
+            ;;
+        --rm-tag)
+            if [[ -z "$2" ]]; then
+                echo "$1 expects a tag name. See $prog --help."
+                exit 1
+            fi
+            tag_name=$2
+            shift 2
+            ;;
+        --dry-run)
+            dry_run=1
+            shift
+            ;;
+        -h|--help)
+            ShowHelp $0
+            exit 0
+            ;;
+        *)
+            echo "Unrecognized option detected: '$1'. See $prog --help for more info."
+            exit 1
+            ;;
+    esac
+done
+
+if [[ -n "$tag_name"  && -z ${remove_scz_image+x} ]]; then
+    echo "Please select an image name as well when selecting a tag name."
+    exit 1
+fi
+
+images=$(GatherImages)
+
+if [[ -z "$images" ]]; then
+    echo "Nothing to do."
+    exit 0
+fi
+
+StopRunningContainers
+RemoveContainers
+RemoveImages $images

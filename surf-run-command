@@ -28,6 +28,6 @@ echo -n "Press enter to continue"
 read
 echo
 
-ansible -i environments/surf/inventory $root "$host" -a "$cmd"
+ansible -i environments/surf/inventory $root "$host" -m command -a "$cmd"
 
 exit 0

@@ -8,10 +8,12 @@
   when: "inventory_hostname != mail.relay_host"
 
 - name: clean up after exim
-  apt: name={{item}} state=absent purge=true
-  with_items:
-    - exim4
-    - exim4-base
-    - exim4-config
-    - exim4-daemon-light
+  apt:
+    state: absent
+    purge: true
+    name:
+      - exim4
+      - exim4-base
+      - exim4-config
+      - exim4-daemon-light
 

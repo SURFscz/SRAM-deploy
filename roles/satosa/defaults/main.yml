@@ -9,6 +9,10 @@ satosa_project_dir: "/opt/satosa"
 satosa_src_dir: "{{ satosa_project_dir }}/satosa-src"
 satosa_env_dir: "{{ satosa_project_dir }}/satosa-env"
 
+satosa_microservices_repo_url: "https://github.com/SURFscz/SATOSA-micro_services.git"
+satosa_microservices_repo_version: "master"
+satosa_microservices_src_dir: "{{ satosa_project_dir }}/satosa-microservices"
+
 satosa_host: "0.0.0.0"
 satosa_port: "8080"
 satosa_state_encryption_key: "poikjh567"
@@ -23,13 +27,13 @@ satosa_md:
     url: "https://{{ hostnames.meta }}/"
   contacts:
     technical:
-      email_address: "technical@{{ hostnames.proxy }}"
+      email_address: "mailto:technical@{{ hostnames.proxy }}"
       given_name: "Technical"
     support:
-      email_address: "support@{{ hostnames.proxy }}"
+      email_address: "mailto:support@{{ hostnames.proxy }}"
       given_name: "Support"
     administrative:
-      email_address: "admin{{ hostnames.proxy }}"
+      email_address: "mailto:admin{{ hostnames.proxy }}"
       given_name: "Admin"
 
 
@@ -55,7 +59,7 @@ satosa_mdui:
         - "{{ environment_string }} (EN)"
         - IdP-EN
     logo:
-      url: "http://idp.logo.url/"
+      text: "http://idp.logo.url/"
       width: "100"
       height: "100"
   sp:
@@ -79,6 +83,6 @@ satosa_mdui:
         - "{{ environment_string }} (EN)"
         - SP-EN
     logo:
-      url: "http://sp.logo.url/"
+      text: "http://sp.logo.url/"
       width: "100"
       height: "100"

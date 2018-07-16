@@ -1,5 +1,4 @@
 ---
-# Create COManage-Proxy linkup database
 - name: Copy create_db file
   copy:
     src: "create_db.sql"
