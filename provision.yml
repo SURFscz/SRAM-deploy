@@ -87,7 +87,8 @@
     - { role: client-saml-sp,       tags: ['client','client-sp'    ] }
     - { role: client-saml-idp,      tags: ['client','client-idp'   ] }
     - { role: client-google-idp,    tags: ['client','client-google'] }
-    - { role: client-microsoft-idp, tags: ['client','client-ms'] }
+    - { role: client-orcid-idp,     tags: ['client','client-orcid' ] }
+    - { role: client-microsoft-idp, tags: ['client','client-ms'    ] }
     - { role: client-oidc-rp,       tags: ['client','client-rp'    ] }
 
 - hosts: proxy

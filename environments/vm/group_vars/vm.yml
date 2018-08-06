@@ -18,12 +18,14 @@ hostnames:
   sp:       sp-test.{{base_domain}}
   idp:      idp-test.{{base_domain}}
   google:   google-test.{{base_domain}}
+  orcid:    orcid-test.{{base_domain}}
   ms:       ms-test.{{base_domain}}
 
 idp_test_port: 81
 sp_test_port: 82
 oidc_test_port: 83
 google_test_port: 84
+orcid_test_port: 85
 ms_test_port: 86
 
 # COmanage-ldap configuration
@@ -67,6 +69,10 @@ loadbalancer:
     http: true
     backend_hosts: "{{groups['vm-client']}}"
     backend_port: "{{google_test_port}}"
+  - hostname: "{{hostnames.orcid}}"
+    http: true
+    backend_hosts: "{{groups['vm-client']}}"
+    backend_port: "{{orcid_test_port}}"
   - hostname: "{{hostnames.ms}}"
     http: true
     backend_hosts: "{{groups['vm-client']}}"
