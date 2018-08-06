@@ -6,7 +6,6 @@
     - name: Read vars from secrets file
       include_vars: "{{ secrets_file }}"
       tags: always
-      check_mode: "no"
 
 # first gather facts from all hosts that we're actually deploying to
 - hosts: all
