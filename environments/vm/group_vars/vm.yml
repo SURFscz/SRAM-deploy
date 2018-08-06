@@ -19,6 +19,7 @@ hostnames:
   idp:      idp-test.{{base_domain}}
   google:   google-test.{{base_domain}}
   pam:      pam.{{base_domain}}
+  orcid:    orcid-test.{{base_domain}}
   ms:       ms-test.{{base_domain}}
 
 idp_test_port: 81
@@ -27,6 +28,7 @@ oidc_test_port: 83
 google_test_port: 84
 pam_clients_port: 8123
 pam_web_port: 8125
+orcid_test_port: 85
 ms_test_port: 86
 
 # COmanage-ldap configuration
@@ -74,6 +76,10 @@ loadbalancer:
     http: true
     backend_hosts: "{{groups['vm-ldap']}}"
     backend_port: "{{pam_web_port}}"
+  - hostname: "{{hostnames.orcid}}"
+    http: true
+    backend_hosts: "{{groups['vm-client']}}"
+    backend_port: "{{orcid_test_port}}"
   - hostname: "{{hostnames.ms}}"
     http: true
     backend_hosts: "{{groups['vm-client']}}"
