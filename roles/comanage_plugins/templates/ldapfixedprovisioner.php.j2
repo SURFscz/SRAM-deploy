@@ -1,4 +1,4 @@
-<?php
+<?php # vim:ft=php
 $config=array(
   'fixedldap' => array(
     'basedn'  => '{{ ldap.basedn }}',
@@ -98,6 +98,17 @@ $config=array(
     'eduMember' => array(
       'isMemberOf' => TRUE,   # optional
       'hasMember' => TRUE,   # optional
+    ),
+    'voPerson' => array(
+      'voPersonApplicationUID' => TRUE,      # optional
+      'voPersonAuthorName' => TRUE,          # optional
+      'voPersonCertificateDN' => TRUE,       # optional
+      'voPersonCertificateIssuerDN' => TRUE, # optional
+      'voPersonExternalID' => 'uid;org',     # optional
+      'voPersonID' => 'enterprise',          # optional
+      'voPersonPolicyAgreement' => TRUE,     # optional
+      'voPersonSoRID' => 'sorid',            # optional
+      'voPersonStatus' => TRUE,              # optional
     ),
   )
 );
