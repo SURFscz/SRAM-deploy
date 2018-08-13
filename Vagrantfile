@@ -156,6 +156,7 @@ Vagrant.configure("2") do |config|
                 dk.has_ssh = true
                 create_args = [
                     #"-d", "-t", "-i",
+                    "--cpuset-cpus=0,1",
                     "--network", "scznet",
                     "--ip", "#{machine['ip']}",
                     # internal names (used for LB rerouting)
