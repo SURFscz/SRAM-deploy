@@ -46,7 +46,7 @@ then
 fi
 
 # bring up the VMs if they're not running
-num_running=$(vagrant status|grep -E '\brunning\b'|wc -l)
+num_running=$(vagrant status 2>&1 |grep -E '\brunning\b'|wc -l)
 if [ "$num_running" -ne 6 ]
 then
     echo "Running vagrant to start containers..."
