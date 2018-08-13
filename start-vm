@@ -28,7 +28,7 @@ do
 done
 
 # build single docker image before vagrant starts
-if [ -n "$TRAVIS" ]
+if [ -n "$TRAVIS" -a -z "$REENTRANT" ]
 then
     # generate ssh key if it doesn't exist
     if ! [ -e ".vagrant/id_rsa" ]
