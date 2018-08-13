@@ -53,3 +53,5 @@ install:
 script:
   - scripts/syntax-check
   - sudo ./start-vm --provider docker
+  # run again, to check if reeantrace works ok
+  - sudo ./start-vm --provider docker
