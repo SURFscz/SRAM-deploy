@@ -207,24 +207,6 @@ Vagrant.configure("2") do |config|
                 end
                 dk.create_args = create_args
             end
-
-            ## obsolete; run start-vagrant instead
-            # if machine_id == N
-            #    m.vm.provision :ansible do |ansible|
-            #        # Note: recent versions of Vagrant need this, but older
-            #        # version choke on it
-            #        #ansible.compatibility_mode = "2.0"
-            #        ansible.playbook = "provision.yml"
-            #        ansible.inventory_path = "./environments/vm/inventory"
-            #        #ansible.verbose = 3
-            #        #ansible.raw_arguments = "-vvv"
-            #        ansible.limit = "comanage,ldap,proxy,meta,lb,client"
-            #        #ansible.tags = "clients,comanage"
-            #        ansible.extra_vars = {
-            #            secrets_file: "environments/vm/secrets/all.yml",
-            #        }
-            #    end
-            #end
         end
     end
 
