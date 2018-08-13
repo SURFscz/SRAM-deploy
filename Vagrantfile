@@ -110,12 +110,16 @@ Vagrant.configure("2") do |config|
 
     config.vm.provider "docker" do |dk, override|
         # create a docker client network
-        Vagrant::Util::Subprocess.execute('bash','-c',
-            "(docker network list | grep 'scznet') || \
-              docker network create --attachable --driver bridge \
-                --gateway 172.20.1.1 --subnet 172.20.1.0/24 scznet",
-            :notify => [:stdout, :stderr]
-        )
+        # note: this will also run when libvirt or vbox is used, and will break networking
+        # starting from vagrant 2.1, we can use triggers instead
+        #override.trigger.before [:up] do |trigger|
+            Vagrant::Util::Subprocess.execute('bash','-c',
+                "(docker network list | grep 'scznet') || \
+                  docker network create --attachable --driver bridge \
+                    --gateway 172.20.1.1 --subnet 172.20.1.0/24 scznet",
+                :notify => [:stdout, :stderr]
+            )
+        #end
         # disable proxying
         if Vagrant.has_plugin?("vagrant-proxyconf")
             override.proxy.enabled = false
