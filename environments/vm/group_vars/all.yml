@@ -104,3 +104,5 @@ comanage_proxy_db_user: "scz"
 comanage_proxy_db_name: "cotosa"
 comanage_proxy_attribute: "cmuid"
 
+php_debug: true
+php_xdebug_host: "{{iprange.bastion}}"

@@ -33,3 +33,14 @@
   register: result
   changed_when: "result.stdout != ''"
 
+- name: install xdebug
+  apt: name=php-xdebug state={{ 'present' if php_debug else 'absent' }}
+
+- name: config xdebug
+  blockinfile:
+    path: "/etc/php/5.6/apache2/php.ini"
+    block: |
+      [Xdebug]
+      xdebug.remote_enable={{ '1' if php_debug else '0' }}
+      xdebug.remote_host={{php_xdebug_host}}
+      xdebug.remote_port={{php_xdebug_port}}
