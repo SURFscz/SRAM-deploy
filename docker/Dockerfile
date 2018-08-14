@@ -26,6 +26,7 @@ RUN apt-get install -y openssh-server python2.7 python3 python sudo locales
 RUN update-locale
 RUN systemctl enable ssh.service
 RUN systemctl disable getty\@tty1.service
+RUN systemctl disable systemd-timesyncd.service
 
 # sshd services in all containers
 EXPOSE 22
