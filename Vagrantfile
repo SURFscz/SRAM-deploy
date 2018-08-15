@@ -114,7 +114,7 @@ Vagrant.configure("2") do |config|
         # starting from vagrant 2.1, we can use triggers instead
         #override.trigger.before [:up] do |trigger|
             Vagrant::Util::Subprocess.execute('bash','-c',
-                "(docker network ls | grep -q scznet || \
+                "(docker network ls | grep -q scznet) || \
                   docker network create --attachable --driver bridge \
                     --gateway 172.20.1.1 --subnet 172.20.1.0/24 scznet",
                 :notify => [:stdout, :stderr]
