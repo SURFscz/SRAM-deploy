@@ -52,6 +52,6 @@ install:
 
 script:
   - scripts/syntax-check
-  - sudo ./start-vm --provider docker
-  # run again, to check if reeantrace works ok
-  - sudo env REEANTRANT=1 ./start-vm
+  # run twice, to check if reeantrace works ok
+  - sudo bash -x ./start-vm --provider docker \
+      && sudo env REEANTRANT=1 bash -x ./start-vm
