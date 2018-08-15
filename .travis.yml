@@ -53,5 +53,5 @@ install:
 script:
   - scripts/syntax-check
   # run twice, to check if reeantrace works ok
-  - sudo env VAGRANT_LOG=info bash -x ./start-vm --provider docker \
+  - sudo bash -x ./start-vm --provider docker \
       && sudo env REEANTRANT=1 bash -x ./start-vm
