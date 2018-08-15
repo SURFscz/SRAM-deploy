@@ -78,6 +78,7 @@
 - name: Configure JsonLog for ZoneProvisioner
   blockinfile:
     path: "{{ comanage_path }}/app/local/Config/bootstrap.php"
+    create: yes
     follow: yes
     marker: "// {mark} ANSIBLE MANAGED BLOCK"
     block: |
