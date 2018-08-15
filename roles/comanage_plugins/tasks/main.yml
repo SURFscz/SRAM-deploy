@@ -77,10 +77,9 @@
 
 - name: Configure JsonLog for ZoneProvisioner
   blockinfile:
-    path: "{{ comanage_path }}/app/Config/bootstrap.php"
+    path: "{{ comanage_path }}/app/local/Config/bootstrap.php"
     follow: yes
-    insertbefore: "CakeLog::config\\('debug'"
-    marker: // {mark} ANSIBLE MANAGED BLOCK"
+    marker: "// {mark} ANSIBLE MANAGED BLOCK"
     block: |
       CakeLog::config('json', array(
         'engine' => 'ZoneProvisioner.JsonLog',
