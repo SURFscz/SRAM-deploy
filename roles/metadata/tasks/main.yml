@@ -29,6 +29,21 @@
     path: /etc/cron.d/create_metadata
     state: absent
 
+- name: Remove old metadata file
+  file:
+    path: "{{ metadata_project_dir }}/{{ item }}"
+    state: absent
+  with_items:
+    - sc_edugain.xml
+    - sc_edugain_rs_coco_nosc.xml
+    - sc_edugain_rs_coco_nosc_sps.xml
+    - sc_edugain_rs_coco_nosc_idps.xml
+    - sc_edugain_rs_coco_nosc_nologo.xml
+    - sc_edugain_rs_coco_nosc_nologo_idps.xml
+    - sc_edugain_rs_coco_nosc_nologo_sps.xml
+    - proxy_idp.xml
+    - proxy_sp.xml
+
 - name: Copy metadata service files
   template:
     src: "{{item}}.j2"
