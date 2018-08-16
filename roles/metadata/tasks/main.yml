@@ -24,6 +24,11 @@
 - name: Copy xsl processing script script in place
   template: src=create_metadata.j2 dest={{ metadata_project_dir }}/create_metadata mode=0755
 
+- name: Remove obsolete cron file
+  file:
+    path: /etc/cron.d/create_metadata
+    state: absent
+
 - name: Copy metadata service files
   template:
     src: "{{item}}.j2"
