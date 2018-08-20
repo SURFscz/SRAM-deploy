@@ -1,5 +1,6 @@
 .ansible/
 .vagrant/
+.mypy_cache/
 vagrant.log
 provision.retry
 logs/
