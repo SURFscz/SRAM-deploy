@@ -55,18 +55,27 @@
     - { src: "set_loglevel_stats.ldif.j2", dest: "set_loglevel_stats.ldif" }
     - { src: "enable_syncprov.ldif.j2", dest: "enable_syncprov.ldif" }
 
+
 - name: Ensure the ldap admin credentials are set
   command: ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f "{{ ldap_ldif_dir }}/set_root_credentials.ldif"
+  # return code 20 means entry already exists
+  register: result
+  failed_when: "result.rc not in [0,20]"
+  changed_when: "result.rc==20"
 
 - name: Set loglevel to stats
   command: ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f "{{ ldap_ldif_dir }}/set_loglevel_stats.ldif"
+  # return code 20 means entry already exists
+  register: result
+  failed_when: "result.rc not in [0,20]"
+  changed_when: "result.rc==20"
 
 - name: Enable synchronization
   command: ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f "{{ ldap_ldif_dir }}/enable_syncprov.ldif"
-  register: ldap_sync_enable
   # return code 20 means entry already exists
-  failed_when: "ldap_sync_enable.rc!=0 and ldap_sync_enable.rc!=20"
-  changed_when: "ldap_sync_enable.rc!=20"
+  register: result
+  failed_when: "result.rc not in [0,20]"
+  changed_when: "result.rc==20"
 
 - name: Check for presence of eduPerson ldif
   stat:
