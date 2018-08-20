@@ -34,9 +34,12 @@ create a number of VMs on your local machine, en run the Ansible playbook to
 install the different components onto the VMs.
 
 We support this on both Linux (tested on Ubuntu 17.10 and 18.04, experimental on
-openSUSE Tumbleweed) and OSX/MacOS (tested on High Sierra).  For VM backends,
-both libvirt/qemu and virtualbox are supported.  We are working on Docker
-support, but this is currently broken (works on openSUSE Tumbleweed).
+openSUSE Tumbleweed) and OSX/MacOS (tested on High Sierra).
+You can either deploy to full VMs (libvirt/qemu and Virtualbox are supported), or to container (using docker).
+
+We _strongly_ recommend using the container/docker-based deploy, because it requires much less resources (should run
+easily on a dual core machine with 8GB memory). To deploy to VMs, we recommend a quad-core CPU and at least 16GB of
+memory, as the script will create 6 VMs with 768MB of memory each.
 
 To get started, do the following:
 
@@ -47,16 +50,17 @@ To get started, do the following:
       <http://docs.ansible.com/ansible/latest/intro_installation.html#latest-releases-on-mac-osx>
       and <https://www.vagrantup.com/downloads.html>
 - install either one of:
-    - virtualbox: `apt install virtualbox`
-    - virtualbox (openSUSE Tumbleweed): `zypper install virtualbox`
-    - libvirt and qemu: `apt install libvirt-daemon-system virt-manager
-     gir1.2-spice-client-gtk-3.0 qemu qemu-kvm`
-    - docker (openSUSE Tumbleweed): `sudo zypper install docker docker-compose` and
-      if you want the docker deamon to start automatically: `sudo systemctl enable docker`
-      If you are on a btrfs system and using snapshots (snapper for example),
-      you might want to consider making `/var/lib/docker` a subvolume.
-- (libvirt only) add your user to the libvirt group: `adduser $(whoami) libvirt`
-- openSUSE Tumbleweed with docker: either use YaST, or `sudo usermod -a -G docker`
+    - docker:
+      - (Debian/Ubuntu): `sudo apt install docker-compose docker.io` and add yourself to the docker group:
+        `adduser $(whoami) docker`
+      - (openSUSE Tumbleweed): `sudo zypper install docker docker-compose` and if you want the docker deamon to start
+        automatically: `sudo systemctl enable docker`.  Add yourself tot he docker group: `sudo usermod -a -G docker`
+    - virtualbox:
+      - (Debian/Ubuntu): `apt install virtualbox`
+      - (openSUSE Tumbleweed): `zypper install virtualbox`
+    - libvirt and qemu:
+      - (Debian/Ubuntu): `apt install libvirt-daemon-system virt-manager gir1.2-spice-client-gtk-3.0 qemu qemu-kvm`
+        and add your user to the libvirt group: `adduser $(whoami) libvirt`
 - add the following entries to `/etc/hosts`:
     ```
     172.20.1.24 lb.vm.scz-vm.net oidc-test.scz-vm.net sp-test.scz-vm.net idp-test.scz-vm.net proxy.scz-vm.net mdq.scz-vm.net cm.scz-vm.net comanage.scz-vm.net ldap.scz-vm.net meta.scz-vm.net
@@ -67,10 +71,11 @@ To get started, do the following:
     172.20.1.25 client.vm.scz-vm.net
     ```
 - set up the VMs and start the deploy:
-    - libvirt: `vagrant up --provider libvirt; ./start-vm` 
-    - virtualbox: `vagrant up --provider virtualbox; ./start-vm`
+    - docker (recommended): `./start-vm --provider docker`
+    - libvirt: `./start-vm --provider libvirt`
+    - virtualbox: `./start-vm --provider virtualbox`
 
-    This will boot 6 VMs (each of which requires 786MB of memory) and run ansible to deploy SCZ to these 6 hosts.
+    This will boot 6 containers/VMs and run ansible to deploy SCZ to these 6 hosts.
 
 - when the deploy finishes, you should be able to browse to
   <https://comanage.scz-vm.net> and login using the default platform admin
