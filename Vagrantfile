@@ -63,7 +63,7 @@ machines = {
         "ports"     => [ '2722:22' ] }
 }
 cpus = "1"
-memory = "512"
+memory = "768"
 
 # All Vagrant configuration is done below. The "2" in Vagrant.configure
 # configures the configuration version (we support older styles for
