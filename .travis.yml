@@ -28,7 +28,7 @@ notifications:
 language: python
 cache: pip
 python:
-  - 3.7
+  - 3.6
 
 # disable the default submodule logic, as travis can't reach gitlab anyway
 git:
