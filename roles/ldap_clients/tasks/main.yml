@@ -63,7 +63,7 @@
 - name: Check if the synchronization config is already present
   shell: >
     ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// -b 'olcDatabase={2}mdb,cn=config'
-        '(objectClass=olcSyncProvConfig)' dn
+    '(objectClass=olcSyncProvConfig)' dn
     | grep -E '^dn: olcOverlay='
   register: checkSyncEnabled
   failed_when: "checkSyncEnabled.rc not in [0,1]"
