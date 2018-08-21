@@ -44,7 +44,7 @@ install:
   - sudo apt -y update
   - sudo apt -y install ansible
   - sudo apt -y install bridge-utils
-  - sudo apt -y install python3-jinja2
+  - sudo apt -y install python3-jinja2 python3-yaml
 
 script:
   - sudo ./scripts/travis_tests
