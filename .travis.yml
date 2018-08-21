@@ -37,13 +37,12 @@ git:
 install:
   - pip install yamllint
   - pip install jinja2
-  - sudo wget https://releases.hashicorp.com/vagrant/2.0.3/vagrant_2.0.3_x86_64.deb -P /tmp
-  - sudo dpkg -i /tmp/vagrant_2.0.3_x86_64.deb
+  - sudo wget https://releases.hashicorp.com/vagrant/2.1.2/vagrant_2.1.2_x86_64.deb -P /tmp
+  - sudo dpkg -i /tmp/vagrant_2.1.2_x86_64.deb
   - sudo apt -y install software-properties-common
   - sudo apt-add-repository -y ppa:ansible/ansible
   - sudo apt -y update
-  - sudo apt -y install ansible
-  - sudo apt -y install bridge-utils
+  - sudo apt -y install ansible bridge-utils
   - sudo apt -y install python3-jinja2 python3-yaml
 
 script:
