@@ -28,7 +28,7 @@ notifications:
 language: python
 cache: pip
 python:
-  - 3.5
+  - 3.7
 
 # disable the default submodule logic, as travis can't reach gitlab anyway
 git:
@@ -45,8 +45,6 @@ addons:
       - python3-yaml
 
 before_install:
-  - env
-  - pip install yamllint
   - sudo pip install yamllint
   - sudo wget https://releases.hashicorp.com/vagrant/2.1.2/vagrant_2.1.2_x86_64.deb -P /tmp
   - sudo dpkg -i /tmp/vagrant_2.1.2_x86_64.deb
