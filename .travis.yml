@@ -39,11 +39,6 @@ install:
   - pip install jinja2
   - sudo wget https://releases.hashicorp.com/vagrant/2.0.3/vagrant_2.0.3_x86_64.deb -P /tmp
   - sudo dpkg -i /tmp/vagrant_2.0.3_x86_64.deb
-  #- sudo wget >
-  #  https://download.docker.com/linux/ubuntu/dists/trusty/pool/
-  #  stable/amd64/docker-ce_18.03.0~ce-0~ubuntu_amd64.deb -P /tmp
-  #- sudo dpkg -i /tmp/docker-ce_18.03.0~ce-0~ubuntu_amd64.deb
-  #- sudo apt -y update
   - sudo apt -y install software-properties-common
   - sudo apt-add-repository -y ppa:ansible/ansible
   - sudo apt -y update
@@ -51,7 +46,4 @@ install:
   - sudo apt -y install bridge-utils
 
 script:
-  - scripts/syntax-check
-  # run twice, to check if reeantrace works ok
-  - sudo bash -x ./start-vm --provider docker \
-      && sudo env REEANTRANT=1 bash -x ./start-vm
+  - sudo ./scripts/travis_tests

@@ -1,0 +1,23 @@
+#!/bin/bash
+set -e
+
+if ! test -e .travis.yml
+then
+    echo Run this script from the SCZ-deploy root dir
+    exit 2
+fi
+
+
+./scripts/syntax-check
+
+
+./start-vm --provider docker
+
+# run second time, to check if reeantrace works ok
+export REEANTRANT=1
+./start-vm
+
+#TODO: find some way to push data about changed targets in the second run back to github
+
+exit 0
+
