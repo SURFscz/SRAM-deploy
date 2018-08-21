@@ -1,10 +1,10 @@
 ---
 #- name: Ensure that packages are installed
-  #apt:
-    #name: "{{ item }}"
-    #state: present
-  #with_items:
-    #- composer
+#  apt:
+#    name: "{{ item }}"
+#    state: present
+#  with_items:
+#    - composer
 
 - name: Add ORCID IdP vhost
   template:
@@ -35,11 +35,11 @@
   notify: restart Apache
 
 #- name: Install ORCID module
-  #composer:
-    #working_dir: "{{ simplesaml_project_dir }}/simplesaml"
-    #command: require
-    #arguments: rciam/simplesamlphp-module-authorcid
-    #optimize_autoloader: False
+#  composer:
+#    working_dir: "{{ simplesaml_project_dir }}/simplesaml"
+#    command: require
+#    arguments: rciam/simplesamlphp-module-authorcid
+#    optimize_autoloader: False
 
 - name: Install ORCID module
   git:

@@ -58,17 +58,20 @@
   failed_when: "(result.rc not in [0, 68])"
   when: olcSuffix.stdout.find(client_ldap.basedn) == -1
 
-  # TODO: replace shell ldapsearch command with https://github.com/unchained-capital/ansible-ldap-modules
+  # TODO: replace shell ldapsearch command with
+  # https://github.com/unchained-capital/ansible-ldap-modules
 - name: Check if the synchronization config is already present
   shell: >
-    ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// -b 'olcDatabase={2}mdb,cn=config' '(objectClass=olcSyncProvConfig)' dn
+    ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// -b 'olcDatabase={2}mdb,cn=config'
+        '(objectClass=olcSyncProvConfig)' dn
     | grep -E '^dn: olcOverlay='
   register: checkSyncEnabled
   failed_when: "checkSyncEnabled.rc not in [0,1]"
   changed_when: false
 
 - name: Enable synchronization for client db
-  command: ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f "{{ ldap_ldif_dir }}/enable_syncprov_client.ldif"
+  command: >
+    ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f "{{ ldap_ldif_dir }}/enable_syncprov_client.ldif"
   when: "checkSyncEnabled.rc==1"
   register: result
   failed_when: "result.rc not in [0,20]"
