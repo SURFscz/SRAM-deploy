@@ -43,7 +43,7 @@ install:
   - sudo apt-add-repository -y ppa:ansible/ansible
   - sudo apt -y update
   - sudo apt -y install ansible bridge-utils
-  - sudo apt -y install python3-jinja2 python3-yaml
+  - sudo apt -y install python3-jinja2 python3-yaml yamllint
 
 script:
   - sudo ./scripts/travis_tests
