@@ -40,6 +40,16 @@ wget https://{{ hostnames.proxy }}/md/SamlSP.xml  $WFLAGS -O proxy_sp.xml
 #rm -f /var/www/html/*.xml
 cp *.xml /var/www/html
 
+# remove old xml files in the www dir that don't have a newly generated equivalent
+for f in /var/www/html/*.xml
+do
+    f_base=$(basename $f)
+    if ! [ -e "$dir/$f_base" ]
+    then
+        rm -f $f
+    fi
+done
+
 # remove temporary files if everything went ok
 rm -rf "$dir"
 exit 0
