@@ -13,7 +13,7 @@ for CONF in {{lsc_config_dir}}/*/; do
   fi
 
   echo "Running Sync Tasks"
-  /usr/bin/env JAVA_OPTS="$JAVA_OPTS $MY_JAVA_OPTS" /usr/bin/lsc -f $CONF -s all >/dev/null
+  /usr/bin/env JAVA_OPTS="$JAVA_OPTS $MY_JAVA_OPTS" /usr/bin/lsc -f $CONF -t 1 -s all >/dev/null
   echo "Running Cleanup Tasks"
-  /usr/bin/env JAVA_OPTS="$JAVA_OPTS $MY_JAVA_OPTS" /usr/bin/lsc -f $CONF -c all >/dev/null
+  /usr/bin/env JAVA_OPTS="$JAVA_OPTS $MY_JAVA_OPTS" /usr/bin/lsc -f $CONF -t 1 -c all >/dev/null
 done
