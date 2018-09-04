@@ -21,7 +21,7 @@ client_ldap_clients:
     lsc_dir: "{{ lsc_config_dir }}/rebel_alliance"
     password: "{{ test_organization_password }}"
     uid_start: 1000
-    gid:start: 1000
+    gid_start: 1000
   - name: "Second Client"
     lsc_dir: "{{ lsc_config_dir }}/second_client"
     password: "{{ test_organization_password }}"
