@@ -20,6 +20,9 @@ satosa_user_id_hash_salt: "59o3gaxfwg0svem1n1g3tk22i9mihcom"
 
 satosa_backup_dir: "{{backup_base}}/satosa"
 
+satosa_idp_country_attribute: "idpcountry"
+satosa_idp_name_attribute: "idpname"
+
 satosa_md:
   organisation:
     display_name: "{{ environment_string }} Proxy"

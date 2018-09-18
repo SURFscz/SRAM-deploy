@@ -70,10 +70,19 @@ attributes:
     saml:
       - 'urn:mace:dir:attribute-def:eduPersonEntitlement'
       - 'urn:oid:1.3.6.1.4.1.5923.1.1.1.7'
+  sshPublicKey:
+    saml:
+      - 'urn:oid:1.3.6.1.4.1.24552.1.1.1.13'
   # internal custom uid transport attribute
   cmuid:
     saml:
       - '{{ comanage_proxy_attribute }}'
-  sshPublicKey:
+  # special case internal attributes
+  '*idpcountry':
+    openid: [{{ satosa_idp_country_attribute }}]
     saml:
-      - 'urn:oid:1.3.6.1.4.1.24552.1.1.1.13'
+      - '{{ satosa_idp_country_attribute }}'
+  '*idpname':
+    openid: [{{ satosa_idp_name_attribute }}]
+    saml:
+      - '{{ satosa_idp_name_attribute }}'
