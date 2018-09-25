@@ -5,7 +5,10 @@ set -e
 WFLAGS="--verbose --server-response"
 
 basedir={{ metadata_project_dir }}
-dir=$(mktemp -d -p $basedir run-$(date '+%Y%m%d-%H%M').XXX)
+ds=`date '+%Y%m%d-%H%M'`
+dir=$(mktemp -d -p $basedir run-${ds}.XXX)
+# for debugging systemd timer unit
+# echo $ds >> metadata.log
 
 cd $dir
 
@@ -19,19 +22,17 @@ set -x
 
 wget {{ edugain_feed }} $WFLAGS -O sc_edugain.xml
 
-# Select R&S and COCO entityID's but not SURFConext
-#xsltproc rs_coco_nosc.xsl sc_edugain.xml > sc_edugain_rs_coco_nosc.xml
-xalan -in sc_edugain.xml -xsl "$basedir/rs_coco_nosc.xsl" -indent 2 > sc_edugain_rs_coco_nosc.xml
+# Select IdP's
+xalan -in sc_edugain.xml -xsl "$basedir/idps.xsl" -indent 2 > sc_edugain_idps.xml
 
 # Remove logos
-#xsltproc nologo.xsl sc_edugain_rs_coco_nosc.xml > sc_edugain_rs_coco_nosc_nologo.xml
-xalan -in sc_edugain_rs_coco_nosc.xml -xsl "$basedir/nologo.xsl" -indent 2 > sc_edugain_rs_coco_nosc_nologo.xml
+xalan -in sc_edugain_idps.xml -xsl "$basedir/nologo.xsl" -indent 2 > sc_edugain_idps_nologo.xml
 
-# Split SP's and IdP's
-#xsltproc idps.xsl sc_edugain_rs_coco_nosc_nologo.xml > sc_edugain_rs_coco_nosc_nologo_idps.xml
-#xsltproc sps.xsl  sc_edugain_rs_coco_nosc_nologo.xml > sc_edugain_rs_coco_nosc_nologo_sps.xml
-xalan -in sc_edugain_rs_coco_nosc_nologo.xml -xsl "$basedir/idps.xsl" -indent 2 > sc_edugain_rs_coco_nosc_nologo_idps.xml
-xalan -in sc_edugain_rs_coco_nosc_nologo.xml -xsl "$basedir/sps.xsl"  -indent 2 > sc_edugain_rs_coco_nosc_nologo_sps.xml
+# Remove hide-from-discovery
+xalan -in sc_edugain_idps_nologo.xml -xsl "$basedir/nohide.xsl" -indent 2 > sc_edugain_idps_nologo_nohide.xml
+
+# Remove registrationAuthority = SURFconext
+xalan -in sc_edugain_idps_nologo_nohide.xml -xsl "$basedir/nosc.xsl" -indent 2 > sc_edugain_idps_nologo_nohide_nosc.xml
 
 # Retrieve SATOSA generated md
 wget https://{{ hostnames.proxy }}/md/SamlIdP.xml $WFLAGS -O proxy_idp.xml
