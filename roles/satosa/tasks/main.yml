@@ -158,6 +158,11 @@
         src: custom_alias.yaml.j2
         dest: "{{ satosa_env_dir }}/plugins/micro_services/custom_alias.yaml"
 
+    - name: Create metainfo.yaml definition
+      template:
+        src: metainfo.yaml.j2
+        dest: "{{ satosa_env_dir }}/plugins/micro_services/metainfo.yaml"
+
     - name: Copy error and info pages to static alias directory
       copy:
         src: "{{ item }}"
