@@ -1,6 +1,6 @@
 ---
 pam_websso:
-  repo_url: "https://github.com/mrvanes/pam-websso.git"
+  repo_url: "https://github.com/SURFscz/pam-websso.git"
   repo_version: "master"
   project_dir: "/opt/pam-websso"
   server: "localhost"
