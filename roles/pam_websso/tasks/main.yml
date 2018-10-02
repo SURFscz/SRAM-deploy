@@ -7,10 +7,19 @@
   with_items:
     - libnss-ldap
     - libpam-python
-    - python-pip
+    - pamtester
     - libxml2-dev
     - libxmlsec1-dev
-    - pamtester
+    - build-essential
+    - python-dev
+    - python-pip
+    - python-openssl
+    - python-setuptools
+    - python-wheel
+    - python-twisted
+    - python-openssl
+    - python-defusedxml
+    - python-isodate
 
 - name: fetch PAM WebSSO from {{ pam_websso.repo_url }}, version {{ pam_websso.repo_version }}
   git:
@@ -24,7 +33,7 @@
 - name: install PAM WebSSO
   pip:
     name: "{{ pam_websso.project_dir }}"
-    state: latest
+    #state: latest
   when: pam_websso_git.changed
 
 - name: install PAM WebSSO configuration
