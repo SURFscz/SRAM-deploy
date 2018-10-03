@@ -25,6 +25,7 @@ config:
           - [<base_url>/<name>/disco, 'urn:oasis:names:tc:SAML:profiles:SSO:idp-discovery-protocol']
 
         name_id_format: 'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent'
+        name_id_format_allow_create: True
         want_response_signed: false
     attribute_map_dir: '{{ satosa_env_dir }}/mapper'
     allow_unknown_attributes: true
