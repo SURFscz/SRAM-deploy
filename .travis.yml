@@ -36,8 +36,6 @@ git:
 
 addons:
   apt:
-    sources:
-      - ppa:ansible/ansible
     packages:
       - bridge-utils
       - python3-jinja2
@@ -47,6 +45,7 @@ before_install:
   - sudo pip install yamllint
   - sudo wget https://releases.hashicorp.com/vagrant/2.1.2/vagrant_2.1.2_x86_64.deb -P /tmp
   - sudo dpkg -i /tmp/vagrant_2.1.2_x86_64.deb
+  - sudo apt-add-repository -y ppa:ansible/ansible
   - sudo apt -q update
   - sudo apt -y install ansible/2.6.1-1ppa~artful
 
