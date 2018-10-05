@@ -45,9 +45,11 @@ before_install:
   - sudo pip install yamllint
   - sudo wget https://releases.hashicorp.com/vagrant/2.1.2/vagrant_2.1.2_x86_64.deb -P /tmp
   - sudo dpkg -i /tmp/vagrant_2.1.2_x86_64.deb
-  - sudo apt-add-repository -y ppa:ansible/ansible
-  - sudo apt -q update
-  - sudo apt -y install ansible/2.6.1-1ppa~artful
+  #- sudo apt-add-repository -y ppa:ansible/ansible
+  #- sudo apt -q update
+  #- sudo apt -y install ansible
+  - sudo wget https://launchpad.net/~ansible/+archive/ubuntu/ansible-2.6/+build/15090801/+files/ansible_2.6.1-1ppa~artful_all.deb -P /tmp
+  - sudo dpkg -i /tmp/ansible_2.6.1-1ppa~artful_all.deb
 
 
 script:
