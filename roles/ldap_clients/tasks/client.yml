@@ -16,12 +16,9 @@
 #  failed_when: "(result.rc not in [0, 68])"
 #  when: org.stdout.find(test_organization.o) == -1
 
-
 - name: "Create the client {{client.name}} organization"
   ldap_entry:
     # SASL EXTERNAL Should work
-    #bind_dn: "{{ client_ldap.binddn }}"
-    #bind_pw: "{{ client_ldap_password }}"
     dn: "o={{ client.name}},{{ client_ldap.basedn }}"
     objectClass: organization
     attributes:
@@ -29,8 +26,6 @@
 
 - name: "Create the admin identity for {{client.name}}"
   ldap_entry:
-    #bind_dn: "{{ client_ldap.binddn }}"
-    #bind_pw: "{{ client_ldap_password }}"
     dn: "cn=admin,o={{ client.name }},{{ client_ldap.basedn }}"
     objectClass:
       - simpleSecurityObject
@@ -50,8 +45,6 @@
 
 - name: "Add database skeleton to client db"
   ldap_entry:
-    #bind_dn: "{{ client_ldap.binddn }}"
-    #bind_pw: "{{ client_ldap_password }}"
     dn: "ou={{item}},o={{ client.name }},{{ client_ldap.basedn }}"
     objectClass: organizationalUnit
     attributes:
@@ -63,26 +56,19 @@
 
 - name: "Set default uidNumer sequence for client {{client.name}}"
   ldap_entry:
-    #bind_dn: "{{ client_ldap.binddn }}"
-    #bind_pw: "{{ client_ldap_password }}"
-    dn: "cn={{ item }},ou=Sequence,o={{ client.name }},{{ client_ldap.basedn }}"
+    dn: "cn=uidNumberSequence,ou=Sequence,o={{ client.name }},{{ client_ldap.basedn }}"
     objectClass: device
     attributes:
-      cn: "{{ item }}"
-      serialNumber: 1
-  with_items:
-    - uidNumberSequence
-    - gidNumberSequence
+      cn: uidNumberSequence
+      serialNumber: "{{ client.uid_start }}"
 
 - name: "Set default giNumber sequence for client {{client.name}}"
   ldap_entry:
-    #bind_dn: "{{ client_ldap.binddn }}"
-    #bind_pw: "{{ client_ldap_password }}"
     dn: "cn=gidNumberSequence,ou=Sequence,o={{ client.name }},{{ client_ldap.basedn }}"
     objectClass: device
     attributes:
       cn: gidNumberSequence
-      serialNumber: 1
+      serialNumber: "{{ client.gid_start }}"
 
 # LSC config
 - name: Make sure test org LSC directory exists
