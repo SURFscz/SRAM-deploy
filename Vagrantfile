@@ -13,8 +13,12 @@ if ARGV[0] == "up"  and  ( !sshkeypriv.exist?  or  !sshkeypub.exist? )
     # see https://github.com/mitchellh/vagrant/blob/master/plugins/communicators/ssh/communicator.rb#L183-L193
     puts "Generating new ssh key to use"
     _, priv, openssh = Vagrant::Util::Keypair.create
-    sshkeypriv.open("w+").write(priv)
-    sshkeypub.open("w+").write(openssh)
+    priv_fd = sshkeypriv.open("w+")
+    priv_fd.write(priv)
+    priv_fd.close
+    pub_fd = sshkeypub.open("w+")
+    pub_fd.write(openssh)
+    pub_fd.close
 
     File.chmod(0600,sshkeypriv)
 end
