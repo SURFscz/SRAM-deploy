@@ -260,18 +260,6 @@
       args:
         chdir: "{{ satosa_env_dir }}"
 
-    - name: Retrieve Test SP metadata
-      get_url:
-        url: https://{{ hostnames.sp }}/saml/module.php/saml/sp/metadata.php/default-sp
-        dest: "{{ satosa_env_dir }}/metadata/sp-test.xml"
-        force: yes
-
-    - name: Retreive Test IdP metadata
-      get_url:
-        url: https://{{ hostnames.idp }}/saml/saml2/idp/metadata.php
-        dest: "{{ satosa_env_dir }}/metadata/idp-test.xml"
-        force: yes
-
     - name: Copy metadata generating script
       copy:
         src: gen_metadata
