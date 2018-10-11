@@ -40,6 +40,14 @@
         state: latest
         #executable: pip3
 
+    - name: Update pip dependencies
+      shell: "bin/pip list --outdated --format=freeze | \
+              grep -v '^\\-e' | \
+              cut -d = -f 1 | \
+              xargs -rn1 bin/pip install -U"
+      args:
+        chdir: "{{ cmservice_env_dir }}"
+
     - name: Create CMservice  settings.cfg configuration
       template: src=settings.cfg.j2
                 dest="{{ cmservice_env_dir }}/settings.cfg"

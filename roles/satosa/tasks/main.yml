@@ -65,6 +65,14 @@
         state: latest
       when: satosa_git.changed
 
+    - name: Update pip dependencies
+      shell: "bin/pip list --outdated --format=freeze | \
+              grep -v '^\\-e' | \
+              cut -d = -f 1 | \
+              xargs -rn1 bin/pip install -U"
+      args:
+        chdir: "{{ satosa_env_dir }}"
+
     - name: >
         install SATOSA microservices from {{ satosa_microservices_src_dir }}
         to {{ satosa_env_dir }}
