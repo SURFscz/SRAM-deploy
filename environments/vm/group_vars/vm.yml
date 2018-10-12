@@ -27,7 +27,6 @@ sp_test_port: 82
 oidc_test_port: 83
 google_test_port: 84
 pam_clients_port: 8123
-pam_web_port: 8125
 orcid_test_port: 85
 ms_test_port: 86
 
@@ -72,10 +71,6 @@ loadbalancer:
     http: true
     backend_hosts: "{{groups['vm-client']}}"
     backend_port: "{{google_test_port}}"
-  - hostname: "{{hostnames.pam}}"
-    http: true
-    backend_hosts: "{{groups['vm-ldap']}}"
-    backend_port: "{{pam_web_port}}"
   - hostname: "{{hostnames.orcid}}"
     http: true
     backend_hosts: "{{groups['vm-client']}}"
@@ -90,7 +85,6 @@ loadbalancer:
     backend_hosts: "{{groups['vm-ldap']}}"
     backend_port: 389
   - hostname: "{{hostnames.pam}}"
-    http: false
-    frontend_port: "{{pam_clients_port}}"
+    http: true
     backend_hosts: "{{groups['vm-ldap']}}"
     backend_port: "{{pam_clients_port}}"

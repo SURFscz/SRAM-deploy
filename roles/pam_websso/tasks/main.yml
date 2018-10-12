@@ -6,6 +6,7 @@
     install_recommends: no
   with_items:
     - libnss-ldap
+    - nscd
     - libpam-python
     - pamtester
     - libxml2-dev
