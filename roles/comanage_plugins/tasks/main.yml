@@ -92,4 +92,3 @@
   file:
     path: "{{ comanage_path }}/app/local"
     state: absent
-    recurse: yes
