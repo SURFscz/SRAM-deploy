@@ -57,6 +57,18 @@
         force: "yes"
       register: satosa_microservices_git
 
+    # requirements.txt can be generated from virtualenv/bin/pip freeze
+    - name: Copy requirements.txt
+      copy:
+        src: "requirements.txt"
+        dest: "{{ satosa_project_dir }}/requirements.txt"
+
+    - name: Install virtualenv requirements
+      pip:
+        requirements: "{{ satosa_project_dir }}/requirements.txt"
+        virtualenv: "{{ satosa_env_dir }}"
+        virtualenv_python: python3
+
     - name: install SATOSA from {{ satosa_src_dir }} to {{ satosa_env_dir }}
       pip:
         name: "{{ satosa_src_dir }}"
