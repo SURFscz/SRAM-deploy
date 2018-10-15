@@ -26,6 +26,7 @@
       - bzip2
       - unzip
       - apt-transport-https
+      - python-apt
 
 - name: remove unneccessary packages
   apt:
