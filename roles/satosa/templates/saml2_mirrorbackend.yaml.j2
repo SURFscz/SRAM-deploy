@@ -10,7 +10,6 @@ config:
     - {contact_type: technical, email_address: technical@{{ hostnames.proxy }}, given_name: Technical}
     - {contact_type: support, email_address: support@{{ hostnames.proxy }}, given_name: Support}
     metadata:
-      local: ['metadata/idp-test.xml']
       mdq: ['http://localhost:{{ pyff_port }}']
     entityid: <base_url>/md/<name>.xml
     entity_category: ['http://www.geant.net/uri/dataprotection-code-of-conduct/v1']
