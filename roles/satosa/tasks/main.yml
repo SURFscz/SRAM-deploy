@@ -120,11 +120,6 @@
         src: custom_logging_service.yaml.j2
         dest: "{{ satosa_env_dir }}/plugins/micro_services/custom_logging_service.yaml"
 
-    - name: Create db_acl.yaml definition
-      template:
-        src: db_acl.yaml.j2
-        dest: "{{ satosa_env_dir }}/plugins/micro_services/db_acl.yaml"
-
     - name: Create db_attributes_store.yaml definition
       template:
         src: db_attributes_store.yaml.j2
