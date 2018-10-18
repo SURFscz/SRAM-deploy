@@ -22,13 +22,6 @@
     state: link
   become: Yes
 
-- name: Activate Email Uid Enroller Plugin
-  file:
-    src: "{{ comanage_path }}/app/AvailablePlugin/EmailUidEnroller"
-    dest: "{{ comanage_path }}/local/Plugin/EmailUidEnroller"
-    state: link
-  become: Yes
-
 - name: Checkout the relevant Git based plugins
   git:
     repo: "{{ item.src }}"
