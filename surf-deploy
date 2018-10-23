@@ -50,6 +50,10 @@ elif [ "$1" = "--dev" ]
 then
     ENV=dev
     shift
+elif [ "$1" = "--sandbox" ]
+then
+    ENV=sandbox
+    shift
 fi
 
 CMD="ansible-playbook provision.yml \
