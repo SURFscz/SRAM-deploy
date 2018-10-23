@@ -18,7 +18,11 @@
   when: dhclient.changed
 
 - name: set localtime
-  file: state=link src=/usr/share/zoneinfo/{{timezone}} dest=/etc/localtime
+  file:
+    state: link
+    src: "/usr/share/zoneinfo/{{timezone}}"
+    dest: "/etc/localtime"
+    force: yes
 
 - name: set timezone
   template: src=timezone.j2 dest=/etc/timezone
