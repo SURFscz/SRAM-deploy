@@ -2,6 +2,8 @@
 timezone: Etc/UTC
 enable_ipv6: false
 
+cloud: undefined
+
 # set this to true if you are using internal hostnames that are not published
 # in DNS (e.g., for vagrant)
 fake_hostnames: false
