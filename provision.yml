@@ -110,6 +110,10 @@
   roles:
     - { role: sbs,     tags: ['sbs']  }
 
-- hosts: sandbox1
+- hosts: vm-sandbox
   roles:
-    - { role: pam_websso,         tags: ['client','pam-websso'] }
+    - { role: pam_websso,         tags: ['client','pam-websso'   ] }
+
+- hosts: sandbox
+  roles:
+    - { role: wordpress,   tags: ['sandbox','wordpress' ] }

@@ -62,7 +62,7 @@ vm-meta
 [client:children]
 vm-client
 
-[sandbox1:children]
+[vm-sandbox:children]
 vm-sandbox1
 
 [sbs:children]
