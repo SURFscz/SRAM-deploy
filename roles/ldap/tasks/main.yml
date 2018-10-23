@@ -57,6 +57,16 @@
     - { src: "enable_syncprov.ldif.j2", dest: "enable_syncprov.ldif" }
     - { src: "enable_memberof.ldif.j2", dest: "enable_memberof.ldif" }
     - { src: "enable_memberof_1mdb.ldif.j2", dest: "enable_memberof_1mdb.ldif" }
+    - { src: "enable_memberof_2mdb.ldif.j2", dest: "enable_memberof_2mdb.ldif" }
+
+- name: Copy sczGroup ldif
+  become: true
+  become_user: "{{ ldap_user }}"
+  copy:
+    src: "{{ sczGroup_ldif }}"
+    dest: "{{ ldap_schema_dir }}/{{ sczGroup_ldif }}"
+    owner: "{{ ldap_user }}"
+    group: "{{ ldap_user }}"
 
 - name: Ensure the ldap admin credentials are set
   command: ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f "{{ ldap_ldif_dir }}/set_root_credentials.ldif"
@@ -88,6 +98,30 @@
 
 - name: Configure memberof overlay for 1mdb
   command: ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f "{{ ldap_ldif_dir }}/enable_memberof_1mdb.ldif"
+  # return code 20 means entry already exists
+  register: result
+  failed_when: "result.rc not in [0,20]"
+  changed_when: "result.rc==20"
+
+# This needs to be done before we configure 2mdb memberof overlay
+- name: Check if the sczGroup schema is already present
+  shell: >
+    ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// -b 'cn=schema,cn=config' '(cn=*)' dn
+    | grep -i 'cn={[0-9]\+}sczgroup,cn=schema,cn=config'
+  failed_when: not [1, 2]
+  register:
+    sczGroupTask
+
+- name: Ensure the sczGroup schema is added to LDAP
+  become: true
+  command: >
+    ldapadd -Q -Y EXTERNAL -H ldapi:///
+    -f "{{ ldap_schema_dir }}/{{ sczGroup_ldif }}"
+    -D "cn=config" -w "{{ ldap_password }}"
+  when: sczGroupTask.stdout == ""
+
+- name: Configure memberof overlay for 2mdb
+  command: ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f "{{ ldap_ldif_dir }}/enable_memberof_2mdb.ldif"
   # return code 20 means entry already exists
   register: result
   failed_when: "result.rc not in [0,20]"

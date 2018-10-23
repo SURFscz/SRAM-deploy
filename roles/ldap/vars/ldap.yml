@@ -28,3 +28,5 @@ voPerson_ldif: "{{ voPerson }}.ldif"
 voPerson_host: https://raw.githubusercontent.com
 voPerson_path: /voperson/voperson/master/schema/openldap/voperson.ldif
 voPersonLdif_url: "{{ voPerson_host }}{{ voPerson_path }}"
+
+sczGroup_ldif: sczGroup.ldif
