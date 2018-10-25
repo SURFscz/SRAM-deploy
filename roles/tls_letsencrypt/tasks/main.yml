@@ -31,7 +31,7 @@
             --renew-with-new-domains --domains={{item}}"
   register: result
   changed_when: '"Your certificate and chain have been saved" in result.stdout'
-  with_items: '{{loadbalancer|map(attribute="hostname")|list}}'
+  with_items: '{{tls_letsencrypt_hosts}}'
 
 # extra renewal is necessary, because certbot does not run its renew_hook when the
 # certificate is first created
@@ -41,5 +41,5 @@
   changed_when: '"Your certificate and chain have been saved" in result.stdout'
   args:
     creates: '{{certbot.cert_dir}}/{{item}}/{{certbot.all_pem}}'
-  with_items: '{{loadbalancer|map(attribute="hostname")|list}}'
+  with_items: '{{tls_letsencrypt_hosts}}'
 

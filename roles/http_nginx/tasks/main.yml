@@ -1,4 +1,4 @@
-# is we enable https, we need a http-only nginx to handle acme-verification
+# if we enable https, we need a http-only nginx to handle acme-verification
 # and http redirects
 ---
 - name: enable nginx

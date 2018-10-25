@@ -47,17 +47,22 @@
   roles:
     - { role: syslog-server,   tags: ['syslog'] }
 
-- hosts: lb
+- hosts:
+    - lb
+    - sandbox
   roles:
     - role: http_nginx
-      tags: ['lb','http_nginx']
+      tags: ['tls','http_nginx']
     - role: tls_letsencrypt
-      tags: ['lb','tls_letsencrypt']
+      tags: ['tls','tls_letsencrypt']
       when: enable_https and not use_fixed_cert
     - role: tls_fixed_cert
-      tags: ['lb','tls_fixedcert']
+      tags: ['tls','tls_fixedcert']
       when: enable_https and use_fixed_cert
-    - { role: lb_haproxy,   tags: ['lb','haproxy'] }
+
+- hosts: lb
+  roles:
+    - { role: https_haproxy,   tags: ['lb','haproxy'] }
 
 - hosts: db
   roles:
