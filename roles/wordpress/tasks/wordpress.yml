@@ -1,0 +1,85 @@
+---
+
+- name: Add docker apt key
+  apt_key:
+    id: "9DC858229FC7DD38854AE2D88D81803C0EBFCD88"
+    keyserver: hkps://keys.gnupg.net
+
+- name: add docker apt repository
+  apt_repository:
+    repo: "deb https://download.docker.com/linux/debian {{ansible_distribution_release}} stable"
+    state: present
+
+- name: install docker
+  apt:
+    name: "{{item}}"
+  with_items:
+    - docker-ce
+
+- name: install docker-compose
+  get_url:
+    url: "{{docker_compose_url}}"
+    dest: "/usr/local/bin/docker-compose"
+    mode: 0755
+    checksum: "sha256:{{docker_compose_sha256}}"
+
+# too bad this is needed.  No idea why
+- name: install docker settings
+  lineinfile:
+    path: /etc/default/docker
+    regexp: '^#?\s*DOCKER_OPTS='
+    line: 'DOCKER_OPTS="--dns 8.8.8.8 --dns 8.8.4.4"'
+  notify: restart docker
+
+
+- name: create directory {{item}}
+  file:
+    dest: "{{item}}"
+    state: directory
+  with_items:
+    - "{{wordpress_dir}}"
+    - "{{wordpress_dir}}/db-data"
+    - "{{wordpress_dir}}/wp-plugins"
+
+- name: install docker configuration {{item}}
+  template:
+    src: "{{item}}.j2"
+    dest: "{{wordpress_dir}}/{{item}}"
+  with_items:
+    - docker-compose.yml
+    - Dockerfile
+    - wp-apache.conf
+
+- name: install wordpress shibboleth plugin
+  git:
+    repo: "https://github.com/michaelryanmcneill/shibboleth.git"
+    version: "2.1.1"
+    dest: "{{wordpress_dir}}/wp-plugins/shibboleth"
+
+# can't use ansible module because there is no way to install up to date python docker modules
+- name: run docker-compose
+  command: "docker-compose up --no-start"
+  args:
+    chdir: "{{wordpress_dir}}"
+  register: result
+  changed_when: "'Build' in result.stderr or 'Create' in result.stderr or 'Pull' in result.stderr"
+
+- debug: var=result
+
+- name: install wordpress service file
+  template:
+    src: wordpress.service.j2
+    dest: /etc/systemd/system/wordpress.service
+  register: result
+
+- name: reload systemd
+  systemd:
+    daemon_reload: yes
+  when: result.changed
+
+- name: start wordpress
+  systemd:
+    name: wordpress.service
+    state: started
+    enabled: yes
+

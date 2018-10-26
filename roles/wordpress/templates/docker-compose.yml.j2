@@ -6,7 +6,7 @@ services:
   db:
     image: mysql:5.7
     volumes:
-      - db_data:/var/lib/mysql
+      - db-data:/var/lib/mysql
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: somewordpress
@@ -17,14 +17,19 @@ services:
   wordpress:
     depends_on:
       - db
-    image: wordpress:latest
+    build: .
     ports:
       - "{{wordpress_port}}:80"
     restart: always
+    volumes:
+      - "wp-apache.conf:/etc/apache/sites-enabled/000-default.conf:ro"
+      - "wp-plugins:/var/www/html/wp-content/plugins:ro"
     environment:
       WORDPRESS_DB_HOST: db:3306
       WORDPRESS_DB_USER: wordpress
       WORDPRESS_DB_PASSWORD: wordpress
 
 volumes:
-  db_data:
+  db-data:
+  wp-apache.conf:
+  wp-plugins:
