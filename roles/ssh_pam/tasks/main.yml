@@ -1,0 +1,24 @@
+---
+- name: Create directories
+  file:
+    path: "{{item}}"
+    state: directory
+  with_items:
+    - "{{pam_ssh_dir}}"
+
+- name: clone pam_sso
+  git:
+    repo: https://github.com/SURFscz/pam-websso.git
+    version: master
+    dest: "{{pam_ssh_dir}}/pam-websso"
+
+- name: copy templates
+  template:
+    src: "{{item}}.j2"
+    dest: "{{pam_ssh_dir}}/{{item}}"
+  with_items:
+    - Dockerfile.ldap
+    - Dockerfile.ssh
+    - docker-compose.yml
+
+

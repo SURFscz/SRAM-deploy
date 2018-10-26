@@ -122,3 +122,4 @@
 - hosts: sandbox
   roles:
     - { role: wordpress,   tags: ['sandbox','wordpress' ] }
+    - { role: ssh_pam,     tags: ['sandbox','ssh'       ] }

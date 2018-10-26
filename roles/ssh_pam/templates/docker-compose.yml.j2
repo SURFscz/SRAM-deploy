@@ -1,0 +1,21 @@
+# vim:ft=yaml
+---
+version: '3.3'
+
+services:
+  ldap:
+    build:
+      dockerfile: Dockerfile.ldap
+      context: .
+    restart: always
+
+  ssh_sandbox:
+    depends_on:
+      - ldap
+    build:
+      dockerfile: Dockerfile.ssh
+      context: .
+    ports:
+      - "2022:22"
+    restart: always
+
