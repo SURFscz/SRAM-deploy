@@ -4,11 +4,33 @@
     src: "create_db.sql"
     dest: /tmp
 
+- name: Copy foreign keys file
+  copy:
+    src: "fkeys.sql"
+    dest: /tmp
+
+- name: Copy views file
+  copy:
+    src: "views.sql"
+    dest: /tmp
+
 - name: create database for CoManage-Proxy linkup
   mysql_db:
     name: "{{ comanage_proxy_db_name }}"
     state: import
     target: /tmp/create_db.sql
+
+- name: create foreign key relations for CoManage-Proxy linkup
+  mysql_db:
+    name: "{{ comanage_proxy_db_name }}"
+    state: import
+    target: /tmp/fkeys.sql
+
+- name: create views for CoManage-Proxy linkup
+  mysql_db:
+    name: "{{ comanage_proxy_db_name }}"
+    state: import
+    target: /tmp/views.sql
 
 - name: create user for mysql with all privilege
   mysql_user:
