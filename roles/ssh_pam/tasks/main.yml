@@ -10,7 +10,7 @@
 - name: Copy config file
   template:
     src: "{{item.file}}.j2"
-    dest: "{{pam_config_dir}}"
+    dest: "{{pam_config_dir}}/{{item.file}}"
     mode: "{{item.mode}}"
   with_items:
     - { file: nslcd.conf,      mode: 0644 }
@@ -19,7 +19,7 @@
 - name: Copy docker-compose config
   template:
     src: docker-compose.yml.j2
-    dest: "{{pam_ssh_dir}}"
+    dest: "{{pam_ssh_dir}}/docker-compose.yml"
 
 - name: install pam_ssh service file
   template:
