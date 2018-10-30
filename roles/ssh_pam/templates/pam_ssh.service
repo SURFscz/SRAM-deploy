@@ -1,0 +1,14 @@
+[Unit]
+Description=SSH (pam-sso) containers
+After=docker.service network-online.target
+Requires=docker.service network-online.target
+
+[Service]
+WorkingDirectory={{pam_ssh_dir}}
+Type=simple
+
+ExecStart=/usr/local/bin/docker-compose up
+SyslogIdentifier=ssh-pam-sso
+
+[Install]
+WantedBy=multi-user.target

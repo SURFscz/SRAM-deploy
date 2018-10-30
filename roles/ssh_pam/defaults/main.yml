@@ -1,2 +1,3 @@
 ---
 pam_ssh_dir: /opt/ssh_sandbox
+pam_config_dir: "{{pam_ssh_dir}}/pam_config"

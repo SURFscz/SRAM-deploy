@@ -8,6 +8,6 @@ services:
     ports:
       - "2022:22"
     volumes:
-      - "pam-config:/opt/config:ro"
+      - "{{pam_config_dir}}:/opt/config:ro"
     restart: always
 

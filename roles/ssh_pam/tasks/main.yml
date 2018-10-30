@@ -5,19 +5,37 @@
     state: directory
   with_items:
     - "{{pam_ssh_dir}}"
+    - "{{pam_config_dir}}"
 
-- name: clone pam_sso
-  git:
-    repo: https://github.com/SURFscz/pam-websso.git
-    version: master
-    dest: "{{pam_ssh_dir}}/pam-websso"
-
-- name: copy templates
+- name: Copy config file
   template:
-    src: "{{item}}.j2"
-    dest: "{{pam_ssh_dir}}/{{item}}"
+    src: "{{item.file}}.j2"
+    dest: "{{pam_config_dir}}"
+    mode: "{{item.mode}}"
   with_items:
-    - Dockerfile.ldap
-    - Dockerfile.ssh
-    - docker-compose.yml
+    - { file: nslcd.conf,      mode: 0644 }
+    - { file: pam_websso.json, mode: 0640 }
+
+- name: Copy docker-compose config
+  template:
+    src: docker-compose.yml.j2
+    dest: "{{pam_ssh_dir}}"
+
+- name: install wordpress service file
+  template:
+    src: pam_ssh.service.j2
+    dest: /etc/systemd/system/pam_ssh.service
+  register: result
+
+- name: reload systemd
+  systemd:
+    daemon_reload: yes
+  when: result.changed
+
+- name: start wordpress
+  systemd:
+    name: pam_ssh.service
+    state: started
+    enabled: yes
+
 
