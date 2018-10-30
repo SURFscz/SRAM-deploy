@@ -26,9 +26,9 @@ idp_test_port: 81
 sp_test_port: 82
 oidc_test_port: 83
 google_test_port: 84
-pam_clients_port: 8123
 orcid_test_port: 85
 ms_test_port: 86
+pam_clients_port: 8087
 
 # COmanage-ldap configuration
 comanage_ldap_host: "ldap.vm.scz-vm.net"
@@ -79,12 +79,12 @@ loadbalancer:
     http: true
     backend_hosts: "{{groups['vm-client']}}"
     backend_port: "{{ms_test_port}}"
+  - hostname: "{{hostnames.pam}}"
+    http: true
+    backend_hosts: "{{groups['vm-ldap']}}"
+    backend_port: "{{pam_clients_port}}"
   - hostname: "{{hostnames.ldap}}"
     http: false
     frontend_port: 636
     backend_hosts: "{{groups['vm-ldap']}}"
     backend_port: 389
-  - hostname: "{{hostnames.pam}}"
-    http: true
-    backend_hosts: "{{groups['vm-ldap']}}"
-    backend_port: "{{pam_clients_port}}"

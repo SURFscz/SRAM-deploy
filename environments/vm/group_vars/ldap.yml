@@ -1,6 +1,7 @@
 ---
 firewall_v4_incoming:
-  - { name: bastion,      src: "{{iprange.bastion}}",  dport:   "22", proto: tcp }
-  - { name: loadbalancer, src: "{{iprange.lb}}",       dport:  "389", proto: tcp }
-  - { name: comanage,     src: "{{iprange.comanage}}", dport:  "389", proto: tcp }
-  - { name: vnet,         src: "{{iprange.vm}}",       dport: "22,389", proto: tcp }
+  - { name: bastion,      src: "{{iprange.bastion}}",  dport:                    "22", proto: tcp }
+  - { name: loadbalancer, src: "{{iprange.lb}}",       dport:                   "389", proto: tcp }
+  - { name: comanage,     src: "{{iprange.comanage}}", dport:                   "389", proto: tcp }
+  - { name: loadbalancer, src: "{{iprange.lb}}",       dport:  "{{pam_clients_port}}", proto: tcp }
+  - { name: vnet,         src: "{{iprange.vm}}",       dport:                "22,389", proto: tcp }
