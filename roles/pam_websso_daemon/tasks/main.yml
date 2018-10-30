@@ -22,11 +22,13 @@
     name: "{{ pam_websso.project_dir }}"
     state: latest
   when: pam_websso_git.changed
+  notify: restart WebSSO daemon
 
 - name: install WebSSO daemon settings
   template:
     src: "websso_daemon.json.j2"
     dest: "{{ pam_websso.project_dir }}/websso_daemon.json"
+  notify: restart WebSSO daemon
 
 - name: Create WebSSO daemon systemd service file
   template:
@@ -39,6 +41,11 @@
     src: "{{ pam_websso.project_dir }}/websso-daemon.service"
     dest: /etc/systemd/system/websso-daemon.service
     remote_src: yes
+  notify: restart WebSSO daemon
 
-- name: restart WebSSO daemon
-  systemd: daemon_reload=yes name=websso-daemon state=restarted enabled=yes
+- name: enable WebSSO daemon
+  systemd:
+    name: websso-daemon
+    state: started
+    enabled: yes
+    daemon_reload: yes
