@@ -21,7 +21,7 @@
     src: docker-compose.yml.j2
     dest: "{{pam_ssh_dir}}"
 
-- name: install wordpress service file
+- name: install pam_ssh service file
   template:
     src: pam_ssh.service.j2
     dest: /etc/systemd/system/pam_ssh.service
@@ -32,7 +32,7 @@
     daemon_reload: yes
   when: result.changed
 
-- name: start wordpress
+- name: start pam_ssh docker
   systemd:
     name: pam_ssh.service
     state: started
