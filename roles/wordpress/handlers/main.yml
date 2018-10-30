@@ -1,9 +1,4 @@
 ---
-- name: restart docker
-  systemd:
-    name: docker
-    state: restarted
-
 - name: restart nginx
   systemd:
     name: nginx

@@ -1,0 +1,5 @@
+---
+docker_compose_version: "1.22.0"
+docker_compose_url: "https://github.com/docker/compose/releases/download/\
+                     {{docker_compose_version}}/docker-compose-Linux-x86_64"
+docker_compose_sha256: "f679a24b93f291c3bffaff340467494f388c0c251649d640e661d509db9d57e9"

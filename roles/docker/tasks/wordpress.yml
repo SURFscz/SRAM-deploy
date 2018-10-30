@@ -1,5 +1,37 @@
 ---
 
+- name: Add docker apt key
+  apt_key:
+    id: "9DC858229FC7DD38854AE2D88D81803C0EBFCD88"
+    keyserver: hkps://keys.gnupg.net
+
+- name: add docker apt repository
+  apt_repository:
+    repo: "deb https://download.docker.com/linux/debian {{ansible_distribution_release}} stable"
+    state: present
+
+- name: install docker
+  apt:
+    name: "{{item}}"
+  with_items:
+    - docker-ce
+
+- name: install docker-compose
+  get_url:
+    url: "{{docker_compose_url}}"
+    dest: "/usr/local/bin/docker-compose"
+    mode: 0755
+    checksum: "sha256:{{docker_compose_sha256}}"
+
+# too bad this is needed.  No idea why
+- name: install docker settings
+  lineinfile:
+    path: /etc/default/docker
+    regexp: '^#?\s*DOCKER_OPTS='
+    line: 'DOCKER_OPTS="--dns 8.8.8.8 --dns 8.8.4.4"'
+  notify: restart docker
+
+
 - name: create directory {{item}}
   file:
     dest: "{{item}}"

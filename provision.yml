@@ -121,6 +121,7 @@
 
 - hosts: sandbox
   roles:
+    - { role: docker,             tags: ['sandbox','docker'       ] }
     - { role: pam_websso_daemon,  tags: ['sandbox','websso-daemon'] }
     - { role: wordpress,          tags: ['sandbox','wordpress'    ] }
     - { role: ssh_pam,            tags: ['sandbox','ssh'          ] }
