@@ -49,3 +49,7 @@
     state: started
     enabled: yes
     daemon_reload: yes
+
+- name: install proxy config
+  include: nginx.yml
+  when: "{{pam_websso_proxy_enabled}}"

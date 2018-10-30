@@ -1,4 +1,5 @@
 ---
+pam_hostname: localhost
 pam_clients_port: 8123
 pam_debug_port: 8124
 pam_websso:
@@ -6,7 +7,9 @@ pam_websso:
   repo_version: "master"
   project_dir: "/opt/pam-websso"
   daemon:
+    hostname: "{{pam_hostname}}"
     ports:
       clients: "{{pam_clients_port}}"
       command: "{{pam_debug_port}}"
     user_attribute: 'urn:mace:dir:attribute-def:uid'
+pam_websso_proxy_enabled: false

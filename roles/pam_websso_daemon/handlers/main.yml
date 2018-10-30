@@ -1,4 +1,9 @@
 ---
+- name: restart nginx
+  systemd:
+    name: nginx
+    state: restarted
+
 - name: restart sshd
   systemd:
     name: 'ssh.service'
