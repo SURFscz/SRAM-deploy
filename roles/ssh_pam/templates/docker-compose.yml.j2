@@ -3,19 +3,11 @@
 version: '3.3'
 
 services:
-  ldap:
-    build:
-      dockerfile: Dockerfile.ldap
-      context: .
-    restart: always
-
   ssh_sandbox:
-    depends_on:
-      - ldap
-    build:
-      dockerfile: Dockerfile.ssh
-      context: .
+    image: "surfscz/pam-websso:v1"
     ports:
       - "2022:22"
+    volumes:
+      - "pam-config:/opt/config:ro"
     restart: always
 
