@@ -8,13 +8,13 @@
     "strict": false,
     "debug": true,
     "sp": {
-        "entityId": "http://{{pam_hostname}}/md",
+        "entityId": "https://{{pam_hostname}}/md",
         "assertionConsumerService": {
-            "url": "http://{{pam_hostname}}/login/acs",
+            "url": "https://{{pam_hostname}}/login/acs",
             "binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
         },
         "singleLogoutService": {
-            "url": "http://{{pam_hostname}}/login/sls",
+            "url": "https://{{pam_hostname}}/login/sls",
             "binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
         },
         "NameIDFormat": "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified",
