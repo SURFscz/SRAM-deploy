@@ -52,4 +52,4 @@
 
 - name: install proxy config
   include: nginx.yml
-  when: "{{pam_websso_proxy_enabled}}"
+  when: pam_websso_proxy_enabled
