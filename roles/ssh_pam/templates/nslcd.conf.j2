@@ -7,7 +7,7 @@ uid nslcd
 gid nslcd
 
 # The location at which the LDAP server(s) should be reachable.
-uri {{sandbox_ldap_host}}
+uri ldaps://{{sandbox_ldap_host}}
 
 # The search base that will be used for all queries.
 base {{sandbox_ldap_basedn}}
