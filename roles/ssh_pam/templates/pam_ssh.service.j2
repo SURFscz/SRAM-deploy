@@ -8,6 +8,7 @@ WorkingDirectory={{pam_ssh_dir}}
 Type=simple
 
 ExecStart=/usr/local/bin/docker-compose up
+ExecStopPost=/usr/local/bin/docker-compose rm -f
 SyslogIdentifier=ssh-pam-sso
 
 [Install]
