@@ -50,12 +50,6 @@
     enabled: yes
     daemon_reload: yes
 
-- name: override dns to refer to ourself via localhost
-  lineinfile:
-    path: /etc/hosts
-    line: "127.0.0.2 {{pam_websso.daemon.hostname}}"
-    state: present
-
 - name: install proxy config
   include: nginx.yml
   when: pam_websso_proxy_enabled
