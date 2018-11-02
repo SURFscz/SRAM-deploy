@@ -3,18 +3,18 @@
         "clients": {{ pam_websso.daemon.ports.clients }},
         "command": {{ pam_websso.daemon.ports.command }}
     },
-    "url": "https://{{pam_hostname}}/",
+    "url": "https://{{pam_websso.daemon.hostname}}/",
     "user_attribute": "{{ pam_websso.daemon.user_attribute }}",
     "strict": false,
     "debug": true,
     "sp": {
-        "entityId": "https://{{pam_hostname}}/md",
+        "entityId": "https://{{pam_websso.daemon.hostname}}/md",
         "assertionConsumerService": {
-            "url": "https://{{pam_hostname}}/login/acs",
+            "url": "https://{{pam_websso.daemon.hostname}}/login/acs",
             "binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
         },
         "singleLogoutService": {
-            "url": "https://{{pam_hostname}}/login/sls",
+            "url": "https://{{pam_websso.daemon.hostname}}/login/sls",
             "binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
         },
         "NameIDFormat": "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified",
