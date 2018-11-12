@@ -1,5 +1,8 @@
 ---
+- debug: var=item_client
+
 - set_fact: client="{{item_client}}"
+- set_fact: lsc_dir="{{lsc_config_dir}}/{{client.ldap_o | replace(' ','_')}}"
 
 #- name: Check if client test organization already exists
 #  shell: >
@@ -16,17 +19,17 @@
 #  failed_when: "(result.rc not in [0, 68])"
 #  when: org.stdout.find(test_organization.o) == -1
 
-- name: "Create the client {{client.name}} organization"
+- name: "Create the client {{client.ldap_o}} organization"
   ldap_entry:
     # SASL EXTERNAL Should work
-    dn: "o={{ client.name}},{{ client_ldap.basedn }}"
+    dn: "o={{ client.ldap_o}},{{ client_ldap.basedn }}"
     objectClass: organization
     attributes:
-      o: "{{ client.name }}"
+      o: "{{ client.ldap_o }}"
 
-- name: "Create the admin identity for {{client.name}}"
+- name: "Create the admin identity for {{client.ldap_o}}"
   ldap_entry:
-    dn: "cn=admin,o={{ client.name }},{{ client_ldap.basedn }}"
+    dn: "cn=admin,o={{ client.ldap_o }},{{ client_ldap.basedn }}"
     objectClass:
       - simpleSecurityObject
       - organizationalRole
@@ -36,16 +39,16 @@
 
 # set the password separately from creating the admin entry, because
 # we want the password to update when it changes in ansible
-- name: "Set admin password for {{client.name}}"
+- name: "Set admin password for {{client.ldap_o}}"
   ldap_attr:
-    dn: "cn=admin,o={{ client.name }},{{ client_ldap.basedn }}"
+    dn: "cn=admin,o={{ client.ldap_o }},{{ client_ldap.basedn }}"
     name: userPassword
     values: "{{ '%s' |  format(client.password) | slapd_hash }}"
     state: exact
 
 - name: "Add database skeleton to client db"
   ldap_entry:
-    dn: "ou={{item}},o={{ client.name }},{{ client_ldap.basedn }}"
+    dn: "ou={{item}},o={{ client.ldap_o }},{{ client_ldap.basedn }}"
     objectClass: organizationalUnit
     attributes:
       ou: "{{item}}"
@@ -54,17 +57,17 @@
     - Groups
     - Sequence
 
-- name: "Set default uidNumer sequence for client {{client.name}}"
+- name: "Set default uidNumer sequence for client {{client.ldap_o}}"
   ldap_entry:
-    dn: "cn=uidNumberSequence,ou=Sequence,o={{ client.name }},{{ client_ldap.basedn }}"
+    dn: "cn=uidNumberSequence,ou=Sequence,o={{ client.ldap_o }},{{ client_ldap.basedn }}"
     objectClass: device
     attributes:
       cn: uidNumberSequence
       serialNumber: "{{ client.uid_start }}"
 
-- name: "Set default giNumber sequence for client {{client.name}}"
+- name: "Set default giNumber sequence for client {{client.ldap_o}}"
   ldap_entry:
-    dn: "cn=gidNumberSequence,ou=Sequence,o={{ client.name }},{{ client_ldap.basedn }}"
+    dn: "cn=gidNumberSequence,ou=Sequence,o={{ client.ldap_o }},{{ client_ldap.basedn }}"
     objectClass: device
     attributes:
       cn: gidNumberSequence
@@ -73,19 +76,19 @@
 # LSC config
 - name: Make sure test org LSC directory exists
   file:
-    path: "{{ client.lsc_dir }}"
+    path: "{{ lsc_dir }}"
     state: directory
     mode: 0755
 
 - name: Prepare LSC test org directory
   copy:
     src: "/etc/lsc/logback.xml"
-    dest: "{{ client.lsc_dir }}"
+    dest: "{{ lsc_dir }}"
     remote_src: yes
     force: false
 
 - name: Copy LSC test org configuration
   template:
     src: "lsc.xml.j2"
-    dest: "{{ client.lsc_dir }}/lsc.xml"
+    dest: "{{ lsc_dir }}/lsc.xml"
     force: false
