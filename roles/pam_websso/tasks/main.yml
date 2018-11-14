@@ -53,14 +53,14 @@
 - name: Add LDAP nsswitch passwd lookup
   replace:
     path: /etc/nsswitch.conf
-    regexp: '^(passwd:.*compat)$'
+    regexp: '^(passwd:.*systemd)$'
     replace: '\1 ldap'
     backup: yes
 
 - name: Add LDAP nsswitch group lookup
   replace:
     path: /etc/nsswitch.conf
-    regexp: '^(group:.*compat)$'
+    regexp: '^(group:.*systemd)$'
     replace: '\1 ldap'
     backup: yes
 
