@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 
 import json
-from typing import Dict  # noqa: F401
 
 # list of "allowed" "changed"-state tasks in a second ansible run
 # ideally, everything should be zero (fully idempotent), but let's make at least sure the
@@ -25,7 +24,7 @@ WHITELIST = {
     'proxy_mysql':          1,
     'comanage':             8,
     'client-google-idp':    2,
-}  # type: Dict[str,int]
+}
 
 
 class Color:
