@@ -10,14 +10,15 @@ fi
 
 ./scripts/syntax-check
 
-
 ./start-vm --provider docker
 
 # run second time, to check if reeantrace works ok
 export REEANTRANT=1
 ./start-vm
 
-#TODO: find some way to push data about changed targets in the second run back to github
+# check if the
+echo Running idempotency check...
+./scripts/check_provision_status
 
 exit 0
 
