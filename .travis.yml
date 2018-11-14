@@ -26,9 +26,14 @@ notifications:
 
 # the syntax check scripts as well as yamllint need python3
 language: python
-cache: pip
 python:
   - 3.6
+
+# cache the docker images
+cache:
+  directories:
+    - $HOME/.pip
+    - /var/lib/docker
 
 # disable the default submodule logic, as travis can't reach gitlab anyway
 git:
