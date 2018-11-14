@@ -31,9 +31,9 @@ python:
 
 # cache the docker images
 cache:
+  pip: true
   directories:
-    - $HOME/.pip
-    - /var/lib/docker
+    - $HOME/docker
 
 # disable the default submodule logic, as travis can't reach gitlab anyway
 git:
@@ -47,6 +47,12 @@ addons:
       - python3-yaml
 
 before_install:
+  # Load cached docker images
+  - >
+    if [ -d $HOME/docker ]
+    then
+      ls $HOME/docker/*.tar.gz | xargs -I {file} sh -c "zcat {file} | docker load"
+    fi
   - sudo pip install yamllint
   - sudo wget https://releases.hashicorp.com/vagrant/2.1.2/vagrant_2.1.2_x86_64.deb -P /tmp
   - sudo dpkg -i /tmp/vagrant_2.1.2_x86_64.deb
@@ -56,3 +62,12 @@ before_install:
 
 script:
   - sudo ./scripts/travis_tests
+
+before_cache:
+  # Save tagged docker images
+  - >
+    mkdir -p $HOME/docker
+    && docker images -a --filter='dangling=false' --format '{{.Repository}}:{{.Tag}} {{.ID}}'
+       | xargs -n 2 -t sh -c '
+           test -e $HOME/docker/$1.tar.gz || docker save $0 | gzip -2 > $HOME/docker/$1.tar.gz
+         '
