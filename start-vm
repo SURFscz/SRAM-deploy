@@ -40,12 +40,16 @@ then
     scz_image=$(docker image list scz -q)
     if [ -z "$scz_image" ]
     then
+        echo "Building docker image"
         ssh_pubkey=$(cat .vagrant/id_rsa.pub)
         time docker build -t scz --build-arg "ssh_pub_key=${ssh_pubkey}" docker/
+    else
+        echo "Docker image found"
     fi
 fi
 
 # bring up the VMs if they're not running
+echo "Checking if VMs/containers are running"
 num_running=$(vagrant status 2>&1 |grep -E '\brunning\b'|wc -l)
 if [ "$num_running" -ne 7 ]
 then
@@ -60,9 +64,11 @@ then
         ssh-keygen -f ~/.ssh/known_hosts -R "$net.$ip" > /dev/null
         ssh -Nf -i ./.vagrant/id_rsa -o "StrictHostKeyChecking no" vagrant@$net.$ip
     done
+else
+    echo "VMs/containers are running"
 fi
 
-#vagrant up --provision "$@"
+echo "Starting ansible"
 time \
 ansible-playbook provision.yml \
     -i ./environments/vm/inventory \
