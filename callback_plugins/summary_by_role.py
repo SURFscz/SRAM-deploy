@@ -1,5 +1,5 @@
 from __future__ import (absolute_import, division, print_function)
-from future.utils import iteritems
+from six import iteritems
 __metaclass__ = type
 
 from ansible.plugins.callback import CallbackBase
