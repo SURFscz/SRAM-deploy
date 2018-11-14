@@ -40,6 +40,7 @@ addons:
       - bridge-utils
       - python3-jinja2
       - python3-yaml
+      - python3-future
 
 before_install:
   - sudo pip install yamllint
