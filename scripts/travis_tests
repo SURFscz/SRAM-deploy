@@ -18,7 +18,7 @@ export REEANTRANT=1
 
 # check if the
 echo Running idempotency check...
-./scripts/check_provision_status
+./scripts/check-idempotency-status
 
 exit 0
 
