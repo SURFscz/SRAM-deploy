@@ -14,7 +14,15 @@ notifications:
     on_success: always
     on_failure: always
     rooms:
-      - "surfnet-nl:hWCPDj2K9KVEPYrSmE16q4CM"
+      secure: "a/fFFYancO6PwaPZrY68kFl8GFOmObJa2UEOS8jdymRB7QxyzYxRheY1R10dhsrwokVWYMpT8BvZgdm\
+               G6JGRKyd8yZAN2eiKR8VMOOPWmCKBIiHprF2MLlxOVaTTB8nSrQbOZ259n9GmZ+0wU1jmKeMQ/W3KHU\
+               MrFOlIYLP7oxw3JArCsRpk9UwGVRYPkDknTJdQVYfpQFnpKQ1T8t3TGgUNzy80DT0Ai5tGOPOHZ1qgn\
+               Ga/Fq3e0v3NBKIQ8WPksdH2fFAe6lL9BOgolnOP5w2AkQoz81XhgRNeB+m4ilVJlVZaZaehNNzj2m8O7\
+               t39r7XTTh38TNIUEEXpDyw44TwAMIZogRov46rtLl4D4QflLdtGMCbVUsrDPJZ5OIObbdW4cCslLm+/g\
+               JXYB4UeEhCHuv/2uzrJLcFWDtKCef2Q/3yX4i8DaRrkXge4mv/g5OUDaQI8FtBrMwlEqO3C9Hwu2G2nU\
+               MBm0U9SXZv8BI7s3tyUATWupygYhdt90ZrSaNSA6v2SETuXjDjCAh1H2g8D+8Oyqihsod4SMvSQw0kCm\
+               nDyv406z6jaFHLjK6OswRnQaSW3L0lgX/IzYo7FH3P7EvmAFv/oN+cYDXMw6mUbqvHgy4VFksVSHJTKi\
+               K2wymyKMkU4Ty/2gaxIph7OgwVn6kS0DVpkyXQFuf64pGQ="
 
 # the syntax check scripts as well as yamllint need python3
 language: python
