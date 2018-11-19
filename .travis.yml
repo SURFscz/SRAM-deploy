@@ -61,7 +61,9 @@ before_install:
   - sudo apt -y install ansible
 
 script:
-  - sudo ./scripts/travis_tests
+  - "                      ./scripts/syntaxt_check       ||  travis_terminate 1"
+  - "sudo                  ./start-vm --provider docker  ||  travis_terminate 1"
+  - "sudo env REEANTRANT=1 ./start-vm --provider docker  ||  travis_terminate 1"
 
 before_cache:
   # Save tagged docker images
