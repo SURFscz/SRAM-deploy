@@ -10,9 +10,9 @@ satosa_project_dir: "/opt/satosa"
 satosa_src_dir: "{{ satosa_project_dir }}/satosa-src"
 satosa_env_dir: "{{ satosa_project_dir }}/satosa-env"
 
-scz_microservices_repo_url: "https://github.com/SURFscz/SATOSA-micro_services.git"
-scz_microservices_repo_version: "feature-deploy-editable"
-scz_microservices_src_dir: "{{ satosa_project_dir }}/satosa-microservices"
+satosa_microservices_repo_url: "https://github.com/SURFscz/SATOSA-micro_services.git"
+satosa_microservices_repo_version: "master"
+satosa_microservices_src_dir: "{{ satosa_project_dir }}/satosa-microservices"
 
 pysaml_repo_url: "https://github.com/SURFscz/pysaml2.git"
 pysaml_repo_version: "scz"

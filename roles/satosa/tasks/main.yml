@@ -77,11 +77,11 @@
       #register: satosa_microservices_git
 
     - name: >
-        install SCZ microservices editable from {{ scz_microservices_repo_url }}
+        install SCZ microservices editable from {{ satosa_microservices_repo_url }}
         to {{ satosa_env_dir }}
       pip:
         editable: yes
-        name: "git+{{ scz_microservices_repo_url }}@{{ scz_microservices_repo_version }}\
+        name: "git+{{ satosa_microservices_repo_url }}@{{ satosa_microservices_repo_version }}\
           #egg=scz-micro_services"
         virtualenv: "{{ satosa_env_dir }}"
         virtualenv_python: python3
