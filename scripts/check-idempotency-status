@@ -67,7 +67,10 @@ class Color:
 
 
 def cprint(text, color=Color.F_Default):
-    print(color, text, Color.F_Default, Color.B_Default, end='')
+    print(color, end='')
+    print(text, end='')
+    print(Color.F_Default, end='')
+    print(Color.B_Default, end='')
 
 
 with open('provision_status.json', 'r') as f:
