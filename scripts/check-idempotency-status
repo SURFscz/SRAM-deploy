@@ -66,32 +66,38 @@ class Color:
     B_White        = "\x1b[107m"
 
 
+def cprint(text, color=Color.F_Default):
+    print(color, text, Color.F_Default, Color.B_Default, end='')
+
+
 with open('provision_status.json', 'r') as f:
     stats = json.load(f)
 
 # max length of the "role" name
 max_len = len(max(stats.keys(), key=len))
 
+err = 0
+
 for role, status in stats.items():
-    print(('{:>' + str(max_len) + '}: ').format(role), end='')
+    cprint(('{:>' + str(max_len) + '}: ').format(role))
     if status['failed']:
-        print(Color.F_Red + "FAIL", end='')
+        cprint("FAIL", Color.F_Red)
         continue
     if status['changed'] == 0:
-        print(Color.F_Green, "GOOD", end='')
+        cprint("GOOD", Color.F_Green)
     else:
         changed = status['changed']
         if role in WHITELIST:
             allowed = WHITELIST[role]
-            if changed > allowed:
-                print(Color.F_Red + "BAD ({} changed, {} allowed)".format(changed, allowed))
-                print(Color.F_Default)
-                exit(1)
-            elif changed < allowed:
-                print(Color.F_Yellow + "OK ({} changed, {} allowed, adjust whitelist)".format(changed, allowed))
-                print(Color.F_Default)
-            else:  # changed==allowed
-                print(Color.F_Yellow + "OK ({} changed)".format(changed))
-                print(Color.F_Default)
+        else:
+            allowed = 0
+        if changed > allowed:
+            cprint(f'BAD ({changed} changed, {allowed} allowed)', Color.F_Red)
+            err += 1
+        elif changed < allowed:
+            cprint(f"OK ({changed} changed, {allowed} allowed, adjust whitelist)", Color.F_Yellow)
+        else:  # changed==allowed
+            cprint(f"OK ({changed} changed)", Color.F_Yellow)
+
     print()
-    exit(0)
+exit(err)
