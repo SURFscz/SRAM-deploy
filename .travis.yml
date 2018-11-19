@@ -11,7 +11,8 @@ notifications:
   slack:
     on_success: always
     on_failure: always
-    secure: "bfADrrpWJfb7PNlLtrkAAScwORxjpDQ4lHM2VSfc6av4AWqz0IzCRZRWS+B9xKCaSDzLM2Tl+q8mJQ2BUjLwZ8Tp4FD2GZsUKHoylCHkfHcHweNOJgPfoOJbs/oTKrSbVqcKhBFyToEvN3r2ADyZHuSzTU/E19udc+MwUoB9fvcfUrCFOfCG8F2GC1iCBrkLiZ4YmpIR8Y+q3cZuO6Hk5yamZ4B6YD8YsgNgXJkgPw/C1g2nmOsKSETJr20XsiJkh2wDkm+0oDt/LvuvwBDnTzkqTaekweczaQyak16QKdAaUm4xvcZU7H2Jdgf6WQjyeh/Bkcn74CWw8hEmLlHIQYZxfc2WY+9JWDcXUd2nnRcTaMvb/B4hrPy+qlHDFWhyFg8S/F7D1TgEw5uI8k/talALcUFGP4CMbVTxlKEI5XdITmGMiO+hjnWxHQZnVo1F1O6m4goJPr52jaTzYpT3WaJW6AxjTaYPs0abrjjqYFshmcGItBYL5h6q4n+x4zQioRln3ITUQDVZnfg3qVXb+LDLFvZb+lxq8JCWkZ1CIVyFdesrmZVna88ubff1XOmYRNpU6xLdKgEONcHpXF6mMav6nl/2h7g46TlY5G9FegyU2pruBL78qKddTRiDqN+u19MwR4o+XsuNKk51wPSEeFCCwj7V9aR5cUAQ2yb9Vi8="
+    rooms:
+      - surfnet-nl:tEtfF52tuZaz02sdjLJ2XGUY
 
 language: python
 python:
