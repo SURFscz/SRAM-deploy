@@ -61,7 +61,7 @@ before_install:
   - sudo apt -y install ansible
 
 script:
-  - "                      ./scripts/syntax-check        ||  travis_terminate 1"
+  - "sudo                  ./scripts/syntax-check        ||  travis_terminate 1"
   - "sudo                  ./start-vm --provider docker  ||  travis_terminate 1"
   - "sudo env REEANTRANT=1 ./start-vm --provider docker  ||  travis_terminate 1"
 
