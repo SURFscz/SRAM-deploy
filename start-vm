@@ -34,7 +34,7 @@ then
     if ! [ -e ".vagrant/id_rsa" ]
     then
         test -d .vagrant || mkdir .vagrant
-        ssh-keygen -N '' -b 2048 -t rsa -f .vagrant/id_rsa
+        ssh-keygen -q -N '' -b 2048 -t rsa -f .vagrant/id_rsa
     fi
 
     scz_image=$(docker image list scz -q)
@@ -58,11 +58,11 @@ then
 
     # fix the ssh keys (might be changed)
     net=172.20.1
-    for ip in 20 21 22 23 24 25
+    for ip in 20 21 22 23 24 25 26
     do
         ssh -Oexit vagrant@$net.$ip >/dev/null 2>&1 || true
-        ssh-keygen -f ~/.ssh/known_hosts -R "$net.$ip" > /dev/null
-        ssh -Nf -i ./.vagrant/id_rsa -o "StrictHostKeyChecking no" vagrant@$net.$ip
+        ssh-keygen -q -f ~/.ssh/known_hosts -R "$net.$ip"
+        ssh -Nfq -i ./.vagrant/id_rsa -o "StrictHostKeyChecking no" vagrant@$net.$ip
     done
 else
     echo "VMs/containers are running"
