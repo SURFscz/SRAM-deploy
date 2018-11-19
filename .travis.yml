@@ -1,41 +1,27 @@
 ---
-# Use containers instead of full VMs for faster startup.
 sudo: required
 
 services:
   - docker
 
 notifications:
-  # default: send to commiter
   email:
     on_success: change
     on_failure: always
   slack:
     on_success: always
     on_failure: always
-    rooms:
-      secure: "a/fFFYancO6PwaPZrY68kFl8GFOmObJa2UEOS8jdymRB7QxyzYxRheY1R10dhsrwokVWYMpT8BvZgdm\
-               G6JGRKyd8yZAN2eiKR8VMOOPWmCKBIiHprF2MLlxOVaTTB8nSrQbOZ259n9GmZ+0wU1jmKeMQ/W3KHU\
-               MrFOlIYLP7oxw3JArCsRpk9UwGVRYPkDknTJdQVYfpQFnpKQ1T8t3TGgUNzy80DT0Ai5tGOPOHZ1qgn\
-               Ga/Fq3e0v3NBKIQ8WPksdH2fFAe6lL9BOgolnOP5w2AkQoz81XhgRNeB+m4ilVJlVZaZaehNNzj2m8O7\
-               t39r7XTTh38TNIUEEXpDyw44TwAMIZogRov46rtLl4D4QflLdtGMCbVUsrDPJZ5OIObbdW4cCslLm+/g\
-               JXYB4UeEhCHuv/2uzrJLcFWDtKCef2Q/3yX4i8DaRrkXge4mv/g5OUDaQI8FtBrMwlEqO3C9Hwu2G2nU\
-               MBm0U9SXZv8BI7s3tyUATWupygYhdt90ZrSaNSA6v2SETuXjDjCAh1H2g8D+8Oyqihsod4SMvSQw0kCm\
-               nDyv406z6jaFHLjK6OswRnQaSW3L0lgX/IzYo7FH3P7EvmAFv/oN+cYDXMw6mUbqvHgy4VFksVSHJTKi\
-               K2wymyKMkU4Ty/2gaxIph7OgwVn6kS0DVpkyXQFuf64pGQ="
+    secure: "bfADrrpWJfb7PNlLtrkAAScwORxjpDQ4lHM2VSfc6av4AWqz0IzCRZRWS+B9xKCaSDzLM2Tl+q8mJQ2BUjLwZ8Tp4FD2GZsUKHoylCHkfHcHweNOJgPfoOJbs/oTKrSbVqcKhBFyToEvN3r2ADyZHuSzTU/E19udc+MwUoB9fvcfUrCFOfCG8F2GC1iCBrkLiZ4YmpIR8Y+q3cZuO6Hk5yamZ4B6YD8YsgNgXJkgPw/C1g2nmOsKSETJr20XsiJkh2wDkm+0oDt/LvuvwBDnTzkqTaekweczaQyak16QKdAaUm4xvcZU7H2Jdgf6WQjyeh/Bkcn74CWw8hEmLlHIQYZxfc2WY+9JWDcXUd2nnRcTaMvb/B4hrPy+qlHDFWhyFg8S/F7D1TgEw5uI8k/talALcUFGP4CMbVTxlKEI5XdITmGMiO+hjnWxHQZnVo1F1O6m4goJPr52jaTzYpT3WaJW6AxjTaYPs0abrjjqYFshmcGItBYL5h6q4n+x4zQioRln3ITUQDVZnfg3qVXb+LDLFvZb+lxq8JCWkZ1CIVyFdesrmZVna88ubff1XOmYRNpU6xLdKgEONcHpXF6mMav6nl/2h7g46TlY5G9FegyU2pruBL78qKddTRiDqN+u19MwR4o+XsuNKk51wPSEeFCCwj7V9aR5cUAQ2yb9Vi8="
 
-# the syntax check scripts as well as yamllint need python3
 language: python
 python:
   - 3.6
 
-# cache the docker images
 cache:
   pip: true
   directories:
-    - $HOME/docker
+    - "$HOME/docker"
 
-# disable the default submodule logic, as travis can't reach gitlab anyway
 git:
   submodules: false
 
@@ -47,10 +33,8 @@ addons:
       - python3-yaml
 
 before_install:
-  # Load cached docker images
   - >
-    if [ -d $HOME/docker ];
-    then
+    if [ -d $HOME/docker ]; then
       ls $HOME/docker/*.tar.gz | xargs -I {file} sh -c "zcat {file} | docker load";
     fi
   - sudo pip install yamllint
@@ -64,9 +48,7 @@ script:
   - sudo ./scripts/travis_tests
 
 before_cache:
-  # Save tagged docker images
-  - "mkdir -p $HOME/docker"
+  - mkdir -p $HOME/docker
   - "docker images -a --filter='dangling=false' --format '{{.Repository}}:{{.Tag}} {{.ID}}' \
-       | xargs -n 2 -t sh \
-         -c 'test -e $HOME/docker/$1.tar.gz || docker save $0 | gzip -c6 > $HOME/docker/$1.tar.gz' \
-    "
+        | xargs -n 2 -t sh -c 'test -e $HOME/docker/$1.tar.gz \
+             || docker save $0 | gzip -c6 > $HOME/docker/$1.tar.gz' "
