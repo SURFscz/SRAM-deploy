@@ -93,4 +93,5 @@ for role, status in stats.items():
             else:  # changed==allowed
                 print(Color.F_Yellow + "OK ({} changed)".format(changed))
                 print(Color.F_Default)
+    print()
     exit(0)
