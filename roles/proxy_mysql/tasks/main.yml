@@ -15,19 +15,25 @@
     dest: /tmp
 
 - name: create database for CoManage-Proxy linkup
-  command: mysql --batch --silent --raw --database "{{ comanage_proxy_db_name }}" --execute "source /tmp/create_db.sql"
+  command: >
+    mysql --batch --silent --raw --database "{{ comanage_proxy_db_name }}"
+          --execute "source /tmp/create_db.sql"
   register: tablecreation
   changed_when: tablecreation.stderr is not search("45000.*table exists")
   become: Yes
 
 - name: create foreign key relations for CoManage-Proxy linkup
-  command: mysql --batch --silent --raw --database "{{ comanage_proxy_db_name }}" --execute "source /tmp/fkeys.sql"
+  command: >
+    mysql --batch --silent --raw --database "{{ comanage_proxy_db_name }}"
+          --execute "source /tmp/fkeys.sql"
   register: keycreation
   changed_when: keycreation.stderr is not search("45000.*key exists")
   become: Yes
 
 - name: create views for CoManage-Proxy linkup
-  command: mysql --batch --silent --raw --database "{{ comanage_proxy_db_name }}" --execute "source  /tmp/views.sql"
+  command: >
+    mysql --batch --silent --raw --database "{{ comanage_proxy_db_name }}"
+          --execute "source  /tmp/views.sql"
   register: viewcreation
   changed_when: viewcreation.stderr is not search("45000.*view exists")
   become: Yes
