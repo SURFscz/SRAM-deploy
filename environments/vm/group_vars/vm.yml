@@ -88,3 +88,15 @@ loadbalancer:
     frontend_port: 636
     backend_hosts: "{{groups['vm-ldap']}}"
     backend_port: 389
+
+client_ldap_clients:
+  - co_name: "Rebel Alliance"
+    ldap_o: "Rebel Alliance Client 1"
+    password: "{{ test_organization_password }}"
+    uid_start: 1000
+    gid_start: 1000
+  - co_name: "Rebel Alliance"
+    ldap_o: "Rebel Alliance Client 2"
+    password: "{{ test_organization_password }}"
+    uid_start: 4200
+    gid_start: 5000
