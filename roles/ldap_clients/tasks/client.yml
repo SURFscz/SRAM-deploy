@@ -74,21 +74,19 @@
       serialNumber: "{{ client.gid_start }}"
 
 # LSC config
-- name: Make sure test org LSC directory exists
+- name: "Make sure LSC directory {{lsc_dir}} exists"
   file:
     path: "{{ lsc_dir }}"
     state: directory
     mode: 0755
 
-- name: Prepare LSC test org directory
+- name: Copy LSC logging config
   copy:
     src: "/etc/lsc/logback.xml"
     dest: "{{ lsc_dir }}"
     remote_src: yes
-    force: false
 
-- name: Copy LSC test org configuration
+- name: Copy LSC configuration
   template:
     src: "lsc.xml.j2"
     dest: "{{ lsc_dir }}/lsc.xml"
-    force: false
