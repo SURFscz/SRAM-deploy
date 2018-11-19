@@ -31,7 +31,7 @@ echo
 echo '===================================================='
 echo '== Running idempotency check...'
 echo '===================================================='
-python3.6 ./scripts/check-idempotency-status
+python ./scripts/check-idempotency-status
 
 exit 0
 
