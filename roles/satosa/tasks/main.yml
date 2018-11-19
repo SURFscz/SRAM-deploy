@@ -37,15 +37,6 @@
     mode: 0755
 
 - block:
-    #- name: fetch SATOSA from {{ satosa_repo_url }}, version {{ satosa_repo_version }}
-      #git:
-        #repo: "{{ satosa_repo_url }}"
-        #dest: "{{ satosa_src_dir }}"
-        #version: "{{ satosa_repo_version }}"
-        #accept_hostkey: "yes"
-        #force: "yes"
-      #register: satosa_git
-
     - name: install pysaml editable in venv
       pip:
         editable: yes
@@ -54,7 +45,6 @@
         virtualenv_python: python3
         state: latest
 
-    #- name: install SATOSA from {{ satosa_src_dir }} to {{ satosa_env_dir }}
     - name: install SATOSA editable from {{ satosa_repo_url }} to {{ satosa_env_dir }}
       pip:
         editable: yes
@@ -63,18 +53,6 @@
         virtualenv: "{{ satosa_env_dir }}"
         virtualenv_python: python3
         state: latest
-      #when: satosa_git.changed
-
-    #- name: >
-        #fetch SATOSA micro_services from {{ scz_microservices_repo_url }},
-        #version {{ scz_microservices_repo_version }}
-      #git:
-        #repo: "{{ scz_microservices_repo_url }}"
-        #dest: "{{ scz_microservices_src_dir }}"
-        #version: "{{ scz_microservices_repo_version }}"
-        #accept_hostkey: "yes"
-        #force: "yes"
-      #register: satosa_microservices_git
 
     - name: >
         install SCZ microservices editable from {{ satosa_microservices_repo_url }}
