@@ -61,7 +61,7 @@ then
     for ip in 20 21 22 23 24 25 26
     do
         ssh -Oexit vagrant@$net.$ip >/dev/null 2>&1 || true
-        ssh-keygen -q -f ~/.ssh/known_hosts -R "$net.$ip"
+        ssh-keygen -q -f ~/.ssh/known_hosts -R "$net.$ip" >/dev/null 2>&1
         ssh -Nfq -i ./.vagrant/id_rsa -o "StrictHostKeyChecking no" vagrant@$net.$ip
     done
 else
