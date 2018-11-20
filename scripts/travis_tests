@@ -11,6 +11,7 @@ fi
 source $HOME/virtualenv/python3.6/bin/activate
 
 ls -la `which python`
+pip list
 
 echo '===================================================='
 echo '== Running Syntax Check'
