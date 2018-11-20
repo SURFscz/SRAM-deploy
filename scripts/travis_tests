@@ -22,7 +22,7 @@ echo
 echo '===================================================='
 echo '== Starting deploy (run 1)'
 echo '===================================================='
-./start-vm --provider docker
+./start-vm --provider docker --no-parallel
 echo
 
 # run second time, to check if reeantrace works ok
