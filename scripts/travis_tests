@@ -10,10 +10,12 @@ fi
 # activate correct python virtualenv
 source $HOME/virtualenv/python3.6/bin/activate
 
+ls -la `which python`
+
 echo '===================================================='
 echo '== Running Syntax Check'
 echo '===================================================='
-./scripts/syntax-check
+python ./scripts/syntax-check
 echo
 
 echo '===================================================='
