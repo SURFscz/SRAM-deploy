@@ -54,7 +54,8 @@ num_running=$(vagrant status 2>&1 |grep -E '\brunning\b'|wc -l)
 if [ "$num_running" -ne 7 ]
 then
     echo "Running vagrant to start containers..."
-    time vagrant up --provision ${vagrant_args[*]} > vagrant.log 2>&1 || cat vagrant.log
+    #time vagrant up --provision ${vagrant_args[*]} > vagrant.log 2>&1 || cat vagrant.log
+    time vagrant up --provision ${vagrant_args[*]}
 
     # fix the ssh keys (might be changed)
     net=172.20.1
