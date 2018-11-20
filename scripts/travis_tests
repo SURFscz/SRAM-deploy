@@ -9,14 +9,20 @@ fi
 
 # activate correct python virtualenv
 source $HOME/virtualenv/python3.6/bin/activate
+echo PATH=$PATH
 
 ls -la `which python`
+ls -la `which pip`
+echo pip list
 pip list
 
 echo '===================================================='
 echo '== Running Syntax Check'
 echo '===================================================='
-python ./scripts/syntax-check
+find . -name '*.j2'  -print0 | xargs -0 python ./scripts/syntax-jinja
+find . -name '*.yml' -print0 | xargs -0 python ./scripts/syntax-yml
+yamllint .
+
 echo
 
 echo '===================================================='
