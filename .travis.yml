@@ -26,24 +26,17 @@ cache:
 git:
   submodules: false
 
-addons:
-  apt:
-    packages:
-      - bridge-utils
-      - python3-jinja2
-      - python3-yaml
-
 before_install:
   - >
     if [ -d $HOME/docker ]; then
       ls $HOME/docker/*.tar.gz | xargs -I {file} sh -c "zcat {file} | docker load";
     fi
-  - sudo pip install yamllint
+  - sudo pip install yamllint jinja2 pyyaml
   - sudo wget https://releases.hashicorp.com/vagrant/2.1.2/vagrant_2.1.2_x86_64.deb -P /tmp
   - sudo dpkg -i /tmp/vagrant_2.1.2_x86_64.deb
   - sudo apt-add-repository -y ppa:ansible/ansible-2.6
   - sudo apt -q update
-  - sudo apt -y install ansible
+  - sudo apt -y install ansible bridge-utils
 
 script:
   - sudo ./scripts/travis_tests
