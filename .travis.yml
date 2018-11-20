@@ -49,7 +49,13 @@ script:
   - sudo ./scripts/travis_tests
 
 before_cache:
-  - mkdir -p $HOME/docker
+  - "rm -rf $HOME/docker"
+  - "mkdir -p $HOME/docker"
+  - "docker image ls -a"
+  - "docker image prune -f"
+  - "docker image ls -a"
+  - "docker image ls -a --filter='dangling=false'"
   - "docker images -a --filter='dangling=false' --format '{{.Repository}}:{{.Tag}} {{.ID}}' \
         | xargs -n 2 -t sh -c 'test -e $HOME/docker/$1.tar.gz \
              || docker save $0 | gzip -c6 > $HOME/docker/$1.tar.gz' "
+  - "ls -la $HOME/docker"
