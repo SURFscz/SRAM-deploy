@@ -7,6 +7,9 @@ then
     exit 2
 fi
 
+# activate correct python virtualenv
+source $HOME/virtualenv/python3.6/bin/activate
+
 echo '===================================================='
 echo '== Running Syntax Check'
 echo '===================================================='
