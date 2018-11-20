@@ -27,9 +27,13 @@ git:
   submodules: false
 
 before_install:
+  - "ls -la $HOME/docker/"
   - >
     if [ -d $HOME/docker ]; then
-      ls $HOME/docker/*.tar.gz | xargs -I {file} sh -c "zcat {file} | docker load";
+      for f in $HOME/docker/*.tar.gz;
+      do
+        echo "Loading '$i' into docker";
+        zcat "$i" | docker load;
     fi
   - pip install yamllint jinja2 pyyaml
   - sudo wget https://releases.hashicorp.com/vagrant/2.1.2/vagrant_2.1.2_x86_64.deb -P /tmp
