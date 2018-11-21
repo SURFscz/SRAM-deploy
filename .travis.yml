@@ -34,6 +34,7 @@ before_install:
       for f in $HOME/docker/*.tar.gz;
       do
         echo "Loading '$f' into docker";
+        tar cvzf $f;
         zcat "$f" | sudo docker load;
       done;
     fi
