@@ -5,6 +5,8 @@ ARG DEBIAN_FRONTEND=noninteractive
 ARG RUNLEVEL=1
 ENV TERM linux
 
+ENV hoi test
+
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections  && \
     echo "deb http://ftp.de.debian.org/debian/ stretch-backports main" >> /etc/apt/sources.list  && \
     apt-get update -y  && \
