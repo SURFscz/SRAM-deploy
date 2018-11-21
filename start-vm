@@ -30,19 +30,12 @@ done
 # build single docker image before vagrant starts
 if [ -n "$TRAVIS" -a -z "$REENTRANT" ]
 then
-    # generate ssh key if it doesn't exist
-    if ! [ -e ".vagrant/id_rsa" ]
-    then
-        test -d .vagrant || mkdir .vagrant
-        ssh-keygen -q -N '' -b 2048 -t rsa -f .vagrant/id_rsa
-    fi
-
-    scz_image=$(docker image list scz -q)
+    scz_image=$(docker image list scz-base -q)
     if [ -z "$scz_image" ]
     then
         echo "Building docker image"
         ssh_pubkey=$(cat .vagrant/id_rsa.pub)
-        time docker build -t scz --build-arg "ssh_pub_key=${ssh_pubkey}" docker/
+        time docker build -t scz-base --target=scz-base docker/
     else
         echo "Docker image found"
     fi
@@ -68,6 +61,8 @@ then
 else
     echo "VMs/containers are running"
 fi
+
+exit 0
 
 echo "Starting ansible"
 time \

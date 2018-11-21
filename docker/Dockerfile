@@ -1,10 +1,9 @@
-FROM debian:stretch
+FROM debian:stretch as scz-base
 MAINTAINER SURFnet <info@surfnet.nl>
 
 ARG DEBIAN_FRONTEND=noninteractive
 ARG RUNLEVEL=1
 ENV TERM linux
-ARG ssh_pub_key
 
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections  && \
     echo "deb http://ftp.de.debian.org/debian/ stretch-backports main" >> /etc/apt/sources.list  && \
@@ -26,9 +25,6 @@ RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selectio
     mkdir -p /etc/sudoers.d && install -b -m 0440 /dev/null /etc/sudoers.d/vagrant  && \
     echo 'vagrant ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers.d/vagran
 
-# save ssh public key; Note: this is the only thing that is different for the containers up until we run ansible
-RUN echo "${ssh_pub_key}" >> /home/vagrant/.ssh/authorized_keys
-
 # sshd services in all containers
 EXPOSE 22
 # for LB
@@ -49,3 +45,8 @@ EXPOSE 8082
 
 VOLUME [ "/sys/fs/cgroup", "/run", "/run/lock", "/tmp" ]
 CMD ["/lib/systemd/systemd"]
+
+FROM scz-base as scz
+ARG ssh_pub_key
+# save ssh public key; Note: this is the only thing that is different for the containers up until we run ansible
+RUN echo "${ssh_pub_key}" >> /home/vagrant/.ssh/authorized_keys
