@@ -43,7 +43,6 @@ before_install:
         zcat "$f" | docker load || true;
       done;
     fi
-  - docker pull debian:stretch
 
 script:
   - ./scripts/travis_tests
