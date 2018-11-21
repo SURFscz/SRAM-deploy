@@ -161,7 +161,7 @@ Vagrant.configure("2") do |config|
             m.vm.provider "docker" do |dk|
                 dk.name = machinename
                 dk.build_dir ="./docker"
-                dk.build_args = ["-t", "scz", "--build-arg", "ssh_pub_key=#{ssh_pub_key}" ]
+                dk.build_args = ["-t", "scz", "--cache-from", "scz:latest,debian:stretch", "--build-arg", "ssh_pub_key=#{ssh_pub_key}" ]
                 #dk.remains_running = true
                 dk.has_ssh = true
                 create_args = [
