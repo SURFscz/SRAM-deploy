@@ -28,6 +28,7 @@ git:
 
 before_install:
   - "ls -la $HOME/docker/"
+  - "sudo ls -la /var/lib/docker/"
   - >
     if [ -d $HOME/docker ]; then
       for f in $HOME/docker/*.tar.gz;
