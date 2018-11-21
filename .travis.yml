@@ -32,8 +32,8 @@ before_install:
     if [ -d $HOME/docker ]; then
       for f in $HOME/docker/*.tar.gz;
       do
-        echo "Loading '$i' into docker";
-        zcat "$i" | docker load;
+        echo "Loading '$f' into docker";
+        zcat "$f" | docker load;
       done;
     fi
   - pip install yamllint jinja2 pyyaml
