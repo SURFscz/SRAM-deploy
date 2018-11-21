@@ -27,15 +27,16 @@ git:
   submodules: false
 
 before_install:
-  - "ls -la $HOME/docker/"
-  - "sudo ls -la /var/lib/docker/"
   - >
     if [ -d $HOME/docker ]; then
+      find $HOME/docker -type f -size -1k
       find $HOME/docker -type f -size -1k -print0 | xargs -0 rm -f;
+      ls -la $HOME/docker/;
       for f in $HOME/docker/*.tar.gz;
       do
         echo "Loading '$f' into docker";
-        zcat "$f" | sudo docker load;
+        ls -la "$f"
+        zcat "$f" | sudo docker load || true;
       done;
     fi
   - pip install yamllint jinja2 pyyaml
