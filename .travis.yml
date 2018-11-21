@@ -49,5 +49,5 @@ script:
 before_cache:
   - "rm -rf $HOME/docker"
   - "mkdir -p $HOME/docker"
-  - "docker save scz-base | gzip -c6 > $HOME/docker/scz-base.tar.gz' "
+  - "docker save scz-base | gzip -c6 > $HOME/docker/scz-base.tar.gz"
   - "ls -la $HOME/docker"
