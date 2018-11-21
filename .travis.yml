@@ -36,6 +36,7 @@ before_install:
         zcat "$f" | sudo docker load || true;
       done;
     fi
+  - docker image inspect scz-base
   - pip install yamllint jinja2 pyyaml
   - sudo wget https://releases.hashicorp.com/vagrant/2.1.2/vagrant_2.1.2_x86_64.deb -P /tmp
   - sudo dpkg -i /tmp/vagrant_2.1.2_x86_64.deb
@@ -49,6 +50,7 @@ script:
 
 before_cache:
   - "ls -la $HOME/docker"
+  - docker image inspect scz-base
   - |
     # save docker images to cache
     export IMG=$( docker images --format '{{.ID}}' scz-base );
