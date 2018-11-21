@@ -27,7 +27,7 @@ git:
   submodules: false
 
 before_install:
-  - >
+  - |
     if [ -d $HOME/docker ]; then
       for f in $HOME/docker/*.tar.gz;
       do
@@ -47,7 +47,6 @@ script:
   - ./scripts/travis_tests
 
 before_cache:
-  - "rm -rf $HOME/docker; mkdir -p $HOME/docker"
   - |
     export IMG=$( docker images --format '{{.ID}}' scz-base );
     if ! [ -e $HOME/docker/$IMG ]; then
