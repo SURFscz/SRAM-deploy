@@ -55,7 +55,7 @@ before_cache:
     # save docker images to cache
     export IMG=$( docker images --format '{{.ID}}' scz-base );
     echo "scz-image is id ${IMG}";
-    if ! [ -e {$HOME/docker/$IMG}.tar.gz ]; then
+    if ! [ -e $HOME/docker/$IMG.tar.gz ]; then
       echo "scz-base image has changed, clearing out cache and writing new image"
       rm -rf $HOME/docker;
       mkdir -p $HOME/docker;
