@@ -28,6 +28,7 @@ git:
 
 before_install:
   - |
+    # load docker images from cache
     if [ -d $HOME/docker ]; then
       for f in $HOME/docker/*.tar.gz;
       do
@@ -47,12 +48,17 @@ script:
   - ./scripts/travis_tests
 
 before_cache:
+  - "ls -la $HOME/docker"
   - |
+    # save docker images to cache
     export IMG=$( docker images --format '{{.ID}}' scz-base );
+    echo "scz-image is id ${IMG}";
     if ! [ -e $HOME/docker/$IMG ]; then
       echo "scz-base image has changed, clearing out cache and writing new image"
       rm -rf $HOME/docker;
       mkdir -p $HOME/docker;
-      docker save $IMG | gzip -c6 > $HOME/docker/${IMG}.tar.gz;
+      docker save scz-base | gzip -c6 > $HOME/docker/${IMG}.tar.gz;
+    else
+      echo "scz-base image exists; nothing to do"
     fi
   - "ls -la $HOME/docker"
