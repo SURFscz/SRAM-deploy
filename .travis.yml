@@ -31,10 +31,10 @@ before_install:
   - "sudo ls -la /var/lib/docker/"
   - >
     if [ -d $HOME/docker ]; then
+      find $HOME/docker -type f -size -1k -print0 | xargs -0 rm -f;
       for f in $HOME/docker/*.tar.gz;
       do
         echo "Loading '$f' into docker";
-        tar tvzf $f;
         zcat "$f" | sudo docker load;
       done;
     fi
