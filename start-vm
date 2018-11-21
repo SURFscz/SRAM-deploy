@@ -34,7 +34,6 @@ then
     if [ -z "$scz_image" ]
     then
         echo "Building docker image"
-        ssh_pubkey=$(cat .vagrant/id_rsa.pub)
         time docker build -t scz-base --target=scz-base docker/
     else
         echo "Docker image found"
