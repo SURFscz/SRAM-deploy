@@ -27,14 +27,13 @@ git:
   submodules: false
 
 before_install:
-  - sudo adduser travis docker
   - "ls -la $HOME/docker/"
   - >
     if [ -d $HOME/docker ]; then
       for f in $HOME/docker/*.tar.gz;
       do
         echo "Loading '$f' into docker";
-        zcat "$f" | docker load;
+        zcat "$f" | sudo docker load;
       done;
     fi
   - pip install yamllint jinja2 pyyaml
@@ -43,6 +42,7 @@ before_install:
   - sudo apt-add-repository -y ppa:ansible/ansible-2.6
   - sudo apt -q update
   - sudo apt -y install ansible bridge-utils
+  - sudo adduser travis docker
 
 script:
   - ./scripts/travis_tests
