@@ -1,4 +1,5 @@
-
+# -*- mode: ruby -*- vi:ft=ruby:sw=4:ts=4:expandtab:
+#
 # Generate a single new ssh key to use for all VMs
 # By default, vagrant generates a key for each VM, but put is in a
 # provider-dependent location.  Here, we want to support both vbox and
