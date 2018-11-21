@@ -47,7 +47,13 @@ script:
   - ./scripts/travis_tests
 
 before_cache:
-  - "rm -rf $HOME/docker"
-  - "mkdir -p $HOME/docker"
-  - "docker save scz-base | gzip -c6 > $HOME/docker/scz-base.tar.gz"
+  - "rm -rf $HOME/docker; mkdir -p $HOME/docker"
+  - |
+    export IMG=$( docker images --format '{{.ID}}' scz-base );
+    if ! [ -e $HOME/docker/$IMG ]; then
+      # image has changed, clear out cache and write new image
+      rm -rf $HOME/docker;
+      mkdir -p $HOME/docker;
+      docker save scz-base | gzip -c6 > $HOME/docker/scz-base.tar.gz;
+    fi
   - "ls -la $HOME/docker"
