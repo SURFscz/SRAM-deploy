@@ -24,23 +24,14 @@
   file: path={{ pyff_project_dir }} state=directory mode=0755 owner=pyff
 
 - block:
-    - name: fetch pyFF from {{ pyff_repo_url }}, version {{ pyff_repo_version }}
-      git:
-        repo: "{{ pyff_repo_url }}"
-        dest: "{{ pyff_src_dir }}"
-        version: "{{ pyff_repo_version }}"
-        accept_hostkey: "yes"
-        force: "yes"
-      register: fetch_pyff
-
-    - name: install pyFF from {{ pyff_src_dir }} to {{ pyff_env_dir }}
+    - name: "install pyFF editable from {{ pyff_repo_url }}@{{ pyff_repo_version }} \
+              to {{ pyff_env_dir }}"
       pip:
-        name: "{{ pyff_src_dir }}"
+        editable: yes
+        name: "git+{{ pyff_repo_url }}@{{ pyff_repo_version }}#egg=pyff"
         virtualenv: "{{ pyff_env_dir }}"
         virtualenv_python: python2
         state: latest
-        #executable: pip2
-      when: fetch_pyff.changed
 
     - name: Create pyFF mdq configuration
       template: src=mdq.fd.j2

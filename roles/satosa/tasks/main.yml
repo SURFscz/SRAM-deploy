@@ -64,7 +64,7 @@
         virtualenv: "{{ satosa_env_dir }}"
         virtualenv_python: python3
         state: latest
-      #when: satosa_microservices_git.changed
+        #when: satosa_microservices_git.changed
 
     - name: Create SATOSA  proxy_conf configuration
       template:
