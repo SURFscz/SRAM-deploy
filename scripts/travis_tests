@@ -9,21 +9,18 @@ fi
 
 # activate correct python virtualenv
 source $HOME/virtualenv/python3.6/bin/activate
-echo PATH=$PATH
-
-ls -la `which python`
-ls -la `which pip`
-echo pip list
-pip list
 
 echo '===================================================='
 echo '== Running Syntax Check'
 echo '===================================================='
-find . -name '*.j2'  -print0 | xargs -0 python ./scripts/syntax-jinja
-find . -name '*.yml' -print0 | xargs -0 python ./scripts/syntax-yml
+echo Checking jinja2 files
+find . -name '*.j2'  -print0 | xargs -0 python ./scripts/syntax-yml -q
+echo Checking yaml files
+find . -name '*.yml' -print0 | xargs -0 python ./scripts/syntax-jinja -q
+echo Running yamllint
 yamllint .
-
 echo
+
 
 echo '===================================================='
 echo '== Starting deploy (run 1)'
@@ -39,7 +36,7 @@ export REEANTRANT=1
 ./start-vm
 echo
 
-# check if the
+# check if the second run didn't give (too many) "changed"-states
 echo '===================================================='
 echo '== Running idempotency check...'
 echo '===================================================='

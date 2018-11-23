@@ -160,7 +160,8 @@
         </pivotAttributes>
         <fetchedAttributes>
           <string>objectClass</string>
-          <string>memberUid</string>
+<!--           <string>memberUid</string> -->
+          <string>sczMember</string>
           <string>description</string>
           <string>gidNumber</string>
         </fetchedAttributes>
@@ -186,13 +187,13 @@
         </conditions>
         <dataset>
           <name>objectClass</name>
-          <policy>KEEP</policy>
+          <policy>FORCE</policy>
           <defaultValues></defaultValues>
-          <forceValues></forceValues>
-          <createValues>
+          <forceValues>
             <string>"posixGroup"</string>
-          </createValues>
-          <delimiter>,</delimiter>
+            <string>"sczGroup"</string>
+          </forceValues>
+          <createValues></createValues>
         </dataset>
         <dataset>
           <name>description</name>
@@ -203,19 +204,20 @@
             <string>srcBean.getDatasetFirstValueById("cn")</string>
           </createValues>
         </dataset>
-        <dataset>
+<!--        <dataset>
           <name>memberUid</name>
           <policy>FORCE</policy>
           <defaultValues></defaultValues>
           <forceValues>
             <string>
-            <![CDATA[rjs:
-                java.lang.System.out.println("srcCn:"+srcBean.getDatasetFirstValueById("cn"));
+           <![CDATA[rjs:
+                java.lang.System.out.println("memberUid srcCn:"+srcBean.getDatasetFirstValueById("cn"));
                 var memberSrcDns = srcBean.getDatasetValuesById("member");
                 var memberDstUids = [];
                 for  (var i=0; i<memberSrcDns.size(); i++) {
                     try {
                        memberSrcDn = memberSrcDns.get(i);
+                       if (!srcLdap.exists(memberSrcDn).length) continue;
                        java.lang.System.out.println("memberSrcDn:" + memberSrcDn);
                        uid = srcLdap.attribute(memberSrcDn, "uid").get(0);
                        memberDstRdn = ldap.search("ou=People,o={{ client.ldap_o }}", "(uid=" + uid + ")");
@@ -232,7 +234,42 @@
             </string>
           </forceValues>
           <createValues></createValues>
-          <delimiter>;</delimiter>
+        </dataset>-->
+       <dataset>
+          <name>sczMember</name>
+          <policy>FORCE</policy>
+          <defaultValues></defaultValues>
+          <forceValues>
+            <string>
+            <![CDATA[rjs:
+                java.lang.System.out.println("\nsczMember srcCn:"+srcBean.getDatasetFirstValueById("cn"));
+                var memberSrcDns = srcBean.getDatasetValuesById("member");
+                var memberDstDns = [];
+                for  (var i=0; i<memberSrcDns.size(); i++) {
+                    memberSrcDn = memberSrcDns.get(i);
+                    if (!srcLdap.exists(memberSrcDn).length) continue;
+                    java.lang.System.out.println("memberSrcDn:" + memberSrcDn);
+                    uid_ = srcLdap.attribute(memberSrcDn, "uid");
+                    cn_ = srcLdap.attribute(memberSrcDn, "cn");
+                    memberDstRdn = [];
+                        if (uid_.length) {
+                            uid = uid_.get(0);
+                            memberDstRdn = ldap.search("ou=People,o={{ client.ldap_o }}", "(uid=" + uid + ")");
+                        } else if (cn_.length) {
+                            cn = cn_.get(0);
+                            memberDstRdn = ldap.search("ou=Groups,o={{ client.ldap_o }}", "(description=" + cn + ")");
+                        }
+                        if (memberDstRdn.length) {
+                            memberDstDn = memberDstRdn.get(0) + "," + ldap.getContextDn();
+                            memberDstDns.push(memberDstDn);
+                        }
+                }
+                java.lang.System.out.println("membersDstDns:" + memberDstDns);
+                memberDstDns
+            ]]>
+            </string>
+          </forceValues>
+          <createValues></createValues>
         </dataset>
         <dataset>
           <name>gidNumber</name>

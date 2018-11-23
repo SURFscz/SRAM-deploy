@@ -1,5 +1,5 @@
 # -*- mode: ruby -*- vi:ft=ruby:sw=4:ts=4:expandtab:
-
+#
 # Generate a single new ssh key to use for all VMs
 # By default, vagrant generates a key for each VM, but put is in a
 # provider-dependent location.  Here, we want to support both vbox and
@@ -87,6 +87,12 @@ Vagrant.configure("2") do |config|
 
     config.vm.synced_folder ".", "/vagrant", disabled: true
 
+    # the first provider specified is the default, so insert a null docker statement here
+    config.vm.provider "docker" do |dk, override|
+        dk.remains_running = true
+        dk.has_ssh = true
+    end
+
     # because docker does not require an image (and in fact, we want it provisioned
     # atop our current OS) we put box information inside the providers that actually
     # need to download the box
@@ -120,16 +126,12 @@ Vagrant.configure("2") do |config|
 
     config.vm.provider "docker" do |dk, override|
         # create a docker client network
-        # note: this will also run when libvirt or vbox is used, and will break networking
-        # starting from vagrant 2.1, we can use triggers instead
-        #override.trigger.before [:up] do |trigger|
-            Vagrant::Util::Subprocess.execute('bash','-c',
-                "(docker network ls | grep -q scznet) || \
-                  docker network create --attachable --driver bridge \
-                    --gateway 172.20.1.1 --subnet 172.20.1.0/24 scznet",
-                :notify => [:stdout, :stderr]
-            )
-        #end
+        Vagrant::Util::Subprocess.execute('bash','-c',
+            "(docker network ls | grep -q scznet) || \
+              docker network create --attachable --driver bridge \
+                --gateway 172.20.1.1 --subnet 172.20.1.0/24 scznet",
+            :notify => [:stdout, :stderr]
+        )
         # disable proxying
         if Vagrant.has_plugin?("vagrant-proxyconf")
             override.proxy.enabled = false
@@ -161,9 +163,7 @@ Vagrant.configure("2") do |config|
             m.vm.provider "docker" do |dk|
                 dk.name = machinename
                 dk.build_dir ="./docker"
-                dk.build_args = ["-t", "scz", "--build-arg", "ssh_pub_key=#{ssh_pub_key}" ]
-                #dk.remains_running = true
-                dk.has_ssh = true
+                dk.build_args = ["-t", "scz", "--cache-from", "scz-base", "--build-arg", "ssh_pub_key=#{ssh_pub_key}" ]
                 create_args = [
                     #"-d", "-t", "-i",
                     "--cpuset-cpus=0,1",
