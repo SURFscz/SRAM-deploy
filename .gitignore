@@ -1,7 +1,9 @@
 .ansible/
 .vagrant/
+.mypy_cache/
 vagrant.log
 provision.retry
+provision_status.json
 logs/
 *.pyc
 *~

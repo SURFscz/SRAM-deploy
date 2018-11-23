@@ -18,10 +18,9 @@
 
 - name: get composer installer
   get_url:
-    url: https://getcomposer.org/installer
+    url: "{{ composer_installer }}"
     dest: /tmp/composer-installer
-    checksum: "sha384:544e09ee996cdf60ece3804abc52599c22b1f40f4323403c44d44fdfdd5864\
-               75ca9813a858088ffbc1f233e9b180f061"
+    checksum: "{{ composer_installer_checksum }}"
 
 - name: install composer
   command: "php -f /tmp/composer-installer -- --install-dir=/usr/local/bin --filename=composer"

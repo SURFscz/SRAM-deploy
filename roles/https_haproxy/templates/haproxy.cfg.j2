@@ -73,6 +73,7 @@ frontend fe_https
 {% endif %}
 
 	http-request set-header X-Forwarded-For "%[src]"
+	http-request set-header X-Forwarded-Host "%[req.hdr(Host)]"
 	http-request set-header X-Forwarded-Port "%[dst_port]"
 {% if enable_https %}
 	http-request set-header X-Forwarded-Proto "https"

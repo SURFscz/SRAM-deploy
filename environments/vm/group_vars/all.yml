@@ -104,8 +104,10 @@ comanage_proxy_db_user: "scz"
 comanage_proxy_db_name: "cotosa"
 comanage_proxy_attribute: "cmuid"
 
+php_debug: true
+php_xdebug_host: "{{iprange.bastion}}"
+
 # Satosa attributes_hash database configuration
-# It is needed in the proxy_mysql and satosa role
-satosa_db: "{{ groups['proxy'][0] }}"
+# It is needed in the proxy_mysql and satosa rolesatosa_db: "{{ groups['proxy'][0] }}"
 satosa_db_name: "satosa"
 satosa_db_user: "satosa"

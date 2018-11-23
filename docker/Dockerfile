@@ -25,7 +25,12 @@ CMD ["/lib/systemd/systemd"]
 RUN apt-get install -y openssh-server python2.7 python3 python sudo locales
 RUN update-locale
 RUN systemctl enable ssh.service
-RUN systemctl disable getty\@tty1.service
+# DIE getty, DIE!
+RUN systemctl disable getty@
+RUN systemctl disable getty.target
+RUN rm /lib/systemd/system/multi-user.target.wants/getty.target
+RUN rm /lib/systemd/system/getty.target.wants/getty-static.service
+RUN systemctl disable systemd-timesyncd.service
 
 # sshd services in all containers
 EXPOSE 22

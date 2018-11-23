@@ -46,6 +46,7 @@
   blockinfile:
     path: "{{ simplesaml_project_dir }}/simplesaml/config/authsources.php"
     insertbefore: "\\);"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK {{ hostnames.google }}"
     block: |
         'oidc-google' => array(
             'openidconnect:Connect',
@@ -62,6 +63,7 @@
   blockinfile:
     path: "{{ simplesaml_project_dir }}/simplesaml/metadata/saml20-idp-hosted.php"
     insertafter: EOF
+    marker: "# {mark} ANSIBLE MANAGED BLOCK {{ hostnames.google }}"
     block: |
         $metadata['__DYNAMIC:2__'] = array(
                 'host' => '{{ hostnames.google }}',

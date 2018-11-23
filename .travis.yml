@@ -1,12 +1,10 @@
 ---
-# Use containers instead of full VMs for faster startup.
 sudo: required
 
 services:
   - docker
 
 notifications:
-  # default: send to commiter
   email:
     on_success: change
     on_failure: always
@@ -14,42 +12,43 @@ notifications:
     on_success: always
     on_failure: always
     rooms:
-      secure: "GwjWmymXdHh3pyaDtriIrGyBqQGpFvS2sCa9yrO5xKrnPh0OZtJdVCNKCYREaSsdMp6NYL6EqoQgzABdl8\
-               ErK9VQ7ErpUZMuDKhaPZL4LTZ4CfuSdytD7g58Kmx1JYfLe7wuc3iiZi3XXpklK1TScHDyUFFR24imDXHG\
-               f2E/DPSsB6AJGrtqsHtjDE6u6f8XTuq5oEIXGinM50kgzjZamnpgD8Hzms/Jon4wIADy0iabIKaJeNZYsv\
-               VgWDP5lckIgRo6YmanTETiUCvOp3NIdcOAjilsEUiJbCAIB/aJ1TaRu3z5R295shgfBpPaz/a47zTCbeeq\
-               XMQJ604Mtg4CHRe7S54Fv+whIDGejA3LcEcM4/cxjG3kS3iyXRb6sHMpS7gqUgamjEd2EImcigElsxat4b\
-               KkKU13IPNbB4seVDdyXoAIBlkmJTNtzt1vH5DAFU5WHRO+qyOc3YxgX63cYJBcNxFZyZe63UuUSll20/5n\
-               jpCBGyVE1YW8rD2iMO/V+HxMY0wQiMyS855q5v9ayi7T5r7oaj98DfXUzzAP8VMKIITAYGiZpQeT5dDO63\
-               Ula3eJBTYTcHdpb37KrowB731sox8cBH9A5uAufdgxgUE/c3xo+kBVVLgt13lmBjmMqEdEN6pr8wSueSeI\
-               WIdQczg4EOJTLEMVgFBdCmd8f04="
+      - surfnet-nl:tEtfF52tuZaz02sdjLJ2XGUY
 
-# the syntax check scripts as well as yamllint need python3
 language: python
-cache: pip
 python:
-  - 3.5
+  - 3.6
 
-# disable the default submodule logic, as travis can't reach gitlab anyway
+cache:
+  pip: true
+  directories:
+    - "$HOME/docker"
+
 git:
   submodules: false
 
-install:
-  - pip install yamllint
-  - pip install jinja2
-  - sudo wget https://releases.hashicorp.com/vagrant/2.0.3/vagrant_2.0.3_x86_64.deb -P /tmp
-  - sudo dpkg -i /tmp/vagrant_2.0.3_x86_64.deb
-  #- sudo wget >
-  #  https://download.docker.com/linux/ubuntu/dists/trusty/pool/
-  #  stable/amd64/docker-ce_18.03.0~ce-0~ubuntu_amd64.deb -P /tmp
-  #- sudo dpkg -i /tmp/docker-ce_18.03.0~ce-0~ubuntu_amd64.deb
-  #- sudo apt -y update
-  - sudo apt -y install software-properties-common
-  - sudo apt-add-repository -y ppa:ansible/ansible
-  - sudo apt -y update
-  - sudo apt -y install ansible
-  - sudo apt -y install bridge-utils
+before_install:
+  - >
+    if [ -d $HOME/docker ]; then
+      ls $HOME/docker/*.tar.gz | xargs -I {file} sh -c "zcat {file} | docker load";
+    fi
+  - pip install yamllint jinja2 pyyaml
+  - sudo wget https://releases.hashicorp.com/vagrant/2.1.2/vagrant_2.1.2_x86_64.deb -P /tmp
+  - sudo dpkg -i /tmp/vagrant_2.1.2_x86_64.deb
+  - sudo apt-add-repository -y ppa:ansible/ansible-2.6
+  - sudo apt -q update
+  - sudo apt -y install ansible bridge-utils
 
 script:
-  - scripts/syntax-check
-  - sudo ./start-vm --provider docker
+  - sudo ./scripts/travis_tests
+
+before_cache:
+  - "rm -rf $HOME/docker"
+  - "mkdir -p $HOME/docker"
+  - "docker image ls -a"
+  - "docker image prune -f"
+  - "docker image ls -a"
+  - "docker image ls -a --filter='dangling=false'"
+  - "docker images -a --filter='dangling=false' --format '{{.Repository}}:{{.Tag}} {{.ID}}' \
+        | xargs -n 2 -t sh -c 'test -e $HOME/docker/$1.tar.gz \
+             || docker save $0 | gzip -c6 > $HOME/docker/$1.tar.gz' "
+  - "ls -la $HOME/docker"

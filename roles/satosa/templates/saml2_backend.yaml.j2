@@ -21,7 +21,6 @@ config:
 {% endfor %}
 {% endfor %}
     metadata:
-      local: ['metadata/idp-test.xml']
       mdq: ['http://localhost:{{ pyff_port }}']
     entityid: <base_url>/md/<name>.xml
     entity_category: ['http://www.geant.net/uri/dataprotection-code-of-conduct/v1']
@@ -64,7 +63,8 @@ config:
             - [<base_url>/<name>/acs/post, 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST']
           discovery_response:
             - [<base_url>/<name>/disco, 'urn:oasis:names:tc:SAML:profiles:SSO:idp-discovery-protocol']
-        name_id_format: 'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent'
+        name_id_format: 'urn:oasis:names:tc:SAML:2.0:nameid-format:transient'
+        name_id_format_allow_create: True
         want_response_signed: false
         optional_attributes:
           # eduPersonPrincipalName

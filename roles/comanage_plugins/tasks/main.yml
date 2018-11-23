@@ -22,13 +22,6 @@
     state: link
   become: Yes
 
-- name: Activate Email Uid Enroller Plugin
-  file:
-    src: "{{ comanage_path }}/app/AvailablePlugin/EmailUidEnroller"
-    dest: "{{ comanage_path }}/local/Plugin/EmailUidEnroller"
-    state: link
-  become: Yes
-
 - name: Checkout the relevant Git based plugins
   git:
     repo: "{{ item.src }}"
@@ -77,13 +70,18 @@
 
 - name: Configure JsonLog for ZoneProvisioner
   blockinfile:
-    path: "{{ comanage_path }}/app/Config/bootstrap.php"
+    path: "{{ comanage_path }}/local/Config/bootstrap.php"
+    create: yes
     follow: yes
-    insertbefore: "CakeLog::config\\('debug'"
-    marker: // {mark} ANSIBLE MANAGED BLOCK"
+    marker: "// {mark} ANSIBLE MANAGED BLOCK"
     block: |
       CakeLog::config('json', array(
         'engine' => 'ZoneProvisioner.JsonLog',
         'types' => array('json_err','json_not'),
         'path' => '{{ comanage_path }}/local/tmp/logs',
       ));
+
+- name: Remove file in incorrect location
+  file:
+    path: "{{ comanage_path }}/app/local"
+    state: absent

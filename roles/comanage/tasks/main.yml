@@ -120,6 +120,7 @@
   with_items:
     - database.php
     - email.php
+    - bootstrap.php
 
 - name: Install database schema
   command: ./Console/cake database

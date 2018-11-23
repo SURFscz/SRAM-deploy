@@ -1,24 +1,56 @@
-#!/bin/sh
-cd {{ metadata_project_dir }}
-wget https://wayf.surfnet.nl/metadata/edugain/downstream.xml -q -O sc_edugain.xml
+#!/bin/bash
+# vim:ft=sh
+set -e
 
-# Select R&S and COCO entityID's but not SURFConext
-#xsltproc rs_coco_nosc.xsl sc_edugain.xml > sc_edugain_rs_coco_nosc.xml
-xalan -in sc_edugain.xml -xsl rs_coco_nosc.xsl -indent 2 > sc_edugain_rs_coco_nosc.xml
+WFLAGS="--verbose --server-response"
+
+basedir={{ metadata_project_dir }}
+ds=`date '+%Y%m%d-%H%M'`
+dir=$(mktemp -d -p $basedir run-${ds}.XXX)
+# for debugging systemd timer unit
+# echo $ds >> metadata.log
+
+cd $dir
+
+# Redirect stdout and stderr to a logfile and only output the log when an error occurs
+exec 6>&1
+exec > log.txt 2>&1
+trap "cat log.txt >&6" ERR
+
+# be verbose
+set -x
+
+wget {{ edugain_feed }} $WFLAGS -O sc_edugain.xml
+
+# Select IdP's
+xalan -in sc_edugain.xml -xsl "$basedir/idps.xsl" -indent 2 > sc_edugain_idps.xml
 
 # Remove logos
-#xsltproc nologo.xsl sc_edugain_rs_coco_nosc.xml > sc_edugain_rs_coco_nosc_nologo.xml
-xalan -in sc_edugain_rs_coco_nosc.xml -xsl nologo.xsl -indent 2 > sc_edugain_rs_coco_nosc_nologo.xml
+xalan -in sc_edugain_idps.xml -xsl "$basedir/nologo.xsl" -indent 2 > sc_edugain_idps_nologo.xml
 
-# Split SP's and IdP's
-#xsltproc idps.xsl sc_edugain_rs_coco_nosc_nologo.xml > sc_edugain_rs_coco_nosc_nologo_idps.xml
-#xsltproc sps.xsl  sc_edugain_rs_coco_nosc_nologo.xml > sc_edugain_rs_coco_nosc_nologo_sps.xml
-xalan -in sc_edugain_rs_coco_nosc_nologo.xml -xsl idps.xsl -indent 2 > sc_edugain_rs_coco_nosc_nologo_idps.xml
-xalan -in sc_edugain_rs_coco_nosc_nologo.xml -xsl sps.xsl  -indent 2 > sc_edugain_rs_coco_nosc_nologo_sps.xml
+# Remove hide-from-discovery
+xalan -in sc_edugain_idps_nologo.xml -xsl "$basedir/nohide.xsl" -indent 2 > sc_edugain_idps_nologo_nohide.xml
+
+# Remove registrationAuthority = SURFconext
+xalan -in sc_edugain_idps_nologo_nohide.xml -xsl "$basedir/nosc.xsl" -indent 2 > sc_edugain_idps_nologo_nohide_nosc.xml
 
 # Retrieve SATOSA generated md
-wget https://{{ hostnames.proxy }}/md/SamlIdP.xml -q -O proxy_idp.xml
-wget https://{{ hostnames.proxy }}/md/SamlSP.xml  -q -O proxy_sp.xml
+wget https://{{ hostnames.proxy }}/md/SamlIdP.xml $WFLAGS -O proxy_idp.xml
+wget https://{{ hostnames.proxy }}/md/SamlSP.xml  $WFLAGS -O proxy_sp.xml
 
 #rm -f /var/www/html/*.xml
 cp *.xml /var/www/html
+
+# remove old xml files in the www dir that don't have a newly generated equivalent
+for f in /var/www/html/*.xml
+do
+    f_base=$(basename $f)
+    if ! [ -e "$dir/$f_base" ]
+    then
+        rm -f $f
+    fi
+done
+
+# remove temporary files if everything went ok
+rm -rf "$dir"
+exit 0
