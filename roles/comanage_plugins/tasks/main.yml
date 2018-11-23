@@ -22,13 +22,6 @@
     state: link
   become: Yes
 
-- name: Activate Email Uid Enroller Plugin
-  file:
-    src: "{{ comanage_path }}/app/AvailablePlugin/EmailUidEnroller"
-    dest: "{{ comanage_path }}/local/Plugin/EmailUidEnroller"
-    state: link
-  become: Yes
-
 - name: Checkout the relevant Git based plugins
   git:
     repo: "{{ item.src }}"
@@ -77,7 +70,7 @@
 
 - name: Configure JsonLog for ZoneProvisioner
   blockinfile:
-    path: "{{ comanage_path }}/app/local/Config/bootstrap.php"
+    path: "{{ comanage_path }}/local/Config/bootstrap.php"
     create: yes
     follow: yes
     marker: "// {mark} ANSIBLE MANAGED BLOCK"
@@ -87,3 +80,8 @@
         'types' => array('json_err','json_not'),
         'path' => '{{ comanage_path }}/local/tmp/logs',
       ));
+
+- name: Remove file in incorrect location
+  file:
+    path: "{{ comanage_path }}/app/local"
+    state: absent

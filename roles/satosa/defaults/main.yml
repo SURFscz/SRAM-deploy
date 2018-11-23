@@ -1,6 +1,7 @@
 ---
 http_proto: https
 mongodb_host: "127.0.0.1"
+comange_entityid: "{{http_proto}}://{{hostnames.comanage}}/registry/auth/sp/metadata"
 
 # SATOSA configuration
 satosa_repo_url: "https://github.com/SURFscz/SATOSA.git"
@@ -12,6 +13,9 @@ satosa_env_dir: "{{ satosa_project_dir }}/satosa-env"
 satosa_microservices_repo_url: "https://github.com/SURFscz/SATOSA-micro_services.git"
 satosa_microservices_repo_version: "master"
 satosa_microservices_src_dir: "{{ satosa_project_dir }}/satosa-microservices"
+
+pysaml_repo_url: "https://github.com/SURFscz/pysaml2.git"
+pysaml_repo_version: "scz"
 
 satosa_host: "0.0.0.0"
 satosa_port: "8080"

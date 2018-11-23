@@ -7,17 +7,37 @@ then
     exit 2
 fi
 
+# activate correct python virtualenv
+source $HOME/virtualenv/python3.6/bin/activate
 
-./scripts/syntax-check
+echo '===================================================='
+echo '== Running Syntax Check'
+echo '===================================================='
+find . -name '*.j2'  -print0 | xargs -0 python ./scripts/syntax-jinja
+find . -name '*.yml' -print0 | xargs -0 python ./scripts/syntax-yml
+yamllint .
+echo
 
 
+echo '===================================================='
+echo '== Starting deploy (run 1)'
+echo '===================================================='
 ./start-vm --provider docker
+echo
 
 # run second time, to check if reeantrace works ok
+echo '===================================================='
+echo '== Starting deploy (run 2)'
+echo '===================================================='
 export REEANTRANT=1
 ./start-vm
+echo
 
-#TODO: find some way to push data about changed targets in the second run back to github
+# check if the second run didn't give (too many) "changed"-states
+echo '===================================================='
+echo '== Running idempotency check...'
+echo '===================================================='
+python ./scripts/check-idempotency-status
 
 exit 0
 

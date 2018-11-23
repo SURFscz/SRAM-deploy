@@ -1,11 +1,12 @@
 ---
+pam_clients_port: 8123
+pam_debug_port: 8124
 pam_websso:
   repo_url: "https://github.com/mrvanes/pam-websso.git"
   repo_version: "master"
   project_dir: "/opt/pam-websso"
   daemon:
     ports:
-      clients: 8123
-      command: 8124
-      web: 8125
+      clients: "{{pam_clients_port}}"
+      command: "{{pam_debug_port}}"
     user_attribute: 'urn:mace:dir:attribute-def:uid'

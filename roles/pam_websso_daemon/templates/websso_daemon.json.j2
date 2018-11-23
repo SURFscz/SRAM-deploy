@@ -1,8 +1,7 @@
 {
     "ports": {
         "clients": {{ pam_websso.daemon.ports.clients }},
-        "command": {{ pam_websso.daemon.ports.command }},
-        "web": {{ pam_websso.daemon.ports.web }}
+        "command": {{ pam_websso.daemon.ports.command }}
     },
     "url": "https://{{hostnames.pam}}/",
     "user_attribute": "{{ pam_websso.daemon.user_attribute }}",
