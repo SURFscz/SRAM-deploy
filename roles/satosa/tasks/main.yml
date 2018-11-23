@@ -37,43 +37,34 @@
     mode: 0755
 
 - block:
-    - name: fetch SATOSA from {{ satosa_repo_url }}, version {{ satosa_repo_version }}
-      git:
-        repo: "{{ satosa_repo_url }}"
-        dest: "{{ satosa_src_dir }}"
-        version: "{{ satosa_repo_version }}"
-        accept_hostkey: "yes"
-        force: "yes"
-      register: satosa_git
-
-    - name: >
-        fetch SATOSA micro_services from {{ satosa_microservices_repo_url }},
-        version {{ satosa_microservices_repo_version }}
-      git:
-        repo: "{{ satosa_microservices_repo_url }}"
-        dest: "{{ satosa_microservices_src_dir }}"
-        version: "{{ satosa_microservices_repo_version }}"
-        accept_hostkey: "yes"
-        force: "yes"
-      register: satosa_microservices_git
-
-    - name: install SATOSA from {{ satosa_src_dir }} to {{ satosa_env_dir }}
+    - name: install pysaml editable in venv
       pip:
-        name: "{{ satosa_src_dir }}"
+        editable: yes
+        name: "git+{{ pysaml_repo_url }}@{{ pysaml_repo_version }}#egg=pysaml2"
         virtualenv: "{{ satosa_env_dir }}"
         virtualenv_python: python3
         state: latest
-      when: satosa_git.changed
+
+    - name: install SATOSA editable from {{ satosa_repo_url }} to {{ satosa_env_dir }}
+      pip:
+        editable: yes
+        #name: "{{ satosa_src_dir }}"
+        name: "git+{{ satosa_repo_url }}@{{ satosa_repo_version }}#egg=satosa"
+        virtualenv: "{{ satosa_env_dir }}"
+        virtualenv_python: python3
+        state: latest
 
     - name: >
-        install SATOSA microservices from {{ satosa_microservices_src_dir }}
+        install SCZ microservices editable from {{ satosa_microservices_repo_url }}
         to {{ satosa_env_dir }}
       pip:
-        name: "{{ satosa_microservices_src_dir }}"
+        editable: yes
+        name: "git+{{ satosa_microservices_repo_url }}@{{ satosa_microservices_repo_version }}\
+          #egg=scz-micro_services"
         virtualenv: "{{ satosa_env_dir }}"
         virtualenv_python: python3
         state: latest
-      when: satosa_microservices_git.changed
+      #when: satosa_microservices_git.changed
 
     - name: Create SATOSA  proxy_conf configuration
       template:
@@ -119,11 +110,6 @@
       template:
         src: custom_logging_service.yaml.j2
         dest: "{{ satosa_env_dir }}/plugins/micro_services/custom_logging_service.yaml"
-
-    - name: Create db_acl.yaml definition
-      template:
-        src: db_acl.yaml.j2
-        dest: "{{ satosa_env_dir }}/plugins/micro_services/db_acl.yaml"
 
     - name: Create db_attributes_store.yaml definition
       template:
