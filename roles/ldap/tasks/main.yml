@@ -35,6 +35,7 @@
 
 - name: Enable LDAP
   service: name=slapd state=restarted enabled=yes
+  changed_when: False
 
 - name: Copy schema2ldif
   become_user: "{{ ldap_user }}"
@@ -55,24 +56,64 @@
     - { src: "set_root_credentials.ldif.j2", dest: "set_root_credentials.ldif" }
     - { src: "set_loglevel_stats.ldif.j2", dest: "set_loglevel_stats.ldif" }
     - { src: "enable_syncprov.ldif.j2", dest: "enable_syncprov.ldif" }
-
+    - { src: "enable_memberof.ldif.j2", dest: "enable_memberof.ldif" }
+    - { src: "enable_memberof_1mdb.ldif.j2", dest: "enable_memberof_1mdb.ldif" }
 
 - name: Ensure the ldap admin credentials are set
   command: ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f "{{ ldap_ldif_dir }}/set_root_credentials.ldif"
   # return code 20 means entry already exists
   register: result
-  failed_when: "result.rc not in [0,20]"
-  changed_when: "result.rc==20"
+  failed_when: result.rc not in [0,20,68]
+  changed_when: result.rc not in [20,68]
 
 - name: Set loglevel to stats
   command: ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f "{{ ldap_ldif_dir }}/set_loglevel_stats.ldif"
   # return code 20 means entry already exists
   register: result
-  failed_when: "result.rc not in [0,20]"
-  changed_when: "result.rc==20"
+  failed_when: result.rc != 0
+  changed_when: result.rc != 0
 
 - name: Enable synchronization
   command: ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f "{{ ldap_ldif_dir }}/enable_syncprov.ldif"
+  # return code 20 means entry already exists
+  register: result
+  failed_when: result.rc not in [0,20,68]
+  changed_when: result.rc not in [20,68]
+
+- name: Enable memberof/refint overlay
+  command: ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f "{{ ldap_ldif_dir }}/enable_memberof.ldif"
+  # return code 20 means entry already exists
+  register: result
+  failed_when: result.rc not in [0,20,68]
+  changed_when: result.rc not in [20,68]
+
+- name: Check memberof/refint overlay for 1mdb
+  shell: >
+    ldapsearch -Q -Y EXTERNAL -H ldapi:///
+    -b 'olcDatabase={1}mdb,cn=config' '(olcOverlay=memberof)' dn
+    | grep -i 'dn: olcOverlay={[0-9]\+}memberof,olcDatabase={1}mdb,cn=config'
+  register:
+    memberOfOverlayPresent
+  failed_when: memberOfOverlayPresent.rc not in [0,1]
+  changed_when: False
+
+- name: Configure memberof/refint overlay for 1mdb
+  command: ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f "{{ ldap_ldif_dir }}/enable_memberof_1mdb.ldif"
+  # return code 20 means entry already exists
+  register: result
+  failed_when: result.rc not in [0,20,68]
+  changed_when: result.rc not in [20,68]
+  when: memberOfOverlayPresent.rc != 0
+
+- name: Enable memberof overlay
+  command: ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f "{{ ldap_ldif_dir }}/enable_memberof.ldif"
+  # return code 20 means entry already exists
+  register: result
+  failed_when: "result.rc not in [0,20]"
+  changed_when: "result.rc==20"
+
+- name: Configure memberof overlay for 1mdb
+  command: ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f "{{ ldap_ldif_dir }}/enable_memberof_1mdb.ldif"
   # return code 20 means entry already exists
   register: result
   failed_when: "result.rc not in [0,20]"
@@ -173,9 +214,10 @@
   shell: >
     ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// -b 'cn=schema,cn=config' '(cn=*)' dn
     | grep -i 'cn={[0123456789]\+}eduperson,cn=schema,cn=config'
-  failed_when: not [0, 1]
   register:
     eduPersonSchemaPresent
+  failed_when: eduPersonSchemaPresent.rc not in [0, 1]
+  changed_when: False
 
 # Based on the success or failure of copying the eduPerson schema add
 # the schema to the ldap database. Copying the same file in the previous
@@ -192,9 +234,10 @@
   shell: >
     ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// -b 'cn=schema,cn=config' '(cn=*)' dn
     | grep -i 'cn={[0-9]\+}openssh-lpk-openldap,cn=schema,cn=config'
-  failed_when: not [0, 1]
   register:
     ldapPublicKeyTask
+  failed_when: ldapPublicKeyTask.rc not in [0, 1]
+  changed_when: False
 
 - name: Ensure the ldapPublicKey schema is added to LDAP
   become: true
@@ -208,9 +251,10 @@
   shell: >
     ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// -b 'cn=schema,cn=config' '(cn=*)' dn
     | grep -i 'cn={[0-9]\+}edumember,cn=schema,cn=config'
-  failed_when: not [1, 2]
   register:
     eduMemberTask
+  failed_when: eduMemberTask.rc not in [0, 1]
+  changed_when: False
 
 - name: Ensure the eduMember schema is added to LDAP
   become: true
@@ -224,9 +268,10 @@
   shell: >
     ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// -b 'cn=schema,cn=config' '(cn=*)' dn
     | grep -i 'cn={[0-9]\+}voperson,cn=schema,cn=config'
-  failed_when: not [1, 2]
   register:
     voPersonTask
+  failed_when: voPersonTask.rc not in [0, 1]
+  changed_when: False
 
 - name: Ensure the voPerson schema is added to LDAP
   become: true
@@ -240,14 +285,16 @@
   command:
     ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// -b "{{ ldap.basedn }}" "(ou=group)" dn
   register: emptyDIT
-  failed_when: "emptyDIT.rc not in [0, 32]"
+  failed_when: emptyDIT.rc not in [0, 32]
+  changed_when: False
 
 - name: Initialize DIT
   command: >
     ldapadd -c -x -D "{{ ldap.binddn }}" -w "{{ ldap_password }}"
     -f "{{ ldap_ldif_dir }}/initial_setup.ldif"
   register: result
-  failed_when: "(result.rc not in [0, 68])"
+  failed_when: result.rc not in [0,20,68]
+  changed_when: result.rc not in [20,68]
   tags: ldap
   when: emptyDIT.stdout == ""
 
