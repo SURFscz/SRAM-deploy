@@ -1,0 +1,34 @@
+{
+    "ports": {
+        "clients": {{ pam_websso.daemon.ports.clients }},
+        "command": {{ pam_websso.daemon.ports.command }}
+    },
+    "url": "https://{{hostnames.pam}}/",
+    "user_attribute": "{{ pam_websso.daemon.user_attribute }}",
+    "strict": false,
+    "debug": true,
+    "sp": {
+        "entityId": "http://{{hostnames.pam}}/md",
+        "assertionConsumerService": {
+            "url": "http://{{hostnames.pam}}/login/acs",
+            "binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+        },
+        "singleLogoutService": {
+            "url": "http://{{hostnames.pam}}/login/sls",
+            "binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
+        },
+        "NameIDFormat": "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified",
+        "x509cert": "",
+        "privateKey": ""
+    },
+
+    "idp": {
+        "entityId": "https://{{hostnames.proxy}}/md/SamlIdP.xml",
+        "singleSignOnService": {
+            "url": "https://{{hostnames.proxy}}/SamlSP/sso/redirect",
+            "binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
+        },
+        "x509cert": "{{satosa_frontend_cert.pub.replace('\n','')}}"
+    }
+}
+

@@ -15,6 +15,12 @@ comanage_git_plugins:
   - name: "SamlSource"
     src: "https://github.com/SURFscz/COmanage-samlsource.git"
     version: "{{comanage_plugin_samlsource_version}}"
+  - name: "FixedAttributeEnroller"
+    src: "https://github.com/SURFscz/COmanage-fixedattributeenroller.git"
+    version: "{{comanage_plugin_fixedattributeenroller_version}}"
+  - name: "Yoda"
+    src: "https://github.com/SURFscz/comanage-yoda.git"
+    version: "{{comanage_plugin_yoda_version}}"
 
 comanage_plugin_configurations:
   - { src: ldapfixedprovisioner.php.j2, dest: ldapfixedprovisioner.php }

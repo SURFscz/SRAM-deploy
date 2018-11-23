@@ -1,4 +1,4 @@
-module: satosa.micro_services.attribute_filter.AttributeFilter
+module: scz-micro_services.attribute_filter.AttributeFilter
 name: AttributeFilter
 config:
     attribute_allow:
@@ -7,9 +7,9 @@ config:
             "https://{{hostnames.comanage}}/registry/auth/sp/metadata":
                 "":
                    - ""
-            # Block everything to other SP's ("^$" matches nothing)
+            # Block everything except starting with * to other SP's ("^$" matches nothing)
             default:
-                "^$":
+                "^\\*":
                     - ""
     attribute_deny:
         default:

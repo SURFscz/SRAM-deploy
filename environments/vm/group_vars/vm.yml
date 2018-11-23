@@ -18,13 +18,17 @@ hostnames:
   sp:       sp-test.{{base_domain}}
   idp:      idp-test.{{base_domain}}
   google:   google-test.{{base_domain}}
+  pam:      pam.{{base_domain}}
+  orcid:    orcid-test.{{base_domain}}
   ms:       ms-test.{{base_domain}}
 
 idp_test_port: 81
 sp_test_port: 82
 oidc_test_port: 83
 google_test_port: 84
+orcid_test_port: 85
 ms_test_port: 86
+pam_clients_port: 8087
 
 # COmanage-ldap configuration
 comanage_ldap_host: "ldap.vm.scz-vm.net"
@@ -67,12 +71,32 @@ loadbalancer:
     http: true
     backend_hosts: "{{groups['vm-client']}}"
     backend_port: "{{google_test_port}}"
+  - hostname: "{{hostnames.orcid}}"
+    http: true
+    backend_hosts: "{{groups['vm-client']}}"
+    backend_port: "{{orcid_test_port}}"
   - hostname: "{{hostnames.ms}}"
     http: true
     backend_hosts: "{{groups['vm-client']}}"
     backend_port: "{{ms_test_port}}"
+  - hostname: "{{hostnames.pam}}"
+    http: true
+    backend_hosts: "{{groups['vm-ldap']}}"
+    backend_port: "{{pam_clients_port}}"
   - hostname: "{{hostnames.ldap}}"
     http: false
     frontend_port: 636
     backend_hosts: "{{groups['vm-ldap']}}"
     backend_port: 389
+
+client_ldap_clients:
+  - co_name: "Rebel Alliance"
+    ldap_o: "Rebel Alliance Client 1"
+    password: "{{ test_organization_password }}"
+    uid_start: 1000
+    gid_start: 1000
+  - co_name: "Rebel Alliance"
+    ldap_o: "Rebel Alliance Client 2"
+    password: "{{ test_organization_password }}"
+    uid_start: 4200
+    gid_start: 5000

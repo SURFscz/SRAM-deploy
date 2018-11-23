@@ -3,9 +3,9 @@
     xmlns:mdui="urn:oasis:names:tc:SAML:metadata:ui">
   <xsl:output method="xml" indent="yes" omit-xml-declaration="no"/>
 
-  <xsl:template match="@* | node()">
+  <xsl:template match="node()|@*">
     <xsl:copy>
-      <xsl:apply-templates select="@* | node()"/>
+      <xsl:apply-templates select="node()|@*"/>
     </xsl:copy>
   </xsl:template>
 

@@ -6,7 +6,6 @@
     - name: Read vars from secrets file
       include_vars: "{{ secrets_file }}"
       tags: always
-      check_mode: "no"
 
 # first gather facts from all hosts that we're actually deploying to
 - hosts: all
@@ -75,6 +74,7 @@
   roles:
     - { role: ldap, tags: ['ldap'] }
     - { role: ldap_clients, tags: ['ldap', 'ldap_clients'] }
+    - { role: pam_websso_daemon,  tags: ['client','websso-daemon'] }
 
 - hosts:
     - proxy
@@ -84,11 +84,12 @@
 
 - hosts: client
   roles:
-    - { role: client-base,          tags: ['client'                ] }
+    - { role: client-base,          tags: ['client','client-base'  ] }
     - { role: client-saml-sp,       tags: ['client','client-sp'    ] }
     - { role: client-saml-idp,      tags: ['client','client-idp'   ] }
     - { role: client-google-idp,    tags: ['client','client-google'] }
-    - { role: client-microsoft-idp, tags: ['client','client-ms'] }
+    - { role: client-orcid-idp,     tags: ['client','client-orcid' ] }
+    - { role: client-microsoft-idp, tags: ['client','client-ms'    ] }
     - { role: client-oidc-rp,       tags: ['client','client-rp'    ] }
 
 - hosts: proxy
@@ -113,3 +114,7 @@
   roles:
     - { role: http_dummy,  tags: ['meta','http']     }
     - { role: metadata,    tags: ['meta','metadata'] }
+
+- hosts: sandbox1
+  roles:
+    - { role: pam_websso,         tags: ['client','pam-websso'   ] }

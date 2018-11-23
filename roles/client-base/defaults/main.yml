@@ -7,3 +7,8 @@ simplesaml_project_dir: "/opt/simplesaml"
 
 client_ssp_admin_pass: "admin"
 client_ssp_salt: "ThisIsNotASecretSalt,PleaseChangeMe!"
+
+composer_installer: "https://raw.githubusercontent.com/composer/getcomposer.org/877cb10b101957ef8\
+  bbb9d196f711dbb8a011bb4/web/installer"
+composer_installer_checksum: "sha384:93b54496392c062774670ac18b134c3b3a95e5a5e5c8f1a9f115f203b75b\
+  f9a129d5daa8ba6a13e2cc8a1da0806388a8"

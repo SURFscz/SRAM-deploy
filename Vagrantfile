@@ -13,8 +13,12 @@ if ARGV[0] == "up"  and  ( !sshkeypriv.exist?  or  !sshkeypub.exist? )
     # see https://github.com/mitchellh/vagrant/blob/master/plugins/communicators/ssh/communicator.rb#L183-L193
     puts "Generating new ssh key to use"
     _, priv, openssh = Vagrant::Util::Keypair.create
-    sshkeypriv.open("w+").write(priv)
-    sshkeypub.open("w+").write(openssh)
+    priv_fd = sshkeypriv.open("w+")
+    priv_fd.write(priv)
+    priv_fd.close
+    pub_fd = sshkeypub.open("w+")
+    pub_fd.write(openssh)
+    pub_fd.close
 
     File.chmod(0600,sshkeypriv)
 end
@@ -60,10 +64,16 @@ machines = {
         "ip"        => "172.20.1.25",
         "hostname"  => "client.vm.#{domain}",
         "limit"     => ['client'],
-        "ports"     => [ '2722:22' ] }
+        "ports"     => [ '2722:22' ] },
+    "m7" => {
+        "name"      => "sandbox1",
+        "ip"        => "172.20.1.26",
+        "hostname"  => "sandbox1.vm.#{domain}",
+        "limit"     => ['sandbox1'],
+        "ports"     => [ '2822:22' ] }
 }
 cpus = "1"
-memory = "512"
+memory = "768"
 
 # All Vagrant configuration is done below. The "2" in Vagrant.configure
 # configures the configuration version (we support older styles for
@@ -110,12 +120,16 @@ Vagrant.configure("2") do |config|
 
     config.vm.provider "docker" do |dk, override|
         # create a docker client network
-        Vagrant::Util::Subprocess.execute('bash','-c',
-            "(docker network list | grep 'scznet') || \
-              docker network create --attachable --driver bridge \
-                --gateway 172.20.1.1 --subnet 172.20.1.0/24 scznet",
-            :notify => [:stdout, :stderr]
-        )
+        # note: this will also run when libvirt or vbox is used, and will break networking
+        # starting from vagrant 2.1, we can use triggers instead
+        #override.trigger.before [:up] do |trigger|
+            Vagrant::Util::Subprocess.execute('bash','-c',
+                "(docker network ls | grep -q scznet) || \
+                  docker network create --attachable --driver bridge \
+                    --gateway 172.20.1.1 --subnet 172.20.1.0/24 scznet",
+                :notify => [:stdout, :stderr]
+            )
+        #end
         # disable proxying
         if Vagrant.has_plugin?("vagrant-proxyconf")
             override.proxy.enabled = false
@@ -152,6 +166,7 @@ Vagrant.configure("2") do |config|
                 dk.has_ssh = true
                 create_args = [
                     #"-d", "-t", "-i",
+                    "--cpuset-cpus=0,1",
                     "--network", "scznet",
                     "--ip", "#{machine['ip']}",
                     # internal names (used for LB rerouting)
@@ -161,6 +176,7 @@ Vagrant.configure("2") do |config|
                     "--add-host", "#{machines['m4']['hostname']}:#{machines['m4']['ip']}",
                     "--add-host", "#{machines['m5']['hostname']}:#{machines['m5']['ip']}",
                     "--add-host", "#{machines['m6']['hostname']}:#{machines['m6']['ip']}",
+                    "--add-host", "#{machines['m7']['hostname']}:#{machines['m7']['ip']}",
                     # (unused) interface for outgoing mail
                     "--add-host", "outgoing.#{domain}:172.20.1.1",
                     # add options to get systemd to run properly
@@ -184,6 +200,7 @@ Vagrant.configure("2") do |config|
                         "--add-host", "sp-test.#{domain}:#{machines['m6']['ip']}",
                         "--add-host", "idp-test.#{domain}:#{machines['m6']['ip']}",
                         "--add-host", "google-test.#{domain}:#{machines['m6']['ip']}",
+                        "--add-host", "sandbox1.#{domain}:#{machines['m7']['ip']}",
                     ]
                 else
                     # external interfaces are routed through the LB
@@ -198,28 +215,11 @@ Vagrant.configure("2") do |config|
                         "--add-host", "sp-test.#{domain}:#{machines['m5']['ip']}",
                         "--add-host", "idp-test.#{domain}:#{machines['m5']['ip']}",
                         "--add-host", "google-test.#{domain}:#{machines['m5']['ip']}",
+                        "--add-host", "sandbox1.#{domain}:#{machines['m5']['ip']}",
                     ]
                 end
                 dk.create_args = create_args
             end
-
-            ## obsolete; run start-vagrant instead
-            # if machine_id == N
-            #    m.vm.provision :ansible do |ansible|
-            #        # Note: recent versions of Vagrant need this, but older
-            #        # version choke on it
-            #        #ansible.compatibility_mode = "2.0"
-            #        ansible.playbook = "provision.yml"
-            #        ansible.inventory_path = "./environments/vm/inventory"
-            #        #ansible.verbose = 3
-            #        #ansible.raw_arguments = "-vvv"
-            #        ansible.limit = "comanage,ldap,proxy,meta,lb,client"
-            #        #ansible.tags = "clients,comanage"
-            #        ansible.extra_vars = {
-            #            secrets_file: "environments/vm/secrets/all.yml",
-            #        }
-            #    end
-            #end
         end
     end
 

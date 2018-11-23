@@ -17,5 +17,5 @@ class FilterModule(object):
     def filters(self):
         return {
             'sha1_b64':   self._sha1_b64,
-            'slapd_hash': lambda a: '{SHA}'+self._sha1_b64(a)
+            'slapd_hash': lambda a: '{SHA}' + self._sha1_b64(a)
         }

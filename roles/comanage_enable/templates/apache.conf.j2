@@ -25,6 +25,7 @@
     RewriteEngine on
 {% if sp_home != "" %}
     RewriteCond %{REQUEST_URI} "^/(?!registry)" [NC]
+    RewriteCond {{ comanage_root }}/%{REQUEST_FILENAME} !-f
     RewriteRule "^(.*)" "/registry$1" [R,L]
 {% endif %}
     # make SP metadata available on a convenient url
