@@ -99,6 +99,7 @@
     ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// -b 'cn=schema,cn=config' '(cn=*)' dn
     | grep -i 'cn={[0-9]\+}sczgroup,cn=schema,cn=config'
   failed_when: not [1, 2]
+  changed_when: false
   register:
     sczGroupTask
 
