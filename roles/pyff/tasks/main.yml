@@ -23,6 +23,9 @@
 - name: Create project directory
   file: path={{ pyff_project_dir }} state=directory mode=0755 owner=pyff
 
+- name: Create metadata directory
+  file: path={{ pyff_metadata_dir }} state=directory mode=0755 owner=pyff
+
 - block:
     # requirements.txt can be generated from virtualenv/bin/pip freeze
     - name: Generate requirements.txt.j2 from template

@@ -5,6 +5,7 @@ http_proto: https
 pyff_repo_url: "https://github.com/SURFscz/pyFF.git"
 pyff_repo_version: "master"
 pyff_project_dir: "/opt/pyff"
+pyff_metadata_dir: "{{ pyff_project_dir }}/metadata"
 pyff_src_dir: "{{ pyff_project_dir }}/pyff-src"
 pyff_env_dir: "{{ pyff_project_dir }}/pyff-env"
 
