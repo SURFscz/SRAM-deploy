@@ -49,17 +49,19 @@
     - Restart MySQL
   become: Yes
 
-# Create Attribues Hash database
+# Create Attributes Hash database
 - name: Copy hash_db file
   copy:
     src: "create_attributes_hash_db.sql"
     dest: /tmp/create_attributes_hash_db.sql
 
 - name: create satosa attributes_hash table
-  mysql_db:
-    name: "{{ satosa_db_name }}"
-    state: import
-    target: /tmp/create_attributes_hash_db.sql
+  command: >
+    mysql --batch --silent --raw --database "{{ satosa_db_name }}"
+          --execute "source /tmp/create_attributes_hash_db.sql"
+  register: tablecreation
+  changed_when: tablecreation.stderr is not search("45000.*table exists")
+  become: Yes
 
 - name: create user for mysql with all privilege
   mysql_user:

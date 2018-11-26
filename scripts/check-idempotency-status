@@ -21,7 +21,6 @@ WHITELIST = {
     'satosa':               4,
     'client-base':          4,
     'client-orcid-idp':     2,
-    'proxy_mysql':          1,
     'comanage':             8,
     'client-google-idp':    2,
 }
