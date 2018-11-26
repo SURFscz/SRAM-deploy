@@ -1,7 +1,14 @@
 ---
 - name: set up apt repo
-  template: src=sources.list.j2 dest=/etc/apt/sources.list force=yes
-  when: ansible_virtualization_type != "docker"
+  template:
+    src: sources.list.j2
+    dest: /etc/apt/sources.list
+    force: yes
+
+- name: set up apt pinning for official packages
+  template:
+    src: apt_pinning.j2
+    dest: /etc/apt/preferences.d/official_packages
 
 - name: Upgrade packages
   apt:
