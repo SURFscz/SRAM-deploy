@@ -14,6 +14,11 @@
     src: "views.sql"
     dest: /tmp
 
+- name: create database for {{ comanage_proxy_db_name }}
+  mysql_db:
+    name: "{{ comanage_proxy_db_name }}"
+    state: present
+
 - name: create database for CoManage-Proxy linkup
   command: >
     mysql --batch --silent --raw --database "{{ comanage_proxy_db_name }}"
@@ -54,6 +59,11 @@
   copy:
     src: "create_attributes_hash_db.sql"
     dest: /tmp/create_attributes_hash_db.sql
+
+- name: create database for {{ satosa_db_name }}
+  mysql_db:
+    name: "{{ satosa_db_name }}"
+    state: present
 
 - name: create satosa attributes_hash table
   command: >
