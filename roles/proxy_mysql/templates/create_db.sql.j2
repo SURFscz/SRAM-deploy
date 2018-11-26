@@ -1,6 +1,6 @@
 DELIMITER $
 BEGIN NOT ATOMIC
-  IF ( select count(*) from information_schema.tables where TABLE_SCHEMA='cotosa' and TABLE_NAME='zone_people')=1
+  IF ( select count(*) from information_schema.tables where TABLE_SCHEMA='{{ comanage_proxy_db_name }}' and TABLE_NAME='zone_people')=1
   THEN
     SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='table exists';
   ELSE

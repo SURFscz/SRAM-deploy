@@ -1,8 +1,8 @@
 ---
 - name: Copy create_db file
-  copy:
-    src: "create_db.sql"
-    dest: /tmp
+  template:
+    src: "create_db.sql.j2"
+    dest: /tmp/create_db.sql
 
 - name: Copy foreign keys file
   copy:
@@ -56,8 +56,8 @@
 
 # Create Attributes Hash database
 - name: Copy hash_db file
-  copy:
-    src: "create_attributes_hash_db.sql"
+  template:
+    src: "create_attributes_hash_db.sql.j2"
     dest: /tmp/create_attributes_hash_db.sql
 
 - name: create database for {{ satosa_db_name }}
