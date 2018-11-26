@@ -1,36 +1,29 @@
-FROM debian:stretch
+FROM debian:stretch as scz-base
 MAINTAINER SURFnet <info@surfnet.nl>
 
 ARG DEBIAN_FRONTEND=noninteractive
 ARG RUNLEVEL=1
 ENV TERM linux
-RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
-ARG ssh_pub_key
 
-# add the backports repository so we get the right version of systemd
-ADD sources.list /etc/apt/sources.list
-
-RUN echo "exit 0" > /usr/sbin/policy-rc.d
-
-# clean out, update and install systemd from backports
-#RUN apt-get update -y && apt-get dist-upgrade -y
-RUN apt-get update -y
-RUN apt-get -t stretch-backports install -y systemd
-
-VOLUME [ "/sys/fs/cgroup", "/run", "/run/lock", "/tmp" ]
-CMD ["/lib/systemd/systemd"]
-
-# Install base tools: sshd, python
-# RUN apt-get update
-RUN apt-get install -y openssh-server python2.7 python3 python sudo locales
-RUN update-locale
-RUN systemctl enable ssh.service
-# DIE getty, DIE!
-RUN systemctl disable getty@
-RUN systemctl disable getty.target
-RUN rm /lib/systemd/system/multi-user.target.wants/getty.target
-RUN rm /lib/systemd/system/getty.target.wants/getty-static.service
-RUN systemctl disable systemd-timesyncd.service
+RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections  && \
+    echo "deb http://ftp.de.debian.org/debian/ stretch-backports main" >> /etc/apt/sources.list  && \
+    apt-get update -y  && \
+    apt-get -t stretch-backports install -y systemd  && \
+    apt-get install -y openssh-server python2.7 python3 python sudo locales  && \
+    apt-get clean -y && apt-get autoremove -y && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*  && \
+    update-locale  && \
+    systemctl enable ssh.service  && \
+    systemctl disable getty@  && \
+    systemctl disable getty.target  && \
+    rm /lib/systemd/system/multi-user.target.wants/getty.target  && \
+    rm /lib/systemd/system/getty.target.wants/getty-static.service  && \
+    systemctl disable systemd-timesyncd.service  && \
+    echo "exit 0" > /usr/sbin/policy-rc.d  && \
+    useradd --create-home -s /bin/bash vagrant  && \
+    install -d -o vagrant -m 0700 /home/vagrant/.ssh  && \
+    echo -n 'vagrant:vagrant' | chpasswd  && \
+    mkdir -p /etc/sudoers.d && install -b -m 0440 /dev/null /etc/sudoers.d/vagrant  && \
+    echo 'vagrant ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers.d/vagran
 
 # sshd services in all containers
 EXPOSE 22
@@ -50,20 +43,10 @@ EXPOSE 8080
 EXPOSE 8081
 EXPOSE 8082
 
-# Create and configure vagrant user
-RUN useradd --create-home -s /bin/bash vagrant
-WORKDIR /home/vagrant
+VOLUME [ "/sys/fs/cgroup", "/run", "/run/lock", "/tmp" ]
+CMD ["/lib/systemd/systemd"]
 
-# Configure SSH access
-RUN mkdir -p /home/vagrant/.ssh
+FROM scz-base as scz
+ARG ssh_pub_key
+# save ssh public key; Note: this is the only thing that is different for the containers up until we run ansible
 RUN echo "${ssh_pub_key}" >> /home/vagrant/.ssh/authorized_keys
-RUN chown -R vagrant: /home/vagrant/.ssh
-RUN echo -n 'vagrant:vagrant' | chpasswd
-
-# Enable passwordless sudo for the "vagrant" user
-RUN mkdir -p /etc/sudoers.d
-RUN install -b -m 0440 /dev/null /etc/sudoers.d/vagrant
-RUN echo 'vagrant ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers.d/vagrant
-
-# Clean up APT when done.
-RUN apt-get clean -y && apt-get autoremove -y && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*

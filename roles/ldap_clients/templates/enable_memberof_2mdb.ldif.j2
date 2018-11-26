@@ -1,0 +1,17 @@
+# Enable memberof overlay for second mdb
+dn: olcOverlay=memberof,olcDatabase={2}mdb,cn=config
+changeType: add
+objectClass: olcMemberOf
+objectClass: olcOverlayConfig
+olcOverlay: memberof
+olcMemberOfRefInt: TRUE
+olcMemberOfGroupOC: sczGroup
+olcMemberOfMemberAD: sczMember
+olcMemberOfMemberOfAD: memberOf
+
+dn: olcOverlay=refint,olcDatabase={2}mdb,cn=config
+changeType: add
+objectClass: olcOverlayConfig
+objectClass: olcRefintConfig
+olcOverlay: refint
+olcRefintAttribute: memberof sczmember

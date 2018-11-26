@@ -37,34 +37,17 @@
     mode: 0755
 
 - block:
-    - name: install pysaml editable in venv
-      pip:
-        editable: yes
-        name: "git+{{ pysaml_repo_url }}@{{ pysaml_repo_version }}#egg=pysaml2"
-        virtualenv: "{{ satosa_env_dir }}"
-        virtualenv_python: python3
-        state: latest
+    # requirements.txt can be generated from virtualenv/bin/pip freeze
+    - name: Generate requirements.txt.j2 from template
+      template:
+        src: "requirements.txt.j2"
+        dest: "{{ satosa_project_dir }}/requirements.txt"
 
-    - name: install SATOSA editable from {{ satosa_repo_url }} to {{ satosa_env_dir }}
+    - name: Install SATOSA from requirements.txt
       pip:
-        editable: yes
-        #name: "{{ satosa_src_dir }}"
-        name: "git+{{ satosa_repo_url }}@{{ satosa_repo_version }}#egg=satosa"
+        requirements: "{{ satosa_project_dir }}/requirements.txt"
         virtualenv: "{{ satosa_env_dir }}"
         virtualenv_python: python3
-        state: latest
-
-    - name: >
-        install SCZ microservices editable from {{ satosa_microservices_repo_url }}
-        to {{ satosa_env_dir }}
-      pip:
-        editable: yes
-        name: "git+{{ satosa_microservices_repo_url }}@{{ satosa_microservices_repo_version }}\
-          #egg=scz-micro_services"
-        virtualenv: "{{ satosa_env_dir }}"
-        virtualenv_python: python3
-        state: latest
-      #when: satosa_microservices_git.changed
 
     - name: Create SATOSA  proxy_conf configuration
       template:
