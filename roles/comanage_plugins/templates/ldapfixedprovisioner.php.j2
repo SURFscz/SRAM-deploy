@@ -39,35 +39,35 @@ $config=array(
 #     'pwdAccountLockedTime' => TRUE,  # optional
     ),
     'organizationalPerson' => array (
-#     'title' => TRUE,                      # optional
-#     'ou' => TRUE,                         # optional
-#     'telephoneNumber' => 'office',        # optional
-#     'facsimileTelephoneNumber' => 'fax',  # optional
-#     'street' => 'office',                 # optional
-#     'l' => 'office',                      # optional
-#     'st' => 'office',                     # optional
-#     'postalCode' => 'office',             # optional
+     'title' => TRUE,                      # optional
+     'ou' => TRUE,                         # optional
+     'telephoneNumber' => 'office',        # optional
+     'facsimileTelephoneNumber' => 'fax',  # optional
+     'street' => 'office',                 # optional
+     'l' => 'office',                      # optional
+     'st' => 'office',                     # optional
+     'postalCode' => 'office',             # optional
     ),
     'inetOrgPerson' => array(
-#     'givenName' => 'official',        # optional
-      'displayName' => 'preferred',     # optional
-      'o' => TRUE,                      # optional
-      'mail' => TRUE,                   # optional
-#     'mobile' => 'mobile',             # optional
-#     'employeeNumber' => 'enterprise', # optional
-#     'employeeType' => TRUE,           # optional
-#     'roomNumber' => TRUE,             # optional
-      'uid' => 'uid;person',            # optional
+     'givenName' => 'official',            # optional
+     'displayName' => 'preferred',         # optional
+     'o' => TRUE,                          # optional
+     'mail' => ';person',                  # optional
+     'mobile' => 'mobile',                 # optional
+     'employeeNumber' => 'enterprise',     # optional
+     'employeeType' => TRUE,               # optional
+     'roomNumber' => TRUE,                 # optional
+      'uid' => 'uid;person',               # optional
     ),
     'eduPerson' => array(
-#     'eduPersonAffiliation' => TRUE,              # optional
-     'eduPersonEntitlement' => TRUE,               # optional
-#     'eduPersonNickname' => 'official',           # optional
-#     'eduPersonOrcid' => TRUE   ,                 # optional
-     'eduPersonPrincipalName' => 'eppn;org',       # optional
-#     'eduPersonPrincipalNamePrior' => 'eppn;org', # optional
-#     'eduPersonScopedAffiliation' => TRUE,        # optional
-#     'eduPersonUniqueId' => 'enterprise',         # optional
+     'eduPersonAffiliation' => TRUE,              # optional
+     'eduPersonEntitlement' => TRUE,              # optional
+     'eduPersonNickname' => 'official',           # optional
+     'eduPersonOrcid' => TRUE,                    # optional
+     'eduPersonPrincipalName' => 'eppn;org',      # optional
+     'eduPersonPrincipalNamePrior' => 'eppn;org', # optional
+     'eduPersonScopedAffiliation' => TRUE,        # optional
+     'eduPersonUniqueId' => 'enterprise',         # optional
     ),
     'posixAccount' => array(
       'uidNumber' => TRUE,     # required
@@ -78,7 +78,7 @@ $config=array(
     ),
     'ldapPublicKey' => array(
       'sshPublicKey' => TRUE,  # required
-      'uid' => 'uid;person'           # required
+      'uid' => 'uid;person'    # required
     ),
     'posixGroup' => array(
       'cn' => TRUE,            # required
@@ -97,7 +97,7 @@ $config=array(
     ),
     'eduMember' => array(
       'isMemberOf' => TRUE,   # optional
-      'hasMember' => TRUE,   # optional
+      'hasMember' => TRUE,    # optional
     ),
     'voPerson' => array(
       'voPersonApplicationUID' => TRUE,      # optional
