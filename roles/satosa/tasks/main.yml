@@ -193,21 +193,6 @@
         dest: "{{ satosa_env_dir }}/satosa.service"
         mode: 0644
 
-    - name: Create mapper directory
-      file: path="{{ satosa_env_dir }}/mapper" state=directory mode=0755
-
-    - name: Copy empty mapper config
-      copy:
-        src: "{{ item }}"
-        dest: "{{ satosa_env_dir }}/mapper/{{ item }}"
-        mode: 0755
-      with_items:
-        - __init__.py
-        - basic.py
-        - uri.py
-        - unspecified.py
-        - shibboleth.py
-
     - name: Create metadata directory
       file: path="{{ satosa_metadata_dir }}" state=directory mode=0755 owner=satosa
 

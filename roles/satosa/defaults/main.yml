@@ -5,7 +5,7 @@ comange_entityid: "{{http_proto}}://{{hostnames.comanage}}/registry/auth/sp/meta
 
 # SATOSA configuration
 satosa_repo_url: "https://github.com/SURFscz/SATOSA.git"
-satosa_repo_version: "scz-poc"
+satosa_repo_version: "scz"
 satosa_project_dir: "/opt/satosa"
 satosa_client_dir: "{{ satosa_project_dir }}/clients"
 satosa_metadata_dir: "{{ satosa_project_dir }}/metadata"

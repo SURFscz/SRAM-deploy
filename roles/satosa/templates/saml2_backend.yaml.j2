@@ -78,7 +78,6 @@ config:
           - urn:oid:2.5.4.42
           # surname
           - urn:oid:2.5.4.4
-    attribute_map_dir: '{{ satosa_env_dir }}/mapper'
     allow_unknown_attributes: true
   # disco_srv must be defined if there is more than one IdP in the metadata specified above
   disco_srv: {{http_proto}}://{{ hostnames.mdq }}/role/idp.ds

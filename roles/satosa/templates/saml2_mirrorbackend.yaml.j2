@@ -26,7 +26,6 @@ config:
         name_id_format: 'urn:oasis:names:tc:SAML:2.0:nameid-format:transient'
         name_id_format_allow_create: True
         want_response_signed: false
-    attribute_map_dir: '{{ satosa_env_dir }}/mapper'
     allow_unknown_attributes: true
   # disco_srv must be defined if there is more than one IdP in the metadata specified above
   disco_srv: https://{{ hostnames.mdq }}/role/idp.ds
