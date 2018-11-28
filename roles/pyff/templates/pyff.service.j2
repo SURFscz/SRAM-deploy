@@ -5,6 +5,7 @@ After=syslog.target network.target
 [Service]
 Type=simple
 User=pyff
+LimitNOFILE=10240
 WorkingDirectory={{ pyff_env_dir }}
 ExecStartPre=-+/usr/bin/touch /var/run/pyff.pid
 ExecStartPre=-+/bin/chown pyff. /var/run/pyff.pid
