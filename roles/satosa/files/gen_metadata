@@ -1,5 +1,0 @@
-#!/bin/sh
-. bin/activate
-export LC_ALL=C.UTF-8
-export LANG=C.UTF-8
-satosa-saml-metadata --dir metadata --split-module proxy_conf.yaml certs/signing.key certs/signing.crt
