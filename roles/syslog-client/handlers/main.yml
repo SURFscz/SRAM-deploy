@@ -12,3 +12,6 @@
   service: name=filebeat state=restarted enabled=yes
   when: use_logserver
 
+- name: start metricbeat Service
+  service: name=metricbeat state=restarted enabled=yes
+  when: use_logserver

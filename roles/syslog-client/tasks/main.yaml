@@ -27,12 +27,19 @@
         install_recommends: no
       with_items:
         - filebeat
+        - metricbeat
 
     - name: Create generic filebeat conf
       template: >
         src=filebeat.yml.j2
         dest=/etc/filebeat/filebeat.yml
       notify: start filebeat Service
+
+    - name: Create generic metricbeat conf
+      template: >
+        src=metricbeat.yml.j2
+        dest=/etc/metricbeat/metricbeat.yml
+      notify: start metricbeat Service
 
     - name: Copy generic filebeat syslog config
       template:
