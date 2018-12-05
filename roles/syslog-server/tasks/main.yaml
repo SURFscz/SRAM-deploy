@@ -22,14 +22,19 @@
     - elasticsearch
     - logstash
     - kibana
+    - elasticsearch-curator
 
 - name: Ensure Elasticsearch data directory exists
   file: path=/var/elasticsearch state=directory mode=0750 owner=elasticsearch
 
 - name: Copy elasticsearch configuration file
   copy:
-    src: elasticsearch.yml
-    dest: /etc/elasticsearch/elasticsearch.yml
+    src: "{{ item }}"
+    dest: "/etc/elasticsearch/{{ item }}"
+  with_items:
+    - elasticsearch.yml
+    - curator.yml
+    - curator_actions.yml
   notify: restart elasticsearch
 
 - name: Copy logstash configuration file
@@ -43,4 +48,3 @@
     src: kibana.yml
     dest: /etc/kibana/kibana.yml
   notify: restart kibana
-
