@@ -12,3 +12,6 @@
   service: name=filebeat state=restarted enabled=yes
   when: use_logserver
 
+- name: start collectd Service
+  service: name=collectd state=restarted enabled=yes
+  when: use_logserver

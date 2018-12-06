@@ -1,0 +1,31 @@
+FQDNLookup false
+Interval 60
+LoadPlugin syslog
+<Plugin syslog>
+        LogLevel info
+</Plugin>
+LoadPlugin cpu
+LoadPlugin df
+LoadPlugin disk
+LoadPlugin entropy
+LoadPlugin interface
+LoadPlugin load
+LoadPlugin memory
+LoadPlugin network
+<Plugin df>
+        FSType rootfs
+        FSType sysfs
+        FSType proc
+        FSType devtmpfs
+        FSType devpts
+        FSType tmpfs
+        FSType fusectl
+        FSType cgroup
+        IgnoreSelected true
+</Plugin>
+<Plugin network>
+        Server "{{ servers.syslog }}" "25826"
+</Plugin>
+<Include "/etc/collectd/collectd.conf.d">
+        Filter "*.conf"
+</Include>

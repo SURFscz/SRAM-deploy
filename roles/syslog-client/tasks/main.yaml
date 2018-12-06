@@ -27,6 +27,7 @@
         install_recommends: no
       with_items:
         - filebeat
+        - collectd
 
     - name: Create generic filebeat conf
       template: >
@@ -39,5 +40,11 @@
         src: fb_syslog.yml.j2
         dest: /etc/filebeat/conf.d/fb_syslog.yml
       when: false
+
+    - name: Copy collectd config
+      template:
+        src: collectd.conf.j2
+        dest: /etc/collectd/collectd.conf
+      notify: start collectd Service
 
   when: use_logserver
