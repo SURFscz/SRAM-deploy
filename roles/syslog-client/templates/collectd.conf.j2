@@ -8,6 +8,7 @@ LoadPlugin cpu
 LoadPlugin df
 LoadPlugin disk
 LoadPlugin entropy
+LoadPlugin exec
 LoadPlugin interface
 LoadPlugin load
 LoadPlugin memory
@@ -22,6 +23,9 @@ LoadPlugin network
         FSType fusectl
         FSType cgroup
         IgnoreSelected true
+</Plugin>
+<Plugin exec>
+        Exec _apt "/usr/local/bin/upgradeable"
 </Plugin>
 <Plugin network>
         Server "{{ servers.syslog }}" "25826"
