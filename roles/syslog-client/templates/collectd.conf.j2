@@ -10,6 +10,7 @@ LoadPlugin disk
 LoadPlugin entropy
 LoadPlugin exec
 LoadPlugin interface
+LoadPlugin iptables
 LoadPlugin load
 LoadPlugin memory
 LoadPlugin network
@@ -26,6 +27,9 @@ LoadPlugin network
 </Plugin>
 <Plugin exec>
         Exec _apt "/usr/local/bin/upgradeable"
+</Plugin>
+<Plugin iptables>
+        Chain "filter" "INPUT" 1
 </Plugin>
 <Plugin network>
         Server "{{ servers.syslog }}" "25826"
