@@ -12,3 +12,10 @@
   service: name=filebeat state=restarted enabled=yes
   when: use_logserver
 
+- name: start collectd Service
+  service: name=collectd state=restarted enabled=yes
+  when: use_logserver
+
+- name: start logging Service
+  service: name=scz-logging.timer state=restarted enabled=yes
+  when: use_logserver
