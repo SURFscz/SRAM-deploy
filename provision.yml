@@ -51,8 +51,6 @@
 
 - hosts: mgnt1
   roles:
-  #  - { role: ldap, tags: ['ldap'] }
-  #  - { role: mta,  tags: ['mta' ] }
 
 - hosts: mgnt2
   roles:
@@ -72,8 +70,8 @@
 
 - hosts: ldap
   roles:
-    - { role: ldap, tags: ['ldap'] }
-    - { role: ldap_clients, tags: ['ldap', 'ldap_clients'] }
+    - { role: ldap,               tags: ['ldap'                  ] }
+    - { role: ldap_clients,       tags: ['ldap', 'ldap-clients'  ] }
     - { role: pam_websso_daemon,  tags: ['client','websso-daemon'] }
 
 - hosts:
