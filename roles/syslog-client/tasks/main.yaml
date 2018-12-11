@@ -69,4 +69,9 @@
       with_items:
         - iptables.sh
 
+    - name: Copy upgradeable counter script
+      copy:
+        src: upgradeable
+        dest: /usr/local/bin/upgradeable
+
   when: use_logserver
