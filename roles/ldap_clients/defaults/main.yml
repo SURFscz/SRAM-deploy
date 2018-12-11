@@ -2,12 +2,14 @@
 ldap_install_dir: /etc/ldap
 ldap_ldif_dir: "{{ ldap_install_dir }}/schema"
 ldap_schema_dir: "{{ ldap_install_dir }}/schema"
+ldap_backup_dir: "{{backup_base}}/ldap"
 
 ldap_user: openldap
 ldap_group: openldap
 
 lsc_install_dir: /opt/lsc
 lsc_config_dir: "{{ lsc_install_dir }}/config.d"
+lsc_backup_dir: "{{backup_base}}/lsc"
 
 client_ldap_dbdir: "/var/lib/ldap/client"
 

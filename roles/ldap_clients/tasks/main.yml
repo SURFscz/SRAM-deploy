@@ -134,9 +134,12 @@
   notify:
     - enable lsc job
 
-- name: Install backup script
+- name: Install backup scripts
   template:
-    src: ldap-clients-backup.sh.j2
-    dest: "{{backup_runparts}}/ldap-clients-backup.sh"
+    src: "{{item}}.j2"
+    dest: "{{backup_runparts}}/{{item}}"
     mode: 0755
+  with_items:
+    - ldap-clients-backup.sh
+    - lsc-backup.sh
 
