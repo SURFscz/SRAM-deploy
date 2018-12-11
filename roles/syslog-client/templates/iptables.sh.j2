@@ -1,0 +1,5 @@
+ #!/bin/bash
+IPTABLES=`/sbin/iptables -t filter -S INPUT`
+VALUE=${IPTABLES//$'\n'/"\n"}
+MSG="{ \"hostname\": \"proxy1\" , \"source\": \"iptables\", \"message\": \"$VALUE\" }"
+curl -s -H "content-type: application/json" -XPUT 'http://{{ servers.syslog }}:8080/' -d "$MSG" > /dev/null

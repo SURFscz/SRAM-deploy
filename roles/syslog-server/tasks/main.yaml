@@ -1,5 +1,5 @@
 ---
-- name: Ensure that apt-transport-https and openjdk-8-jdk are installed
+- name: Ensure that openjdk-8-jdk is installed
   apt:
     name: "{{ item }}"
   with_items:
@@ -22,6 +22,7 @@
     - elasticsearch
     - logstash
     - kibana
+    - collectd
     - elasticsearch-curator
 
 - name: Ensure Elasticsearch data directory exists
@@ -54,3 +55,6 @@
     src: kibana.yml
     dest: /etc/kibana/kibana.yml
   notify: restart kibana
+
+- name: Disable collectd service
+  systemd: name=collectd state=stopped enabled=no
