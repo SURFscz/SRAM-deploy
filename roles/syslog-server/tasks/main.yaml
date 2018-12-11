@@ -26,6 +26,12 @@
 - name: Ensure Elasticsearch data directory exists
   file: path=/var/elasticsearch state=directory mode=0750 owner=elasticsearch
 
+- name: Copy elasticsearch jvm.options file
+  copy:
+    src: jvm.options
+    dest: /etc/elasticsearch/jvm.options
+  notify: restart elasticsearch
+
 - name: Copy elasticsearch configuration file
   copy:
     src: elasticsearch.yml
