@@ -14,6 +14,7 @@ LoadPlugin iptables
 LoadPlugin load
 LoadPlugin memory
 LoadPlugin network
+LoadPlugin ping
 <Plugin df>
         FSType rootfs
         FSType sysfs
@@ -33,6 +34,11 @@ LoadPlugin network
 </Plugin>
 <Plugin network>
         Server "{{ servers.syslog }}" "25826"
+</Plugin>
+<Plugin ping>
+        Host "{{ servers.syslog }}"
+        Host "{{ servers.dns[0] }}"
+        Host "{{ external_ping }}"
 </Plugin>
 <Include "/etc/collectd/collectd.conf.d">
         Filter "*.conf"
