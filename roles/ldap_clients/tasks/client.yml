@@ -90,3 +90,5 @@
   template:
     src: "lsc.xml.j2"
     dest: "{{ lsc_dir }}/lsc.xml"
+    backup: yes
+    force: no
