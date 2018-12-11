@@ -73,5 +73,6 @@
       copy:
         src: upgradeable
         dest: /usr/local/bin/upgradeable
+        mode: 0755
 
   when: use_logserver
