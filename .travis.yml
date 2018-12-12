@@ -30,7 +30,7 @@ before_install:
   - pip install yamllint jinja2 pyyaml
   - sudo wget https://releases.hashicorp.com/vagrant/2.1.2/vagrant_2.1.2_x86_64.deb -P /tmp
   - sudo dpkg -i /tmp/vagrant_2.1.2_x86_64.deb
-  - sudo apt-add-repository -y ppa:ansible/ansible-2.6
+  - sudo apt-add-repository -y ppa:ansible/ansible-2.7
   - sudo apt -q update
   - sudo apt -y install ansible bridge-utils
   - sudo adduser travis docker
