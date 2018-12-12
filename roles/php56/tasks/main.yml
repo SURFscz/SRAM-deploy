@@ -16,17 +16,16 @@
 
 - name: ensure that packages are installed
   apt:
-    name: "{{ item }}"
+    name:
+      - libapache2-mod-php5.6
+      - php5.6
+      - php5.6-fpm
+      - php5.6-ldap
+      - php5.6-mbstring
+      - php5.6-mcrypt
+      - php5.6-mysql
+      - php5.6-xsl
     state: present
-  with_items:
-    - libapache2-mod-php5.6
-    - php5.6
-    - php5.6-fpm
-    - php5.6-ldap
-    - php5.6-mbstring
-    - php5.6-mcrypt
-    - php5.6-mysql
-    - php5.6-xsl
 
 - name: Ensure php5.6 is used when php is called
   command: update-alternatives --set php /usr/bin/php5.6
