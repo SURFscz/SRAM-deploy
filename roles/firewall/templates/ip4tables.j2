@@ -36,6 +36,7 @@
   {#- now loop over all src addreses -#}
   {%- for s in src %}
     {%- if True               -%} -A INPUT                      {%- endif -%}
+    {%- if True                %} -i {{l.iface|default('eth0')}}{%- endif -%}
     {%- if True                %} -p {{l.proto|default('tcp')}} {%- endif -%}
     {%- if s                   %} -s {{s}}                      {%- endif -%}
     {%- if l.sport is defined  %} -m multiport                  {%- endif -%}
