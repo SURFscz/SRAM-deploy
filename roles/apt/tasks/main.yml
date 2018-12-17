@@ -10,15 +10,9 @@
     src: apt_pinning.j2
     dest: /etc/apt/preferences.d/official_packages
 
-- name: Upgrade packages
-  apt:
-    upgrade: dist
-    cache_valid_time: 86400
-  when: "environment_name != 'vm'"
-
 - name: Install common tools / clients
   apt:
-    cache_valid_time: 86400
+    update_cache: yes
     state: present
     name:
       - sudo
@@ -34,6 +28,13 @@
       - unzip
       - apt-transport-https
       - python-apt
+
+- name: Upgrade packages
+  apt:
+    upgrade: dist
+    cache_valid_time: 86400
+    update_cache: yes
+  when: "environment_name != 'vm'"
 
 - name: remove unneccessary packages
   apt:
