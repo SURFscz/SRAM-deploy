@@ -39,10 +39,15 @@
 - name: remove unneccessary packages
   apt:
     state: absent
+    purge: yes
     name:
-      - nfs-common
-      - rpcbind
       - cloud-init
+
+- name: remove cloud-init network config
+  lineinfile:
+    path: /etc/network/interfaces
+    state: absent
+    regexp: '^source '
 
 - name: install VMware clients
   apt:
