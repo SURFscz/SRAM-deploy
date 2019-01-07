@@ -4,9 +4,6 @@
   serial: 20
   gather_facts: false
   tasks:
-    - name: Read user secrets
-      include_vars: "{{ secrets_users_file }}"
-      tags: always
     - name: Read vars from secrets file
       include_vars: "{{ item }}"
       with_items: "{{ secrets_files }}"
