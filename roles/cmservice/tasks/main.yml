@@ -11,6 +11,7 @@
     - python-dev
     - python-setuptools
     - python3-pip
+    - libicu-dev
 
 - name: install python virtualenv
   pip:
