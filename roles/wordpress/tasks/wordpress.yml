@@ -24,6 +24,18 @@
     version: "2.1.1"
     dest: "{{wordpress_dir}}/wp-plugins/shibboleth"
 
+- name: install additional wordpress plugins
+  subversion:
+    repo: "{{item.svn}}"
+    dest: "{{wordpress_dir}}/wp-plugins/{{item.name}}"
+  with_items:
+    - name: "disable-xml-rpc"
+      svn: "https://plugins.svn.wordpress.org/disable-xml-rpc/tags/1.0.1/"
+    - name: "disable-json-api"
+      svn: "https://plugins.svn.wordpress.org/disable-json-api/tags/1.4.3/"
+
+# TODO: enable the plugins!
+
 # can't use ansible module because there is no way to install up to date python docker modules
 - name: run docker-compose
   command: "docker-compose up --no-start"

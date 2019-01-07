@@ -53,6 +53,7 @@
       - gnupg2
       - net-tools
       - git
+      - subversion
       - acl
       - bzip2
       - unzip
