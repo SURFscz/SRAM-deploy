@@ -39,6 +39,7 @@
 
 - hosts: mgnt1
   roles:
+    - { role: dns-master,    tags: ['test'] }
 
 - hosts: mgnt2
   roles:
