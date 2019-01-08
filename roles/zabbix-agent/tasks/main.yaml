@@ -1,0 +1,38 @@
+---
+
+- name: Ensure that packages are installed
+  apt:
+    name:
+      - zabbix-agent
+    state: present
+    install_recommends: no
+
+- name: Default configuration
+  template: >
+    src=default.conf.j2
+    dest=/etc/zabbix/zabbix_agentd.conf.d/default.conf
+  notify: restart zabbix-agent
+
+- name: Register Host
+  local_action:
+    module: zabbix_host
+    server_url: https://zabbix.scz.lab.surf.nl/
+    login_user: Admin
+    login_password: zabbix
+    host_name: "{{ inventory_hostname }}"
+    host_groups:
+      - "{{ environment_name }}"
+    link_templates:
+      - Template OS Linux
+    status: enabled
+    state: present
+    interfaces:
+      - type: 1
+        main: 1
+        useip: 1
+        ip: "{{ ansible_default_ipv4.address }}"
+        dns: ""
+        port: 10050
+
+
+
