@@ -2,6 +2,7 @@
 ---
 - hosts: all
   serial: 20
+  gather_facts: false
   tasks:
     - name: Read user secrets
       include_vars: "{{ secrets_users_file }}"
@@ -16,25 +17,9 @@
   serial: 20
   gather_facts: true
 
-# Then gather facts from all other hosts, but one by one
-# looks hackish, but this is apparently the "a clean, official way" to gather
-# required facts from all hosts, regardless of the commandline --limit
-# parameter
-# We need this here, because in the group vars, we rely on the hostvars for
-# the ip addresses of other hosts (e.g, mgnt1)
-- hosts: all
-  serial: 2
-  pre_tasks:
-    - name: Gather facts from mgnt hosts (regardless of limit or tags)
-      setup:
-      delegate_to: "{{ item }}"
-      delegate_facts: "true"
-      when: hostvars[item]['ansible_default_ipv4'] is not defined
-      with_items: "{{ groups['all'] }}"
-      tags: always
-
 # to run the debug target, specify --extra-vars="debug=true" / -e debug=1
 - hosts: all
+  gather_facts: false
   roles:
     - role: debug
       tags: ['debug']
