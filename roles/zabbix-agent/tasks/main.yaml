@@ -14,6 +14,12 @@
         dest=/etc/zabbix/zabbix_agentd.conf.d/default.conf
       notify: restart zabbix-agent
 
+    - name: Count upgradeable packages
+      copy:
+        src: count_upgradeable
+        dest: /usr/local/sbin/count_upgradeable
+        mode: 0755
+
     - name: Register Host
       local_action:
         module: zabbix_host
