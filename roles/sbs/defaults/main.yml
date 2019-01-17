@@ -1,0 +1,7 @@
+---
+sbs_repo_url: "https://github.com/SURFscz/SBS.git"
+sbs_repo_version: "master"
+sbs_project_dir: "/opt/sbs"
+sbs_src_dir: "{{ sbs_project_dir }}/sbs-src"
+sbs_env_dir: "{{ sbs_project_dir }}/sbs-env"
+

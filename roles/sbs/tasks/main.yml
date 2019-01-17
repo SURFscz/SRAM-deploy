@@ -1,0 +1,80 @@
+---
+
+- name: Ensure that packages are installed
+  apt:
+    name:
+      - mariadb-server
+      - python3-pip
+      - python-pymysql
+      - git
+    state: present
+
+- name: install python3 virtualenv
+  pip:
+    name: virtualenv
+    executable: pip3
+
+- name: create SBS user
+  user: name=sbs shell="/bin/false" state=present
+
+- name: Create project directory
+  file: path="{{ sbs_project_dir }}" state=directory mode=0755 owner=sbs
+
+- block:
+  - name: fetch SBS from {{ sbs_repo_url }}, version {{ sbs_repo_version }}
+    git:
+      repo: "{{ sbs_repo_url }}"
+      dest: "{{ sbs_env_dir }}"
+      version: "{{ sbs_repo_version }}"
+      accept_hostkey: "yes"
+      force: "yes"
+
+  - name: Install SBS from requirements.txt
+    pip:
+      requirements: "{{ sbs_env_dir }}/requirements/test.txt"
+      virtualenv: "{{ sbs_env_dir }}"
+      virtualenv_python: python3
+
+  - name: Create SBS systemd service
+    template:
+      src: sbs.service.j2
+      dest: "{{ sbs_env_dir }}/sbs.service"
+      mode: 0644
+  when: false
+  become: "yes"
+  become_user: sbs
+
+- name: Create a new database with name 'sbs'
+  mysql_db:
+    name: sbs
+    state: present
+    login_unix_socket: "/var/run/mysqld/mysqld.sock"
+
+- name: Create a new database with name 'sbs_test'
+  mysql_db:
+    name: sbs_test
+    state: present
+    login_unix_socket: "/var/run/mysqld/mysqld.sock"
+
+- name: Create MySQL user
+  mysql_user:
+    name: 'sbs'
+    password: "{{ sbs_db_password }}"
+    host: localhost
+    state: present
+    priv: '*.*:ALL,GRANT'
+    login_unix_socket: "/var/run/mysqld/mysqld.sock"
+
+- name: Copy to sbs.service in /etc/systemd/system
+  copy:
+    src: "{{ sbs_env_dir }}/sbs.service"
+    dest: /etc/systemd/system/sbs.service
+    remote_src: yes
+
+- name: restart SBS
+  systemd: daemon_reload=yes name=sbs state=restarted enabled=yes
+
+
+
+
+

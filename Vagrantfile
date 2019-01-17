@@ -70,7 +70,13 @@ machines = {
         "ip"        => "172.20.1.26",
         "hostname"  => "sandbox1.vm.#{domain}",
         "limit"     => ['sandbox1'],
-        "ports"     => [ '2822:22' ] }
+        "ports"     => [ '2822:22' ] },
+    "m8" => {
+        "name"      => "sbs",
+        "ip"        => "172.20.1.27",
+        "hostname"  => "sbs.vm.#{domain}",
+        "limit"     => ['sbs'],
+        "ports"     => [ '2922:22' ] }
 }
 cpus = "1"
 memory = "768"
@@ -177,6 +183,7 @@ Vagrant.configure("2") do |config|
                     "--add-host", "#{machines['m5']['hostname']}:#{machines['m5']['ip']}",
                     "--add-host", "#{machines['m6']['hostname']}:#{machines['m6']['ip']}",
                     "--add-host", "#{machines['m7']['hostname']}:#{machines['m7']['ip']}",
+                    "--add-host", "#{machines['m8']['hostname']}:#{machines['m8']['ip']}",
                     # (unused) interface for outgoing mail
                     "--add-host", "outgoing.#{domain}:172.20.1.1",
                     # add options to get systemd to run properly
@@ -201,6 +208,7 @@ Vagrant.configure("2") do |config|
                         "--add-host", "idp-test.#{domain}:#{machines['m6']['ip']}",
                         "--add-host", "google-test.#{domain}:#{machines['m6']['ip']}",
                         "--add-host", "sandbox1.#{domain}:#{machines['m7']['ip']}",
+                        "--add-host", "sbs.#{domain}:#{machines['m8']['ip']}",
                     ]
                 else
                     # external interfaces are routed through the LB
@@ -216,6 +224,7 @@ Vagrant.configure("2") do |config|
                         "--add-host", "idp-test.#{domain}:#{machines['m5']['ip']}",
                         "--add-host", "google-test.#{domain}:#{machines['m5']['ip']}",
                         "--add-host", "sandbox1.#{domain}:#{machines['m5']['ip']}",
+                        "--add-host", "sbs.#{domain}:#{machines['m5']['ip']}",
                     ]
                 end
                 dk.create_args = create_args
