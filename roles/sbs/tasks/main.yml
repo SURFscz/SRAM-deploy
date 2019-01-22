@@ -1,80 +1,92 @@
 ---
 
-- name: Ensure that packages are installed
+- name: Install required packages
   apt:
     name:
-      - mariadb-server
-      - python3-pip
-      - python-pymysql
-      - git
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - gnupg2
+      - software-properties-common
+
+- name: Remove any existing Docker packages
+  apt:
+    state: absent
+    name:
+      - docker
+      - docker-engine
+      - docker.io
+      - containerd
+      - runc
+
+- name: Add Docker repository
+  apt_repository:
+    repo: "deb [arch=amd64] https://download.docker.com/linux/debian stretch stable"
     state: present
 
-- name: install python3 virtualenv
-  pip:
-    name: virtualenv
-    executable: pip3
+- name: install Docker key
+  shell: curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 
-- name: create SBS user
-  user: name=sbs shell="/bin/false" state=present
+- name: Install docker-ce packages
+  apt:
+    update_cache: yes
+    name:
+      - docker-ce
 
-- name: Create project directory
-  file: path="{{ sbs_project_dir }}" state=directory mode=0755 owner=sbs
+- name: Download latest Docker Compose
+  get_url:
+    url: "{{ docker_compose_latest }}"
+    dest: /usr/local/bin/docker-compose
+    mode: 0755
 
-- block:
-  - name: fetch SBS from {{ sbs_repo_url }}, version {{ sbs_repo_version }}
-    git:
-      repo: "{{ sbs_repo_url }}"
-      dest: "{{ sbs_env_dir }}"
-      version: "{{ sbs_repo_version }}"
-      accept_hostkey: "yes"
-      force: "yes"
+- name: Create SBS docker compose directory
+  file:
+    path: "{{ sbs_workdir }}"
+    state: directory
+    mode: 0755
 
-  - name: Install SBS from requirements.txt
-    pip:
-      requirements: "{{ sbs_env_dir }}/requirements/test.txt"
-      virtualenv: "{{ sbs_env_dir }}"
-      virtualenv_python: python3
+- name: Create SBS docker compose directories
+  file:
+    path: "{{ sbs_workdir }}/{{ item }}"
+    state: directory
+    mode: 0755
+  with_items:
+    - etc
+    - server/config
+    - server/migrations
+    - log
+    - data
 
-  - name: Create SBS systemd service
-    template:
-      src: sbs.service.j2
-      dest: "{{ sbs_env_dir }}/sbs.service"
-      mode: 0644
-  when: false
-  become: "yes"
-  become_user: sbs
+- name: Copy docker-compose.yml file from template
+  template:
+    src: "{{ item }}.j2"
+    dest: "{{ sbs_workdir }}/{{ item }}"
+  with_items:
+    - docker-compose.yml
+    - sbs.service
 
-- name: Create a new database with name 'sbs'
-  mysql_db:
-    name: sbs
-    state: present
-    login_unix_socket: "/var/run/mysqld/mysqld.sock"
-
-- name: Create a new database with name 'sbs_test'
-  mysql_db:
-    name: sbs_test
-    state: present
-    login_unix_socket: "/var/run/mysqld/mysqld.sock"
-
-- name: Create MySQL user
-  mysql_user:
-    name: 'sbs'
-    password: "{{ sbs_db_password }}"
-    host: localhost
-    state: present
-    priv: '*.*:ALL,GRANT'
-    login_unix_socket: "/var/run/mysqld/mysqld.sock"
-
-- name: Copy to sbs.service in /etc/systemd/system
+- name: Copy sbs.service in /etc/systemd/system
   copy:
-    src: "{{ sbs_env_dir }}/sbs.service"
+    src: "{{ sbs_workdir }}/sbs.service"
     dest: /etc/systemd/system/sbs.service
     remote_src: yes
 
-- name: restart SBS
-  systemd: daemon_reload=yes name=sbs state=restarted enabled=yes
+- name: Copy etc templates
+  template:
+    src: "{{ item }}.j2"
+    dest: "{{ sbs_workdir }}/{{ item }}"
+  with_items:
+    - "etc/alembic.env"
+    - "etc/config.env"
+    - "etc/init.sql"
+    - "etc/mysql.cnf"
+    - "etc/nginx.conf"
+    - "server/config/config.yml"
+    - "server/config/test_config.yml"
+    - "server/migrations/alembic.ini"
 
-
-
-
+- name: Build dockers
+  shell: /usr/local/bin/docker-compose up --no-start
+  args:
+    chdir: "{{ sbs_workdir }}"
 

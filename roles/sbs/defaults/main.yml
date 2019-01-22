@@ -1,7 +1,24 @@
 ---
-sbs_repo_url: "https://github.com/SURFscz/SBS.git"
-sbs_repo_version: "master"
-sbs_project_dir: "/opt/sbs"
-sbs_src_dir: "{{ sbs_project_dir }}/sbs-src"
-sbs_env_dir: "{{ sbs_project_dir }}/sbs-env"
+sbs_image_repository: "surfscz"
+sbs_server_image: "sbs-server"
+sbs_client_image: "sbs-client"
+sbs_server_version: "v0.0.1"
+sbs_client_version: "v0.0.1"
 
+sbs_workdir: "/opt/sbs"
+
+sbs_client_port: 8321
+sbs_db_name: "sbs"
+sbs_testdb_name: "sbs_test"
+sbs_db_user: "sbs"
+
+sbs_api_user: "sysadmin"
+
+sbs_mail_host: "localhost"
+sbs_mail_port: "1025"
+
+sbs_base_url: "http://localhost:8321"
+
+sbs_admin_users: "urn:admin"
+
+docker_compose_latest: "https://github.com/docker/compose/releases/download/1.23.2/docker-compose-Linux-x86_64"

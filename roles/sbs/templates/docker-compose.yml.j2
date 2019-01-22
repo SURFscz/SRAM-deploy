@@ -1,0 +1,93 @@
+version: "2"
+
+services:
+
+  db:
+    image: mysql:8.0
+    volumes:
+      - ./etc/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./etc/mysql.cnf:/etc/mysql/conf.d/mysql.cnf
+      - ./data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: "{{ sbs_db_password }}"
+      MYSQL_DATABASE: "{{ sbs_db_name }}"
+      MYSQL_USER: "{{ sbs_db_user }}"
+      MYSQL_PASSWORD: "{{ sbs_db_password }}"
+    networks:
+      - sbs-backend
+    restart: unless-stopped
+
+  db_front:
+    image: adminer
+    links:
+      - db
+    ports:
+      - 8080:8080
+    networks:
+      - sbs-backend
+      - sbs-frontend
+    restart: unless-stopped
+
+  server:
+    image: "{{ sbs_image_repository }}/{{ sbs_server_image }}:{{ sbs_server_version }}"
+    volumes:
+      - ./log:/opt/app/log
+      - ./etc/config.env:/tmp/config.env
+      - ./etc/alembic.env:/tmp/alembic.env
+    depends_on:
+      - db
+    networks:
+      - sbs-backend
+    environment:
+      SECRET: "{{ sbs_db_password }}"
+
+      DB_HOST: db
+      DB_NAME: "{{ sbs_db_name }}"
+      DB_USER: "{{ sbs_db_user }}"
+      DB_PASS: "{{ sbs_db_password }}"
+
+      MAIL_HOST: "{{ sbs_mail_host }}"
+      MAIL_PORT: "{{ sbs_mail_port }}"
+
+      API_USER: "{{ sbs_api_user }}"
+      API_PASS: "{{ sbs_api_password }}"
+
+      BASE_URL: "{{ sbs_base_url }}"
+
+      ADMIN_USERS: "{{ sbs_admin_users }}"
+
+      PROFILE: local
+    command:
+      - /bin/bash
+      - -c
+      - |
+        envsubst < /tmp/config.env > server/config/config.yml
+        envsubst < /tmp/config.env > server/config/test_config.yml
+        envsubst < /tmp/alembic.env > server/migrations/alembic.ini
+        echo "Waiting for Database..."
+        sleep 20
+        python -m server seed
+        python -m server
+    restart: unless-stopped
+
+  client-prod:
+    image: "{{ sbs_image_repository }}/{{ sbs_client_image }}:{{ sbs_client_version }}"
+    volumes:
+      - ./etc/nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - {{ sbs_client_port }}:80
+    networks:
+      - sbs-backend
+      - sbs-frontend
+    links:
+      - server
+    restart: unless-stopped
+
+volumes:
+  data:
+
+networks:
+  sbs-backend:
+    driver: bridge
+  sbs-frontend:
+    driver: bridge

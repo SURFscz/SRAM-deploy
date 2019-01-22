@@ -102,7 +102,7 @@
     - { role: http_dummy,  tags: ['meta','http']     }
     - { role: metadata,    tags: ['meta','metadata'] }
 
-- hosts: sbs
+- hosts: docker
   roles:
     - { role: sbs,     tags: ['sbs']  }
 

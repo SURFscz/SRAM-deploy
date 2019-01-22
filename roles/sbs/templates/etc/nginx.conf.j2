@@ -1,0 +1,38 @@
+worker_processes auto;
+
+events {
+    worker_connections 8000;
+    multi_accept on;
+}
+
+http {
+    include       /etc/nginx/mime.types;
+    default_type  application/octet-stream;
+
+    # Sets the path, format, and configuration for a buffered log write
+    log_format compression '$remote_addr - $remote_user [$time_local] '
+        '"$request" $status $upstream_addr '
+        '"$http_referer" "$http_user_agent"';
+
+    server {
+        listen 80;
+        access_log /var/log/nginx/access.log compression;
+
+        root /var/www;
+        index index.html index.htm;
+
+        location / {
+            # First attempt to serve request as file, then
+            # as directory, then fall back to redirecting to index.html
+
+            try_files $uri $uri/ @server;
+        }
+        
+        location @server {
+            proxy_set_header                Host $host;
+            proxy_set_header                X-Real-IP $remote_addr;
+            proxy_pass_request_headers      on;
+            proxy_pass                      http://server:8080;
+        }
+    }
+}

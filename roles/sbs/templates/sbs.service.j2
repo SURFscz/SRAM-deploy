@@ -5,10 +5,9 @@ After=syslog.target network.target
 [Service]
 Type=simple
 User=sbs
-WorkingDirectory={{ sbs_env_dir }}
-Environment=PROFILE=local
-ExecStart={{ sbs_env_dir }}/bin/python -m server
-Restart=on-abort
+WorkingDirectory={{ sbs_workdir }}
+ExecStart=docker-compose up
+Restart=never
 StandardOutput=syslog
 StandardError=syslog
 SyslogIdentifier=sbs

@@ -1,0 +1,19 @@
+database:
+  uri: "mysql+pymysql://{{ sbs_db_user }}:{{ sbs_db_password }}@localhost/{{ sbs_db_name }}"
+
+secret_key: secret
+
+api_users:
+  - name: "sysadmin"
+    password: "secret"
+    scope: "read, write"
+
+mail:
+  host: localhost
+  port: 1025
+
+base_url: http://localhost:3000
+
+admin_users:
+  - uid: "urn:john"
+  - uid: "urn:admin"
