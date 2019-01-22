@@ -1,0 +1,17 @@
+database:
+  uri: "mysql+pymysql://{{ sbs_db_user }}:{{ sbs_db_password }}@{{ sbs_db_host }}/{{ sbs_db_name }}"
+
+secret_key: {{ sbs_db_password }}
+
+api_users:
+  - name: {{ sbs_api_user }}
+    password: {{ sbs_api_password }}
+    scope: "read, write"
+
+mail:
+  host: {{ sbs_mail_host }}
+  port: {{ sbs_mail_port }}
+
+base_url: {{ sbs_base_url }}
+
+admin_users: {{ sbs_admin_users }}

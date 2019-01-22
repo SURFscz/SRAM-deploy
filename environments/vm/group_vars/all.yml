@@ -107,3 +107,6 @@ comanage_proxy_attribute: "cmuid"
 
 php_debug: true
 php_xdebug_host: "{{iprange.bastion}}"
+
+# Enable SBS deploy
+sbs_enabled: true

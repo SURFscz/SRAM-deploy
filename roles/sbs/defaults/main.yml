@@ -11,14 +11,15 @@ sbs_client_port: 8321
 sbs_db_name: "sbs"
 sbs_testdb_name: "sbs_test"
 sbs_db_user: "sbs"
+sbs_db_host: "db"
 
 sbs_api_user: "sysadmin"
 
 sbs_mail_host: "localhost"
 sbs_mail_port: "1025"
 
-sbs_base_url: "http://localhost:8321"
+sbs_base_url: "http://docker.scz-vm.net:8321"
 
-sbs_admin_users: "urn:admin"
+sbs_admin_users: [uid: "urn:admin", uid: "urn:john"]
 
 docker_compose_latest: "https://github.com/docker/compose/releases/download/1.23.2/docker-compose-Linux-x86_64"
