@@ -81,9 +81,6 @@
     - "etc/init.sql"
     - "etc/mysql.cnf"
     - "etc/nginx.conf"
-    - "server/config/config.yml"
-    - "server/config/test_config.yml"
-    - "server/migrations/alembic.ini"
 
 - name: Build dockers
   shell: /usr/local/bin/docker-compose up --no-start
