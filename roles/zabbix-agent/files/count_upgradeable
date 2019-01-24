@@ -1,0 +1,7 @@
+#!/bin/sh
+# All updates
+/usr/bin/aptitude search '~U' | wc -l
+
+# Only security updates
+#/usr/bin/aptitude search '?and(~U,~Asecurity)' | wc -l
+
