@@ -54,15 +54,15 @@
       'prefix' => '',
       );
 
-- name: Clearing Cake cache
-  command: ./Console/cake cache
+- name: Setup Plugin schemata
+  command: ./Console/cake database
   become: true
   become_user: "{{ comanage_www_user }}"
   args:
     chdir: "{{ comanage_path }}/app"
 
-- name: Setup Plugin schemata
-  command: ./Console/cake database
+- name: Clearing Cake cache
+  command: ./Console/cake cache
   become: true
   become_user: "{{ comanage_www_user }}"
   args:

@@ -1,0 +1,8 @@
+[Unit]
+Description=SCZ Logging Runner
+
+[Service]
+User=root
+Group=root
+Type=oneshot
+ExecStart=/bin/run-parts --verbose --new-session --umask=077 --regex='.*\\.sh' -- '/opt/logging/run.d'

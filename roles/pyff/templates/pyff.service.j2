@@ -5,11 +5,12 @@ After=syslog.target network.target
 [Service]
 Type=simple
 User=pyff
+LimitNOFILE=10240
 WorkingDirectory={{ pyff_env_dir }}
 ExecStartPre=-+/usr/bin/touch /var/run/pyff.pid
 ExecStartPre=-+/bin/chown pyff. /var/run/pyff.pid
-#ExecStart={{ pyff_env_dir }}/bin/pyffd --proxy -f --log=syslog:local0 --error-log=syslog:local0 --loglevel=DEBUG -H {{ pyff_cherrypy_host }} -P {{ pyff_cherrypy_port }} {{ pyff_env_dir }}/mdq.fd
-ExecStart={{ pyff_env_dir }}/bin/pyffd --proxy -f --loglevel=DEBUG -H {{ pyff_cherrypy_host }} -P {{ pyff_cherrypy_port }} {{ pyff_env_dir }}/mdq.fd
+#ExecStart={{ pyff_env_dir }}/bin/pyffd -a --proxy -f --log=syslog:local0 --error-log=syslog:local0 --loglevel=DEBUG -H {{ pyff_cherrypy_host }} -P {{ pyff_cherrypy_port }} {{ pyff_env_dir }}/mdq.fd
+ExecStart={{ pyff_env_dir }}/bin/pyffd -a --proxy -f --loglevel=DEBUG -H {{ pyff_cherrypy_host }} -P {{ pyff_cherrypy_port }} {{ pyff_env_dir }}/mdq.fd
 Restart=on-abort
 StandardOutput=syslog
 StandardError=syslog

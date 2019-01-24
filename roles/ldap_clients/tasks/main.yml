@@ -1,4 +1,6 @@
 ---
+- include_vars: "ldap.yml"
+
 - name: Add LSC repository key
   apt_key:
     data: "{{ lookup('file', 'GPG-KEY-lsc') }}"
@@ -27,6 +29,16 @@
     - { src: "add_client_mdb.ldif.j2", dest: "add_client_mdb.ldif" }
     - { src: "add_client_mdb_admin.ldif.j2", dest: "add_client_mdb_admin.ldif" }
     - { src: "enable_syncprov_client.ldif.j2", dest: "enable_syncprov_client.ldif" }
+    - { src: "enable_memberof_2mdb.ldif.j2", dest: "enable_memberof_2mdb.ldif" }
+
+- name: Copy sczGroup ldif
+  become: true
+  become_user: "{{ ldap_user }}"
+  copy:
+    src: "{{ sczGroup_ldif }}"
+    dest: "{{ ldap_schema_dir }}/{{ sczGroup_ldif }}"
+    owner: "{{ ldap_user }}"
+    group: "{{ ldap_user }}"
 
 - name: Make sure client ldap db directory exists
   file:
@@ -82,11 +94,41 @@
   loop_control:
     loop_var: item_client
 
+- name: Check if the sczGroup schema is already present
+  shell: >
+    ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// -b 'cn=schema,cn=config' '(cn=*)' dn
+    | grep -i 'cn={[0-9]\+}sczgroup,cn=schema,cn=config'
+  failed_when: not [1, 2]
+  changed_when: false
+  register:
+    sczGroupTask
+
+- name: Ensure the sczGroup schema is added to LDAP
+  become: true
+  command: >
+    ldapadd -Q -Y EXTERNAL -H ldapi:///
+    -f "{{ ldap_schema_dir }}/{{ sczGroup_ldif }}"
+    -D "cn=config" -w "{{ ldap_password }}"
+  when: sczGroupTask.stdout == ""
+
+- name: Configure memberof overlay for 2mdb
+  command: ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f "{{ ldap_ldif_dir }}/enable_memberof_2mdb.ldif"
+  # return code 20 means entry already exists
+  register: result
+  failed_when: "result.rc not in [0,20]"
+  changed_when: "result.rc==20"
+
 - name: Copy run_lsc batchfile
-  template: >
-    src="run_lsc_tasks.j2"
-    dest="{{lsc_install_dir}}/run_lsc_tasks"
-    mode=0755
+  template:
+    src: "run_lsc_tasks.j2"
+    dest: "{{lsc_install_dir}}/run_lsc_tasks"
+    mode: 0755
+
+- name: Copy LSC log config
+  copy:
+    src: "logback.xml"
+    dest: "{{lsc_config_dir}}/logback.xml"
+    mode: 0644
 
 - name: Copy LSC service files
   template:
@@ -98,9 +140,18 @@
   notify:
     - enable lsc job
 
-- name: Install backup script
+- name: Install backup scripts
   template:
-    src: ldap-clients-backup.sh.j2
-    dest: "{{backup_runparts}}/ldap-clients-backup.sh"
+    src: "{{item}}.j2"
+    dest: "{{backup_runparts}}/{{item}}"
     mode: 0755
+  with_items:
+    - ldap-clients-backup.sh
+    - lsc-backup.sh
+
+- name: Install LSC logrotate config
+  copy:
+    src: "logrotate_lsc"
+    dest: "/etc/logrotate.d/lsc"
+    mode: 0644
 

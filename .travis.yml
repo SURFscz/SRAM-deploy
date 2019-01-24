@@ -27,28 +27,38 @@ git:
   submodules: false
 
 before_install:
-  - >
-    if [ -d $HOME/docker ]; then
-      ls $HOME/docker/*.tar.gz | xargs -I {file} sh -c "zcat {file} | docker load";
-    fi
   - pip install yamllint jinja2 pyyaml
   - sudo wget https://releases.hashicorp.com/vagrant/2.1.2/vagrant_2.1.2_x86_64.deb -P /tmp
   - sudo dpkg -i /tmp/vagrant_2.1.2_x86_64.deb
   - sudo apt-add-repository -y ppa:ansible/ansible-2.6
   - sudo apt -q update
   - sudo apt -y install ansible bridge-utils
+  - sudo adduser travis docker
+  - |
+    # load docker images from cache
+    if [ -d $HOME/docker ]; then
+      for f in $HOME/docker/*.tar.gz;
+      do
+        echo "Loading '$f' into docker";
+        zcat "$f" | docker load || true;
+      done;
+    fi
 
 script:
-  - sudo ./scripts/travis_tests
+  - ./scripts/travis_tests
 
 before_cache:
-  - "rm -rf $HOME/docker"
-  - "mkdir -p $HOME/docker"
-  - "docker image ls -a"
-  - "docker image prune -f"
-  - "docker image ls -a"
-  - "docker image ls -a --filter='dangling=false'"
-  - "docker images -a --filter='dangling=false' --format '{{.Repository}}:{{.Tag}} {{.ID}}' \
-        | xargs -n 2 -t sh -c 'test -e $HOME/docker/$1.tar.gz \
-             || docker save $0 | gzip -c6 > $HOME/docker/$1.tar.gz' "
+  - "ls -la $HOME/docker"
+  - |
+    # save docker images to cache
+    export IMG=$( docker images --format '{{.ID}}' scz-base );
+    echo "scz-image is id ${IMG}";
+    if ! [ -e $HOME/docker/$IMG.tar.gz ]; then
+      echo "scz-base image has changed, clearing out cache and writing new image"
+      rm -rf $HOME/docker;
+      mkdir -p $HOME/docker;
+      docker save scz-base | gzip -c6 > $HOME/docker/${IMG}.tar.gz;
+    else
+      echo "scz-base image exists; nothing to do"
+    fi
   - "ls -la $HOME/docker"

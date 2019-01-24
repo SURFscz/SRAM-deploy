@@ -3,9 +3,15 @@ set -e
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-find . -name '*.j2'  -print0 | xargs -0 ${DIR}/syntax-jinja
-find . -name '*.yml' -print0 | xargs -0 ${DIR}/syntax-yml
+numcpu=$( grep "^processor" /proc/cpuinfo | wc -l )
+numj2=$(  find . -name '*.j2'  | wc -l )
+numyml=$( find . -name '*.yml' | wc -l )
 
-yamllint .
+maxj2=$(  expr $numj2  / $numcpu + 1 )
+maxyml=$( expr $numyml / $numcpu + 1 )
+
+find . -name '*.j2'  -print0 | xargs -0 -n${maxj2}  -P${numcpu} ${DIR}/syntax-jinja
+find . -name '*.yml' -print0 | xargs -0 -n${maxyml} -P${numcpu} ${DIR}/syntax-yml
+find . -name '*.yml' -print0 | xargs -0 -n${maxyml} -P${numcpu} yamllint
 
 exit 0

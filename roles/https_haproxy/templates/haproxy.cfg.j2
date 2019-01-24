@@ -121,6 +121,9 @@ listen proxy_{{host.hostname}}_{{host.frontend_port}}
 	option	tcpka
 	option	tcplog
 
+    timeout client 900s
+    timeout server 901s
+
 	{% for be_server in host.backend_hosts -%}
 	server {{be_server}} {{be_server}}:{{host.backend_port}} check
 	{% endfor %}

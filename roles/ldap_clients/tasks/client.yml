@@ -80,13 +80,16 @@
     state: directory
     mode: 0755
 
-- name: Copy LSC logging config
-  copy:
-    src: "/etc/lsc/logback.xml"
-    dest: "{{ lsc_dir }}"
-    remote_src: yes
+- name: Link LSC logging config
+  file:
+    dest: "{{ lsc_dir }}/logback.xml"
+    state: link
+    src: "{{ lsc_config_dir }}/logback.xml"
+    force: yes
 
 - name: Copy LSC configuration
   template:
     src: "lsc.xml.j2"
     dest: "{{ lsc_dir }}/lsc.xml"
+    backup: yes
+    force: no

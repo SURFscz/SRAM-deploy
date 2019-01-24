@@ -53,14 +53,14 @@
 - name: Add LDAP nsswitch passwd lookup
   replace:
     path: /etc/nsswitch.conf
-    regexp: '^(passwd:.*compat)$'
+    regexp: '^(passwd:.*systemd)$'
     replace: '\1 ldap'
     backup: yes
 
 - name: Add LDAP nsswitch group lookup
   replace:
     path: /etc/nsswitch.conf
-    regexp: '^(group:.*compat)$'
+    regexp: '^(group:.*systemd)$'
     replace: '\1 ldap'
     backup: yes
 
@@ -79,3 +79,16 @@
     replace: >-
       \n\nsession required pam_mkhomedir.so umask=0022 skel=/etc/skel\1
     backup: yes
+
+- name: Check for ChallengeResponseAuthentication in sshd
+  shell: grep 'ChallengeResponseAuthentication yes' /etc/ssh/sshd_config
+  register: cra_check
+  ignore_errors: true
+
+- name: Enable ssh ChallengeResponseAuthentication
+  replace:
+    path: /etc/ssh/sshd_config
+    regexp: '(\nUsePAM yes)\n\n'
+    replace: '\1\nChallengeResponseAuthentication yes\n\n'
+    backup: yes
+  when: cra_check is failed
