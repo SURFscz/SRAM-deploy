@@ -2,7 +2,11 @@
 ---
 - hosts: all
   serial: 20
+  gather_facts: false
   tasks:
+    - name: Read user secrets
+      include_vars: "{{ secrets_users_file }}"
+      tags: always
     - name: Read vars from secrets file
       include_vars: "{{ secrets_file }}"
       tags: always
@@ -13,25 +17,9 @@
   serial: 20
   gather_facts: true
 
-# Then gather facts from all other hosts, but one by one
-# looks hackish, but this is apparently the "a clean, official way" to gather
-# required facts from all hosts, regardless of the commandline --limit
-# parameter
-# We need this here, because in the group vars, we rely on the hostvars for
-# the ip addresses of other hosts (e.g, mgnt1)
-- hosts: all
-  serial: 2
-  pre_tasks:
-    - name: Gather facts from mgnt hosts (regardless of limit or tags)
-      setup:
-      delegate_to: "{{ item }}"
-      delegate_facts: "true"
-      when: hostvars[item]['ansible_default_ipv4'] is not defined
-      with_items: "{{ groups['all'] }}"
-      tags: always
-
 # to run the debug target, specify --extra-vars="debug=true" / -e debug=1
 - hosts: all
+  gather_facts: false
   roles:
     - role: debug
       tags: ['debug']
@@ -51,8 +39,7 @@
 
 - hosts: mgnt1
   roles:
-  #  - { role: ldap, tags: ['ldap'] }
-  #  - { role: mta,  tags: ['mta' ] }
+    - { role: dns-master,    tags: ['test'] }
 
 - hosts: mgnt2
   roles:
@@ -72,8 +59,8 @@
 
 - hosts: ldap
   roles:
-    - { role: ldap, tags: ['ldap'] }
-    - { role: ldap_clients, tags: ['ldap', 'ldap_clients'] }
+    - { role: ldap,               tags: ['ldap'                  ] }
+    - { role: ldap_clients,       tags: ['ldap', 'ldap-clients'  ] }
     - { role: pam_websso_daemon,  tags: ['client','websso-daemon'] }
 
 - hosts:
@@ -103,7 +90,7 @@
   roles:
     - { role: http_apache,      tags: ['comanage', 'web'] }
     - { role: comanage_mysql,   tags: ['comanage', 'db' ] }
-    - { role: php56,            tags: ['comanage', 'web'] }
+    - { role: php,              tags: ['comanage', 'web'] }
     - { role: auth_mellon,      tags: ['comanage', 'web'] }
     - { role: comanage,         tags: ['comanage', 'web'] }
     - { role: comanage_idp,     tags: ['comanage', 'web'] }

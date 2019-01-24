@@ -19,8 +19,7 @@
 ##################################################
 # generated from group config firewall_v4_incoming
 ##################################################
-{% if firewall_v4_incoming is defined %}
-{%- for l in firewall_v4_incoming %}
+{%- for l in firewall_v4_incoming_global + firewall_v4_incoming %}
 {{'# '}}{{l.name}}{{"\n"}}
   {#- first check if l.src is a string or a list                    -#}
   {#- if it's a string, convert to a list, so we can iterate safely -#}
@@ -34,8 +33,9 @@
   {%-   set src = [False]     -%}
   {%- endif                   -%}
   {#- now loop over all src addreses -#}
-  {%- for s in src %}
+  {% for s in src %}
     {%- if True               -%} -A INPUT                      {%- endif -%}
+    {%- if True                %} -i {{l.iface|default('eth0')}}{%- endif -%}
     {%- if True                %} -p {{l.proto|default('tcp')}} {%- endif -%}
     {%- if s                   %} -s {{s}}                      {%- endif -%}
     {%- if l.sport is defined  %} -m multiport                  {%- endif -%}
@@ -46,11 +46,6 @@
     {{"\n"}}
   {%- endfor -%}
 {%- endfor %}
-{%- endif %}
-
-# explicitly add a REJECT rule to prevent timeouts when connecting
-# note: REJECT is not a valid policy, but can only be used in targets
--A INPUT -j REJECT
 
 # explicitly add a REJECT rule to prevent timeouts when connecting
 # note: REJECT is not a valid policy, but can only be used in targets

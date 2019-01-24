@@ -1,0 +1,46 @@
+FQDNLookup false
+Interval 60
+LoadPlugin syslog
+<Plugin syslog>
+        LogLevel info
+</Plugin>
+LoadPlugin cpu
+LoadPlugin df
+LoadPlugin disk
+LoadPlugin entropy
+LoadPlugin exec
+LoadPlugin interface
+LoadPlugin iptables
+LoadPlugin load
+LoadPlugin memory
+LoadPlugin network
+LoadPlugin ping
+LoadPlugin uptime
+<Plugin df>
+        FSType rootfs
+        FSType sysfs
+        FSType proc
+        FSType devtmpfs
+        FSType devpts
+        FSType tmpfs
+        FSType fusectl
+        FSType cgroup
+        IgnoreSelected true
+</Plugin>
+<Plugin exec>
+        Exec _apt "/usr/local/bin/upgradeable"
+</Plugin>
+<Plugin iptables>
+        Chain "filter" "INPUT" 1
+</Plugin>
+<Plugin network>
+        Server "{{ servers.syslog }}" "25826"
+</Plugin>
+<Plugin ping>
+        Host "{{ servers.syslog }}"
+        Host "{{ servers.dns[0] }}"
+        Host "{{ external_ping }}"
+</Plugin>
+<Include "/etc/collectd/collectd.conf.d">
+        Filter "*.conf"
+</Include>
