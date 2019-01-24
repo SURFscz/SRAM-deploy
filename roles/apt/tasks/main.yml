@@ -1,17 +1,18 @@
 ---
 - name: set up apt repo
-  template: src=sources.list.j2 dest=/etc/apt/sources.list force=yes
-  when: ansible_virtualization_type != "docker"
+  template:
+    src: sources.list.j2
+    dest: /etc/apt/sources.list
+    force: yes
 
-- name: Upgrade packages
-  apt:
-    upgrade: dist
-    cache_valid_time: 86400
-  when: "environment_name != 'vm'"
+- name: set up apt pinning for official packages
+  template:
+    src: apt_pinning.j2
+    dest: /etc/apt/preferences.d/official_packages
 
 - name: Install common tools / clients
   apt:
-    cache_valid_time: 86400
+    update_cache: yes
     state: present
     name:
       - sudo
@@ -28,13 +29,25 @@
       - apt-transport-https
       - python-apt
 
+- name: Upgrade packages
+  apt:
+    upgrade: dist
+    cache_valid_time: 86400
+    update_cache: yes
+  when: "environment_name != 'vm'"
+
 - name: remove unneccessary packages
   apt:
     state: absent
+    purge: yes
     name:
-      - nfs-common
-      - rpcbind
       - cloud-init
+
+- name: remove cloud-init network config
+  lineinfile:
+    path: /etc/network/interfaces
+    state: absent
+    regexp: '^source '
 
 - name: install VMware clients
   apt:

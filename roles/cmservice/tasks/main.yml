@@ -9,6 +9,7 @@
       - python-dev
       - python-setuptools
       - python3-pip
+      - libicu-dev
     state: present
 
 - name: install python virtualenv

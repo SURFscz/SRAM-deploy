@@ -9,7 +9,7 @@ firewall_v4_incoming:
 
 # SATOSA configuration
 satosa_repo_url: "https://github.com/SURFscz/SATOSA.git"
-satosa_repo_version: "scz-poc"
+satosa_repo_version: "scz"
 satosa_project_dir: "/opt/satosa"
 satosa_src_dir: "{{ satosa_project_dir }}/satosa-src"
 satosa_env_dir: "{{ satosa_project_dir }}/satosa-env"
