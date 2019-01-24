@@ -15,6 +15,11 @@
     dest: /tmp
 
 - name: create database for CoManage-Proxy linkup
+  mysql_db:
+    name: "{{ comanage_proxy_db_name }}"
+    state: present
+
+- name: initialize database for CoManage-Proxy linkup
   command: >
     mysql --batch --silent --raw --database "{{ comanage_proxy_db_name }}"
           --execute "source /tmp/create_db.sql"
