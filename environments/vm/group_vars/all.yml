@@ -112,3 +112,6 @@ php_xdebug_host: "{{iprange.bastion}}"
 # It is needed in the proxy_mysql and satosa rolesatosa_db: "{{ groups['proxy'][0] }}"
 satosa_db_name: "satosa"
 satosa_db_user: "satosa"
+
+# No Zabbix on VM/Travis
+zabbix_enabled: false
