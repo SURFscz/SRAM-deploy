@@ -56,30 +56,31 @@
       - log
       - data
 
-  - name: Copy docker-compose.yml file from template
+  - name: Copy docker_compose.yml and .env
+    copy:
+      src: "{{ item }}"
+      dest: "{{ sbs_workdir }}/{{ item }}"
+    with_items:
+      - etc/alembic.env
+      - etc/config.env
+      - etc/init.sql
+      - etc/mysql.cnf
+      - etc/nginx.conf
+
+  - name: Copy sbs.service file from template
     template:
       src: "{{ item }}.j2"
       dest: "{{ sbs_workdir }}/{{ item }}"
     with_items:
       - docker-compose.yml
       - sbs.service
+      - .env
 
   - name: Copy sbs.service in /etc/systemd/system
     copy:
       src: "{{ sbs_workdir }}/sbs.service"
       dest: /etc/systemd/system/sbs.service
       remote_src: yes
-
-  - name: Copy etc templates
-    template:
-      src: "{{ item }}.j2"
-      dest: "{{ sbs_workdir }}/{{ item }}"
-    with_items:
-      - "etc/alembic.ini"
-      - "etc/config.yml"
-      - "etc/init.sql"
-      - "etc/mysql.cnf"
-      - "etc/nginx.conf"
 
   - name: Build dockers
     shell: /usr/local/bin/docker-compose up --no-start

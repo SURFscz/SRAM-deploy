@@ -2,71 +2,100 @@ version: "2"
 
 services:
 
-  {{ sbs_db_host }}:
+  db:
     image: mysql:8.0
     volumes:
       - ./etc/init.sql:/docker-entrypoint-initdb.d/init.sql
       - ./etc/mysql.cnf:/etc/mysql/conf.d/mysql.cnf
       - ./data:/var/lib/mysql
     environment:
-      MYSQL_ROOT_PASSWORD: "{{ sbs_db_password }}"
-      MYSQL_DATABASE: "{{ sbs_db_name }}"
-      MYSQL_USER: "{{ sbs_db_user }}"
-      MYSQL_PASSWORD: "{{ sbs_db_password }}"
+      MYSQL_ROOT_PASSWORD: ${SECRET}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASS}
     networks:
-      - sbs-backend
+      - backend
     restart: unless-stopped
 
   db_front:
     image: adminer
     links:
-      - {{ sbs_db_host }}
+      - db
     ports:
       - 8080:8080
     networks:
-      - sbs-backend
-      - sbs-frontend
+      - backend
+      - frontend
     restart: unless-stopped
 
   server:
     image: "{{ sbs_image_repository }}/{{ sbs_server_image }}:{{ sbs_server_version }}"
     volumes:
       - ./log:/opt/app/log
-      - ./etc/config.yml:/tmp/config.yml
-      - ./etc/alembic.ini:/tmp/alembic.ini
+      - ./etc/config.env:/tmp/config.env
+      - ./etc/alembic.env:/tmp/alembic.env
     depends_on:
-      - {{ sbs_db_host }}
+      - db
     networks:
-      - sbs-backend
+      - backend
     environment:
+      SECRET: ${SECRET}
+
+      DB_HOST: db
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASS}
+
+      MAIL_HOST: ${MAIL_HOST}
+      MAIL_PORT: ${MAIL_PORT}
+
+      API_USER: ${API_USER}
+      API_PASS: ${API_PASS}
+
+      BASE_URL: http://localhost:3000
+
+      ADMIN_USERS: ${ADMIN_USERS}
+
       PROFILE: local
     command:
       - /bin/bash
       - -c
       - |
-        cp /tmp/config.yml server/config/config.yml
-        cp /tmp/config.yml server/config/test_config.yml
-        cp /tmp/alembic.ini server/migrations/alembic.ini
+        envsubst < /tmp/config.env > server/config/config.yml
+        envsubst < /tmp/config.env > server/config/test_config.yml
+        envsubst < /tmp/alembic.env > server/migrations/alembic.ini
         echo "Waiting for Database..."
         sleep 20
         python -m server
+    restart: unless-stopped
+
+  client-test:
+    image: "{{ sbs_image_repository }}/{{ sbs_client_image }}:{{ sbs_client_version }}"
+    ports:
+      - 3000:3000
+    networks:
+      - frontend
+      - backend
+    links:
+      - server
     restart: unless-stopped
 
   client-prod:
     image: "{{ sbs_image_repository }}/{{ sbs_client_image }}:{{ sbs_client_version }}"
     volumes:
       - ./etc/nginx.conf:/etc/nginx/nginx.conf
+      - ./log:/var/log/nginx
     ports:
-      - {{ sbs_client_port }}:80
+      - 8321:80
     networks:
-      - sbs-backend
-      - sbs-frontend
+      - frontend
+      - backend
     links:
       - server
     restart: unless-stopped
 
 networks:
-  sbs-backend:
+  frontend:
     driver: bridge
-  sbs-frontend:
+  backend:
     driver: bridge
