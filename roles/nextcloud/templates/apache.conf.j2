@@ -1,0 +1,56 @@
+<VirtualHost *:80>
+        ServerName {{ nextcloud_hostname }}
+
+        ServerAdmin webmaster@localhost
+        DocumentRoot /var/www/html
+
+        ErrorLog ${APACHE_LOG_DIR}/error.log
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+        SetEnv MELLON_uid admin
+        SetEnv MELLON_memberOf testgroep
+
+        RequestHeader set MELLON_uid %{MELLON_uid}e
+        RequestHeader set MELLON_memberOf %{MELLON_memberOf}e
+
+        ProxyPass / http://localhost:{{ nextcloud_port }}/
+        ProxyPassReverse / http://localhost:{{ nextcloud_port }}/
+</VirtualHost>
+<VirtualHost *:80>
+        ServerName {{ nextcloud_hostname }}
+
+        ServerAdmin webmaster@localhost
+        DocumentRoot /var/www/html
+
+        ErrorLog ${APACHE_LOG_DIR}/error.log
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+        <Location />
+                Require valid-user
+                AuthType "Mellon"
+
+                MellonEnable "auth"
+                MellonVariable "cookie"
+                MellonCookiePath /
+#               MellonSPentityId "http://nextcloud"
+#               MellonOrganizationName "random-service"
+#               MellonOrganizationDisplayName "en" "Random service"
+#               MellonOrganizationURL "http://www.espci.fr"
+
+                MellonSPPrivateKeyFile {{ mellon_dir }}/sp.key
+                MellonSPCertFile {{ mellon_dir }}/sp.crt
+
+                MellonIdPMetadataFile {{ mellon_dir }}/satosa.xml
+
+#               SetEnv MELLON_uid admin
+#               SetEnv MELLON_memberOf testgroep
+#               MellonSetEnv "uid" "urn:mace:dir:attribute-def:uid"
+#               MellonSetEnv "isMemberOf" "urn:mace:dir:attribute-def:isMemberOf"
+
+                RequestHeader set MELLON_uid %{MELLON_urn:mace:dir:attribute-def:uid}e
+                RequestHeader set MELLON_isMemberOf %{MELLON_urn:mace:dir:attribute-def:isMemberOf}e
+
+                ProxyPass http://localhost:{{ nextcloud_port }}/
+                ProxyPassReverse http://localhost:{{ nextcloud_port }}/
+        </Location>
+</VirtualHost>

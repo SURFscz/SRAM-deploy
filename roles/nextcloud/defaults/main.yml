@@ -1,0 +1,4 @@
+---
+nextcloud_dir: /opt/nextcloud
+nextcloud_hostname: nextcloud.local
+nextcloud_port: 8001

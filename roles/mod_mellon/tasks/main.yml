@@ -1,0 +1,56 @@
+---
+- include_vars: "auth_mellon.yml"
+
+- name: ensure that packages are installed
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ packages  }}"
+
+- name: Create a directory where metadata for auth_mellon is stored
+  file:
+    path: "{{ mellon_dir }}"
+    state: directory
+    owner: www-data
+    mode: 0700
+
+- name: Create a self signed certificate for the Auth-Mellon SP
+  command: >
+    openssl req -x509 -new -nodes -subj "/CN=mellon_sp"
+    -days 3650 -keyout "{{ mellon_dir }}/sp.key" -out "{{ mellon_dir }}/sp.crt"
+  args:
+    creates: "{{ mellon_dir }}/sp.key"
+
+- name: Ensure proper file mode for private key
+  file:
+    mode: "0600"
+    owner: "www-data"
+    path: "{{ item }}"
+  with_items:
+    - "{{ mellon_dir }}/sp.key"
+    - "{{ mellon_dir }}/sp.crt"
+
+- name: Copy auth_mellon files
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: www-data
+    mode: "{{ item.mode }}"
+  with_items: "{{ auth_mellon_templates }}"
+
+#- name: retrieve Satosa IdP metadata
+  #get_url:
+    #url: https://
+    #dest: "{{ mellon_dir }}/satosa.xml"
+
+- name: Enable modules
+  apache2_module:
+    state: present
+    name: "{{ item }}"
+  with_items:
+    - auth_mellon
+    - proxy
+    - proxy_http
+    - headers
+  notify:
+    - restart apache

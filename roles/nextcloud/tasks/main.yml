@@ -1,0 +1,6 @@
+---
+- name: install Nextcloud Docker containers
+  include: nextcloud.yml
+
+- name: enable apache proxy
+  include: apache.yml

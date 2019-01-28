@@ -1,0 +1,10 @@
+---
+auth_mellon_templates:
+  -
+    src: mod_auth_mellon.conf.j2
+    dest: "/etc/apache2/mods-available/auth_mellon.conf"
+    mode: "0644"
+
+packages:
+  - apache2
+  - libapache2-mod-auth-mellon

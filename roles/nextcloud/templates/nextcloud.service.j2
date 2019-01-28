@@ -1,0 +1,14 @@
+[Unit]
+Description=Nextcloud containers
+After=docker.service network-online.target
+Requires=docker.service network-online.target
+
+[Service]
+WorkingDirectory={{nextcloud_dir}}
+Type=simple
+
+ExecStart=/usr/local/bin/docker-compose up
+SyslogIdentifier=nextcloud
+
+[Install]
+WantedBy=multi-user.target
