@@ -86,7 +86,7 @@ services:
       - ./etc/nginx.conf:/etc/nginx/nginx.conf
       - ./log:/var/log/nginx
     ports:
-      - 8321:80
+      - "{{sbs_client_port}}:80"
     networks:
       - frontend
       - backend
