@@ -1,20 +1,19 @@
 ---
 - name: Ensure that packages are installed
   apt:
-    name: "{{ item }}"
+    name:
+      - build-essential
+      - git
+      - xmlsec1
+      - libffi-dev
+      - python3.5
+      - python-dev
+      - python-setuptools
+      - python3-pip
+      - mongodb
+      - mongodb-server
+      - libmariadbclient-dev
     state: present
-  with_items:
-    - build-essential
-    - git
-    - xmlsec1
-    - libffi-dev
-    - python3.5
-    - python-dev
-    - python-setuptools
-    - python3-pip
-    - mongodb
-    - mongodb-server
-    - libmariadbclient-dev
 
 - name: install python3 virtualenv
   pip:

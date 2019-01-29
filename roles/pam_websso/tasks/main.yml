@@ -1,25 +1,24 @@
 ---
 - name: Ensure that packages are installed
   apt:
-    name: "{{ item }}"
+    name:
+      - libnss-ldapd
+      - libpam-python
+      - pamtester
+      - libxml2-dev
+      - libxmlsec1-dev
+      - build-essential
+      - python-dev
+      - python-pip
+      - python-openssl
+      - python-setuptools
+      - python-wheel
+      - python-twisted
+      - python-openssl
+      - python-defusedxml
+      - python-isodate
     state: present
     install_recommends: no
-  with_items:
-    - libnss-ldapd
-    - libpam-python
-    - pamtester
-    - libxml2-dev
-    - libxmlsec1-dev
-    - build-essential
-    - python-dev
-    - python-pip
-    - python-openssl
-    - python-setuptools
-    - python-wheel
-    - python-twisted
-    - python-openssl
-    - python-defusedxml
-    - python-isodate
 
 - name: fetch PAM WebSSO from {{ pam_websso.repo_url }}, version {{ pam_websso.repo_version }}
   git:
