@@ -16,6 +16,7 @@
       - lsc
       - openjdk-8-jdk
       - python-ldap
+      - python3-ldap3
     install_recommends: no
 
 - name: Generate ldif from template
