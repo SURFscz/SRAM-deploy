@@ -56,6 +56,7 @@
     - { src: "set_root_credentials.ldif.j2", dest: "set_root_credentials.ldif" }
     - { src: "set_loglevel_stats.ldif.j2", dest: "set_loglevel_stats.ldif" }
     - { src: "enable_syncprov.ldif.j2", dest: "enable_syncprov.ldif" }
+    - { src: "enable_dynlist.ldif.j2", dest: "enable_dynlist.ldif" }
     - { src: "enable_memberof.ldif.j2", dest: "enable_memberof.ldif" }
     - { src: "enable_memberof_1mdb.ldif.j2", dest: "enable_memberof_1mdb.ldif" }
 
@@ -79,6 +80,13 @@
   register: result
   failed_when: result.rc not in [0,20,68]
   changed_when: result.rc not in [20,68]
+
+- name: Enable dynamic lists
+  command: ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f "{{ ldap_ldif_dir }}/enable_dynlist.ldif"
+  # return code 20 means entry already exists
+  register: result
+  failed_when: result.rc not in [0,20,68]
+  changed_when: result.rc != 20
 
 - name: Enable memberof/refint overlay
   command: ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f "{{ ldap_ldif_dir }}/enable_memberof.ldif"
@@ -104,20 +112,6 @@
   failed_when: result.rc not in [0,20,68]
   changed_when: result.rc not in [20,68]
   when: memberOfOverlayPresent.rc != 0
-
-- name: Enable memberof overlay
-  command: ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f "{{ ldap_ldif_dir }}/enable_memberof.ldif"
-  # return code 20 means entry already exists
-  register: result
-  failed_when: "result.rc not in [0,20]"
-  changed_when: "result.rc==20"
-
-- name: Configure memberof overlay for 1mdb
-  command: ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f "{{ ldap_ldif_dir }}/enable_memberof_1mdb.ldif"
-  # return code 20 means entry already exists
-  register: result
-  failed_when: "result.rc not in [0,20]"
-  changed_when: "result.rc==20"
 
 - name: Check for presence of eduPerson ldif
   stat:

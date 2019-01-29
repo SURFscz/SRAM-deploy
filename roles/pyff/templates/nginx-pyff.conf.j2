@@ -14,6 +14,17 @@ server {
 	location /favicon.ico {
 		alias {{pyff_favicon}};
 	}
+
+	# temporary fix for a redirection attack as reported by Bharat Thakur <mrnoob790@gmail.com>
+	# proper fix is to be implemented in pyFF; has been confirmed by Leif on the FOG list
+	location /role/idp.ds {
+		if ($arg_return !~* '^https(%3a|:)(%2f|/){2}{{hostnames.proxy}}(%2f|/)' ) { return 400; }
+		proxy_pass         http://127.0.0.1:{{pyff_cherrypy_port}};
+		proxy_redirect     off;
+		proxy_pass_request_headers on;
+		proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+	}
+
 	location / {
 		proxy_pass         http://127.0.0.1:{{pyff_cherrypy_port}};
 		proxy_redirect     off;
