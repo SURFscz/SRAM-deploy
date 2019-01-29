@@ -81,10 +81,11 @@
         - .env
 
     - name: Copy sbs.service in /etc/systemd/system
-      copy:
+      file:
+        path: /etc/systemd/system/sbs.service
+        state: link
         src: "{{ sbs_workdir }}/sbs.service"
-        dest: /etc/systemd/system/sbs.service
-        remote_src: yes
+        force: yes
 
     - name: Build dockers
       shell: /usr/local/bin/docker-compose up --no-start
