@@ -40,6 +40,7 @@
     - name: Download latest Docker Compose
       get_url:
         url: "{{ docker_compose_latest }}"
+        checksum: "{{ docker_compose_checksum }}"
         dest: /usr/local/bin/docker-compose
         mode: 0755
 
