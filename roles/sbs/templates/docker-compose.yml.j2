@@ -25,7 +25,6 @@ services:
       - 8080:8080
     networks:
       - backend
-      - frontend
     restart: unless-stopped
 
   server:
@@ -72,9 +71,8 @@ services:
   client-test:
     image: "{{ sbs_image_repository }}/{{ sbs_client_image }}:{{ sbs_client_version }}"
     ports:
-      - 3000:3000
+    - ${CLIENT_TEST_PORT}:3000
     networks:
-      - frontend
       - backend
     links:
       - server
@@ -86,16 +84,13 @@ services:
       - ./etc/nginx.conf:/etc/nginx/nginx.conf
       - ./log:/var/log/nginx
     ports:
-      - "{{sbs_client_port}}:80"
+    - ${CLIENT_PORT}:80
     networks:
-      - frontend
       - backend
     links:
       - server
     restart: unless-stopped
 
 networks:
-  frontend:
-    driver: bridge
   backend:
     driver: bridge
