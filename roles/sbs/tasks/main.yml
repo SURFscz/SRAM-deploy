@@ -23,8 +23,8 @@
 
     - name: install Docker key
       apt_key:
-      data: "{{ lookup('file', 'docker.gpg') }}"
-      state: present
+        data: "{{ lookup('file', 'docker.gpg') }}"
+        state: present
 
     - name: Add Docker repository
       apt_repository:
