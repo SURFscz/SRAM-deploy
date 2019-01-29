@@ -88,12 +88,6 @@
   failed_when: "result.rc not in [0,20]"
   changed_when: "result.rc==0"
 
-- name: Configure clients
-  include: client.yml
-  with_items: "{{ client_ldap_clients }}"
-  loop_control:
-    loop_var: item_client
-
 - name: Check if the sczGroup schema is already present
   shell: >
     ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// -b 'cn=schema,cn=config' '(cn=*)' dn
@@ -111,12 +105,29 @@
     -D "cn=config" -w "{{ ldap_password }}"
   when: sczGroupTask.stdout == ""
 
+- name: Check memberof/refint overlay for 2mdb
+  shell: >
+    ldapsearch -Q -Y EXTERNAL -H ldapi:///
+    -b 'olcDatabase={2}mdb,cn=config' '(olcOverlay=memberof)' dn
+    | grep -i '^dn: olcOverlay='
+  register:
+    memberOfOverlayPresent
+  failed_when: memberOfOverlayPresent.rc not in [0,1]
+  changed_when: False
+
 - name: Configure memberof overlay for 2mdb
   command: ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f "{{ ldap_ldif_dir }}/enable_memberof_2mdb.ldif"
   # return code 20 means entry already exists
   register: result
   failed_when: "result.rc not in [0,20]"
   changed_when: "result.rc==20"
+  when: memberOfOverlayPresent.rc != 0
+
+- name: Configure clients
+  include: client.yml
+  with_items: "{{ client_ldap_clients }}"
+  loop_control:
+    loop_var: item_client
 
 - name: Copy run_lsc batchfile
   template:

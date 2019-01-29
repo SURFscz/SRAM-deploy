@@ -113,20 +113,6 @@
   changed_when: result.rc not in [20,68]
   when: memberOfOverlayPresent.rc != 0
 
-- name: Enable memberof overlay
-  command: ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f "{{ ldap_ldif_dir }}/enable_memberof.ldif"
-  # return code 20 means entry already exists
-  register: result
-  failed_when: "result.rc not in [0,20]"
-  changed_when: "result.rc==20"
-
-- name: Configure memberof overlay for 1mdb
-  command: ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f "{{ ldap_ldif_dir }}/enable_memberof_1mdb.ldif"
-  # return code 20 means entry already exists
-  register: result
-  failed_when: "result.rc not in [0,20]"
-  changed_when: "result.rc==20"
-
 - name: Check for presence of eduPerson ldif
   stat:
     path: "{{ ldap_schema_dir }}/{{ eduPersonSchema_ldif }}"
