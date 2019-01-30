@@ -2,8 +2,8 @@
 sbs_image_repository: "surfscz"
 sbs_server_image: "sbs-server"
 sbs_client_image: "sbs-client"
-sbs_server_version: "v0.0.1"
-sbs_client_version: "v0.0.1"
+sbs_server_version: "v0.0.2"
+sbs_client_version: "v0.0.2"
 
 sbs_workdir: "/opt/sbs"
 
