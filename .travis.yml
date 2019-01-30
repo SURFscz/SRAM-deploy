@@ -12,7 +12,7 @@ notifications:
     on_success: always
     on_failure: always
     rooms:
-      - surfnet-nl:tEtfF52tuZaz02sdjLJ2XGUY
+      - "surfnet-nl:${SLACK_TOKEN}"
 
 language: python
 python:
