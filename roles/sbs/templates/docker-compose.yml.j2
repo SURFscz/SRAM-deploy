@@ -81,8 +81,8 @@ services:
   client-prod:
     image: "{{ sbs_image_repository }}/{{ sbs_client_image }}:{{ sbs_client_version }}"
     volumes:
-      - ./etc/nginx.conf:/etc/nginx/nginx.conf
-      - ./log:/var/log/nginx
+      - ./etc/httpd.conf:/usr/local/apache2/conf/httpd.conf
+      - ./etc/proxy-html.conf:/usr/local/apache2/conf/extra/proxy-html.conf
     ports:
     - ${CLIENT_PORT}:80
     networks:
