@@ -1,0 +1,32 @@
+Listen 3001
+<VirtualHost *:3001>
+        ServerName docker1.ams.scz.lab.surf.nl
+
+        ServerAdmin webmaster@localhost
+        DocumentRoot /var/www/html
+
+        ErrorLog ${APACHE_LOG_DIR}/error.log
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+        OIDCProviderMetadataURL https://proxy.test.scz.lab.surf.nl/.well-known/openid-configuration
+        OIDCSSLValidateServer Off
+        OIDCClientID sbs-server
+        OIDCClientSecret test
+        OIDCResponseType "code"
+        #OIDCResponseType "code id_token"
+        #OIDCResponseMode "query"
+        #OIDCResponseMode "fragment"
+        OIDCScope "openid email profile"
+        OIDCAuthRequestParams claims={"userinfo":{"edumember_is_member_of":null,"schac_home_organisation":null,"eduperson_affiliation":null,"nickname":null,"name":null,"cmuid":null,"email":null,"family_name":null,"eppn":null,"address":{"street_address":null}}}
+
+        OIDCRedirectURI https://sbs.test.scz.lab.surf.nl/redirect_uri
+        OIDCCryptoPassphrase randompassword
+
+        ProxyRequests Off
+        <LocationMatch ^/>
+           AuthType openid-connect
+           Require valid-user
+           ProxyPassMatch http://localhost:8321
+           ProxyPassReverse http://localhost:8321
+        </LocationMatch>
+</VirtualHost>

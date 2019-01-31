@@ -10,6 +10,8 @@
           - curl
           - gnupg2
           - software-properties-common
+          - apache2
+          - libapache2-mod-auth-openidc
 
     - name: Remove any existing Docker packages
       apt:
