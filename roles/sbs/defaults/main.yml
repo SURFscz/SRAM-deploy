@@ -1,16 +1,11 @@
 ---
 sbs_image_repository: "surfscz"
 sbs_server_image: "sbs-server"
-sbs_client_image: "sbs-client"
-sbs_server_version: "v0.0.2"
-sbs_client_version: "v0.0.2"
+sbs_server_version: "v0.0.3"
 
 sbs_workdir: "/opt/sbs"
 
-sbs_client_port: 8321
-sbs_client_test_port: 3000
 sbs_db_name: "sbs"
-sbs_testdb_name: "sbs_test"
 sbs_db_user: "sbs"
 sbs_db_host: "db"
 
@@ -19,9 +14,10 @@ sbs_api_user: "sysadmin"
 sbs_mail_host: "localhost"
 sbs_mail_port: "1025"
 
-sbs_base_url: "http://docker.scz-vm.net:8321"
+sbs_server_port: 8321
+sbs_base_url: "http://docker.scz-vm.net"
 
-sbs_admin_users: [uid: "urn:admin", uid: "urn:john"]
+sbs_admin_users: "urn:john"
 
 docker_compose_latest: |
   https://github.com/docker/compose/releases/download/1.23.2/docker-compose-Linux-x86_64

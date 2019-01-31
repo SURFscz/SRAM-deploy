@@ -69,8 +69,7 @@
         - etc/config.env
         - etc/init.sql
         - etc/mysql.cnf
-        - etc/httpd.conf
-        - etc/proxy-html.conf
+        - etc/nginx.conf
 
     - name: Copy sbs.service file from template
       template:
