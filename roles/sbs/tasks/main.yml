@@ -62,7 +62,7 @@
         - log
         - data
 
-    - name: Copy docker_compose.yml and .env
+    - name: Copy files from /etc
       copy:
         src: "{{ item }}"
         dest: "{{ sbs_workdir }}/{{ item }}"
@@ -73,7 +73,7 @@
         - etc/mysql.cnf
         - etc/nginx.conf
 
-    - name: Copy sbs.service file from template
+    - name: Copy files from template
       template:
         src: "{{ item }}.j2"
         dest: "{{ sbs_workdir }}/{{ item }}"
@@ -93,5 +93,11 @@
       shell: /usr/local/bin/docker-compose up --no-start
       args:
         chdir: "{{ sbs_workdir }}"
+
+    - name: Configure Apache vhost
+      template:
+        src: sbs.conf.j2
+        dest: /etc/apache2/sites-enabled/sbs.conf
+      notify: restart Apache
 
   when: sbs_enabled

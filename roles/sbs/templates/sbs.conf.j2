@@ -1,6 +1,6 @@
-Listen 3001
-<VirtualHost *:3001>
-        ServerName docker1.ams.scz.lab.surf.nl
+Listen {{ sbs_server_port }}
+<VirtualHost *:{{ sbs_server_port }}>
+        ServerName {{ ansible_hostname }}
 
         ServerAdmin webmaster@localhost
         DocumentRoot /var/www/html
@@ -8,25 +8,25 @@ Listen 3001
         ErrorLog ${APACHE_LOG_DIR}/error.log
         CustomLog ${APACHE_LOG_DIR}/access.log combined
 
-        OIDCProviderMetadataURL https://proxy.test.scz.lab.surf.nl/.well-known/openid-configuration
+        OIDCProviderMetadataURL https://{{ hostnames.proxy }}/.well-known/openid-configuration
         OIDCSSLValidateServer Off
-        OIDCClientID sbs-server
-        OIDCClientSecret test
+        OIDCClientID {{ sbs_client_id }}
+        OIDCClientSecret {{ sbs_client_secret }}
         OIDCResponseType "code"
         #OIDCResponseType "code id_token"
         #OIDCResponseMode "query"
         #OIDCResponseMode "fragment"
         OIDCScope "openid email profile"
-        OIDCAuthRequestParams claims={"userinfo":{"edumember_is_member_of":null,"schac_home_organisation":null,"eduperson_affiliation":null,"nickname":null,"name":null,"cmuid":null,"email":null,"family_name":null,"eppn":null,"address":{"street_address":null}}}
+        OIDCAuthRequestParams claims={"userinfo":{"edumember_is_member_of":null,"schac_home_organisation":null,"eduperson_affiliation":null,"nickname":null,"name":null,"cmuid":null,"email":null,"family_name":null,"eppn":null}}
 
-        OIDCRedirectURI https://sbs.test.scz.lab.surf.nl/redirect_uri
+        OIDCRedirectURI {{ sbs_base_url }}redirect_uri
         OIDCCryptoPassphrase randompassword
 
         ProxyRequests Off
         <LocationMatch ^/>
            AuthType openid-connect
            Require valid-user
-           ProxyPassMatch http://localhost:8321
-           ProxyPassReverse http://localhost:8321
+           ProxyPassMatch http://localhost:{{ docker_ports.sbs }}
+           ProxyPassReverse http://localhost:{{ docker_ports.sbs }}
         </LocationMatch>
 </VirtualHost>

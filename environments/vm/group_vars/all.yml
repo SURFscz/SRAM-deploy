@@ -108,5 +108,9 @@ comanage_proxy_attribute: "cmuid"
 php_debug: true
 php_xdebug_host: "{{iprange.bastion}}"
 
+# Docker ports
+docker_ports:
+  sbs: 8321
+
 # Enable SBS deploy
 sbs_enabled: true
