@@ -40,4 +40,5 @@
             ip: "{{ ansible_default_ipv4.address }}"
             dns: ""
             port: 10050
+      become: no
   when: zabbix_enabled
