@@ -7,7 +7,7 @@ for research collaborations.  It is a middleware solution for
 researchers, which allows them to
 
 - log in using credentials from their university, as well as support (international) 'guests';
-- handle (Identity and Access Management (IAM)) for their collaborations;
+- handle (Identity and) Access Management (IAM) for their collaborations;
 - allow members of their collaborations easy access to services (like web
   applications, databases, storage solutions, compute facilities, etc.);
 
