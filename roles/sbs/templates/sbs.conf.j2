@@ -23,10 +23,20 @@ Listen {{ sbs_server_port }}
         OIDCCryptoPassphrase randompassword
 
         ProxyRequests Off
+
         <LocationMatch ^/>
+           OIDCUnAuthAction pass
            AuthType openid-connect
            Require valid-user
            ProxyPassMatch http://localhost:{{ docker_ports.sbs }}
            ProxyPassReverse http://localhost:{{ docker_ports.sbs }}
         </LocationMatch>
+        <LocationMatch ^/login>
+           OIDCUnAuthAction auth
+           AuthType openid-connect
+           Require valid-user
+           ProxyPassMatch http://localhost:{{ docker_ports.sbs }}
+           ProxyPassReverse http://localhost:{{ docker_ports.sbs }}
+        </LocationMatch>
+
 </VirtualHost>
