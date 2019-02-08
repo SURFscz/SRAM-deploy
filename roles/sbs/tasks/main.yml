@@ -94,6 +94,15 @@
       args:
         chdir: "{{ sbs_workdir }}"
 
+    - name: enable Apache modules
+      apache2_module:
+        name: "{{item}}"
+        state: present
+      with_items:
+        - auth_openidc
+        - proxy
+        - proxy_http
+
     - name: Configure Apache vhost
       template:
         src: sbs.conf.j2
