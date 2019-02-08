@@ -108,6 +108,9 @@ comanage_proxy_attribute: "cmuid"
 php_debug: true
 php_xdebug_host: "{{iprange.bastion}}"
 
+sbs_client_id: sbs-server
+sbs_base_url: "https://{{hostnames.sbs}}/"
+
 # Docker ports
 docker_ports:
   sbs: 8321

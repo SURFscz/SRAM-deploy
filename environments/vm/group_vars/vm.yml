@@ -14,6 +14,7 @@ hostnames:
   comanage: comanage.{{base_domain}}
   ldap:     ldap.{{base_domain}}
   meta:     meta.{{base_domain}}
+  sbs:      sbs.{{base_domain}}
   oidc:     oidc-test.{{base_domain}}
   sp:       sp-test.{{base_domain}}
   idp:      idp-test.{{base_domain}}
