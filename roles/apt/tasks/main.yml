@@ -34,12 +34,14 @@
     upgrade: dist
     cache_valid_time: 86400
     update_cache: yes
+    autoclean: yes
   when: "environment_name != 'vm'"
 
 - name: remove unneccessary packages
   apt:
     state: absent
     purge: yes
+    autoremove: yes
     name:
       - cloud-init
 
