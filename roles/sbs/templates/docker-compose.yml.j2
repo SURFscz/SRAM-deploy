@@ -1,4 +1,4 @@
-version: "2"
+version: "2.1"
 
 services:
 
@@ -16,16 +16,11 @@ services:
     networks:
       - backend
     restart: unless-stopped
-
-  db_front:
-    image: adminer
-    links:
-      - db
-    ports:
-      - 8080:8080
-    networks:
-      - backend
-    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mysqladmin", "-uroot", "-p${SECRET}", "ping"]
+      interval: 5s
+      timeout: 60s
+      retries: 30
 
   server:
     image: "{{ sbs_image_repository }}/{{ sbs_server_image }}:{{ sbs_server_version }}"
@@ -36,7 +31,8 @@ services:
       - ./etc/nginx.conf:/etc/nginx/nginx.conf
       - ./log:/var/log/nginx
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     networks:
       - frontend
       - backend
@@ -59,8 +55,6 @@ services:
       BASE_URL: ${BASE_URL}
 
       ADMIN_USERS: ${ADMIN_USERS}
-
-      PROFILE: local
     command:
       - /bin/bash
       - -c
@@ -69,7 +63,7 @@ services:
         envsubst < /tmp/config.env > server/config/test_config.yml
         envsubst < /tmp/alembic.env > server/migrations/alembic.ini
         echo "Waiting for Database..."
-        nginx && python -m server
+        nginx && uwsgi --socket localhost:8080 --wsgi-file /opt/app/server/__main__.py --callable app --processes 4 --threads 2
     restart: unless-stopped
 
 networks:
