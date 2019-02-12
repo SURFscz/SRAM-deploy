@@ -17,7 +17,7 @@ services:
       - backend
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "mysqladmin", "-uroot", "-p${SECRET}", "ping"]
+      test: ["CMD", "mysqladmin", "-uroot", "-p${DB_ROOT_PASSWORD}", "ping"]
       interval: 5s
       timeout: 60s
       retries: 30
@@ -37,7 +37,7 @@ services:
       - frontend
       - backend
     ports:
-      - ${SERVER_PORT}:80
+      - {{ sbs_server_port }}:80
     command:
       - /bin/bash
       - -c

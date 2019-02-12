@@ -19,5 +19,5 @@ base_url: {{ sbs_base_url }}
 
 admin_users:
   {% for admin_user in sbs_admin_users %}
-  - uid: "{{ user.uid }}"
+  - uid: "{{ admin_user.uid }}"
   {% endfor %}

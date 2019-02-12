@@ -79,7 +79,7 @@
         - docker-compose.yml
         - sbs.service
         - alembic.ini
-        - config.yml.j2
+        - config.yml
         - .env
 
     - name: Copy sbs.service in /etc/systemd/system
