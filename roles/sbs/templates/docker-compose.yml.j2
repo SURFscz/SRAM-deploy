@@ -26,8 +26,8 @@ services:
     image: "{{ sbs_image_repository }}/{{ sbs_server_image }}:{{ sbs_server_version }}"
     volumes:
       - ./log:/opt/app/log
-      - .config.yml:/opt/app/server/config/config.yml
-      - .alembic.ini:/opt/app/server/migrations/alembic.ini
+      - ./config.yml:/opt/app/server/config/config.yml
+      - ./alembic.ini:/opt/app/server/migrations/alembic.ini
       - ./etc/nginx.conf:/etc/nginx/nginx.conf
       - ./log:/var/log/nginx
     depends_on:
@@ -37,7 +37,7 @@ services:
       - frontend
       - backend
     ports:
-      - {{ sbs_server_port }}:80
+      - {{ docker_ports.sbs }}:80
     command:
       - /bin/bash
       - -c
