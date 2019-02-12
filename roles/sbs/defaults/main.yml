@@ -1,15 +1,13 @@
 ---
 sbs_image_repository: "surfscz"
 sbs_server_image: "sbs-server"
-sbs_server_version: "harries-docker"
+sbs_server_version: "master"
 
 sbs_workdir: "/opt/sbs"
 
 sbs_db_name: "sbs"
 sbs_db_user: "sbs"
 sbs_db_host: "db"
-
-sbs_api_user: "sysadmin"
 
 sbs_mail_host: "localhost"
 sbs_mail_port: "1025"
@@ -19,8 +17,6 @@ sbs_base_url: "http://docker.scz-vm.net"
 
 docker_ports:
   sbs: 8321
-
-sbs_admin_users: "urn:john"
 
 docker_compose_latest: |
   https://github.com/docker/compose/releases/download/1.23.2/docker-compose-Linux-x86_64

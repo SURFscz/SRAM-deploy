@@ -35,7 +35,7 @@ script_location = migrations
 # are written from script.py.mako
 # output_encoding = utf-8
 
-sqlalchemy.url =mysql+pymysql://${DB_NAME}:${DB_USER}@${DB_HOST}/${DB_PASS}"
+sqlalchemy.url = mysql+pymysql://{{ sbs_db_user }}:{{ sbs_db_password }}@{{ sbs_db_host }}/{{ sbs_db_name }}
 
 # Logging configuration
 [loggers]
@@ -48,19 +48,16 @@ keys = console
 keys = generic
 
 [logger_root]
-#level = WARN
 level = DEBUG
 handlers = console
 qualname =
 
 [logger_sqlalchemy]
-#level = WARN
 level = DEBUG
 handlers =
 qualname = sqlalchemy.engine
 
 [logger_alembic]
-#level = INFO
 level = DEBUG
 handlers =
 qualname = alembic

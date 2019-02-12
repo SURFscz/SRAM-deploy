@@ -67,8 +67,6 @@
         src: "{{ item }}"
         dest: "{{ sbs_workdir }}/{{ item }}"
       with_items:
-        - etc/alembic.env
-        - etc/config.env
         - etc/init.sql
         - etc/mysql.cnf
         - etc/nginx.conf
@@ -80,6 +78,8 @@
       with_items:
         - docker-compose.yml
         - sbs.service
+        - alembic.ini
+        - config.yml.j2
         - .env
 
     - name: Copy sbs.service in /etc/systemd/system
