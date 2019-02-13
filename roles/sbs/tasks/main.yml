@@ -78,6 +78,7 @@
       with_items:
         - docker-compose.yml
         - sbs.service
+        - disclaimer.css
         - alembic.ini
         - config.yml
         - .env
