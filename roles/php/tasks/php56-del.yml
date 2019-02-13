@@ -33,4 +33,3 @@
   file:
     path: "/etc/php/5.6"
     state: absent
-

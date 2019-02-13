@@ -25,13 +25,12 @@
 
     - name: Ensure that packages are installed
       apt:
-        name: "{{ item }}"
+        name:
+          - filebeat
+          - collectd
+          - liboping0
         state: present
         install_recommends: no
-      with_items:
-        - filebeat
-        - collectd
-        - liboping0
 
     - name: Create generic filebeat conf
       template: >

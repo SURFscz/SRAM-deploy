@@ -36,6 +36,7 @@
     - { role: mail,          tags: ['common','mail']     }
     - { role: syslog-client, tags: ['common','syslog']   }
     - { role: backups,       tags: ['common','backups']  }
+    - { role: zabbix-agent,  tags: ['common','zabbix']   }
 
 - hosts: mgnt1
   roles:

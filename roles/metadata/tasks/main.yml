@@ -1,11 +1,10 @@
 ---
 - name: Ensure that packages are installed
   apt:
-    name: "{{ item }}"
+    name:
+      - xalan
+      - wget
     state: present
-  with_items:
-    - xalan
-    - wget
 
 - name: Remove obsolete cron file
   file:

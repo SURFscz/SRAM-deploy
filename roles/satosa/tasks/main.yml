@@ -1,20 +1,19 @@
 ---
 - name: Ensure that packages are installed
   apt:
-    name: "{{ item }}"
+    name:
+      - build-essential
+      - git
+      - xmlsec1
+      - libffi-dev
+      - python3.5
+      - python-dev
+      - python-setuptools
+      - python3-pip
+      - mongodb
+      - mongodb-server
+      - libmariadbclient-dev
     state: present
-  with_items:
-    - build-essential
-    - git
-    - xmlsec1
-    - libffi-dev
-    - python3.5
-    - python-dev
-    - python-setuptools
-    - python3-pip
-    - mongodb
-    - mongodb-server
-    - libmariadbclient-dev
 
 - name: install python3 virtualenv
   pip:
@@ -120,7 +119,7 @@
         dest: "{{ satosa_env_dir }}/plugins/micro_services/custom_uid.yaml"
 
     - name: Create static directory
-      file: path="{{ satosa_env_dir }}/static" state=directory mode=0755
+      file: path="{{ satosa_static_dir }}" state=directory mode=0755
 
     - name: Create custom_alias.yaml definition
       template:
@@ -135,7 +134,7 @@
     - name: Copy error and info pages to static alias directory
       copy:
         src: "{{ item }}"
-        dest: "{{ satosa_env_dir }}/static/{{ item }}"
+        dest: "{{ satosa_static_dir }}/{{ item }}"
       with_items:
         - info
         - error
@@ -143,10 +142,12 @@
         - r_and_s_failed
 
     - name: Create MongoDB database satosa with collection clients
-      shell: mongo satosa --eval "db.createCollection('clients')"
+      shell: mongo satosa --quiet --eval "db.createCollection('clients')"
+      register: result
+      changed_when: (result.stdout | from_json).ok == 1
 
-    - name: Create var logging directory
-      file: path="{{ satosa_env_dir }}/var" state=directory mode=0755
+    - name: Create logging directory
+      file: path="{{ satosa_log_dir }}" state=directory mode=0755
 
     - name: Create certs directory
       file: path="{{ satosa_env_dir }}/certs" state=directory mode=0755
@@ -207,15 +208,15 @@
         - shibboleth.py
 
     - name: Create metadata directory
-      file: path="{{ satosa_env_dir }}/metadata" state=directory mode=0755
+      file: path="{{ satosa_metadata_dir }}" state=directory mode=0755 owner=satosa
 
-    - name: Create clients.d directory
-      file: path="{{ satosa_env_dir }}/oidc_clients" state=directory mode=0755
+    - name: Create client directory
+      file: path="{{ satosa_client_dir }}" state=directory mode=0755 owner=satosa
 
     - name: Copy clients.json example file
       template:
         src: clients.json.j2
-        dest: "{{ satosa_env_dir }}/oidc_clients/default.json"
+        dest: "{{ satosa_client_dir }}/default.json"
         mode: 0755
 
     - name: Create sync_clients script
@@ -225,20 +226,20 @@
         mode: 0755
 
     - name: Insert OIDC clients
-      shell: ./sync_clients oidc_clients
-      args:
-        chdir: "{{ satosa_env_dir }}"
+      shell: "{{ satosa_env_dir }}/sync_clients {{ satosa_client_dir }}"
+      changed_when: false
 
     - name: Copy metadata generating script
-      copy:
-        src: gen_metadata
+      template:
+        src: gen_metadata.j2
         dest: "{{ satosa_env_dir }}/gen_metadata"
         mode: 0755
 
     - name: Generate metadata
-      shell: ./gen_metadata
+      shell: "{{ satosa_env_dir }}/gen_metadata {{ satosa_metadata_dir }}"
       args:
         chdir: "{{ satosa_env_dir }}"
+      changed_when: false
 
   become: "yes"
   become_user: satosa
@@ -285,3 +286,4 @@
 
 - name: restart SATOSA
   systemd: daemon_reload=yes name=satosa state=restarted enabled=yes
+  changed_when: false

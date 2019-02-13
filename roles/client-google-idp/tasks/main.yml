@@ -1,10 +1,9 @@
 ---
 - name: Ensure that packages are installed
   apt:
-    name: "{{ item }}"
+    name:
+      - jq
     state: present
-  with_items:
-    - jq
 
 - name: Add Google IdP vhost
   template:

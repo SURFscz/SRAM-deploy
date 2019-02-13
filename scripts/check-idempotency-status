@@ -88,6 +88,9 @@ for role, status in stats.items():
         continue
     if status['changed'] == 0:
         cprint("GOOD", Color.F_Green)
+        if role in WHITELIST:
+            allowed = WHITELIST[role]
+            cprint(" (but {allowed} were allowed, adjust whitelist)", Color.F_Cyan)
     else:
         changed = status['changed']
         if role in WHITELIST:

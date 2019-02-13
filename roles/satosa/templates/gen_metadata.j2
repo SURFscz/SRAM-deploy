@@ -1,0 +1,5 @@
+#!/bin/sh
+. "{{ satosa_env_dir }}/bin/activate"
+export LC_ALL=C.UTF-8
+export LANG=C.UTF-8
+"{{ satosa_env_dir }}/bin/satosa-saml-metadata" --split-module proxy_conf.yaml "{{ satosa_env_dir }}/certs/signing.key" "{{ satosa_env_dir }}/certs/signing.crt" --dir $@

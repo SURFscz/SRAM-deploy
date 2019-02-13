@@ -117,3 +117,7 @@ docker_ports:
 
 # Enable SBS deploy
 sbs_enabled: true
+
+# No Zabbix on VM/Travis
+zabbix_enabled: false
+
