@@ -1,0 +1,16 @@
+diff -ur user_saml.org/lib/UserBackend.php user_saml/lib/UserBackend.php
+--- user_saml.org/lib/UserBackend.php   2019-02-14 15:50:31.010647946 +0100
++++ user_saml/lib/UserBackend.php       2019-02-14 15:51:18.426430212 +0100
+@@ -602,11 +602,8 @@
+		$value = array();
+		foreach($keys as $key) {
+			if (isset($attributes[$key])) {
+-				if (is_array($attributes[$key])) {
+-					$value = array_merge($value, array_values($attributes[$key]));
+-				} else {
+-					$value[] = $attributes[$key];
+-				}
++				$a = explode(";", $attributes[$key]);
++				$value = array_merge($value, array_values($a));
+			}
+		}

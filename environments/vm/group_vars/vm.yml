@@ -24,6 +24,8 @@ hostnames:
   orcid:    orcid-test.{{base_domain}}
   orcid_sb: orcid-sb-test.{{base_domain}}
   ms:       ms-test.{{base_domain}}
+  nextcloud: nextcloud.{{base_domain}}
+
 
 idp_test_port: 81
 sp_test_port: 82

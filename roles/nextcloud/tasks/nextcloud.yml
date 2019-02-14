@@ -32,8 +32,15 @@
   - name: install nextcloud user_saml plugin
     git:
       repo: "https://github.com/nextcloud/user_saml.git"
-      version: "v2.1.0"
+      version: "{{ nextcloud_user_saml_version }}"
       dest: "{{nextcloud_dir}}/custom_apps/user_saml"
+      update: no
+
+  - name: patch user_saml plugin
+    patch:
+      src: user_saml.patch
+      basedir: "{{nextcloud_dir}}/custom_apps/user_saml"
+      strip: 1
 
   - name: copy nextcloud config
     copy:
@@ -56,30 +63,23 @@
   become: yes
   become_user: "www-data"
 
-# can't use ansible module because there is no way to install up to date python docker modules
-#- name: run docker-compose
-  #command: "docker-compose up --no-start"
-  #args:
-    #chdir: "{{nextcloud_dir}}"
-  #register: result
-  #changed_when: "'Build' in result.stderr or 'Create' in result.stderr or 'Pull' in result.stderr"
+- name: run docker-compose
+  command: "/usr/local/bin/docker-compose up --no-start"
+  args:
+    chdir: "{{nextcloud_dir}}"
 
-#- debug: var=result
+- name: install nextcloud service file
+  template:
+    src: nextcloud.service.j2
+    dest: /etc/systemd/system/nextcloud.service
 
-#- name: install nextcloud service file
-  #template:
-    #src: nextcloud.service.j2
-    #dest: /etc/systemd/system/nextcloud.service
-  #register: result
+- name: reload systemd
+  systemd:
+    daemon_reload: yes
 
-#- name: reload systemd
-  #systemd:
-    #daemon_reload: yes
-  #when: result.changed
-
-#- name: start nextcloud
-  #systemd:
-    #name: nextcloud.service
-    #state: started
-    #enabled: yes
+- name: start nextcloud
+  systemd:
+    name: nextcloud.service
+    state: started
+    enabled: yes
 

@@ -38,10 +38,10 @@
     mode: "{{ item.mode }}"
   with_items: "{{ auth_mellon_templates }}"
 
-#- name: retrieve Satosa IdP metadata
-  #get_url:
-    #url: https://
-    #dest: "{{ mellon_dir }}/satosa.xml"
+- name: retrieve Satosa IdP metadata
+  get_url:
+    url: "https://{{ hostnames.meta }}/proxy_idp.xml"
+    dest: "{{ mellon_dir }}/proxy_idp.xml"
 
 - name: Enable modules
   apache2_module:

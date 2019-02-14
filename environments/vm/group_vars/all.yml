@@ -127,8 +127,9 @@ sbs_base_url: "https://{{hostnames.sbs}}/"
 php_debug: true
 php_xdebug_host: "{{iprange.bastion}}"
 
-# Docker ports
 docker_ports:
+  nextcloud: 8001
+  nextcloud: 8001
   sbs: 8321
 
 # Enable SBS deploy
