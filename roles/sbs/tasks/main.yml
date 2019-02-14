@@ -64,7 +64,6 @@
       with_items:
         - etc/init.sql
         - etc/mysql.cnf
-        - etc/nginx.conf
 
     - name: Copy files from template
       template:
