@@ -1,0 +1,23 @@
+---
+sbs_image_repository: "surfscz"
+sbs_server_image: "sbs-server"
+sbs_server_version: "master"
+
+sbs_workdir: "/opt/sbs"
+
+sbs_db_name: "sbs"
+sbs_db_user: "sbs"
+sbs_db_host: "db"
+
+sbs_mail_host: "localhost"
+sbs_mail_port: "1025"
+
+sbs_server_port: 3001
+sbs_base_url: "http://docker.scz-vm.net"
+
+docker_ports:
+  sbs: 8321
+
+docker_compose_latest: |
+  https://github.com/docker/compose/releases/download/1.23.2/docker-compose-Linux-x86_64
+docker_compose_checksum: "sha256:4d618e19b91b9a49f36d041446d96a1a0a067c676330a4f25aca6bbd000de7a9"

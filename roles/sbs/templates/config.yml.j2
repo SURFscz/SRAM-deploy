@@ -1,0 +1,23 @@
+database:
+  uri: "mysql+pymysql://{{ sbs_db_user }}:{{ sbs_db_password }}@{{ sbs_db_host }}/{{ sbs_db_name }}"
+
+secret_key: {{ sbs_db_secret }}
+
+# Valid scopes are "READ" and "WRITE"
+api_users:
+  {% for user in sbs_api_users %}
+  - name: "{{ user.name }}"
+      password: "{{ user.password }}"
+      scopes: [ {{ user.scopes|join(', ') }} ]
+  {% endfor %}
+
+mail:
+  host: {{ mail.relay_host }}
+  port: 25
+
+base_url: {{ sbs_base_url }}
+
+admin_users:
+  {% for admin_user in sbs_admin_users %}
+  - uid: "{{ admin_user.uid }}"
+  {% endfor %}

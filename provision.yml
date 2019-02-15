@@ -103,6 +103,10 @@
     - { role: http_dummy,  tags: ['meta','http']     }
     - { role: metadata,    tags: ['meta','metadata'] }
 
+- hosts: docker
+  roles:
+    - { role: sbs,     tags: ['sbs']  }
+
 - hosts: sandbox1
   roles:
     - { role: pam_websso,         tags: ['client','pam-websso'   ] }

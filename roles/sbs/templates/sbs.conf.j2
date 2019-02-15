@@ -1,0 +1,42 @@
+Listen {{ sbs_server_port }}
+<VirtualHost *:{{ sbs_server_port }}>
+        ServerName {{ ansible_hostname }}
+
+        ServerAdmin webmaster@localhost
+        DocumentRoot /var/www/html
+
+        ErrorLog ${APACHE_LOG_DIR}/error.log
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+        OIDCProviderMetadataURL https://{{ hostnames.proxy }}/.well-known/openid-configuration
+        OIDCSSLValidateServer Off
+        OIDCClientID {{ sbs_client_id }}
+        OIDCClientSecret {{ sbs_client_secret }}
+        OIDCResponseType "code"
+        #OIDCResponseType "code id_token"
+        #OIDCResponseMode "query"
+        #OIDCResponseMode "fragment"
+        OIDCScope "openid email profile"
+        OIDCAuthRequestParams claims={"userinfo":{"edumember_is_member_of":null,"schac_home_organisation":null,"eduperson_affiliation":null,"nickname":null,"name":null,"cmuid":null,"email":null,"family_name":null,"eppn":null}}
+
+        OIDCRedirectURI {{ sbs_base_url }}redirect_uri
+        OIDCCryptoPassphrase randompassword
+
+        ProxyRequests Off
+
+        <LocationMatch ^/>
+           OIDCUnAuthAction pass
+           AuthType openid-connect
+           Require valid-user
+           ProxyPassMatch http://localhost:{{ docker_ports.sbs }}
+           ProxyPassReverse http://localhost:{{ docker_ports.sbs }}
+        </LocationMatch>
+        <LocationMatch ^/login>
+           OIDCUnAuthAction auth
+           AuthType openid-connect
+           Require valid-user
+           ProxyPassMatch http://localhost:{{ docker_ports.sbs }}
+           ProxyPassReverse http://localhost:{{ docker_ports.sbs }}
+        </LocationMatch>
+
+</VirtualHost>

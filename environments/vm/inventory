@@ -25,6 +25,9 @@ client.vm.scz-vm.net ansible_host=172.20.1.25
 [vm-sandbox1]
 sandbox1.vm.scz-vm.net ansible_host=172.20.1.26
 
+[vm-docker]
+docker.vm.scz-vm.net ansible_host=192.168.56.101
+
 [vm:children]
 vm-lb
 vm-proxy
@@ -33,6 +36,7 @@ vm-ldap
 vm-meta
 vm-client
 vm-sandbox1
+vm-docker
 
 ##########################################
 # role-based groups
@@ -56,6 +60,9 @@ vm-client
 
 [sandbox1:children]
 vm-sandbox1
+
+[docker:children]
+vm-docker
 ##########################################
 # all
 [all:children]

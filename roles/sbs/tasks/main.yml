@@ -1,0 +1,113 @@
+---
+
+- name: install sbs
+  block:
+    - name: Install required packages
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - gnupg2
+          - software-properties-common
+          - apache2
+          - libapache2-mod-auth-openidc
+
+    - name: Remove any existing Docker packages
+      apt:
+        state: absent
+        name:
+          - docker
+          - docker-engine
+          - docker.io
+          - containerd
+          - runc
+
+    - name: install Docker key
+      apt_key:
+        data: "{{ lookup('file', 'docker.gpg') }}"
+        state: present
+
+    - name: Add Docker repository
+      apt_repository:
+        repo: "deb [arch=amd64] https://download.docker.com/linux/debian stretch stable"
+        state: present
+
+    - name: Install docker-ce packages
+      apt:
+        update_cache: yes
+        name:
+          - docker-ce
+
+    - name: Download latest Docker Compose
+      get_url:
+        url: "{{ docker_compose_latest }}"
+        checksum: "{{ docker_compose_checksum }}"
+        dest: /usr/local/bin/docker-compose
+        mode: 0755
+
+    - name: Create SBS docker compose directory
+      file:
+        path: "{{ sbs_workdir }}"
+        state: directory
+        mode: 0755
+
+    - name: Create SBS docker compose directories
+      file:
+        path: "{{ sbs_workdir }}/{{ item }}"
+        state: directory
+        mode: 0755
+      with_items:
+        - etc
+        - log
+        - data
+
+    - name: Copy files from /etc
+      copy:
+        src: "{{ item }}"
+        dest: "{{ sbs_workdir }}/{{ item }}"
+      with_items:
+        - etc/init.sql
+        - etc/mysql.cnf
+        - etc/nginx.conf
+
+    - name: Copy files from template
+      template:
+        src: "{{ item }}.j2"
+        dest: "{{ sbs_workdir }}/{{ item }}"
+      with_items:
+        - docker-compose.yml
+        - sbs.service
+        - disclaimer.css
+        - alembic.ini
+        - config.yml
+        - .env
+
+    - name: Copy sbs.service in /etc/systemd/system
+      file:
+        path: /etc/systemd/system/sbs.service
+        state: link
+        src: "{{ sbs_workdir }}/sbs.service"
+        force: yes
+
+    - name: Build dockers
+      shell: /usr/local/bin/docker-compose up --no-start
+      args:
+        chdir: "{{ sbs_workdir }}"
+
+    - name: enable Apache modules
+      apache2_module:
+        name: "{{item}}"
+        state: present
+      with_items:
+        - auth_openidc
+        - proxy
+        - proxy_http
+
+    - name: Configure Apache vhost
+      template:
+        src: sbs.conf.j2
+        dest: /etc/apache2/sites-enabled/sbs.conf
+      notify: restart Apache
+
+  when: sbs_enabled

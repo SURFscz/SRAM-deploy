@@ -1,0 +1,16 @@
+[Unit]
+Description=SBS
+After=syslog.target network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory={{ sbs_workdir }}
+ExecStart=@/usr/local/bin/docker-compose docker-sbs up
+Restart=no
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=sbs
+
+[Install]
+WantedBy=multi-user.target
