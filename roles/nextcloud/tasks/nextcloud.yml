@@ -5,7 +5,7 @@
       - sqlite3
       - python-docker
 
-- name: create directory {{item}}
+- name: create directory
   file:
     dest: "{{item}}"
     state: directory
@@ -29,6 +29,7 @@
     dest: "{{nextcloud_dir}}/{{item}}"
   with_items:
     - docker-compose.yml
+    - config/config.php
 
 - name: copy nextcloud database
   copy:
@@ -49,11 +50,6 @@
       basedir: "{{nextcloud_dir}}/custom_apps/user_saml"
       strip: 1
 
-  - name: copy nextcloud config
-    copy:
-      src: "config.php"
-      dest: "{{nextcloud_dir}}/config/config.php"
-
   - name: make data dir a data dir
     file:
       path: "{{nextcloud_dir}}/data/.ocdata"
@@ -70,6 +66,14 @@
   become: yes
   become_user: "www-data"
 
+- name: Enable modules
+  apache2_module:
+    state: present
+    name: "{{ item }}"
+  with_items:
+    - dav
+  notify:
+    - restart apache
 
 - name: Pull recent nextcloud image
   docker_image:

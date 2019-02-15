@@ -11,24 +11,42 @@
         SSLCertificateFile    /etc/letsencrypt/live/{{nextcloud_hostname}}/fullchain.pem
         SSLCertificateKeyFile /etc/letsencrypt/live/{{nextcloud_hostname}}/privkey.pem
 
-        <Location />
-                Require valid-user
-                AuthType "Mellon"
+        <Location "/">
+            AuthType "Mellon"
+            Require valid-user
 
-                MellonEnable "auth"
-                MellonVariable "cookie"
-                MellonCookiePath /
-                MellonMergeEnvVars On ";"
+            MellonEnable "info"
+            MellonVariable "cookie"
+            MellonCookiePath /
+            MellonMergeEnvVars On ";"
 
-                MellonSPPrivateKeyFile {{ mellon_dir }}/sp.key
-                MellonSPCertFile {{ mellon_dir }}/sp.crt
+            MellonSPPrivateKeyFile {{ mellon_dir }}/sp.key
+            MellonSPCertFile {{ mellon_dir }}/sp.crt
 
-                MellonIdPMetadataFile {{ mellon_dir }}/proxy_idp.xml
+            MellonIdPMetadataFile {{ mellon_dir }}/proxy_idp.xml
 
-                RequestHeader set MELLON_uid %{MELLON_urn:mace:dir:attribute-def:uid}e
-                RequestHeader set MELLON_isMemberOf %{MELLON_urn:mace:dir:attribute-def:isMemberOf}e
-
-                ProxyPass http://localhost:{{ docker_ports.nextcloud }}/
-                ProxyPassReverse http://localhost:{{ docker_ports.nextcloud }}/
+            RequestHeader set MELLON_uid %{MELLON_urn:mace:dir:attribute-def:uid}e
+            RequestHeader set MELLON_isMemberOf %{MELLON_urn:mace:dir:attribute-def:isMemberOf}e
         </Location>
+
+        <Location "/">
+            <Limit PROPFIND>
+                Require all granted
+                MellonEnable "off"
+            </Limit>
+        </Location>
+
+        <Location "/apps">
+                Require valid-user
+                MellonEnable "auth"
+        </Location>
+
+        <Location "/remote.php/webdav/">
+                MellonEnable "off"
+                Require all granted
+        </Location>
+
+        ProxyRequests Off
+        ProxyPass / http://localhost:{{ docker_ports.nextcloud }}/
+        ProxyPassReverse / http://localhost:{{ docker_ports.nextcloud }}/
 </VirtualHost>
