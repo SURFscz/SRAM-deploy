@@ -1,0 +1,16 @@
+<VirtualHost *:443>
+        ServerName {{pam_hostname}}
+
+        ServerAdmin webmaster@localhost
+        DocumentRoot /var/www/html
+
+        ErrorLog ${APACHE_LOG_DIR}/error.log
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+        SSLEngine on
+        SSLCertificateFile    /etc/letsencrypt/live/{{pam_hostname}}/fullchain.pem
+        SSLCertificateKeyFile /etc/letsencrypt/live/{{pam_hostname}}/privkey.pem
+
+        ProxyPass / http://localhost:{{pam_websso.daemon.ports.clients}}/
+        ProxyPassReverse / http://localhost:{{pam_websso.daemon.ports.clients}}/
+</VirtualHost>

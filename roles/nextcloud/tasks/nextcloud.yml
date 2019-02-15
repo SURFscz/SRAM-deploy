@@ -3,6 +3,7 @@
   apt:
     name:
       - sqlite3
+      - python-docker
 
 - name: create directory {{item}}
   file:
@@ -15,13 +16,19 @@
     - "{{nextcloud_dir}}/custom_apps"
     - "{{nextcloud_dir}}/config"
 
-- name: install docker configuration {{item}}
+- name: install docker configuration
   copy:
     src: "{{item}}"
     dest: "{{nextcloud_dir}}/{{item}}"
   with_items:
-    - docker-compose.yml
     - 000-default.conf
+
+- name: create docker configuration
+  template:
+    src: "{{item}}.j2"
+    dest: "{{nextcloud_dir}}/{{item}}"
+  with_items:
+    - docker-compose.yml
 
 - name: copy nextcloud database
   copy:
@@ -62,6 +69,11 @@
 
   become: yes
   become_user: "www-data"
+
+
+- name: Pull recent nextcloud image
+  docker_image:
+    name: nextcloud:latest
 
 - name: run docker-compose
   command: "/usr/local/bin/docker-compose up --no-start"

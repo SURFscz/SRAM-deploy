@@ -43,6 +43,21 @@
     url: "https://{{ hostnames.meta }}/proxy_idp.xml"
     dest: "{{ mellon_dir }}/proxy_idp.xml"
 
+
+- name: Remove 000-default apache conf
+  file:
+    path: /etc/apache2/sites-enabled/000-default.conf
+    state: absent
+  notify:
+    - restart apache
+
+- name: Enable Let'sEncrypt Alias
+  template:
+    src: letsencrypt.conf.j2
+    dest: /etc/apache2/sites-enabled/000-letsencrypt.conf
+  notify:
+    - restart apache
+
 - name: Enable modules
   apache2_module:
     state: present
@@ -52,5 +67,6 @@
     - proxy
     - proxy_http
     - headers
+    - ssl
   notify:
     - restart apache

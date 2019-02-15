@@ -6,7 +6,7 @@ services:
   nextcloud:
     image: nextcloud
     ports:
-      - 8001:80
+      - {{ docker_ports.nextcloud }}:80
     volumes:
       - ./data:/var/www/html/data
       - ./custom_apps:/var/www/html/custom_apps

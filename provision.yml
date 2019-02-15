@@ -46,10 +46,9 @@
 
 - hosts:
     - lb
-    #- sandbox
   roles:
-    - role: http_nginx
-      tags: ['tls','http_nginx']
+    #- role: http_nginx
+      #tags: ['tls','http_nginx']
     - role: tls_letsencrypt
       tags: ['tls','tls_letsencrypt']
       when: enable_https and not use_fixed_cert
@@ -115,15 +114,18 @@
 - hosts: vm-sandbox
   roles:
     - { role: mod_mellon,         tags: ['sandbox','mod_mellon'   ] }
-    - { role: pam_websso,         tags: ['client','pam-websso'   ] }
+    - { role: pam_websso,         tags: ['client','pam-websso'    ] }
     - { role: nextcloud,          tags: ['sandbox','nextcloud'    ] }
 
 - hosts: sandbox
   roles:
     - { role: mod_mellon,         tags: ['sandbox','mod_mellon'   ] }
+    - { role: tls_letsencrypt,    tags: ['tls','tls_letsencrypt'],     when: enable_https and not use_fixed_cert }
+    - { role: tls_fixed_cert,     tags: ['tls','tls_fixedcert'],       when: enable_https and use_fixed_cert }
     - { role: docker,             tags: ['sandbox','docker'       ] }
     - { role: pam_websso_daemon,  tags: ['sandbox','websso-daemon'] }
     - { role: wordpress,          tags: ['sandbox','wordpress'    ] }
+    - { role: nextcloud,          tags: ['sandbox','nextcloud'    ] }
     - { role: ssh_pam,            tags: ['sandbox','ssh'          ] }
     - { role: tls_letsencrypt,    tags: ['sandbox','tls','tls_letsencrypt'],  when: enable_https and not use_fixed_cert }
     - { role: tls_fixed_cert,     tags: ['sandbox','tls','tls_fixedcert'],    when: enable_https and use_fixed_cert }

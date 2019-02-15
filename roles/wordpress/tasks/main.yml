@@ -2,5 +2,5 @@
 - name: install Wordpress Docker containers
   include: wordpress.yml
 
-- name: enable nginx proxy
-  include: nginx.yml
+- name: enable apache proxy
+  include: apache.yml

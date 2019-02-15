@@ -1,0 +1,7 @@
+---
+- name: copy apache proxy config
+  template:
+    src: apache.conf.j2
+    dest: "/etc/apache2/sites-enabled/90-{{pam_hostname}}.conf"
+    mode: 0644
+  notify: restart apache

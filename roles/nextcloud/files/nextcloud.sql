@@ -151,7 +151,7 @@ INSERT INTO "oc_appconfig" VALUES('user_saml','enabled','yes');
 INSERT INTO "oc_appconfig" VALUES('user_saml','types','authentication');
 INSERT INTO "oc_appconfig" VALUES('user_saml','type','environment-variable');
 INSERT INTO "oc_appconfig" VALUES('user_saml','general-uid_mapping','MELLON_uid');
-INSERT INTO "oc_appconfig" VALUES('user_saml','saml-attribute-mapping-group_mapping','MELLON_memberOf');
+INSERT INTO "oc_appconfig" VALUES('user_saml','saml-attribute-mapping-group_mapping','MELLON_isMemberOf');
 INSERT INTO "oc_appconfig" VALUES('nextcloud_announcements','pub_date','Sat, 10 Dec 2016 00:00:00 +0100');
 INSERT INTO "oc_appconfig" VALUES('files','cronjob_scan_files','500');
 CREATE TABLE oc_storages (numeric_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, id VARCHAR(64) DEFAULT NULL, available INTEGER DEFAULT 1 NOT NULL, last_checked INTEGER DEFAULT NULL);

@@ -51,5 +51,5 @@
     daemon_reload: yes
 
 - name: install proxy config
-  include: nginx.yml
+  include: apache.yml
   when: pam_websso_proxy_enabled
