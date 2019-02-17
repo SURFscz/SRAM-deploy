@@ -42,8 +42,9 @@
         </Location>
 
         <Location "/remote.php/webdav/">
-                MellonEnable "off"
                 Require all granted
+                MellonEnable "off"
+                SetEnv proxy-chain-auth
         </Location>
 
         ProxyRequests Off
