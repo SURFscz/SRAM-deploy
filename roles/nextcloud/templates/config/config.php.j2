@@ -32,4 +32,10 @@ $CONFIG = array (
   'instanceid' => 'ocfoukzhokvl',
   'overwritehost' => '{{ nextcloud_hostname }}',
   'overwriteprotocol' => '{{http_proto}}',
+  'auth.bruteforce.protection.enabled' => false,
+  'forwarded_for_headers' =>
+   array (
+    0 => 'HTTP_X_FORWARDED',
+    1 => 'HTTP_FORWARDED_FOR',
+  ),
 );
