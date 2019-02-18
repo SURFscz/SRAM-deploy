@@ -13,8 +13,7 @@
 
         <Location "/">
             AuthType "Mellon"
-            Require valid-user
-
+            Require all granted
             MellonEnable "info"
             MellonVariable "cookie"
             MellonCookiePath /
@@ -29,24 +28,14 @@
             RequestHeader set MELLON_isMemberOf %{MELLON_urn:mace:dir:attribute-def:isMemberOf}e
         </Location>
 
-        <Location "/">
-            <Limit PROPFIND>
-                Require all granted
-                MellonEnable "off"
-            </Limit>
+        <Location "/login">
+            Require valid-user
+            MellonEnable "auth"
         </Location>
 
-        <Location "/apps">
-                Require valid-user
-                MellonEnable "auth"
-        </Location>
-
-        <Location "/remote.php/webdav/">
-                Require all granted
-                MellonEnable "off"
-                SetEnv proxy-chain-auth
-        </Location>
-
+        #ProxyVia On
+        #ProxyPreserveHost On
+        #RequestHeader set X-Forwarded-Proto 'https' env=HTTPS
         ProxyRequests Off
         ProxyPass / http://localhost:{{ docker_ports.nextcloud }}/
         ProxyPassReverse / http://localhost:{{ docker_ports.nextcloud }}/
