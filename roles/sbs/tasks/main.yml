@@ -86,8 +86,8 @@
 
     - name: Copy sbs.service in /etc/systemd/system
       template:
-        src: sbs.service
-        dest: /etc/systemd/system/
+        src: sbs.service.j2
+        dest: /etc/systemd/system/sbs.service
         force: yes
       register: sbs_service
 
