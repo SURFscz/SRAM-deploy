@@ -5,11 +5,6 @@
     - name: Install required packages
       apt:
         name:
-          - apt-transport-https
-          - ca-certificates
-          - curl
-          - gnupg2
-          - software-properties-common
           - apache2
           - libapache2-mod-auth-openidc
 

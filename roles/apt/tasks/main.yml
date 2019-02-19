@@ -21,6 +21,8 @@
       - vim
       - locales-all
       - curl
+      - ca-certificates
+      - gnupg2
       - net-tools
       - git
       - acl
