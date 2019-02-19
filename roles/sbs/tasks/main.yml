@@ -72,18 +72,17 @@
         dest: "{{ sbs_workdir }}/{{ item }}"
       with_items:
         - docker-compose.yml
-        - sbs.service
         - disclaimer.css
         - alembic.ini
         - config.yml
         - .env
 
     - name: Build dockers
-      docker_service:
-        project_src: "{{ sbs_workdir }}"
-        state: present
-        build: yes
-        restarted: yes
+      command: "docker-compose up --build --no-start --remove-orphans"
+      args:
+        chdir: "{{ sbs_workdir }}"
+      register: docker_build
+      changed_when: "'pull' in docker_build.stdout"
 
     - name: Copy sbs.service in /etc/systemd/system
       template:
@@ -95,9 +94,9 @@
     - name: Enable sbs
       systemd:
         name: "sbs.service"
-        daemon_reload: yes
+        daemon_reload: "{{ sbs_service.changed }}"
         enabled: yes
-        state: started
+        state: "{{(sbs_service.changed or docker_build.changed) | ternary('restarted','started')}}"
       when: "sbs_service.changed"
 
     - name: enable Apache modules
