@@ -77,12 +77,19 @@
         - config.yml
         - .env
 
+    - name: Pull docker images
+      command: "docker-compose pull"
+      args:
+        chdir: "{{ sbs_workdir }}"
+      register: docker_pull
+      changed_when: "'downloading' in docker_pull.stderr"
+
     - name: Build dockers
       command: "docker-compose up --build --no-start --remove-orphans"
       args:
         chdir: "{{ sbs_workdir }}"
       register: docker_build
-      changed_when: "'pull' in docker_build.stdout"
+      changed_when: "'creating' in docker_build.stderr"
 
     - name: Copy sbs.service in /etc/systemd/system
       template:
@@ -96,8 +103,9 @@
         name: "sbs.service"
         daemon_reload: "{{ sbs_service.changed }}"
         enabled: yes
-        state: "{{(sbs_service.changed or docker_build.changed) | ternary('restarted','started')}}"
-      when: "sbs_service.changed"
+        state: >-
+          {{ ( sbs_service.changed or docker_pull.changed or docker_build.changed )
+          | ternary('restarted','started') }}
 
     - name: enable Apache modules
       apache2_module:
