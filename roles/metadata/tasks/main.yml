@@ -4,6 +4,7 @@
     name:
       - xalan
       - wget
+      - xmlsec1
     state: present
 
 - name: Remove obsolete cron file
@@ -32,13 +33,18 @@
   with_items:
     - "{{ oldfiles_glob.files }}"
 
-- name: Copy xsl files and shell script in place
+- name: Copy xsl files in place
   copy: src={{ item }} dest={{ metadata_project_dir }}/{{ item }}
   with_items:
     - idps.xsl
     - nologo.xsl
     - nohide.xsl
     - nosc.xsl
+
+- name: Copy eduGAIN public metadata signing cert
+  copy:
+    content: "{{ edugain_metadata_cert.pub }}"
+    dest: "{{ metadata_project_dir }}/edugain.crt"
 
 - name: Copy xsl processing script script in place
   template: src=create_metadata.j2 dest={{ metadata_project_dir }}/create_metadata mode=0755
