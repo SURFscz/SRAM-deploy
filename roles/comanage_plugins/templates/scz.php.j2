@@ -3,6 +3,8 @@ $config=array(
   'scz' => array(
     'scope_suffix'  => '{{ comanage_scope }}',
     'uid' => '{{ comanage_proxy_attribute }}',
+    'namespace' => 'surf.nl:scz:{{ environment_name }}',
+    'authority' => '{{ environment_name }}.scz.surf.nl'
     'attributes' => array(
       '{{ comanage_proxy_attribute }}' => array('attribute'=>'uid','use_org'=>True, 'type'=>'eppn'),
       'urn:oid:2.5.4.3' => array('attribute'=>'cn', 'multiple'=>'single'),
