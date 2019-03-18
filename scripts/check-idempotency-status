@@ -20,7 +20,7 @@ WHITELIST = {
     'comanage_idp':         1,
     'satosa':               4,
     'client-base':          4,
-    'client-orcid-idp':     2,
+    'client-orcid-idp':     4,
     'proxy_mysql':          1,
     'comanage':             8,
     'client-google-idp':    2,
