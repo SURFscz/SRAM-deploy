@@ -14,6 +14,7 @@
   with_items:
     - CoServiceToken
     - LdapServiceTokenProvisioner
+  register: standard_plugins
 
 - name: Checkout the relevant Git based plugins
   git:
@@ -21,13 +22,14 @@
     dest: "{{ comanage_path }}/local/Plugin/{{ item.name }}"
     version: "{{ item.version }}"
   with_items: "{{ comanage_git_plugins }}"
+  register: git_plugins
 
 - name: Install configurations
   template:
     src: "{{ item.src }}"
     dest: "{{ comanage_path }}/app/Config/{{ item.dest }}"
   with_items: "{{ comanage_plugin_configurations }}"
-
+  register: plugin_config
 
 - name: Set Database configuration for external Proxy database
   blockinfile:
@@ -44,9 +46,15 @@
       'database' => '{{ comanage_proxy_db_name }}',
       'prefix' => '',
       );
+  register: database_config
 
 - name: Update Cake database
   include: cake_refresh.yml
+  when: >
+    standard_plugins.changed
+    or git_plugins.changed
+    or plugin_config.changed
+    or database_config.changed
 
 - name: Configure JsonLog for ZoneProvisioner
   blockinfile:
