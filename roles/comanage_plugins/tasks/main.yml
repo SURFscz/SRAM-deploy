@@ -45,23 +45,8 @@
       'prefix' => '',
       );
 
-- name: Clearing Cake cache
-  command: ./Console/cake cache
-  become_user: "{{ comanage_www_user }}"
-  args:
-    chdir: "{{ comanage_path }}/app"
-
-- name: Setup Plugin schemata
-  command: ./Console/cake database
-  become_user: "{{ comanage_www_user }}"
-  args:
-    chdir: "{{ comanage_path }}/app"
-
-- name: Clearing Cake cache again
-  command: ./Console/cake cache
-  become_user: "{{ comanage_www_user }}"
-  args:
-    chdir: "{{ comanage_path }}/app"
+- name: Update Cake database
+  include: cake_refresh.yml
 
 - name: Configure JsonLog for ZoneProvisioner
   blockinfile:
