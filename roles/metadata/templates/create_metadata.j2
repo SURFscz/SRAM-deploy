@@ -22,6 +22,9 @@ set -x
 
 wget {{ edugain_feed }} $WFLAGS -O sc_edugain.xml
 
+# Check signature
+xmlsec1 --verify --trusted-pem "$basedir/edugain.crt" --id-attr:ID "urn:oasis:names:tc:SAML:2.0:metadata:EntitiesDescriptor" sc_edugain.xml
+
 # Select IdP's
 xalan -in sc_edugain.xml -xsl "$basedir/idps.xsl" -indent 2 > sc_edugain_idps.xml
 

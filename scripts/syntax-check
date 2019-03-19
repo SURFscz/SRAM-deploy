@@ -2,7 +2,25 @@
 set -e
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+RESULT=0
 
+echo -n Checking for yaml files
+YAML=$( find . -name '*.yaml' )
+if [ -n "$YAML" ]
+then
+    echo
+    echo "Found files *.yaml (should be *.yml):"
+    for f in $YAML
+    do
+        echo " - $f"
+    done
+    RESULT=1
+else
+    echo OK
+fi
+echo
+
+# magick to use multiple CPUs for checking
 numcpu=$( grep "^processor" /proc/cpuinfo | wc -l )
 numj2=$(  find . -name '*.j2'  | wc -l )
 numyml=$( find . -name '*.yml' | wc -l )
@@ -10,8 +28,17 @@ numyml=$( find . -name '*.yml' | wc -l )
 maxj2=$(  expr $numj2  / $numcpu + 1 )
 maxyml=$( expr $numyml / $numcpu + 1 )
 
-find . -name '*.j2'  -print0 | xargs -0 -n${maxj2}  -P${numcpu} ${DIR}/syntax-jinja
-find . -name '*.yml' -print0 | xargs -0 -n${maxyml} -P${numcpu} ${DIR}/syntax-yml
-find . -name '*.yml' -print0 | xargs -0 -n${maxyml} -P${numcpu} yamllint
+echo Checking jinja2 files
+find . -name '*.j2'  -print0 | xargs -0 -n${maxj2}  -P${numcpu} ${DIR}/syntax-jinja || RESULT=1
+echo
 
-exit 0
+echo Checking yml syntax
+find . -name '*.yml' -print0 | xargs -0 -n${maxyml} -P${numcpu} ${DIR}/syntax-yml   || RESULT=1
+echo
+
+echo -n Running yamllint...
+find . -name '*.yml' -print0 | xargs -0 -n${maxyml} -P${numcpu} yamllint            || RESULT=1
+echo done
+
+exit $RESULT
+
