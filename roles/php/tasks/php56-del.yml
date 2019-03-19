@@ -9,8 +9,7 @@
   apt_repository:
     state: absent
     update_cache: yes
-    repo:
-      - deb http://ppa.launchpad.net/ondrej/php/ubuntu xenial main
+    repo: "deb http://ppa.launchpad.net/ondrej/php/ubuntu xenial main"
 
 - name: "remove old php5.6 packages"
   apt:
