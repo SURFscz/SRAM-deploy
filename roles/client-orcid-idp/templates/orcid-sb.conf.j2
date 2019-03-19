@@ -1,0 +1,20 @@
+Listen {{ orcid_sb_test_port }}
+<VirtualHost *:{{ orcid_sb_test_port }}>
+        ServerName {{ hostnames.orcid_sb }}
+
+        ServerAdmin webmaster@localhost
+        DocumentRoot /var/www/html
+
+        Alias /saml {{ simplesaml_project_dir }}/simplesaml/www
+
+        ErrorLog ${APACHE_LOG_DIR}/error.log
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+        <Directory {{ simplesaml_project_dir }}>
+            Options FollowSymLinks
+            AllowOverride None
+            Order allow,deny
+            allow from all
+            Require all granted
+        </Directory>
+</VirtualHost>
