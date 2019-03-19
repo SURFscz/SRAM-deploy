@@ -39,6 +39,10 @@ git diff-index --check --cached $against --
 
 # check yaml syntax
 echo Checking syntax
-./scripts/syntax-check > /tmp/scz-deploy.log || ( cat /tmp/scz-deploy.log; exit 1 )
+if ! ./scripts/syntax-check > /tmp/scz-deploy.log
+then
+	cat /tmp/scz-deploy.log
+	exit 1
+fi
 
 exit 0
