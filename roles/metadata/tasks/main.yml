@@ -43,7 +43,7 @@
 
 - name: Copy eduGAIN public metadata signing cert
   copy:
-    content: "{{ edugain_metadata_cert.pub }}"
+    content: "{{ edugain_cert }}"
     dest: "{{ metadata_project_dir }}/edugain.crt"
 
 - name: Copy xsl processing script script in place
