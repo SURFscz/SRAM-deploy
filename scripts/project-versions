@@ -1,0 +1,238 @@
+#!/bin/bash
+###########################################################################
+# This scripts checks the status of all subprojects os the SCZ and
+# shows if they have new commits since the last release of SCZ-deploy
+###########################################################################
+set -e
+shopt -s xpg_echo
+
+dir_my="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
+dir_base="$HOME/.cache/SURFscz"
+dir_main="$dir_base/SCZ-deploy"
+
+GIT_MAIN="git@github.com:SURFscz/SCZ-deploy.git"
+GIT_CONF="git@gitlab.surfnet.nl:SCZ/SCZ-deploy-surf.git"
+
+N="\e[0m"
+I="\e[38;5;32m"
+O="\e[38;5;40m"
+W="\e[38;5;196m"
+
+function do_echo {
+	echo "$@$N"
+}
+
+function init {
+	mkdir -p $dir_base
+	if ! [ -d "$dir_main" ]; then
+		git clone  $GIT_MAIN "$dir_main"
+		cd $dir_main
+		git remote rename origin scz
+	fi
+}
+
+function check_main_repo {
+	do_echo "Examining ${I}SCZ-deploy${N} repo"
+
+	pwd=$(pwd)
+	if ! cd "$dir_main" >/dev/null 2>&1
+	then
+		do_echo "  Repo not found, cloning..."
+        git clone  --quiet --origin scz $GIT_MAIN "$dir_main"
+		cd $dir_main
+	fi
+
+	# update current
+	do_echo "  Updating main repo"
+	git fetch -f --all --quiet
+
+	# check if diremaimaimaimaimaimain
+	if output=$(git status --porcelain) && [ -z "$output" ]; then
+	  do_echo "  ${O}Repository is clean"
+	else
+	  do_echo "  ${W}Uncommited changes found"
+	  git status
+	  exit 1
+	fi
+
+	do_echo "  Checkout master"
+	git checkout --quiet master
+	git pull -r -q -f
+
+	# get latest branch
+	branch_latest=$(
+		git branch -a --list --format '%(refname:short) %(objectname)' --sort='upstream' \
+			| grep -E '^scz/v' \
+			| tail -1 \
+			| cut '--delimiter= ' -f1
+	)
+	do_echo "  Latest branch is ${branch_latest}"
+
+	# get tags in latest branch
+	tag_latest=$(git tag --sort='creatordate' --merged ${branch_latest} | tail -1)
+	do_echo "  Latest tag in branch is ${tag_latest}"
+
+	# compare latest tag and latest release branch
+	release_commit_ahead=$(git rev-list --count ${tag_latest}..${branch_latest})
+	if [ $release_commit_ahead -eq 0 ]; then
+		do_echo "  ${O}Release branch $branch_latest and release tag $tag_latest are in sync"
+	else
+		do_echo "  ${W}Release branch $branch_latest is $release_commit_ahead ahead of release tag $tag_latest"
+	fi
+
+	# compare master and latest branch
+	master_release_ahead=$(git rev-list --left-right --count master...${branch_latest} | cut -f1)
+	master_release_behind=$(git rev-list --left-right --count master...${branch_latest} | cut -f2)
+	if [ $master_release_ahead -eq 0 ]; then
+		if [ $master_release_behind -eq 0 ]; then
+			do_echo "  ${O}master branch is in sync with branch $branch_latest"
+		else
+			do_echo "  ${W}master branch is $master_release_behind commits behind branch $branch_latest"
+		fi
+	else
+		do_echo "  ${W}master branch is $master_release_ahead commits ahead of and $master_release_behind commits behind branch $branch_latest"
+	fi
+
+	do_echo
+}
+
+
+function check_conf_repo {
+	repo=SCZ-deploy-surf
+	github=git@gitlab.surfnet.nl:SCZ/SCZ-deploy-surf.git
+
+	do_echo "Examining ${I}$repo${N} repo"
+
+	pwd=$(pwd)
+	if ! cd "$dir_base/$repo" >/dev/null 2>&1
+	then
+		do_echo "  Repo not found, cloning..."
+		git clone  --quiet --origin scz $github "$dir_base/$repo"
+		cd $dir_base/$repo
+	fi
+
+	# update current
+	do_echo "  Updating main repo"
+	git fetch -f --all --quiet
+
+	# check if directory is clean
+	if output=$(git status --porcelain) && [ -z "$output" ]; then
+	  do_echo "  ${O}Repository is clean"
+	else
+	  do_echo "  ${W}Uncommited changes found"
+	  git status
+	  exit 1
+	fi
+
+	do_echo "  Checkout master"
+	git checkout --quiet master
+	git pull -r -q -f
+
+	# get latest branch
+	branch_latest=$(
+		git branch -a --list --format '%(refname:short) %(objectname)' --sort='upstream' \
+			| grep -E '^scz/v' \
+			| tail -1 \
+			| cut '--delimiter= ' -f1
+	)
+	do_echo "  Latest branch is ${branch_latest}"
+
+	# get tags in latest branch
+	tag_latest=$(git tag --sort='creatordate' --merged ${branch_latest} | tail -1)
+	do_echo "  Latest tag in branch is ${tag_latest}"
+
+	# compare latest tag and latest release branch
+	release_commit_ahead=$(git rev-list --count ${tag_latest}..${branch_latest})
+	if [ $release_commit_ahead -eq 0 ]; then
+		do_echo "  ${O}Release branch $branch_latest and release tag $tag_latest are in sync"
+	else
+		do_echo "  ${W}Release branch $branch_latest is $release_commit_ahead ahead of release tag $tag_latest"
+	fi
+
+	# compare master and latest branch
+	master_release_ahead=$(git rev-list --left-right --count master...${branch_latest} | cut -f1)
+	master_release_behind=$(git rev-list --left-right --count master...${branch_latest} | cut -f2)
+	if [ $master_release_ahead -eq 0 ]; then
+		if [ $master_release_behind -eq 0 ]; then
+			do_echo "  ${O}master branch is in sync with branch $branch_latest"
+		else
+			do_echo "  ${W}master branch is $master_release_behind commits behind branch $branch_latest"
+		fi
+	else
+		do_echo "  ${W}master branch is $master_release_ahead commits ahead of and $master_release_behind commits behind branch $branch_latest"
+	fi
+
+	cd "$pwd"
+	do_echo
+}
+
+function check_repo {
+	repo=$1
+	scz_name=$2
+	dev_branch=$3
+	github=$4
+
+	do_echo "Examining repository $I$repo$N"
+
+	# determine currently deployed version
+	cd $dir_main
+	deploy_version=$(
+		cat <<-EOF | python -
+			import yaml
+			from jinja2 import Template
+			template = Template("{{${scz_name}_repo_version}}")
+			stream = file('environments/surf/group_vars/all.yml', 'r')
+			values = yaml.load(stream)
+			print "{}".format(template.render(values))
+		EOF
+	)
+	do_echo "  currently deployed version $deploy_version"
+
+	pwd=$(pwd)
+	if ! cd "$dir_base/$repo" >/dev/null 2>&1
+	then
+		do_echo "  Repo not found, cloning..."
+		git clone --bare --quiet $github "$dir_base/$repo"
+		cd $dir_base/$repo
+	fi
+
+	# update current
+	do_echo "  Updating repo $repo"
+	git fetch -f --all --quiet
+
+	branch_latest=$dev_branch
+	do_echo "  Development branch is ${branch_latest}"
+
+	# get tags in latest branch
+	tag_latest=$(git tag --sort='creatordate' --merged ${branch_latest} | tail -1)
+	do_echo "  Latest tag in branch ${branch_latest} is ${tag_latest}"
+
+	# compare latest tag and latest release branch
+	release_commit_ahead=$(git rev-list --count ${tag_latest}..${branch_latest})
+	if [ $release_commit_ahead -eq 0 ]; then
+		do_echo "  ${O}SCZ branch $branch_latest and release tag $tag_latest are in sync"
+	else
+		do_echo "  ${W}SCZ branch $branch_latest is $release_commit_ahead commits ahead of release tag $tag_latest"
+	fi
+
+	cd "$pwd"
+	do_echo
+}
+
+init
+
+check_main_repo
+check_conf_repo
+
+check_repo pyFF                                pyff                                   scz     https://github.com/SURFscz/pyFF.git
+check_repo CMservice                           cmservice                              master  https://github.com/SURFscz/CMservice.git
+check_repo SATOSA                              satosa                                 scz     https://github.com/SURFscz/SATOSA.git
+check_repo SATOSA-micro_services               satosa_microservices                   master  https://github.com/SURFscz/SATOSA-micro_services.git
+check_repo comanage-registry                   comanage                               scz     https://github.com/SURFscz/comanage-registry.git
+check_repo COmanage-emailprovisioner.git       comanage_plugin_emailprovisioner       master  https://github.com/SURFscz/COmanage-emailprovisioner.git
+check_repo COmanage-ldapfixedprovisioner.git   comanage_plugin_ldapfixedprovisioner   master  https://github.com/SURFscz/COmanage-ldapfixedprovisioner.git
+check_repo COmanage-samlsource.git             comanage_plugin_samlsource             master  https://github.com/SURFscz/COmanage-samlsource.git
+check_repo COmanage-zoneprovisioner.git        comanage_plugin_zoneprovisioner        master  https://github.com/SURFscz/COmanage-zoneprovisioner.git
+check_repo COmanage-fixedattributeenroller.git comanage_plugin_fixedattributeenroller master  https://github.com/SURFscz/COmanage-fixedattributeenroller.git
+check_repo COmanage-yoda.git                   comanage_plugin_yoda                   master  https://github.com/SURFscz/comanage-yoda.git
+
