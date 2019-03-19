@@ -13,6 +13,15 @@ source $HOME/virtualenv/python3.6/bin/activate
 echo '===================================================='
 echo '== Running Syntax Check'
 echo '===================================================='
+echo Checking for yaml files
+YAML=$( find . -name '*.yaml' )
+if [ -n "$YAML" ]; then
+    echo "Found files *.yaml (should be *.yml):"
+    for f in $YAML; do
+        echo " - $f"
+    done
+    exit 1
+fi
 echo Checking jinja2 files
 find . -name '*.j2'  -print0 | xargs -0 python ./scripts/syntax-yml -q
 echo Checking yaml files

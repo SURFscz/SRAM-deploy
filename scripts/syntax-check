@@ -3,6 +3,17 @@ set -e
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
+YAML=$( find . -name '*.yaml' )
+if [ -n "$YAML" ]
+then
+    echo "Found files *.yaml (should be *.yml):"
+    for f in $YAML
+    do
+        echo " - $f"
+    done
+    exit 1
+fi
+
 numcpu=$( grep "^processor" /proc/cpuinfo | wc -l )
 numj2=$(  find . -name '*.j2'  | wc -l )
 numyml=$( find . -name '*.yml' | wc -l )
