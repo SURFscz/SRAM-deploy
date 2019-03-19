@@ -13,7 +13,7 @@ source $HOME/virtualenv/python3.6/bin/activate
 echo '===================================================='
 echo '== Running Syntax Check'
 echo '===================================================='
-./scripts/syntax_check
+./scripts/syntax-check
 
 echo '===================================================='
 echo '== Starting deploy (run 1)'
