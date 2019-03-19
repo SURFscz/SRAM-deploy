@@ -1,9 +1,8 @@
 ---
 - name: Ensure that openjdk-8-jdk is installed
   apt:
-    name: "{{ item }}"
-  with_items:
-    - openjdk-8-jdk
+    name:
+      - openjdk-8-jdk
 
 - name: Add Elesticsearch key
   apt_key:

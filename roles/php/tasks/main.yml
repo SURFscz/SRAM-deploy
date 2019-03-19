@@ -4,19 +4,20 @@
 
 - name: install php packages
   apt:
-    name: "{{ item }}"
     state: present
-  with_items:
-    - libapache2-mod-php7.0
-    - php7.0
-    - php7.0-fpm
-    - php7.0-ldap
-    - php7.0-mbstring
-    - php7.0-mysql
-    - php7.0-xsl
+    name:
+      - libapache2-mod-php7.0
+      - php7.0
+      - php7.0-fpm
+      - php7.0-ldap
+      - php7.0-mbstring
+      - php7.0-mysql
+      - php7.0-xsl
 
 - name: install xdebug
-  apt: name=php-xdebug state={{ 'present' if php_debug else 'absent' }}
+  apt:
+    name: php-xdebug
+    state: "{{ 'present' if php_debug else 'absent' }}"
 
 - name: config xdebug
   template:

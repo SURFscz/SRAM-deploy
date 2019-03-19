@@ -2,21 +2,32 @@
 # {{maiL_relayhost}}
 ---
 - name: install nullmailer
-  apt: name=nullmailer state=present
+  apt:
+    state: present
+    name: nullmailer
 
 - name: start nullmailer
-  service: name=nullmailer state=started enabled=true
+  service:
+    name: nullmailer
+    state: started
+    enabled: true
 
 - name: purge other MTAs
-  apt: name=postfix state=absent purge=true
-  with_items:
-    - postfix
-    - ssmtp
+  apt:
+    state: absent
+    purge: true
+    name:
+      - postfix
+      - ssmtp
 
 - name: fix mailname
-  template: src=mailname.j2 dest=/etc/mailname
+  template:
+    src: mailname.j2
+    dest: /etc/mailname
   notify: restart nullmailer
 
 - name: install nullmail config
-  template: src=nullmailer.remotes.j2 dest=/etc/nullmailer/remotes
+  template:
+    src: nullmailer.remotes.j2
+    dest: /etc/nullmailer/remotes
   notify: restart nullmailer
