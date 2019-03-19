@@ -113,14 +113,32 @@
 
 - name: Copy comanage config
   template:
-    src: "{{item}}.j2"
-    dest: "{{ comanage_path }}/local/Config/{{item}}"
+    src: "{{item.file}}.j2"
+    dest: "{{comanage_path}}/local/Config/{{item.file}}"
     mode: 0600
-    owner: "{{ comanage_www_user }}"
+    owner: "{{comanage_www_user}}"
+    force: "{{item.force}}"
   with_items:
-    - database.php
-    - email.php
-    - bootstrap.php
+    - { force: false, file: "database.php"  }
+    - { force: true,  file: "email.php"     }
+    - { force: true,  file: "bootstrap.php" }
+
+- name: Set main database config
+  blockinfile:
+    path: "{{comanage_path}}/local/Config/database.php"
+    insertafter: '^class'
+    marker: "/* {mark} ANSIBLE MANAGED [MAIN DB] */"
+    block: |
+      public $default = array(
+          'datasource' => 'Database/Mysql',
+          'persistent' => false,
+          'host'       => 'localhost',
+          'login'      => '{{comanage_db_user}}',
+          'password'   => '{{comanage_db_password}}',
+          'database'   => '{{comanage_db}}',
+          'prefix'     => 'cm_',
+          'encoding'   => 'utf8',
+      );
 
 - name: Install database schema
   command: ./Console/cake database

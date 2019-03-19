@@ -34,17 +34,17 @@
 - name: Set Database configuration for external Proxy database
   blockinfile:
     path: "{{ comanage_path }}/local/Config/database.php"
-    follow: yes
-    insertafter: "class DATABASE_CONFIG {$"
+    insertafter: "^class"
+    marker: '/* {mark} ANSIBLE MANAGED [scz db] */'
     block: |
       public $scz = array(
-      'datasource' => 'Database/Mysql',
-      'persistent' => false,
-      'host' => '{{ comanage_proxy_db }}',
-      'login' => '{{ comanage_proxy_db_user }}',
-      'password' => '{{ comanage_proxy_db_password }}',
-      'database' => '{{ comanage_proxy_db_name }}',
-      'prefix' => '',
+          'datasource' => 'Database/Mysql',
+          'persistent' => false,
+          'host'       => '{{ comanage_proxy_db }}',
+          'login'      => '{{ comanage_proxy_db_user }}',
+          'password'   => '{{ comanage_proxy_db_password }}',
+          'database'   => '{{ comanage_proxy_db_name }}',
+          'prefix'     => '',
       );
   register: database_config
 
