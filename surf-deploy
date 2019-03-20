@@ -44,6 +44,7 @@ then
 elif [ "$1" = "--test" ]
 then
     ENV=test
+    EXTRA="${EXTRA} --ask-vault-pass"
     shift
 elif [ "$1" = "--dev" ]
 then
