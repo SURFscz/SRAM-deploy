@@ -54,6 +54,10 @@ loadbalancer:
     http: true
     backend_hosts: "{{groups['vm-comanage']}}"
     backend_port: 80
+  - hostname: "{{hostnames.sbs}}"
+    http: true
+    backend_hosts: "{{groups['vm-sbs']}}"
+    backend_port: 80
   - hostname: "{{hostnames.meta}}"
     http: true
     backend_hosts: "{{groups['vm-meta']}}"
