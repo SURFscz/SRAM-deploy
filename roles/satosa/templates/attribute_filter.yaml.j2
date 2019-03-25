@@ -7,6 +7,9 @@ config:
             "https://{{hostnames.comanage}}/registry/auth/sp/metadata":
                 "":
                    - ""
+            "sbs-server":
+                "":
+                   - ""
             # Block everything except starting with * to other SP's ("^$" matches nothing)
             default:
                 "^\\*":
@@ -15,6 +18,9 @@ config:
         default:
             # Skip deny for comanage SP ("^$" matches nothing)
             "https://{{hostnames.comanage}}/registry/auth/sp/metadata":
+                "^$":
+                    - ""
+            "sbs-server":
                 "^$":
                     - ""
             # Remove custom uid internal transport attribute
