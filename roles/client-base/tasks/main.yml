@@ -7,7 +7,7 @@
       - php-date
       - php-mcrypt
       - php-json
-      - php-simplexml
+      - php-xml
       - php-mbstring
       - php-curl
       - php-gmp

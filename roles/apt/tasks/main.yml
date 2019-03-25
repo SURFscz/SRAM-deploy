@@ -10,6 +10,11 @@
     src: apt_pinning.j2
     dest: /etc/apt/preferences.d/official_packages
 
+- name: set default release to stable
+  copy:
+    src: 00local
+    dest: /etc/apt/apt.conf.d/00local
+
 - name: Install common tools / clients
   apt:
     update_cache: yes
