@@ -28,15 +28,15 @@ numyml=$( find . -name '*.yml' | wc -l )
 maxj2=$(  expr $numj2  / $numcpu + 1 )
 maxyml=$( expr $numyml / $numcpu + 1 )
 
-echo Checking jinja2 files
+echo "Checking jinja2 files "
 find . -name '*.j2'  -print0 | xargs -0 -n${maxj2}  -P${numcpu} ${DIR}/syntax-jinja || RESULT=1
 echo
 
-echo Checking yml syntax
+echo "Checking yml syntax "
 find . -name '*.yml' -print0 | xargs -0 -n${maxyml} -P${numcpu} ${DIR}/syntax-yml   || RESULT=1
 echo
 
-echo -n Running yamllint...
+echo -n "Running yamllint... "
 find . -name '*.yml' -print0 | xargs -0 -n${maxyml} -P${numcpu} yamllint            || RESULT=1
 echo done
 

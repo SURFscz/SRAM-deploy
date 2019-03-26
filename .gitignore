@@ -5,6 +5,7 @@ vagrant.log
 provision.retry
 provision_status.json
 logs/
+__pycache__/
 *.pyc
 *~
 core
