@@ -22,14 +22,14 @@
 - name: "Create the client {{client.ldap_o}} organization"
   ldap_entry:
     # SASL EXTERNAL Should work
-    dn: "o={{ client.ldap_o}},{{ client_ldap.basedn }}"
+    dn: "o={{ client.ldap_o | ldap_escape }},{{ client_ldap.basedn }}"
     objectClass: organization
     attributes:
-      o: "{{ client.ldap_o }}"
+      o: "{{ client.ldap_o | ldap_escape }}"
 
 - name: "Create the admin identity for {{client.ldap_o}}"
   ldap_entry:
-    dn: "cn=admin,o={{ client.ldap_o }},{{ client_ldap.basedn }}"
+    dn: "cn=admin,o={{ client.ldap_o | ldap_escape }},{{ client_ldap.basedn }}"
     objectClass:
       - simpleSecurityObject
       - organizationalRole
@@ -41,17 +41,17 @@
 # we want the password to update when it changes in ansible
 - name: "Set admin password for {{client.ldap_o}}"
   ldap_attr:
-    dn: "cn=admin,o={{ client.ldap_o }},{{ client_ldap.basedn }}"
+    dn: "cn=admin,o={{ client.ldap_o | ldap_escape }},{{ client_ldap.basedn }}"
     name: userPassword
     values: "{{ '%s' |  format(client.password) | slapd_hash }}"
     state: exact
 
 - name: "Add database skeleton to client db"
   ldap_entry:
-    dn: "ou={{item}},o={{ client.ldap_o }},{{ client_ldap.basedn }}"
+    dn: "ou={{item | ldap_escape }},o={{ client.ldap_o | ldap_escape }},{{ client_ldap.basedn }}"
     objectClass: organizationalUnit
     attributes:
-      ou: "{{item}}"
+      ou: "{{item | ldap_escape }}"
   with_items:
     - People
     - Groups
@@ -59,7 +59,8 @@
 
 - name: "Set default uidNumer sequence for client {{client.ldap_o}}"
   ldap_entry:
-    dn: "cn=uidNumberSequence,ou=Sequence,o={{ client.ldap_o }},{{ client_ldap.basedn }}"
+    dn: "cn=uidNumberSequence,ou=Sequence,o={{ client.ldap_o | ldap_escape }},\
+         {{ client_ldap.basedn }}"
     objectClass: device
     attributes:
       cn: uidNumberSequence
@@ -67,7 +68,8 @@
 
 - name: "Set default giNumber sequence for client {{client.ldap_o}}"
   ldap_entry:
-    dn: "cn=gidNumberSequence,ou=Sequence,o={{ client.ldap_o }},{{ client_ldap.basedn }}"
+    dn: "cn=gidNumberSequence,ou=Sequence,o={{ client.ldap_o | ldap_escape }},\
+         {{ client_ldap.basedn }}"
     objectClass: device
     attributes:
       cn: gidNumberSequence

@@ -45,6 +45,7 @@ function check_main_repo {
 	# update current
 	do_echo "  Updating main repo"
 	git fetch -f --all --quiet
+	git reset --hard scz/master
 
 	# check if diremaimaimaimaimaimain
 	if output=$(git status --porcelain) && [ -z "$output" ]; then
@@ -57,7 +58,7 @@ function check_main_repo {
 
 	do_echo "  Checkout master"
 	git checkout --quiet master
-	git pull -r -q -f
+	git fetch -f --all --tags --prune-tags --quiet
 
 	# get latest branch
 	branch_latest=$(
@@ -113,7 +114,7 @@ function check_conf_repo {
 
 	# update current
 	do_echo "  Updating main repo"
-	git fetch -f --all --quiet
+	git fetch -f --all --tags --prune-tags --quiet
 
 	# check if directory is clean
 	if output=$(git status --porcelain) && [ -z "$output" ]; then
@@ -126,7 +127,7 @@ function check_conf_repo {
 
 	do_echo "  Checkout master"
 	git checkout --quiet master
-	git pull -r -q -f
+	git reset --hard scz/master
 
 	# get latest branch
 	branch_latest=$(
@@ -170,17 +171,26 @@ function check_repo {
 	repo=$1
 	scz_name=$2
 	dev_branch=$3
-	github=$4
 
 	do_echo "Examining repository $I$repo$N"
 
 	# determine currently deployed version
 	cd $dir_main
+	github=$(
+		cat <<-EOF | python -
+			import yaml
+			from jinja2 import Template
+			template = Template("{{scz_repo.${scz_name}.src}}")
+			stream = file('environments/surf/group_vars/all.yml', 'r')
+			values = yaml.load(stream)
+			print "{}".format(template.render(values))
+		EOF
+	)
 	deploy_version=$(
 		cat <<-EOF | python -
 			import yaml
 			from jinja2 import Template
-			template = Template("{{${scz_name}_repo_version}}")
+			template = Template("{{scz_repo.${scz_name}.version}}")
 			stream = file('environments/surf/group_vars/all.yml', 'r')
 			values = yaml.load(stream)
 			print "{}".format(template.render(values))
@@ -192,13 +202,13 @@ function check_repo {
 	if ! cd "$dir_base/$repo" >/dev/null 2>&1
 	then
 		do_echo "  Repo not found, cloning..."
-		git clone --bare --quiet $github "$dir_base/$repo"
+		git clone --bare --mirror --quiet $github "$dir_base/$repo"
 		cd $dir_base/$repo
 	fi
 
 	# update current
 	do_echo "  Updating repo $repo"
-	git fetch -f --all --quiet
+	git remote update > /dev/null
 
 	branch_latest=$dev_branch
 	do_echo "  Development branch is ${branch_latest}"
@@ -224,15 +234,16 @@ init
 check_main_repo
 check_conf_repo
 
-check_repo pyFF                                pyff                                   scz     https://github.com/SURFscz/pyFF.git
-check_repo CMservice                           cmservice                              master  https://github.com/SURFscz/CMservice.git
-check_repo SATOSA                              satosa                                 scz     https://github.com/SURFscz/SATOSA.git
-check_repo SATOSA-micro_services               satosa_microservices                   master  https://github.com/SURFscz/SATOSA-micro_services.git
-check_repo comanage-registry                   comanage                               scz     https://github.com/SURFscz/comanage-registry.git
-check_repo COmanage-emailprovisioner.git       comanage_plugin_emailprovisioner       master  https://github.com/SURFscz/COmanage-emailprovisioner.git
-check_repo COmanage-ldapfixedprovisioner.git   comanage_plugin_ldapfixedprovisioner   master  https://github.com/SURFscz/COmanage-ldapfixedprovisioner.git
-check_repo COmanage-samlsource.git             comanage_plugin_samlsource             master  https://github.com/SURFscz/COmanage-samlsource.git
-check_repo COmanage-zoneprovisioner.git        comanage_plugin_zoneprovisioner        master  https://github.com/SURFscz/COmanage-zoneprovisioner.git
-check_repo COmanage-fixedattributeenroller.git comanage_plugin_fixedattributeenroller master  https://github.com/SURFscz/COmanage-fixedattributeenroller.git
-check_repo COmanage-yoda.git                   comanage_plugin_yoda                   master  https://github.com/SURFscz/comanage-yoda.git
+check_repo comanage-registry                   comanage      scz
+check_repo COmanage-zoneprovisioner.git        co_zone       master
+check_repo COmanage-ldapfixedprovisioner.git   co_lfp        master
+check_repo COmanage-emailprovisioner.git       co_email      master
+check_repo COmanage-samlsource.git             co_saml       master
+check_repo COmanage-fixedattributeenroller.git co_fae        master
+check_repo COmanage-yoda.git                   co_yoda       master
+
+check_repo pyFF                                pyff          scz
+check_repo CMservice                           cmservice     master
+check_repo SATOSA                              satosa        scz
+check_repo SATOSA-micro_services               satosa_ms     master
 
