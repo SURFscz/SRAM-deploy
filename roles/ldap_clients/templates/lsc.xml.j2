@@ -45,7 +45,7 @@
       <ldapSourceService>
         <name>openldap-src-service</name>
         <connection reference="ldap-src-conn" />
-        <baseDn>ou=People,o={{ client.co_name }},{{ ldap.basedn }}</baseDn>
+        <baseDn>ou=People,o={{ client.co_name | ldap_escape }},{{ ldap.basedn }}</baseDn>
         <pivotAttributes>
           <string>uid</string>
         </pivotAttributes>
@@ -65,7 +65,7 @@
       <ldapDestinationService>
         <name>ldap-dst-service</name>
         <connection reference="ldap-dst-conn" />
-        <baseDn>ou=People,o={{ client.ldap_o }},{{ client_ldap.basedn }}</baseDn>
+        <baseDn>ou=People,o={{ client.ldap_o | ldap_escape }},{{ client_ldap.basedn }}</baseDn>
         <pivotAttributes>
           <string>uid</string>
         </pivotAttributes>
@@ -83,7 +83,7 @@
         <getOneFilter>(&amp;(objectClass=inetorgperson)(uid={uid}))</getOneFilter>
       </ldapDestinationService>
       <propertiesBasedSyncOptions>
-        <mainIdentifier>"uid=" + srcBean.getDatasetFirstValueById("uid") + ",ou=People,o={{ client.ldap_o }},{{ client_ldap.basedn }}"</mainIdentifier>
+        <mainIdentifier>"uid=" + srcBean.getDatasetFirstValueById("uid") + ",ou=People,o=" + javax.naming.ldap.Rdn.escapeValue("{{ client.ldap_o }}")</mainIdentifier>
         <defaultDelimiter>;</defaultDelimiter>
         <defaultPolicy>FORCE</defaultPolicy>
         <conditions>
@@ -120,14 +120,14 @@
           <name>uidNumber</name>
           <policy>KEEP</policy>
           <forceValues>
-            <string>SequencesFactory.getInstance(ldap.getJndiServices()).getNextValue("cn=uidNumberSequence,ou=Sequence,o={{ client.ldap_o }},{{ client_ldap.basedn }}", "serialNumber")</string>
+            <string>SequencesFactory.getInstance(ldap.getJndiServices()).getNextValue("cn=uidNumberSequence,ou=Sequence,o="+javax.naming.ldap.Rdn.escapeValue("{{ client.ldap_o }}"), "serialNumber")</string>
           </forceValues>
         </dataset>
         <dataset>
           <name>gidNumber</name>
           <policy>KEEP</policy>
           <forceValues>
-            <string>SequencesFactory.getInstance(ldap.getJndiServices()).getCurrentValue("cn=uidNumberSequence,ou=Sequence,o={{ client.ldap_o }},{{ client_ldap.basedn }}", "serialNumber")</string>
+            <string>SequencesFactory.getInstance(ldap.getJndiServices()).getCurrentValue("cn=uidNumberSequence,ou=Sequence,o="+javax.naming.ldap.Rdn.escapeValue("{{ client.ldap_o }}"), "serialNumber")</string>
           </forceValues>
         </dataset>
       </propertiesBasedSyncOptions>
@@ -138,7 +138,7 @@
       <ldapSourceService>
         <name>openldap-src-groups</name>
         <connection reference="ldap-src-conn" />
-        <baseDn>ou=Groups,o={{ client.co_name }},{{ ldap.basedn }}</baseDn>
+        <baseDn>ou=Groups,o={{ client.co_name | ldap_escape }},{{ ldap.basedn }}</baseDn>
         <pivotAttributes>
           <string>cn</string>
         </pivotAttributes>
@@ -154,7 +154,7 @@
       <ldapDestinationService>
         <name>ldap-dst-groups</name>
         <connection reference="ldap-dst-conn" />
-        <baseDn>ou=Groups,o={{ client.ldap_o }},{{ client_ldap.basedn }}</baseDn>
+        <baseDn>ou=Groups,o={{ client.ldap_o | ldap_escape }},{{ client_ldap.basedn }}</baseDn>
         <pivotAttributes>
           <string>description</string>
         </pivotAttributes>
@@ -174,7 +174,8 @@
             var type = srcBean.getDatasetFirstValueById("ou");
             var cn = srcBean.getDatasetFirstValueById("cn");
             var group = cn.match(/^(?:GRP)?(?:CO)?(?:COU)?:(.*?)$/);
-            "cn=" + type + (group[1]?"_" + group[1]:"") + ",ou=Groups,o={{ client.ldap_o }},{{ client_ldap.basedn }}";
+            var dn = "cn=" + javax.naming.ldap.Rdn.escapeValue( type + (group[1]?"_" + group[1]:"") ) + ",ou=Groups,o="+javax.naming.ldap.Rdn.escapeValue("{{ client.ldap_o }}");
+            dn
           ]]>
         </mainIdentifier>
         <defaultDelimiter>;</defaultDelimiter>
@@ -220,7 +221,7 @@
                        if (!srcLdap.exists(memberSrcDn).length) continue;
                        java.lang.System.out.println("memberSrcDn:" + memberSrcDn);
                        uid = srcLdap.attribute(memberSrcDn, "uid").get(0);
-                       memberDstRdn = ldap.search("ou=People,o={{ client.ldap_o }}", "(uid=" + uid + ")");
+                       memberDstRdn = ldap.search("ou=People,o="+javax.naming.ldap.Rdn.escapeValue("{{ client.ldap_o }}"), "(uid=" + uid + ")");
                        memberDstDn = memberDstRdn.get(0) + "," + ldap.getContextDn();
                        memberDstUid = ldap.attribute(memberDstDn, "uid").get(0);
                        memberDstUids.push(memberDstUid);
@@ -254,10 +255,10 @@
                     memberDstRdn = [];
                         if (uid_.length) {
                             uid = uid_.get(0);
-                            memberDstRdn = ldap.search("ou=People,o={{ client.ldap_o }}", "(uid=" + uid + ")");
+                            memberDstRdn = ldap.search("ou=People,o="+javax.naming.ldap.Rdn.escapeValue("{{ client.ldap_o }}"), "(uid=" + uid + ")");
                         } else if (cn_.length) {
                             cn = cn_.get(0);
-                            memberDstRdn = ldap.search("ou=Groups,o={{ client.ldap_o }}", "(description=" + cn + ")");
+                            memberDstRdn = ldap.search("ou=Groups,o="+javax.naming.ldap.Rdn.escapeValue("{{ client.ldap_o }}"), "(description=" + cn + ")");
                         }
                         if (memberDstRdn.length) {
                             memberDstDn = memberDstRdn.get(0) + "," + ldap.getContextDn();
@@ -275,7 +276,7 @@
           <name>gidNumber</name>
           <policy>KEEP</policy>
           <forceValues>
-            <string>SequencesFactory.getInstance(ldap.getJndiServices()).getNextValue("cn=gidNumberSequence,ou=Sequence,o={{ client.ldap_o }},{{ client_ldap.basedn }}", "serialNumber")</string>
+            <string>SequencesFactory.getInstance(ldap.getJndiServices()).getNextValue("cn=gidNumberSequence,ou=Sequence,o="+javax.naming.ldap.Rdn.escapeValue("{{ client.ldap_o }}"), "serialNumber")</string>
           </forceValues>
         </dataset>
       </propertiesBasedSyncOptions>
