@@ -18,7 +18,7 @@ Listen {{ oidc_test_port }}
         OIDCResponseType "code"
         OIDCResponseMode "query"
         OIDCScope "openid email profile address phone"
-        OIDCAuthRequestParams claims={"userinfo":{"edumember_is_member_of":null,"schac_home_organisation":null,"eduperson_affiliation":null,"nickname":null,"name":null,"uid":null,"email":null,"family_name":null,"eppn":null,"address":{"street_address":null}}}
+        OIDCAuthRequestParams claims={"userinfo":{"edumember_is_member_of":null,"schac_home_organisation":null,"eduperson_affiliation":null,"nickname":null,"name":null,"uid":null,"email":null,"family_name":null,"eppn":null,"address":{"street_address":null},"idpcountry":null,"idpname":null}}
 
         OIDCRedirectURI https://{{ hostnames.oidc }}/oidc/redirect_uri
         OIDCCryptoPassphrase randompassword
