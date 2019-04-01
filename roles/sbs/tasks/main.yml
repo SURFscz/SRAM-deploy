@@ -44,9 +44,15 @@
   apt:
     deb: "{{ mod_auth_openidc_url  }}"
 
+- name: Enable mod_auth_openidc
+  apache2_module:
+    state: present
+    name: auth_openidc
+
 - name: Remove stable python 3 version
   apt:
     autoremove: yes
+    purge: yes
 
 - name: Add SBS database
   mysql_db:
