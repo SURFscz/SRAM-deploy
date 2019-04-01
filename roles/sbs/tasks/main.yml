@@ -65,7 +65,7 @@
     name: sbs
     host: "{{sbs_db_host}}"
     password: "{{ sbs_db_secret }}"
-    priv: '*.*:ALL,GRANT'
+    priv: 'sbs.*:ALL'
     login_unix_socket: /var/run/mysqld/mysqld.sock
 
 - name: Clone SBS repository
