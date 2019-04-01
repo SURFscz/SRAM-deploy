@@ -63,7 +63,7 @@
 - name: Add SBS user
   mysql_user:
     name: sbs
-    host: localhost
+    host: "{{sbs_db_host}}"
     password: "{{ sbs_db_secret }}"
     priv: '*.*:ALL,GRANT'
     login_unix_socket: /var/run/mysqld/mysqld.sock
