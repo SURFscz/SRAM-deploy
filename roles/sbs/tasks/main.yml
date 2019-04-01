@@ -21,7 +21,6 @@
       - apache2
       - python-pymysql
       - yarn
-      - mariadb-server
       - python3-virtualenv
       - python3-setuptools
       - python3-distutils
@@ -39,6 +38,7 @@
       - libapache2-mod-wsgi-py3
       - systemd
       - nodejs
+      - mariadb-server
 
 - name: Get mod_auth_openidc from github releases
   apt:
