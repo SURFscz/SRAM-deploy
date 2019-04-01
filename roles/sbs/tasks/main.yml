@@ -47,7 +47,10 @@
 - name: Enable mod_auth_openidc
   apache2_module:
     state: present
-    name: auth_openidc
+    name: "{{item}}"
+  with_items:
+    - auth_openidc
+    - rewrite
 
 - name: Remove stable python 3 version
   apt:
