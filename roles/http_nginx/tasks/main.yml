@@ -8,3 +8,6 @@
 - name: disable nginx
   apt: name=nginx state=absent
   when: not enable_https
+
+# make sure handlers are run befor we ar econtinueing with the play
+- meta: flush_handlers
