@@ -64,7 +64,7 @@
   mysql_user:
     name: sbs
     host: "{{sbs_db_host}}"
-    password: "{{ sbs_db_secret }}"
+    password: "{{ sbs_db_password }}"
     priv: 'sbs.*:ALL'
     login_unix_socket: /var/run/mysqld/mysqld.sock
 
