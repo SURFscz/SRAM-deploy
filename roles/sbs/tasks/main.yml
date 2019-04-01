@@ -77,7 +77,7 @@
 
 # information used in the info endpoint
 - name: Add git info to server
-  shell: git --git-dir ./.git  log -1 --pretty=format:'{%n  "branch": "%D",%n  "commit": "%H",%n  "author":     "%an",%n  "author_email": "%ae",%n  "date": "%ad",%n  "message": "%f"%n}' > {{ sbs_git_dir }}/server/api/git.info
+  shell: "git --git-dir ./.git  log -1 --pretty=format:'{%n  'branch': '%D',%n  'commit': '%H',%n  'author':     '%an',%n  'author_email': '%ae',%n  'date': '%ad',%n  'message': '%f'%n}' > {{ sbs_git_dir }}/server/api/git.info"
   changed_when: false
 
 - name: Create python3 virtualenv
