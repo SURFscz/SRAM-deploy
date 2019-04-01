@@ -14,6 +14,6 @@ rsa-key-size 2048
 authenticator = webroot
 webroot-path {{letsencrypt.acme_challenge_dir}}
 
-post-hook = /bin/systemctl restart haproxy.service
+post-hook = /bin/bash -c 'if [ -x /usr/sbin/haproxy ]; then /bin/systemctl restart haproxy.service; else true; fi'
 renew-hook = /bin/bash -c 'cd "$RENEWED_LINEAGE" && cat {{certbot.privkey_pem}} {{certbot.fullchain_pem}} > {{certbot.all_pem}}'
 
