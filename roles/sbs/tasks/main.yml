@@ -78,6 +78,11 @@
     version: "{{ sbs_version }}"
     force: yes
 
+# information used in the info endpoint
+- name: Add git info to server
+  shell: git --git-dir ./.git  log -1 > {{ sbs_git_dir }}/server/api/git.info
+  changed_when: false
+
 - name: Create python3 virtualenv
   pip:
     virtualenv: "{{ sbs_env_dir }}"
@@ -130,4 +135,3 @@
     src: sbs.conf.j2
     dest: /etc/apache2/sites-enabled/sbs.conf
   notify: restart Apache
-
