@@ -77,8 +77,12 @@
     dest: "{{ sbs_git_dir }}"
     version: "{{ sbs_version }}"
     force: yes
+  notify: reload Apache
+  register: git_apps
 
-# information used in the info endpoint
+- debug:
+    var: git_apps
+
 - name: Add git info to server
   shell: git --git-dir {{ sbs_git_dir }}/.git  log -1 > {{ sbs_git_dir }}/server/api/git.info
   changed_when: false
@@ -92,6 +96,8 @@
 - name: Install yarn dependancies
   yarn:
     path: "{{ sbs_git_dir }}/client"
+  when:
+    - git_apps.changed
 
 - name: Build client yarn
   command: yarn build
