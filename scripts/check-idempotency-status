@@ -17,7 +17,6 @@ WHITELIST = {
     'auth_mellon':          1,
     'comanage_idp':         1,
     'comanage_plugins':     1,
-    'satosa':               4,
     'client-base':          4,
     'client-orcid-idp':     4,
     'comanage':             8,
