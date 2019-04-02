@@ -35,6 +35,9 @@
         </Directory>
 
         <LocationMatch ^/>
+           RewriteEngine On
+           RewriteCond %{REQUEST_FILENAME} !-f
+           RewriteRule ^ /index.html [QSA,L]
            OIDCUnAuthAction pass
            AuthType openid-connect
            Require valid-user
@@ -44,7 +47,6 @@
            OIDCUnAuthAction auth
            AuthType openid-connect
            Require valid-user
-           Redirect /login /
         </LocationMatch>
 
 </VirtualHost>

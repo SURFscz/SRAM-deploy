@@ -47,7 +47,10 @@
 - name: Enable mod_auth_openidc
   apache2_module:
     state: present
-    name: auth_openidc
+    name: "{{item}}"
+  with_items:
+    - auth_openidc
+    - rewrite
 
 - name: Remove stable python 3 version
   apt:
@@ -63,9 +66,9 @@
 - name: Add SBS user
   mysql_user:
     name: sbs
-    host: localhost
-    password: "{{ sbs_db_secret }}"
-    priv: '*.*:ALL,GRANT'
+    host: "{{sbs_db_host}}"
+    password: "{{ sbs_db_password }}"
+    priv: 'sbs.*:ALL'
     login_unix_socket: /var/run/mysqld/mysqld.sock
 
 - name: Clone SBS repository
@@ -132,4 +135,3 @@
     src: sbs.conf.j2
     dest: /etc/apache2/sites-enabled/sbs.conf
   notify: restart Apache
-
