@@ -12,7 +12,6 @@ WHITELIST = {
     'http_apache':          1,
     'cmservice':            2,
     'pyff':                 1,
-    'metadata':             3,
     'auth_mellon':          1,
     'comanage_idp':         1,
     'comanage_plugins':     1,
