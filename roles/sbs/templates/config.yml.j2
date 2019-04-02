@@ -11,6 +11,10 @@ api_users:
       scopes: [ {{ user.scopes|join(', ') }} ]
   {% endfor %}
 
+oidc_id: "cmuid"
+oidc_prefix: "OIDC_CLAIM_"
+oidc_uppercase: False
+
 mail:
   host: {{ mail.relay_host }}
   port: 25
