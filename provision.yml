@@ -96,7 +96,7 @@
     - { role: comanage,         tags: ['comanage', 'web'] }
     - { role: comanage_idp,     tags: ['comanage', 'web'] }
     - { role: comanage_enable,  tags: ['comanage', 'web'] }
-    - { role: comanage_plugins, tags: ['comanage', 'web', 'comanageplugin'] }
+    - { role: comanage_plugins, tags: ['comanage', 'web'] }
 
 - hosts: meta
   roles:
