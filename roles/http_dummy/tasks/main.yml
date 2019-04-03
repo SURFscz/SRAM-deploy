@@ -7,8 +7,11 @@
 
 - name: remove upstream nginx default
   file:
-    dest: /etc/nginx/sites-enabled/default
+    dest: "{{item}}"
     state: absent
+  with_items:
+    - "/etc/nginx/sites-enabled/default"
+    - "/etc/nginx/sites-enabled/00-default"
 
 - name: install our NGINX default file
   copy:
