@@ -241,6 +241,7 @@ check_repo COmanage-emailprovisioner.git       co_email      master
 check_repo COmanage-samlsource.git             co_saml       master
 check_repo COmanage-fixedattributeenroller.git co_fae        master
 check_repo COmanage-yoda.git                   co_yoda       master
+check_repo COmanage-templatemanager.git        co_tmpl       master
 
 check_repo pyFF                                pyff          scz
 check_repo CMservice                           cmservice     master
