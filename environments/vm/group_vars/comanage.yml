@@ -22,6 +22,7 @@ comanage_admin_given_name: "{{admin.fn}}"
 comanage_admin_family_name: "{{admin.sn}}"
 comanage_admin_username: "{{admin.eppn}}"
 comanage_email_from: "no-reply@{{domain}}"
+comanage_templatemanager_scripts: "/opt/scz/scripts"
 
 comanage_full_hostname: "{{ sp_hostname }}"
 

@@ -73,3 +73,8 @@
   file:
     path: "{{ comanage_path }}/app/local"
     state: absent
+
+- name: Make sure the TemplateManager script location path exists
+  file:
+    path: "{{ comanage_templatemanager_scripts }}"
+    state: directory

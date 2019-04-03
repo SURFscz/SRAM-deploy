@@ -21,8 +21,12 @@ comanage_git_plugins:
   - name: "Yoda"
     src: "https://github.com/SURFscz/comanage-yoda.git"
     version: "{{comanage_plugin_yoda_version}}"
+  - name: "TemplateManager"
+    src: "https://github.com/SURFscz/comanage-templatemanager.git"
+    version: "{{comanage_plugin_templatemanager_version}}"
 
 comanage_plugin_configurations:
   - { src: ldapfixedprovisioner.php.j2, dest: ldapfixedprovisioner.php }
   - { src: scz.php.j2, dest: scz.php }
+  - { src: templatemanager.php.j2, dest: templatemanager.php }
 
