@@ -19,8 +19,8 @@ global
 {% endif %}
 
 
-	ssl-default-bind-ciphers ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-SHA384:DHE-RSA-AES256-SHA256:ECDHE-RSA-AES256-SHA:DHE-RSA-AES256-SHA:ECDHE-RSA-AES128-GCM-SHA256
-	ssl-default-bind-options no-sslv3 no-tlsv10
+	ssl-default-bind-ciphers ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-SHA:DHE-RSA-AES256-GCM-SHA384
+	ssl-default-bind-options no-sslv3 no-tlsv10 no-tlsv11
 {% if enable_https and haproxy.custom_dhparam %}
 	ssl-dh-param-file {{haproxy.dhparam_file}}
 {% elif enable_https %}
@@ -120,6 +120,9 @@ listen proxy_{{host.hostname}}_{{host.frontend_port}}
 	mode	tcp
 	option	tcpka
 	option	tcplog
+
+    timeout client 900s
+    timeout server 901s
 
 	{% for be_server in host.backend_hosts -%}
 	server {{be_server}} {{be_server}}:{{host.backend_port}} check

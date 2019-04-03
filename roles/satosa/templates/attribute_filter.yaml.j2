@@ -1,10 +1,13 @@
-module: scz-micro_services.attribute_filter.AttributeFilter
+module: scz_micro_services.attribute_filter.AttributeFilter
 name: AttributeFilter
 config:
     attribute_allow:
         default:
             # Allow all to comanage SP ("" matches everything)
             "https://{{hostnames.comanage}}/registry/auth/sp/metadata":
+                "":
+                   - ""
+            "sbs-server":
                 "":
                    - ""
             # Block everything except starting with * to other SP's ("^$" matches nothing)
@@ -15,6 +18,9 @@ config:
         default:
             # Skip deny for comanage SP ("^$" matches nothing)
             "https://{{hostnames.comanage}}/registry/auth/sp/metadata":
+                "^$":
+                    - ""
+            "sbs-server":
                 "^$":
                     - ""
             # Remove custom uid internal transport attribute

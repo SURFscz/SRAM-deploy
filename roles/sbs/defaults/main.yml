@@ -1,0 +1,21 @@
+---
+mod_auth_openidc_url: "https://github.com/zmartzone/\
+  mod_auth_openidc/releases/download/v2.3.11/\
+  libapache2-mod-auth-openidc_2.3.11-1.stretch+1_amd64.deb"
+
+sbs_repository: https://github.com/SURFscz/SBS.git
+sbs_version: master
+
+sbs_work_dir: "/opt/sbs"
+sbs_git_dir: "{{ sbs_work_dir }}/sbs"
+sbs_env_dir: "{{ sbs_work_dir }}/sbs-env"
+
+sbs_db_name: "sbs"
+sbs_db_user: "sbs"
+sbs_db_host: "localhost"
+
+sbs_mail_host: "localhost"
+sbs_mail_port: "1025"
+
+sbs_disclaimer_color: "#a29c13"
+sbs_disclaimer_label: wsgi

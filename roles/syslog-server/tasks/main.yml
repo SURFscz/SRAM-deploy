@@ -1,9 +1,8 @@
 ---
-- name: Ensure that apt-transport-https and openjdk-8-jdk are installed
+- name: Ensure that openjdk-8-jdk is installed
   apt:
-    name: "{{ item }}"
-  with_items:
-    - openjdk-8-jdk
+    name:
+      - openjdk-8-jdk
 
 - name: Add Elesticsearch key
   apt_key:
@@ -22,14 +21,26 @@
     - elasticsearch
     - logstash
     - kibana
+    - collectd
+    - elasticsearch-curator
 
 - name: Ensure Elasticsearch data directory exists
   file: path=/var/elasticsearch state=directory mode=0750 owner=elasticsearch
 
+- name: Copy elasticsearch jvm.options file
+  copy:
+    src: jvm.options
+    dest: /etc/elasticsearch/jvm.options
+  notify: restart elasticsearch
+
 - name: Copy elasticsearch configuration file
   copy:
-    src: elasticsearch.yml
-    dest: /etc/elasticsearch/elasticsearch.yml
+    src: "{{ item }}"
+    dest: "/etc/elasticsearch/{{ item }}"
+  with_items:
+    - elasticsearch.yml
+    - curator.yml
+    - curator_actions.yml
   notify: restart elasticsearch
 
 - name: Copy logstash configuration file
@@ -44,3 +55,5 @@
     dest: /etc/kibana/kibana.yml
   notify: restart kibana
 
+- name: Disable collectd service
+  systemd: name=collectd state=stopped enabled=no

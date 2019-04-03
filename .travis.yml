@@ -12,7 +12,17 @@ notifications:
     on_success: always
     on_failure: always
     rooms:
-      - surfnet-nl:tEtfF52tuZaz02sdjLJ2XGUY
+      secure: "g2j8EBAPTzk5tMry9O7BqQWhwHi2JFhjj7r6wDtm4cYLJNG21p67JTiwCpjK+VT\
+               YHCabw096UXUGy7yzW0KBokap+y0Jz1eCvDH9fW6XD4TM5NYbONJBLaV/nndV81\
+               6zWMdiDwfTJOP1WKTuPA1j1TSghJ/jAKr+uM2r6vP/qUFLQeVL6pabRagbVm0Yh\
+               zvQFvUISOE8J1iolRDH3pIcg0Q+LNjuzDiKskZGkstNDkiN30Emy2SngKRSJCIa\
+               foGQgglNH2KGuhwIWph2+LzMKvTdpELIu7s2FH+I5EHBPNJqRlPxRAh9fqhkaBl\
+               FtAfX3EOabMdaPiQssDa75T6KSZqmGQ0/h9mIkxojvpiu58F/bG9nRPOO5gQbm7\
+               kuxNV8adOvRxTzSm6PSkpV/G0TxVd45wULHIgfwY6OykHuNsJ4B9PCRt0Vo4kCq\
+               J/RH7YHyAacLc6AqIWQsuqGgaZwPmzKCX0MyFpc/QT9QtlF0jUN9qKIpAAJC1z+\
+               LB39C++aHSQfALSS5OaQ6phDmnPj+NQsWXO9wzADnkcy0Q66grzxpAOwSp7yV9a\
+               NM5P/24BaFaA48qOhQNFNu90jLYnWvH9stJ9CtV/8uSFbxcVr054Wjol0RI/j1a\
+               4h6Hf5HfuqulEbYClOGCbMUtNcmmdgSB0zO9Zlp2+OHfHMXYs6bjM="
 
 language: python
 python:
@@ -30,7 +40,7 @@ before_install:
   - pip install yamllint jinja2 pyyaml
   - sudo wget https://releases.hashicorp.com/vagrant/2.1.2/vagrant_2.1.2_x86_64.deb -P /tmp
   - sudo dpkg -i /tmp/vagrant_2.1.2_x86_64.deb
-  - sudo apt-add-repository -y ppa:ansible/ansible-2.6
+  - sudo apt-add-repository -y ppa:ansible/ansible-2.7
   - sudo apt -q update
   - sudo apt -y install ansible bridge-utils
   - sudo adduser travis docker

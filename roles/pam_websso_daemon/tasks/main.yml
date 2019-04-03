@@ -1,12 +1,11 @@
 ---
 - name: Ensure that packages are installed
   apt:
-    name: "{{ item }}"
+    name:
+      - python-pip
+      - libxml2-dev
+      - libxmlsec1-dev
     state: present
-  with_items:
-    - python-pip
-    - libxml2-dev
-    - libxmlsec1-dev
 
 - name: fetch PAM WebSSO from {{ pam_websso.repo_url }}, version {{ pam_websso.repo_version }}
   git:

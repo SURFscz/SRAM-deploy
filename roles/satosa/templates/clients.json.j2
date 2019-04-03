@@ -22,5 +22,17 @@
       "client_id" : "oidctest",
       "client_secret_expires_at" : 0,
       "client_id_issued_at" : 0
+    },
+    "{{ sbs_client_id }}":
+    {
+      "application_type" : "web",
+      "client_name" : "SBS erver",
+      "subject_type" : "public",
+      "client_secret" : "{{ sbs_client_secret }}",
+      "response_types" : [ "code" ],
+      "redirect_uris" : [ "{{ sbs_base_url }}redirect_uri" ],
+      "client_id" : "{{ sbs_client_id }}",
+      "client_secret_expires_at" : 0,
+      "client_id_issued_at" : 0
     }
 }

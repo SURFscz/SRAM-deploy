@@ -3,6 +3,9 @@
 - name: Ensure filebeat include dir exists
   file: path=/etc/filebeat/conf.d state=directory mode=0750
 
+- name: Ensure generic logging run dir exists
+  file: path=/opt/logging/run.d state=directory mode=0750
+
 - block:
 
     - name: Ensure that apt-transport-https is installed
@@ -22,11 +25,12 @@
 
     - name: Ensure that packages are installed
       apt:
-        name: "{{ item }}"
+        name:
+          - filebeat
+          - collectd
+          - liboping0
         state: present
         install_recommends: no
-      with_items:
-        - filebeat
 
     - name: Create generic filebeat conf
       template: >
@@ -39,5 +43,35 @@
         src: fb_syslog.yml.j2
         dest: /etc/filebeat/conf.d/fb_syslog.yml
       when: false
+
+    - name: Copy collectd config
+      template:
+        src: collectd.conf.j2
+        dest: /etc/collectd/collectd.conf
+      notify: start collectd Service
+
+    - name: Copy systemd generic (hourly) logging timer
+      copy:
+        src: scz-logging.timer
+        dest: /etc/systemd/system/scz-logging.timer
+
+    - name: Copy systemd generic logging service
+      copy:
+        src: scz-logging.service
+        dest: /etc/systemd/system/scz-logging.service
+      notify: start logging Service
+
+    - name: Copy loggers
+      template:
+        src: "{{ item }}.j2"
+        dest: "/opt/logging/run.d/{{ item }}"
+      with_items:
+        - iptables.sh
+
+    - name: Copy upgradeable counter script
+      copy:
+        src: upgradeable
+        dest: /usr/local/bin/upgradeable
+        mode: 0755
 
   when: use_logserver

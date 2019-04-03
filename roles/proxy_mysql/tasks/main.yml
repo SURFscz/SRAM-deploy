@@ -4,11 +4,44 @@
     src: "create_db.sql"
     dest: /tmp
 
+- name: Copy foreign keys file
+  copy:
+    src: "fkeys.sql"
+    dest: /tmp
+
+- name: Copy views file
+  copy:
+    src: "views.sql"
+    dest: /tmp
+
 - name: create database for CoManage-Proxy linkup
   mysql_db:
     name: "{{ comanage_proxy_db_name }}"
-    state: import
-    target: /tmp/create_db.sql
+    state: present
+
+- name: initialize database for CoManage-Proxy linkup
+  command: >
+    mysql --batch --silent --raw --database "{{ comanage_proxy_db_name }}"
+          --execute "source /tmp/create_db.sql"
+  register: tablecreation
+  changed_when: tablecreation.stderr is not search("45000.*table exists")
+  become: Yes
+
+- name: create foreign key relations for CoManage-Proxy linkup
+  command: >
+    mysql --batch --silent --raw --database "{{ comanage_proxy_db_name }}"
+          --execute "source /tmp/fkeys.sql"
+  register: keycreation
+  changed_when: keycreation.stderr is not search("45000.*key exists")
+  become: Yes
+
+- name: create views for CoManage-Proxy linkup
+  command: >
+    mysql --batch --silent --raw --database "{{ comanage_proxy_db_name }}"
+          --execute "source  /tmp/views.sql"
+  register: viewcreation
+  changed_when: viewcreation.stderr is not search("45000.*view exists")
+  become: Yes
 
 - name: create user for mysql with all privilege
   mysql_user:
@@ -19,6 +52,7 @@
     state: present
   notify:
     - Restart MySQL
+  become: Yes
 
 - name: Install backup script
   template:

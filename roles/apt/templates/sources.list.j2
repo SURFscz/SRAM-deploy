@@ -3,6 +3,7 @@
 deb {{debian.mirror}} {{debian.dist}} {{sections}}
 deb {{debian.mirror}} {{debian.dist}}-updates {{sections}}
 deb {{debian.security_mirror}} {{debian.dist}}/updates {{sections}}
+deb {{debian.mirror}} testing {{sections}}
 {% if ansible_virtualization_type == "virtualbox" %}
 deb {{debian.mirror}} {{debian.dist}}-backports main contrib
 {% endif -%}

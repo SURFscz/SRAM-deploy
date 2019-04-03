@@ -1,0 +1,29 @@
+$TTL 300
+
+@ IN SOA   thuis.zoetekouw.net.    hostmaster.zoetekouw.net. (
+                2017112201  ; Serial
+                1H          ; Refresh (slaves)
+                30M         ; Retry (slaves)
+                6W          ; Expire
+                3M          ; Minimum TTL
+            )
+
+            IN    NS    yasigi.org.
+            IN    NS    ns1.transip.net.
+            IN    NS    ns2.transip.net.
+
+            IN    MX 20    yasigi.org.
+            IN    CAA    128    issue "letsencrypt.org"
+
+{% for host, info in hostvars.iteritems() %}
+{{ "%-32s" | format(host+'.') }}  IN A      {{info.ipv4}}
+{% if 'ipv6' in info %}
+{{ "%-32s" | format(host+'.') }}  IN AAAA   {{info.ipv6}}
+{% endif %}
+{% endfor %}
+
+{% for lbname, host_list in hostnames_external.iteritems() %}
+{% for host in host_list.values()  %}
+{{ "%-32s" | format(host+'.') }}  IN CNAME  {{lbname}}.scz.lab.surf.nl.
+{% endfor %}
+{% endfor %}

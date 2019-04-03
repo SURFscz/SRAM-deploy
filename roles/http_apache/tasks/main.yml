@@ -1,7 +1,10 @@
 ---
 # playbook to install and configure general components of Apache
 - name: purge nginx
-  apt: name=nginx state=absent purge=true
+  apt:
+    state: absent
+    purge: true
+    name: nginx
 
 - name: Install apache
   apt:

@@ -4,6 +4,12 @@ for CONF in {{lsc_config_dir}}/*/; do
   CONF=${CONF%*/}
   echo $CONF
 
+  # first run pre-sync scripts
+  if [ -d "$CONF/pre-sync.d" ]
+  then
+      /bin/run-parts --verbose "$CONF/pre-sync.d"
+  fi
+
   # add local keystore, if present
   MY_JAVA_OPTS=
   if [ -e "$CONF/keystore" ]

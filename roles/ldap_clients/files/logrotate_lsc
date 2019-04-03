@@ -1,0 +1,19 @@
+/var/log/lsc/lsc.log {
+  rotate 13
+  weekly
+  dateext
+  dateyesterday
+  compress
+  compressoptions -9
+  delaycompress
+}
+
+/var/log/lsc/lsc.ldif {
+  rotate 13
+  weekly
+  dateext
+  dateyesterday
+  compress
+  compressoptions -9
+  delaycompress
+}

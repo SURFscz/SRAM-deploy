@@ -1,0 +1,7 @@
+#!/bin/sh
+# All updates
+apt list --upgradable 2> /dev/null | tail +2 | wc -l
+
+# Only security updates
+#/usr/bin/aptitude search '?and(~U,~Asecurity)' | wc -l
+

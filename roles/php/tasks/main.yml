@@ -1,0 +1,25 @@
+---
+- name: "clean up php5.6"
+  include: "php56-del.yml"
+
+- name: install php packages
+  apt:
+    state: present
+    name:
+      - libapache2-mod-php7.0
+      - php7.0
+      - php7.0-fpm
+      - php7.0-ldap
+      - php7.0-mbstring
+      - php7.0-mysql
+      - php7.0-xsl
+
+- name: install xdebug
+  apt:
+    name: php-xdebug
+    state: "{{ 'present' if php_debug else 'absent' }}"
+
+- name: config xdebug
+  template:
+    src: xdebug.ini.j2
+    dest: "/etc/php/7.0/apache2/conf.d/99-xdebug.ini"

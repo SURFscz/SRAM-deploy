@@ -2,12 +2,12 @@
 [![Build Status](https://travis-ci.org/SURFscz/SCZ-deploy.svg?branch=travis-docker)](https://travis-ci.org/SURFscz/SCZ-deploy)
 
 
-The Science Collaboration Zone (SCZ) project offers ann Identity Management solution
+The Science Collaboration Zone (SCZ) project offers an Identity Management solution
 for research collaborations.  It is a middleware solution for
 researchers, which allows them to
 
-- log in using credentials from their university;
-- handle (Identity and Access Management (IAM) for their collaborations;
+- log in using credentials from their university, as well as support (international) 'guests';
+- handle (Identity and) Access Management (IAM) for their collaborations;
 - allow members of their collaborations easy access to services (like web
   applications, databases, storage solutions, compute facilities, etc.);
 
@@ -25,6 +25,9 @@ The SCZ is comprised of a number of existing, open source components:
 
 ### Pyff
 <https://github.com/leifj/pyFF>
+
+### LSC (LDAP Synchronisation Connector)
+<https://github.com/lsc-project>
 
 
 ## SCZ-deploy

@@ -1,6 +1,6 @@
-module: scz-micro_services.custom_alias.CustomAlias
+module: scz_micro_services.custom_alias.CustomAlias
 name: CustomAlias
 config:
     locations:
-        md: metadata
-        static: static
+        md: "{{ satosa_metadata_dir }}"
+        static: "{{ satosa_static_dir }}"

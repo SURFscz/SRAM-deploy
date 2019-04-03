@@ -1,0 +1,19 @@
+#!/bin/bash
+# vim:ft=sh
+set -e
+
+if [ $UID -ne 0 ]
+then
+        echo "Sorry, this script must run as root"
+        exit 1
+fi
+
+LSC_DIR="{{lsc_config_dir}}"
+BACKUP_DIR="{{lsc_backup_dir}}"
+BACKUP_FILE="$BACKUP_DIR/lsc_$(/bin/date +%Y-%m-%d_%H:%M)"
+
+mkdir -p -m 0755 "$BACKUP_DIR"
+
+tar -C / -c "${LSC_DIR#/}" -j > "${BACKUP_FILE}.tar.bz2"
+
+exit 0

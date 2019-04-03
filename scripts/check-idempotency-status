@@ -10,18 +10,13 @@ WHITELIST = {
     'client-microsoft-idp': 3,
     'pam_websso_daemon':    1,
     'http_apache':          1,
-    'comanage_plugins':     4,
-    'http_dummy':           4,
     'cmservice':            2,
     'pyff':                 1,
-    'ldap':                 9,
-    'metadata':             3,
     'auth_mellon':          1,
     'comanage_idp':         1,
-    'satosa':               4,
+    'comanage_plugins':     1,
     'client-base':          4,
-    'client-orcid-idp':     2,
-    'proxy_mysql':          1,
+    'client-orcid-idp':     4,
     'comanage':             8,
     'client-google-idp':    2,
 }
@@ -88,6 +83,9 @@ for role, status in stats.items():
         continue
     if status['changed'] == 0:
         cprint("GOOD", Color.F_Green)
+        if role in WHITELIST:
+            allowed = WHITELIST[role]
+            cprint(f" (but {allowed} were allowed, adjust whitelist)", Color.F_Cyan)
     else:
         changed = status['changed']
         if role in WHITELIST:

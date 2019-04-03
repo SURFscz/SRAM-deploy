@@ -1,0 +1,8 @@
+#!/bin/sh
+HOSTNAME="${COLLECTD_HOSTNAME:-localhost}"
+INTERVAL="${COLLECTD_INTERVAL:-60}"
+
+while sleep "$INTERVAL"; do
+   VALUE=`apt list --upgradeable 2>/dev/null | grep -ve '^Listing' | wc -l`
+   echo "PUTVAL \"$HOSTNAME/apt/gauge-upgradeable\" interval=$INTERVAL N:$VALUE"
+done
