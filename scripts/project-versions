@@ -163,6 +163,9 @@ function check_conf_repo {
 		do_echo "  ${W}master branch is $master_release_ahead commits ahead of and $master_release_behind commits behind branch $branch_latest"
 	fi
 
+    # checkout latest release branch, as this might be ahead of master
+	git checkout --quiet ${branch_latest}
+
 	cd "$pwd"
 	do_echo
 }
