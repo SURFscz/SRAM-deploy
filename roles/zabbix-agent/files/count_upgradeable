@@ -1,6 +1,6 @@
 #!/bin/sh
 # All updates
-/usr/bin/aptitude search '~U' | wc -l
+apt list --upgradable 2> /dev/null | tail +2 | wc -l
 
 # Only security updates
 #/usr/bin/aptitude search '?and(~U,~Asecurity)' | wc -l

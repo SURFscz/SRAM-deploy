@@ -1,20 +1,29 @@
-# installs a dummy http server
+# install a dummy http server
 ---
 - name: install nginx
-  apt: name=nginx state=present
+  apt:
+    name: nginx
+    state: present
 
 - name: remove upstream nginx default
-  file: dest=/etc/nginx/sites-enabled/ state=absent
-
-- name: create nginx enabled sites dir
-  file: dest=/etc/nginx/sites-enabled state=directory
+  file:
+    dest: /etc/nginx/sites-enabled/default
+    state: absent
 
 - name: install our NGINX default file
-  copy: src=default dest=/etc/nginx/sites-available/default
+  copy:
+    src: default
+    dest: /etc/nginx/sites-available/scz-default
 
 - name: Create symlink to default in /etc/nginx/sites-enabled
-  file: src="/etc/nginx/sites-available/default" dest=/etc/nginx/sites-enabled/00-default state=link
+  file:
+    src: "/etc/nginx/sites-available/default"
+    dest: "/etc/nginx/sites-enabled/00-scz-default"
+    state: link
   notify: restart nginx
 
 - name: enable nginx
-  service: name=nginx.service state=started enabled=true
+  service:
+    name: nginx.service
+    state: started
+    enabled: true

@@ -13,14 +13,7 @@ source $HOME/virtualenv/python3.6/bin/activate
 echo '===================================================='
 echo '== Running Syntax Check'
 echo '===================================================='
-echo Checking jinja2 files
-find . -name '*.j2'  -print0 | xargs -0 python ./scripts/syntax-yml -q
-echo Checking yaml files
-find . -name '*.yml' -print0 | xargs -0 python ./scripts/syntax-jinja -q
-echo Running yamllint
-yamllint .
-echo
-
+./scripts/syntax-check
 
 echo '===================================================='
 echo '== Starting deploy (run 1)'

@@ -1,124 +1,143 @@
 ---
+- name: Copy yarn.gpg to the server
+  copy:
+    src: yarn.gpg
+    dest: /tmp/yarn.gpg
 
-- name: install sbs
-  block:
-    - name: Install required packages
-      apt:
-        name:
-          - apache2
-          - libapache2-mod-auth-openidc
+- name: Add yarn repo key
+  apt_key:
+    file: /tmp/yarn.gpg
+    state: present
 
-    - name: Remove any existing Docker packages
-      apt:
-        state: absent
-        name:
-          - docker
-          - docker-engine
-          - docker.io
-          - containerd
-          - runc
+- name: Add yarn repository
+  apt_repository:
+    repo: deb https://dl.yarnpkg.com/debian/ stable main
+    state: present
+    update_cache: yes
 
-    - name: install Docker key
-      apt_key:
-        data: "{{ lookup('file', 'docker.gpg') }}"
-        state: present
+- name: Install required packages
+  apt:
+    name:
+      - apache2
+      - python-pymysql
+      - yarn
+      - python3-virtualenv
+      - python3-setuptools
+      - python3-distutils
+      - build-essential
 
-    - name: Add Docker repository
-      apt_repository:
-        repo: "deb [arch=amd64] https://download.docker.com/linux/debian stretch stable"
-        state: present
+# really need systemd from testing, because otherwise the python deps from testing will BREAK
+# systemd from stable
+- name: Install required packages from testing
+  apt:
+    default_release: testing
+    state: latest
+    name:
+      - python3.7
+      - python3.7-dev
+      - libapache2-mod-wsgi-py3
+      - systemd
+      - nodejs
+      - mariadb-server
 
-    - name: Install docker-ce packages
-      apt:
-        update_cache: yes
-        name:
-          - docker-ce
+- name: Get mod_auth_openidc from github releases
+  apt:
+    deb: "{{ mod_auth_openidc_url  }}"
 
-    - name: Download latest Docker Compose
-      get_url:
-        url: "{{ docker_compose_latest }}"
-        checksum: "{{ docker_compose_checksum }}"
-        dest: /usr/local/bin/docker-compose
-        mode: 0755
+- name: Enable mod_auth_openidc
+  apache2_module:
+    state: present
+    name: "{{item}}"
+  with_items:
+    - auth_openidc
+    - rewrite
 
-    - name: Create SBS docker compose directory
-      file:
-        path: "{{ sbs_workdir }}"
-        state: directory
-        mode: 0755
+- name: Remove stable python 3 version
+  apt:
+    autoremove: yes
+    purge: yes
 
-    - name: Create SBS docker compose directories
-      file:
-        path: "{{ sbs_workdir }}/{{ item }}"
-        state: directory
-        mode: 0755
-      with_items:
-        - etc
-        - log
-        - data
+- name: Add SBS database
+  mysql_db:
+    name: sbs
+    encoding: utf8
+    login_unix_socket: /var/run/mysqld/mysqld.sock
 
-    - name: Copy files from /etc
-      copy:
-        src: "{{ item }}"
-        dest: "{{ sbs_workdir }}/{{ item }}"
-      with_items:
-        - etc/init.sql
-        - etc/mysql.cnf
+- name: Add SBS user
+  mysql_user:
+    name: sbs
+    host: "{{sbs_db_host}}"
+    password: "{{ sbs_db_password }}"
+    priv: 'sbs.*:ALL'
+    login_unix_socket: /var/run/mysqld/mysqld.sock
 
-    - name: Copy files from template
-      template:
-        src: "{{ item }}.j2"
-        dest: "{{ sbs_workdir }}/{{ item }}"
-      with_items:
-        - docker-compose.yml
-        - disclaimer.css
-        - alembic.ini
-        - config.yml
-        - .env
+- name: Clone SBS repository
+  git:
+    repo: "{{ sbs_repository }}"
+    dest: "{{ sbs_git_dir }}"
+    version: "{{ sbs_version }}"
+    force: yes
+  notify: reload Apache
+  register: git_apps
 
-    - name: Pull docker images
-      command: "docker-compose pull"
-      args:
-        chdir: "{{ sbs_workdir }}"
-      register: docker_pull
-      changed_when: "'downloading' in docker_pull.stderr"
+- debug:
+    var: git_apps
 
-    - name: Build dockers
-      command: "docker-compose up --build --no-start --remove-orphans"
-      args:
-        chdir: "{{ sbs_workdir }}"
-      register: docker_build
-      changed_when: "'creating' in docker_build.stderr"
+- name: Add git info to server
+  shell: git --git-dir {{ sbs_git_dir }}/.git  log -1 > {{ sbs_git_dir }}/server/api/git.info
+  changed_when: false
 
-    - name: Copy sbs.service in /etc/systemd/system
-      template:
-        src: sbs.service.j2
-        dest: /etc/systemd/system/sbs.service
-        force: yes
-      register: sbs_service
+- name: Create python3 virtualenv
+  pip:
+    virtualenv: "{{ sbs_env_dir }}"
+    virtualenv_python: python3
+    requirements: "{{ sbs_git_dir }}/server/requirements/test.txt"
 
-    - name: Enable sbs
-      systemd:
-        name: "sbs.service"
-        daemon_reload: "{{ sbs_service.changed }}"
-        enabled: yes
-        state: >-
-          {{ ( sbs_service.changed or docker_pull.changed or docker_build.changed )
-          | ternary('restarted','started') }}
+- name: Install yarn dependancies
+  yarn:
+    path: "{{ sbs_git_dir }}/client"
+  when:
+    - git_apps.changed
 
-    - name: enable Apache modules
-      apache2_module:
-        name: "{{item}}"
-        state: present
-      with_items:
-        - auth_openidc
-        - proxy
-        - proxy_http
+- name: Build client yarn
+  command: yarn build
+  args:
+    chdir: "{{ sbs_git_dir }}/client"
+    creates: "{{ sbs_git_dir }}/client/build"
 
-    - name: Configure Apache vhost
-      template:
-        src: sbs.conf.j2
-        dest: /etc/apache2/sites-enabled/sbs.conf
-      notify: restart Apache
+- name: Create SBS config file
+  template:
+    src: config.yml.j2
+    dest: "{{ sbs_git_dir }}/server/config/config.yml"
 
-  when: sbs_enabled
+- name: Create SBS wsgi file
+  template:
+    src: sbs-api.wsgi.j2
+    dest: "{{ sbs_git_dir }}/sbs-api.wsgi"
+
+- name: Create SBS environment disclaimer file
+  template:
+    src: disclaimer.css.j2
+    dest: "{{ sbs_git_dir }}/server/static/disclaimer.css"
+
+- name: touch sbs.log file
+  file:
+    path: /opt/sbs/sbs/log
+    state: directory
+    owner: www-data
+    group: www-data
+    mode: 0755
+
+- name: enable Apache modules
+  apache2_module:
+    name: "{{item}}"
+    state: present
+  with_items:
+    - auth_openidc
+    - wsgi
+
+- name: Configure Apache vhost
+  template:
+    src: sbs.conf.j2
+    dest: /etc/apache2/sites-enabled/sbs.conf
+  notify: restart Apache

@@ -55,7 +55,7 @@
     insertafter: EOF
     marker: "# {mark} ANSIBLE MANAGED BLOCK {{ hostnames.ms }}"
     block: |
-        $metadata['__DYNAMIC:4__'] = array(
+        $metadata['__DYNAMIC:5__'] = array(
                 'host' => '{{ hostnames.ms }}',
                 'OrganizationName' => '{{ environment_string }} Microsoft IdP',
                 'OrganizationDisplayName' => '{{ environment_string }} Microsoft IdP',

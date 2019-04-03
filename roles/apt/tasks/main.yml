@@ -10,6 +10,16 @@
     src: apt_pinning.j2
     dest: /etc/apt/preferences.d/official_packages
 
+- name: set default release to stable
+  copy:
+    src: 00-scz-release
+    dest: /etc/apt/apt.conf.d/00-scz-release
+
+- name: regularly update package lists
+  copy:
+    src: 00-scz-update
+    dest: /etc/apt/apt.conf.d/00-scz-update
+
 - name: Install common tools / clients
   apt:
     update_cache: yes

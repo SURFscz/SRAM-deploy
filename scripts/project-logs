@@ -1,0 +1,49 @@
+#!/bin/bash
+set -e
+shopt -s xpg_echo
+
+dir_my="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
+dir_base="$HOME/.cache/SURFscz"
+
+GIT_MAIN="git@github.com:SURFscz/SCZ-deploy.git"
+GIT_CONF="git@gitlab.surfnet.nl:SCZ/SCZ-deploy-surf.git"
+
+ver1=$1
+ver2=$2
+
+N="\e[0m"
+I="\e[38;5;32m"
+O="\e[38;5;40m"
+W="\e[38;5;196m"
+
+function do_echo {
+	echo "$@$N"
+}
+
+function repo_log {
+	repo=$1
+	src=$2
+	dest=$3
+
+	do_echo ==========================================
+	do_echo "Examining repository $I$repo$N"
+	do_echo ==========================================
+
+	cd $dir_base/$repo && \
+	git log --pretty=format:"%h  %cd   %Cgreen%s%Creset (%ae)" --date=format:%Y-%m-%d --color=always ${src}..${dest} | cat
+}
+
+repo_log SCZ-deploy                           scz/v$ver1    scz/v$ver2
+repo_log SCZ-deploy-surf                      scz/v$ver1    scz/v$ver2
+repo_log pyFF                                 scz-$ver1 scz-$ver2
+repo_log CMservice                            scz-$ver1 scz-$ver2
+repo_log SATOSA                               scz-$ver1 scz-$ver2
+repo_log SATOSA-micro_services                scz-$ver1 scz-$ver2
+repo_log comanage-registry                    scz-$ver1 scz-$ver2
+repo_log COmanage-emailprovisioner.git        scz-$ver1 scz-$ver2
+repo_log COmanage-ldapfixedprovisioner.git    scz-$ver1 scz-$ver2
+repo_log COmanage-samlsource.git              scz-$ver1 scz-$ver2
+repo_log COmanage-zoneprovisioner.git         scz-$ver1 scz-$ver2
+repo_log COmanage-fixedattributeenroller.git  scz-$ver1 scz-$ver2
+repo_log COmanage-yoda.git                    scz-$ver1 scz-$ver2
+

@@ -5,21 +5,16 @@
   apt:
     name: "{{ packages  }}"
     state: present
-  become: Yes
 
-- name: Activate Service Token Plugin
+- name: Activate standard plugins
   file:
-    src: "{{ comanage_path }}/app/AvailablePlugin/CoServiceToken"
-    dest: "{{ comanage_path }}/local/Plugin/CoServiceToken"
+    src: "{{ comanage_path }}/app/AvailablePlugin/{{item}}"
+    dest: "{{ comanage_path }}/local/Plugin/{{item}}"
     state: link
-  become: Yes
-
-- name: Activate LDAP Service Token Plugin
-  file:
-    src: "{{ comanage_path }}/app/AvailablePlugin/LdapServiceTokenProvisioner"
-    dest: "{{ comanage_path }}/local/Plugin/LdapServiceTokenProvisioner"
-    state: link
-  become: Yes
+  with_items:
+    - CoServiceToken
+    - LdapServiceTokenProvisioner
+  register: standard_plugins
 
 - name: Checkout the relevant Git based plugins
   git:
@@ -27,45 +22,39 @@
     dest: "{{ comanage_path }}/local/Plugin/{{ item.name }}"
     version: "{{ item.version }}"
   with_items: "{{ comanage_git_plugins }}"
-  become: yes
+  register: git_plugins
 
 - name: Install configurations
   template:
     src: "{{ item.src }}"
     dest: "{{ comanage_path }}/app/Config/{{ item.dest }}"
   with_items: "{{ comanage_plugin_configurations }}"
-  become: yes
-
+  register: plugin_config
 
 - name: Set Database configuration for external Proxy database
   blockinfile:
     path: "{{ comanage_path }}/local/Config/database.php"
-    follow: yes
-    insertafter: "class DATABASE_CONFIG {$"
+    insertafter: "^class"
+    marker: '/* {mark} ANSIBLE MANAGED [scz db] */'
     block: |
       public $scz = array(
-      'datasource' => 'Database/Mysql',
-      'persistent' => false,
-      'host' => '{{ comanage_proxy_db }}',
-      'login' => '{{ comanage_proxy_db_user }}',
-      'password' => '{{ comanage_proxy_db_password }}',
-      'database' => '{{ comanage_proxy_db_name }}',
-      'prefix' => '',
+          'datasource' => 'Database/Mysql',
+          'persistent' => false,
+          'host'       => '{{ comanage_proxy_db }}',
+          'login'      => '{{ comanage_proxy_db_user }}',
+          'password'   => '{{ comanage_proxy_db_password }}',
+          'database'   => '{{ comanage_proxy_db_name }}',
+          'prefix'     => '',
       );
+  register: database_config
 
-- name: Setup Plugin schemata
-  command: ./Console/cake database
-  become: true
-  become_user: "{{ comanage_www_user }}"
-  args:
-    chdir: "{{ comanage_path }}/app"
-
-- name: Clearing Cake cache
-  command: ./Console/cake cache
-  become: true
-  become_user: "{{ comanage_www_user }}"
-  args:
-    chdir: "{{ comanage_path }}/app"
+- name: Update Cake database
+  include: cake_refresh.yml
+  when: >
+    standard_plugins.changed
+    or git_plugins.changed
+    or plugin_config.changed
+    or database_config.changed
 
 - name: Configure JsonLog for ZoneProvisioner
   blockinfile:
@@ -84,3 +73,8 @@
   file:
     path: "{{ comanage_path }}/app/local"
     state: absent
+
+- name: Make sure the TemplateManager script location path exists
+  file:
+    path: "{{ comanage_templatemanager_scripts }}"
+    state: directory

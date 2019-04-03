@@ -23,4 +23,4 @@
     - name: Start and enable netfilter-persistent
       service: name=netfilter-persistent.service state=started enabled="yes"
 
-  when: ansible_virtualization_type != "docker"
+  when: environment_name != 'vm'

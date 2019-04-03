@@ -1,17 +1,16 @@
 ---
 - name: Ensure that packages are installed
   apt:
-    name: "{{ item }}"
     state: present
-  with_items:
-    - build-essential
-    - git
-    - xmlsec1
-    - libffi-dev
-    - python3.5
-    - python-dev
-    - python-setuptools
-    - python3-pip
+    name:
+      - build-essential
+      - git
+      - xmlsec1
+      - libffi-dev
+      - python3.5
+      - python-dev
+      - python-setuptools
+      - python3-pip
 
 - name: install python3 virtualenv
   pip:
@@ -46,8 +45,8 @@
         dest: "{{ satosa_env_dir }}/proxy_conf.yaml"
 
     - name: Copy internal_attributes.yaml definition
-      copy:
-        src: internal_attributes.yaml
+      template:
+        src: "internal_attributes.yaml.j2"
         dest: "{{ satosa_env_dir }}/internal_attributes.yaml"
 
     - name: Create backends directory

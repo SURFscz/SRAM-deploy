@@ -1,9 +1,8 @@
-Listen {{ sbs_server_port }}
-<VirtualHost *:{{ sbs_server_port }}>
-        ServerName {{ ansible_hostname }}
+<VirtualHost *:80>
+        ServerName {{ hostnames.sbs }}
 
         ServerAdmin webmaster@localhost
-        DocumentRoot /var/www/html
+        DocumentRoot {{ sbs_git_dir }}/client/build
 
         ErrorLog ${APACHE_LOG_DIR}/error.log
         CustomLog ${APACHE_LOG_DIR}/access.log combined
@@ -13,30 +12,41 @@ Listen {{ sbs_server_port }}
         OIDCClientID {{ sbs_client_id }}
         OIDCClientSecret {{ sbs_client_secret }}
         OIDCResponseType "code"
-        #OIDCResponseType "code id_token"
-        #OIDCResponseMode "query"
-        #OIDCResponseMode "fragment"
         OIDCScope "openid email profile"
         OIDCAuthRequestParams claims={"userinfo":{"edumember_is_member_of":null,"schac_home_organisation":null,"eduperson_affiliation":null,"nickname":null,"name":null,"cmuid":null,"email":null,"family_name":null,"eppn":null}}
 
         OIDCRedirectURI {{ sbs_base_url }}redirect_uri
         OIDCCryptoPassphrase randompassword
 
-        ProxyRequests Off
+        WSGIDaemonProcess server user=www-data group=www-data threads=5
+
+        WSGIScriptAlias /api {{ sbs_git_dir }}/sbs-api.wsgi/api
+        WSGIScriptAlias /health {{ sbs_git_dir }}/sbs-api.wsgi/health
+        WSGIScriptAlias /config {{ sbs_git_dir }}/sbs-api.wsgi/config
+        WSGIScriptAlias /info {{ sbs_git_dir }}/sbs-api.wsgi/info
+        WSGIScriptAlias /static/disclaimer.css {{ sbs_git_dir }}/sbs-api.wsgi/static/disclaimer.css
+
+        WSGIApplicationGroup %{GLOBAL}
+        WSGIPassAuthorization On
+
+        <Directory {{ sbs_git_dir }}>
+            WSGIProcessGroup server
+            Require all granted
+        </Directory>
 
         <LocationMatch ^/>
+           RewriteEngine On
+           RewriteCond %{REQUEST_FILENAME} !-f
+           RewriteRule ^ /index.html [QSA,L]
            OIDCUnAuthAction pass
            AuthType openid-connect
            Require valid-user
-           ProxyPassMatch http://localhost:{{ docker_ports.sbs }}
-           ProxyPassReverse http://localhost:{{ docker_ports.sbs }}
         </LocationMatch>
+
         <LocationMatch ^/login>
            OIDCUnAuthAction auth
            AuthType openid-connect
            Require valid-user
-           ProxyPassMatch http://localhost:{{ docker_ports.sbs }}
-           ProxyPassReverse http://localhost:{{ docker_ports.sbs }}
         </LocationMatch>
 
 </VirtualHost>
