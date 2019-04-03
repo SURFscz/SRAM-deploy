@@ -14,6 +14,15 @@
   copy:
     src: 00-scz-release
     dest: /etc/apt/apt.conf.d/00-scz-release
+  register: apt_default_release
+
+# we need to do this manually, because ansible's apt module doesn't handle the default-release
+# setting correctly
+- name: Update cache
+  command: apt-get update
+  args:
+    warn: false
+  when: apt_default_release.changed
 
 - name: regularly update package lists
   copy:
