@@ -5,15 +5,15 @@ $config=array(
     'uid' => '{{ comanage_proxy_attribute }}',
     'export_uid_attribute' => false,
     'attributes' => array(
-      '{{ comanage_proxy_attribute }}' => array('attribute'=>'uid','use_org'=>True, 'type'=>'uid'),
+      '{{ comanage_proxy_attribute }}' => array('attribute'=>'uid','use_org'=>True, 'type'=>'sorid'),
       'urn:mace:dir:attribute-def:cn' => array('attribute'=>'cn', 'multiple'=>'single'),
 //      'urn:oid:2.5.4.3' => array('attribute'=>'cn', 'multiple'=>'single'),
       'urn:mace:dir:attribute-def:givenName'=>array('attribute'=>'givenName', 'multiple'=>'single'),
 //      'urn:oid:2.5.4.42'=>array('attribute'=>'givenName', 'multiple'=>'single'),
       'urn:mace:dir:attribute-def:sn' => array('attribute'=>'sn', 'multiple'=>'single'),
 //      'urn:oid:2.5.4.4' => array('attribute'=>'sn', 'multiple'=>'single'),
-      'urn:mace:dir:attribute-def:displayName'=>array('type'=>array('attribute'=>'displayName','preferred','official'),'multiple'=>'single'),
-//      'urn:oid:2.16.840.1.113730.3.1.241'=>array('type'=>array('attribute'=>'displayName','preferred','official'),'multiple'=>'single'),
+      'urn:mace:dir:attribute-def:displayName'=>array('attribute'=>'displayName','type'=>array('preferred','official'),'multiple'=>'single'),
+//      'urn:oid:2.16.840.1.113730.3.1.241'=>array('attribute'=>'displayName','type'=>array('preferred','official'),'multiple'=>'single'),
 
       'urn:mace:dir:attribute-def:eduPersonScopedAffiliation' => array('attribute'=>'eduPersonScopedAffiliation'),
 //      'urn:oid:1.3.6.1.4.1.5923.1.1.1.9' => array('attribute'=>'eduPersonScopedAffiliation'),
