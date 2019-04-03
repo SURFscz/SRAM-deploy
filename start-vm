@@ -69,6 +69,6 @@ ansible-playbook provision.yml \
     ${ansible_args[*]}
 
 # restart proxy to reload all metadata (chicken finds eggs)
-ansible -i ./environments/vm/inventory -m command -a 'systemctl restart pyff' proxy
+ansible -i ./environments/vm/inventory -m command -a 'systemctl restart pyff' proxy >> /dev/null 2>&1
 
 exit 0
