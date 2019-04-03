@@ -30,24 +30,30 @@
   file:
     path: "{{ item.path }}"
     state: absent
+  when: "item.path|basename not in xsl_files"
   with_items:
     - "{{ oldfiles_glob.files }}"
+  notify: run metadata cronjob
 
 - name: Copy xsl files in place
-  copy: src={{ item }} dest={{ metadata_project_dir }}/{{ item }}
-  with_items:
-    - idps.xsl
-    - nologo.xsl
-    - nohide.xsl
-    - nosc.xsl
+  copy:
+    src: "{{ item }}"
+    dest: "{{ metadata_project_dir }}/{{ item }}"
+  with_items: "{{xsl_files}}"
+  notify: run metadata cronjob
 
 - name: Copy eduGAIN public metadata signing cert
   copy:
     content: "{{ edugain_cert }}"
     dest: "{{ metadata_project_dir }}/edugain.crt"
+  notify: run metadata cronjob
 
 - name: Copy xsl processing script script in place
-  template: src=create_metadata.j2 dest={{ metadata_project_dir }}/create_metadata mode=0755
+  template:
+    src: create_metadata.j2
+    dest: "{{ metadata_project_dir }}/create_metadata"
+    mode: 0755
+  notify: run metadata cronjob
 
 - name: Copy metadata service files
   template:
@@ -59,13 +65,12 @@
   notify:
     - enable metadata job
 
-- name: Run the metadata cronjob now
-  command: "{{ metadata_project_dir }}/create_metadata"
-  args:
-    chdir: "{{ metadata_project_dir }}"
-
 - name: Install logos
-  copy: src={{item}} dest=/var/www/html/{{item}} owner=www-data group=www-data
+  copy:
+    src: "{{item}}"
+    dest: "/var/www/html/{{item}}"
+    owner: www-data
+    group: www-data
   with_items:
     - Light-Bulb_icon_by_Till_Teenck.svg
     - Light-Bulb_icon_by_Till_Teenck_200px.png
