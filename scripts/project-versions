@@ -62,7 +62,7 @@ function check_main_repo {
 
 	# get latest branch
 	branch_latest=$(
-		git branch -a --list --format '%(refname:short) %(objectname)' --sort='upstream' \
+		git branch -a --list --format '%(refname:short) %(objectname)' --sort=upstream --sort=creatordate \
 			| grep -E '^scz/v' \
 			| tail -1 \
 			| cut '--delimiter= ' -f1
@@ -131,7 +131,7 @@ function check_conf_repo {
 
 	# get latest branch
 	branch_latest=$(
-		git branch -a --list --format '%(refname:short) %(objectname)' --sort='upstream' \
+		git branch -a --list --format '%(refname:short) %(objectname)' --sort=upstream --sort=creatordate \
 			| grep -E '^scz/v' \
 			| tail -1 \
 			| cut '--delimiter= ' -f1
