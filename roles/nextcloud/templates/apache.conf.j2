@@ -18,6 +18,7 @@
             MellonVariable "cookie"
             MellonCookiePath /
             MellonMergeEnvVars On ";"
+            MellonCond "urn:mace:dir:attribute-def:isMemberOf" ".+" [REG]
 
             MellonSPPrivateKeyFile {{ mellon_dir }}/sp.key
             MellonSPCertFile {{ mellon_dir }}/sp.crt
