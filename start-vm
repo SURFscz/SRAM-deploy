@@ -43,14 +43,14 @@ fi
 # bring up the VMs if they're not running
 echo "Checking if VMs/containers are running"
 num_running=$(vagrant status 2>&1 |grep -E '\brunning\b'|wc -l)
-if [ "$num_running" -ne 7 ]
+if [ "$num_running" -ne 8 ]
 then
     echo "Running vagrant to start containers..."
     time vagrant up --provision ${vagrant_args[*]} > vagrant.log 2>&1 || cat vagrant.log
 
     # fix the ssh keys (might be changed)
     net=172.20.1
-    for ip in 20 21 22 23 24 25 26
+    for ip in 20 21 22 23 24 25 26 27
     do
         ssh -Oexit vagrant@$net.$ip >/dev/null 2>&1 || true
         ssh-keygen -q -f ~/.ssh/known_hosts -R "$net.$ip" >/dev/null 2>&1
@@ -69,6 +69,6 @@ ansible-playbook provision.yml \
     ${ansible_args[*]}
 
 # restart proxy to reload all metadata (chicken finds eggs)
-ansible -i ./environments/vm/inventory -m command -a 'systemctl restart pyff' proxy
+ansible -i ./environments/vm/inventory -m command -a 'systemctl restart pyff' proxy >> /dev/null 2>&1
 
 exit 0

@@ -95,8 +95,13 @@
 
     - name: Create db_attributes_store.yaml definition
       template:
-        src: db_attributes_store.yaml.j2
-        dest: "{{ satosa_env_dir }}/plugins/micro_services/db_attributes_store.yaml"
+        src: db_attribute_store.yaml.j2
+        dest: "{{ satosa_env_dir }}/plugins/micro_services/db_attribute_store.yaml"
+
+    - name: Create sbs_attributes_store.yaml definition
+      template:
+        src: sbs_attribute_store.yaml.j2
+        dest: "{{ satosa_env_dir }}/plugins/micro_services/sbs_attribute_store.yaml"
 
     - name: Create consent.yaml definition
       template:
