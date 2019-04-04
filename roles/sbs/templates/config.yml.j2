@@ -5,8 +5,8 @@ secret_key: {{ sbs_db_secret }}
 
 # Valid scopes are "READ" and "WRITE"
 api_users:
-  {% for user in sbs_api_users %}
-  - name: "{{ user.name }}"
+  {% for name, user in sbs_api_users.items() %}
+  - name: "{{ name }}"
       password: "{{ user.password }}"
       scopes: [ {{ user.scopes|join(', ') }} ]
   {% endfor %}
