@@ -24,6 +24,7 @@
       - python3-virtualenv
       - python3-setuptools
       - build-essential
+      - virtualenv
 
 # really need systemd from testing, because otherwise the python deps from testing will BREAK
 # systemd from stable
