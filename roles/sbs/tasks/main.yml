@@ -103,7 +103,6 @@
   command: yarn build
   args:
     chdir: "{{ sbs_git_dir }}/client"
-    creates: "{{ sbs_git_dir }}/client/build"
 
 - name: Create SBS config file
   template:
