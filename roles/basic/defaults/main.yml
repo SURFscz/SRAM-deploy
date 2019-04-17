@@ -7,4 +7,3 @@ enable_ipv6: false
 fake_hostnames: false
 
 sudo_groups: [ ]
-sudo_groups_nopasswd: [ ]

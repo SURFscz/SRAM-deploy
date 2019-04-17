@@ -3,11 +3,6 @@
 %{{group}}	ALL=(ALL:ALL) ALL
 {% endfor %}
 
-# Allow members of groups {{sudo_groups_nopasswd|join(',')}} to execute any command without entering passwd
-{% for group in sudo_groups_nopasswd %}
-%{{group}}	ALL=(ALL:ALL) NOPASSWD: ALL
-{% endfor %}
-
 # root may always sudo without password
 root	ALL=(ALL:ALL) NOPASSWD: ALL
 
