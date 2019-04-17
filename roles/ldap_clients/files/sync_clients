@@ -1,0 +1,82 @@
+#!/usr/bin/env python
+
+import os, yaml
+import ldap, ldap.modlist
+import hashlib
+from base64 import b64encode
+
+with open("clients.yml") as f:
+  config = yaml.safe_load(f)
+
+l = ldap.initialize(config['ldap_uri'])
+l.sasl_external_bind_s()
+
+basedn = config['clients_base']
+
+def make_secret(password):
+    salt = os.urandom(4)
+    sha = hashlib.sha1(password.encode('utf-8'))
+    sha.update(salt)
+    b64_digest_salt = b64encode(sha.digest() + salt).strip()
+    return '{SSHA}' + b64_digest_salt.decode('utf-8')
+
+def add_dn(l, dn, entry):
+  addlist = ldap.modlist.addModlist(entry)
+  try:
+    l.add_s(dn, addlist)
+    #print('new')
+  except Exception as e:
+    pass
+    #print(e)
+
+for client_name,client_config in config['clients'].items():
+  print("client: {}".format(client_name))
+
+  dc = client_name
+  bdc = dc.encode()
+  dc_dn = 'dc=' + dc + ',' + basedn
+  dc_entry = {'objectClass':[b'dcObject',b'organization'],'o':[bdc]}
+
+  #print("dc_dn: {}".format(dc_dn))
+  add_dn(l, dc_dn, dc_entry)
+
+  admin_dn = 'cn=admin,' + dc_dn
+  pwd = make_secret(client_config['pwd'])
+  admin_entry = {'objectClass':[b'organizationalRole',b'simpleSecurityObject'],'userPassword':[pwd.encode()]}
+  #print("  admin_dn: {}".format(admin_dn))
+  add_dn(l, admin_dn, admin_entry)
+
+  # Build client skeleton
+  for co,co_config in client_config['cos'].items():
+    bco = co.encode()
+    co_dn = 'o=' + co + ',' + dc_dn
+    co_entry = {'objectClass':[b'top',b'organization'],'o':[bco]}
+    #print("co_dn: {}".format(co_dn))
+    add_dn(l, co_dn, co_entry)
+
+    for ou in ['Groups', 'People', 'Sequence', 'Services']:
+      bou = ou.encode()
+      ou_dn = 'ou=' + ou + ',' + co_dn
+      ou_entry = {'objectClass':[b'top',b'organizationalUnit'],'ou':[bou]}
+      #print("  ou_dn: {}".format(ou_dn))
+      add_dn(l, ou_dn, ou_entry)
+
+    uid_dn = 'cn=uidNumberSequence,ou=Sequence,' + co_dn
+    uid_entry = {'objectClass':[b'top',b'device'], 'serialNumber':[str(co_config['uid']).encode()]}
+    #print("  uid_dn: {}".format(uid_dn))
+    add_dn(l, uid_dn, uid_entry)
+
+    gid_dn = 'cn=gidNumberSequence,ou=Sequence,' + co_dn
+    gid_entry = {'objectClass':[b'top',b'device'], 'serialNumber':[str(co_config['gid']).encode()]}
+    #print("  gid_dn: {}".format(gid_dn))
+    add_dn(l, gid_dn, gid_entry)
+
+# Find entries
+try:
+  r = l.search_s(basedn, ldap.SCOPE_SUBTREE)
+  for dn, entry in r:
+    print("dn: {}".format(dn))
+    print("  {}".format(entry))
+except Exception as e:
+  print(e)
+

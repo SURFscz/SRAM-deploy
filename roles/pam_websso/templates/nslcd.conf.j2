@@ -10,14 +10,14 @@ gid nslcd
 uri ldaps://{{ hostnames.ldap }}
 
 # The search base that will be used for all queries.
-base {{ client_ldap.basedn }}
+base {{ clients_ldap.basedn }}
 
 # The LDAP protocol version to use.
 #ldap_version 3
 
 # The DN to bind with for normal lookups.
-binddn {{ client_ldap.binddn }}
-bindpw {{ client_ldap_password }}
+binddn {{ clients_ldap.binddn }}
+bindpw {{ clients_ldap_password }}
 
 # The DN used for password modifications by root.
 #rootpwmoddn cn=admin,dc=example,dc=com
