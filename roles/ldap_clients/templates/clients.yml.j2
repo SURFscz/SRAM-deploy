@@ -2,7 +2,8 @@
 ldap_uri: 'ldapi:///var/run/slapd/ldapi'
 clients_base: dc=clients,dc=vnet
 clients:
-  Rebel Allianz:
+{% for client in clients_ldap_clients %}
+  {{ client }}:
     pwd: changethispassword
     cos:
       'Empire':
@@ -11,12 +12,4 @@ clients:
       'Rebel Alliance':
         uid: 1002
         gid: 1002
-  Roman Empire:
-    pwd: changethispassword
-    cos:
-      'Empire':
-        uid: 4200
-        gid: 5000
-      'Rebel Alliance':
-        uid: 4202
-        gid: 5002
+{% endfor %}

@@ -20,6 +20,9 @@
       - python3-dev
       - libldap2-dev
       - libsasl2-dev
+      - python-setuptools
+      - virtualenv
+      - build-essential
     install_recommends: no
 
 - name: Generate ldif from template
@@ -30,12 +33,14 @@
     dest: "{{ ldap_ldif_dir }}/{{ item.dest }}"
     mode: 0644
   with_items:
-    - { src: "add_clients_mdb.ldif.j2", dest: "add_clients_mdb.ldif" }
+    - { src: "add_client_mdb.ldif.j2",        dest: "add_client_mdb.ldif" }
+    - { src: "add_client_mdb_admin.ldif.j2",  dest: "add_client_mdb_admin.ldif" }
+    - { src: "add_clients_mdb.ldif.j2",       dest: "add_clients_mdb.ldif" }
     - { src: "add_clients_mdb_admin.ldif.j2", dest: "add_clients_mdb_admin.ldif" }
-    - { src: "enable_syncprov_2mdb.ldif.j2", dest: "enable_syncprov_2mdb.ldif" }
-    - { src: "enable_syncprov_3mdb.ldif.j2", dest: "enable_syncprov_3mdb.ldif" }
-    - { src: "enable_memberof_2mdb.ldif.j2", dest: "enable_memberof_2mdb.ldif" }
-    - { src: "enable_memberof_3mdb.ldif.j2", dest: "enable_memberof_3mdb.ldif" }
+    - { src: "enable_syncprov_2mdb.ldif.j2",  dest: "enable_syncprov_2mdb.ldif" }
+    - { src: "enable_memberof_2mdb.ldif.j2",  dest: "enable_memberof_2mdb.ldif" }
+    - { src: "enable_syncprov_3mdb.ldif.j2",  dest: "enable_syncprov_3mdb.ldif" }
+    - { src: "enable_memberof_3mdb.ldif.j2",  dest: "enable_memberof_3mdb.ldif" }
 
 - name: Copy sczGroup ldif
   become: true
@@ -46,9 +51,10 @@
     owner: "{{ ldap_user }}"
     group: "{{ ldap_user }}"
 
-- name: Make sure clients ldap db directory exists
+# This is old client MDB, keep Travis happy
+- name: Make sure client ldap db directory exists
   file:
-    path: "{{ clients_ldap_dbdir }}"
+    path: "{{ client_ldap_dbdir }}"
     state: directory
     owner: "{{ ldap_user }}"
     group: "{{ ldap_group }}"
@@ -64,9 +70,32 @@
 - name: Set up client MDB database
   command: >
     ldapadd -Y EXTERNAL -H ldapi:///
+    -f "{{ ldap_ldif_dir }}/add_client_mdb.ldif"
+  when: olcSuffix.stdout.find(client_ldap.basedn) == -1
+
+# This is the new clients MDB
+- name: Make sure clients ldap db directory exists
+  file:
+    path: "{{ clients_ldap_dbdir }}"
+    state: directory
+    owner: "{{ ldap_user }}"
+    group: "{{ ldap_group }}"
+    mode: 0755
+
+- name: Check if clients MDB database already exists
+  shell: >
+    ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///
+    -b 'cn=config' olcSuffix
+  register: olcSuffix
+  changed_when: false
+
+- name: Set up clients MDB database
+  command: >
+    ldapadd -Y EXTERNAL -H ldapi:///
     -f "{{ ldap_ldif_dir }}/add_clients_mdb.ldif"
   when: olcSuffix.stdout.find(clients_ldap.basedn) == -1
 
+# We skip creation of client MDB admin, because it already exists in test/pilot
 - name: Add clients DB admin user
   command: >
     ldapadd -c -x -D "{{ clients_ldap.binddn }}" -w "{{ clients_ldap_password }}"
@@ -217,7 +246,7 @@
     state: directory
     mode: 0755
 
-- name: Copy clients requirements file, clients script and clients.yml source
+- name: Copy clients requirements file and sync_clients script
   copy:
     src: "{{ item }}"
     dest: "{{ clients_sync_dir }}/{{ item }}"
@@ -225,7 +254,13 @@
   with_items:
     - clients_requirements.txt
     - sync_clients
-    - clients.yml
+
+- name: Create clients.yml source if it doesn't exist
+  template:
+    src: "clients.yml.j2"
+    dest: "{{ clients_sync_dir }}/clients.yml"
+    mode: 0644
+    force: no
 
 - name: Install virtualenv from requirements.txt
   pip:
@@ -233,13 +268,9 @@
     virtualenv: "{{ clients_sync_dir }}"
     virtualenv_python: python3
 
-- name: Make sure sync_clients is executable
-  file:
-    dest: "{{ clients_sync_dir }}/sync_clients"
-    mode: 0755
-
 - name: Run sync_clients
   command: >
     "{{ clients_sync_dir }}/bin/python" sync_clients
+  changed_when: false
   args:
     chdir: "{{ clients_sync_dir }}"

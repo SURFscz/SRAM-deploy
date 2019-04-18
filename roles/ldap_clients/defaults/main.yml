@@ -13,7 +13,13 @@ lsc_backup_dir: "{{backup_base}}/lsc"
 
 clients_sync_dir: "/opt/clients"
 
+client_ldap_dbdir: "/var/lib/ldap/client"
 clients_ldap_dbdir: "/var/lib/ldap/clients"
+
+client_ldap:
+  basedn: "dc=client,dc=vnet"
+  o: "Client"
+  binddn: "cn=admin,dc=client,{{ldap.base_dn}}"
 
 clients_ldap:
   basedn: "dc=clients,dc=vnet"

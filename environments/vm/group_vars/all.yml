@@ -92,6 +92,11 @@ ldap:
   o:      "SCZ"
   binddn: "cn=John Doe,dc=scz,dc=vnet"
 
+client_ldap:
+  basedn: "dc=client,dc=vnet"
+  o:      "Client"
+  binddn: "cn=admin,dc=client,dc=vnet"
+
 clients_ldap:
   basedn: "dc=clients,dc=vnet"
   o:      "Clients"
