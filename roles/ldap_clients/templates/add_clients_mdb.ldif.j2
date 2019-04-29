@@ -3,10 +3,10 @@ dn: olcDatabase=mdb,cn=config
 objectClass: olcDatabaseConfig
 objectClass: olcMdbConfig
 olcDatabase: mdb
-olcSuffix: {{ client_ldap.basedn }}
-olcDbDirectory: {{ client_ldap_dbdir }}
-olcRootDN: {{ client_ldap.binddn }}
-olcRootPW: {{ '%s' | format(client_ldap_password) | slapd_hash }}
+olcSuffix: {{ clients_ldap.basedn }}
+olcDbDirectory: {{ clients_ldap_dbdir }}
+olcRootDN: {{ clients_ldap.binddn }}
+olcRootPW: {{ '%s' | format(clients_ldap_password) | slapd_hash }}
 olcDbIndex: objectClass eq
 olcDbIndex: cn,uid eq
 olcDbIndex: uidNumber,gidNumber eq
@@ -16,9 +16,9 @@ olcAccess: to *
    by * break
 olcAccess: to attrs=userPassword
    by anonymous auth
-   by dn.exact="{{ client_ldap.binddn }}" write
+   by dn.exact="{{ clients_ldap.binddn }}" write
    by * none
-olcAccess: to dn.regex="(.+,)?({{ client_ldap.basedn }})$"
-   by dn.exact="{{ client_ldap.binddn }}" write
+olcAccess: to dn.regex="(.+,)?(dc=[^,]+,{{ clients_ldap.basedn }})$"
+   by dn.exact="{{ clients_ldap.binddn }}" write
    by dn.exact,expand="cn=admin,$2" read
    by * none

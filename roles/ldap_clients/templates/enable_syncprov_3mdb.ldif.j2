@@ -1,0 +1,10 @@
+# vim:ft=ldif
+# server-wide has already been enabled in main ldap config
+dn: olcOverlay=syncprov,olcDatabase={3}mdb,cn=config
+changeType: add
+olcOverlay: syncprov
+objectClass: olcOverlayConfig
+objectClass: olcSyncProvConfig
+olcSpCheckpoint: 100 10
+olcSpSessionLog: 100
+

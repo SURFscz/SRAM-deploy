@@ -94,8 +94,13 @@ ldap:
 
 client_ldap:
   basedn: "dc=client,dc=vnet"
-  o:      "Clients"
+  o:      "Client"
   binddn: "cn=admin,dc=client,dc=vnet"
+
+clients_ldap:
+  basedn: "dc=clients,dc=vnet"
+  o:      "Clients"
+  binddn: "cn=admin,dc=clients,dc=vnet"
 
 
 # Comanage-Proxy database configuration is here, because it is needed in both the

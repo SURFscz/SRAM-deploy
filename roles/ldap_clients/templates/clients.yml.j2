@@ -1,0 +1,15 @@
+---
+ldap_uri: 'ldapi:///var/run/slapd/ldapi'
+clients_base: dc=clients,dc=vnet
+clients:
+{% for client in clients_ldap_clients %}
+  {{ client }}:
+    pwd: changethispassword
+    cos:
+      'Empire':
+        uid: 1000
+        gid: 1000
+      'Rebel Alliance':
+        uid: 1002
+        gid: 1002
+{% endfor %}

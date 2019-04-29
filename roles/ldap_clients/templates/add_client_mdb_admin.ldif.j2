@@ -1,4 +1,4 @@
-# Create the client base dc
+# Create the clients base dc
 dn: {{ client_ldap.basedn }}
 o: {{ client_ldap.o }}
 dc: {{ client_ldap.basedn | regex_replace('^dc=([^,]+).*', '\\1') }}

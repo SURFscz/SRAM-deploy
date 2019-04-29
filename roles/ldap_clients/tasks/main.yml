@@ -17,6 +17,12 @@
       - openjdk-8-jdk
       - python-ldap
       - python3-ldap3
+      - python3-dev
+      - libldap2-dev
+      - libsasl2-dev
+      - python-setuptools
+      - virtualenv
+      - build-essential
     install_recommends: no
 
 - name: Generate ldif from template
@@ -27,10 +33,14 @@
     dest: "{{ ldap_ldif_dir }}/{{ item.dest }}"
     mode: 0644
   with_items:
-    - { src: "add_client_mdb.ldif.j2", dest: "add_client_mdb.ldif" }
-    - { src: "add_client_mdb_admin.ldif.j2", dest: "add_client_mdb_admin.ldif" }
-    - { src: "enable_syncprov_client.ldif.j2", dest: "enable_syncprov_client.ldif" }
-    - { src: "enable_memberof_2mdb.ldif.j2", dest: "enable_memberof_2mdb.ldif" }
+    - { src: "add_client_mdb.ldif.j2",        dest: "add_client_mdb.ldif" }
+    - { src: "add_client_mdb_admin.ldif.j2",  dest: "add_client_mdb_admin.ldif" }
+    - { src: "add_clients_mdb.ldif.j2",       dest: "add_clients_mdb.ldif" }
+    - { src: "add_clients_mdb_admin.ldif.j2", dest: "add_clients_mdb_admin.ldif" }
+    - { src: "enable_syncprov_2mdb.ldif.j2",  dest: "enable_syncprov_2mdb.ldif" }
+    - { src: "enable_memberof_2mdb.ldif.j2",  dest: "enable_memberof_2mdb.ldif" }
+    - { src: "enable_syncprov_3mdb.ldif.j2",  dest: "enable_syncprov_3mdb.ldif" }
+    - { src: "enable_memberof_3mdb.ldif.j2",  dest: "enable_memberof_3mdb.ldif" }
 
 - name: Copy sczGroup ldif
   become: true
@@ -41,6 +51,7 @@
     owner: "{{ ldap_user }}"
     group: "{{ ldap_user }}"
 
+# This is old client MDB, keep Travis happy
 - name: Make sure client ldap db directory exists
   file:
     path: "{{ client_ldap_dbdir }}"
@@ -62,32 +73,36 @@
     -f "{{ ldap_ldif_dir }}/add_client_mdb.ldif"
   when: olcSuffix.stdout.find(client_ldap.basedn) == -1
 
-- name: Add client DB admin user
-  command: >
-    ldapadd -c -x -D "{{ client_ldap.binddn }}" -w "{{ client_ldap_password }}"
-    -f "{{ ldap_ldif_dir }}/add_client_mdb_admin.ldif"
-  register: result
-  failed_when: "(result.rc not in [0, 68])"
-  when: olcSuffix.stdout.find(client_ldap.basedn) == -1
+# This is the new clients MDB
+- name: Make sure clients ldap db directory exists
+  file:
+    path: "{{ clients_ldap_dbdir }}"
+    state: directory
+    owner: "{{ ldap_user }}"
+    group: "{{ ldap_group }}"
+    mode: 0755
 
-  # TODO: replace shell ldapsearch command with
-  # https://github.com/unchained-capital/ansible-ldap-modules
-- name: Check if the synchronization config is already present
+- name: Check if clients MDB database already exists
   shell: >
-    ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// -b 'olcDatabase={2}mdb,cn=config'
-    '(objectClass=olcSyncProvConfig)' dn
-    | grep -E '^dn: olcOverlay='
-  register: checkSyncEnabled
-  failed_when: "checkSyncEnabled.rc not in [0,1]"
+    ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///
+    -b 'cn=config' olcSuffix
+  register: olcSuffix
   changed_when: false
 
-- name: Enable synchronization for client db
+- name: Set up clients MDB database
   command: >
-    ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f "{{ ldap_ldif_dir }}/enable_syncprov_client.ldif"
-  when: "checkSyncEnabled.rc==1"
+    ldapadd -Y EXTERNAL -H ldapi:///
+    -f "{{ ldap_ldif_dir }}/add_clients_mdb.ldif"
+  when: olcSuffix.stdout.find(clients_ldap.basedn) == -1
+
+# We skip creation of client MDB admin, because it already exists in test/pilot
+- name: Add clients DB admin user
+  command: >
+    ldapadd -c -x -D "{{ clients_ldap.binddn }}" -w "{{ clients_ldap_password }}"
+    -f "{{ ldap_ldif_dir }}/add_clients_mdb_admin.ldif"
   register: result
-  failed_when: "result.rc not in [0,20]"
-  changed_when: "result.rc==0"
+  failed_when: "(result.rc not in [0, 68])"
+  when: olcSuffix.stdout.find(clients_ldap.basedn) == -1
 
 - name: Check if the sczGroup schema is already present
   shell: >
@@ -106,6 +121,26 @@
     -D "cn=config" -w "{{ ldap_password }}"
   when: sczGroupTask.stdout == ""
 
+# TODO: replace shell ldapsearch command with
+# https://github.com/unchained-capital/ansible-ldap-modules
+# First for (old) 2mdb
+- name: Check if the synchronization config is already present
+  shell: >
+    ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// -b 'olcDatabase={2}mdb,cn=config'
+    '(objectClass=olcSyncProvConfig)' dn
+    | grep -E '^dn: olcOverlay='
+  register: checkSyncEnabled
+  failed_when: "checkSyncEnabled.rc not in [0,1]"
+  changed_when: false
+
+- name: Enable synchronization for client db
+  command: >
+    ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f "{{ ldap_ldif_dir }}/enable_syncprov_2mdb.ldif"
+  when: "checkSyncEnabled.rc==1"
+  register: result
+  failed_when: "result.rc not in [0,20]"
+  changed_when: "result.rc==0"
+
 - name: Check memberof/refint overlay for 2mdb
   shell: >
     ldapsearch -Q -Y EXTERNAL -H ldapi:///
@@ -117,7 +152,45 @@
   changed_when: False
 
 - name: Configure memberof overlay for 2mdb
-  command: ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f "{{ ldap_ldif_dir }}/enable_memberof_2mdb.ldif"
+  command: >
+    ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f "{{ ldap_ldif_dir }}/enable_memberof_2mdb.ldif"
+  # return code 20 means entry already exists
+  register: result
+  failed_when: "result.rc not in [0,20]"
+  changed_when: "result.rc==20"
+  when: memberOfOverlayPresent.rc != 0
+
+# Repeat for 3mdb
+- name: Check if the synchronization config is already present
+  shell: >
+    ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// -b 'olcDatabase={3}mdb,cn=config'
+    '(objectClass=olcSyncProvConfig)' dn
+    | grep -E '^dn: olcOverlay='
+  register: checkSyncEnabled
+  failed_when: "checkSyncEnabled.rc not in [0,1]"
+  changed_when: false
+
+- name: Enable synchronization for client db
+  command: >
+    ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f "{{ ldap_ldif_dir }}/enable_syncprov_3mdb.ldif"
+  when: "checkSyncEnabled.rc==1"
+  register: result
+  failed_when: "result.rc not in [0,20]"
+  changed_when: "result.rc==0"
+
+- name: Check memberof/refint overlay for 2mdb
+  shell: >
+    ldapsearch -Q -Y EXTERNAL -H ldapi:///
+    -b 'olcDatabase={3}mdb,cn=config' '(olcOverlay=memberof)' dn
+    | grep -i '^dn: olcOverlay='
+  register:
+    memberOfOverlayPresent
+  failed_when: memberOfOverlayPresent.rc not in [0,1]
+  changed_when: False
+
+- name: Configure memberof overlay for 2mdb
+  command: >
+    ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f "{{ ldap_ldif_dir }}/enable_memberof_3mdb.ldif"
   # return code 20 means entry already exists
   register: result
   failed_when: "result.rc not in [0,20]"
@@ -125,8 +198,8 @@
   when: memberOfOverlayPresent.rc != 0
 
 - name: Configure clients
-  include: client.yml
-  with_items: "{{ client_ldap_clients }}"
+  include: lsc_client.yml
+  with_items: "{{ clients_ldap_clients }}"
   loop_control:
     loop_var: item_client
 
@@ -167,3 +240,37 @@
     dest: "/etc/logrotate.d/lsc"
     mode: 0644
 
+- name: Make sure clients sync directory exists
+  file:
+    path: "{{ clients_sync_dir }}"
+    state: directory
+    mode: 0755
+
+- name: Copy clients requirements file and sync_clients script
+  copy:
+    src: "{{ item }}"
+    dest: "{{ clients_sync_dir }}/{{ item }}"
+    mode: 0644
+  with_items:
+    - clients_requirements.txt
+    - sync_clients
+
+- name: Create clients.yml source if it doesn't exist
+  template:
+    src: "clients.yml.j2"
+    dest: "{{ clients_sync_dir }}/clients.yml"
+    mode: 0644
+    force: no
+
+- name: Install virtualenv from requirements.txt
+  pip:
+    requirements: "{{ clients_sync_dir }}/clients_requirements.txt"
+    virtualenv: "{{ clients_sync_dir }}"
+    virtualenv_python: python3
+
+- name: Run sync_clients
+  command: >
+    "{{ clients_sync_dir }}/bin/python" sync_clients
+  changed_when: false
+  args:
+    chdir: "{{ clients_sync_dir }}"

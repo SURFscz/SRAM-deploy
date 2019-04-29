@@ -11,16 +11,21 @@ lsc_install_dir: /opt/lsc
 lsc_config_dir: "{{ lsc_install_dir }}/config.d"
 lsc_backup_dir: "{{backup_base}}/lsc"
 
+clients_sync_dir: "/opt/clients"
+
 client_ldap_dbdir: "/var/lib/ldap/client"
+clients_ldap_dbdir: "/var/lib/ldap/clients"
 
 client_ldap:
-  basedn: "dc=client,dc=unknown"
-  o: "Clients"
+  basedn: "dc=client,dc=vnet"
+  o: "Client"
   binddn: "cn=admin,dc=client,{{ldap.base_dn}}"
 
-client_ldap_clients:
-  - co_name: Example
-    ldap_o: LDAP name
-    password: secr1t
-    uid_start: 10000
-    gid_start: 20000
+clients_ldap:
+  basedn: "dc=clients,dc=vnet"
+  o: "Clients"
+  binddn: "cn=admin,dc=clients,{{ldap.base_dn}}"
+
+clients_ldap_clients:
+  - Rebel Allianz
+  - Roman Empire
