@@ -19,8 +19,8 @@ class FilterModule(object):
     @staticmethod
     def _sha1_mysql(str):
         str2 = str.encode('ASCII')
-        res = hashlib.sha1(hashlib.sha1(str).digest()).hexdigest()
-        return '*' + res.decode('ASCII').upper()
+        res = hashlib.sha1(hashlib.sha1(str2).digest()).hexdigest()
+        return '*' + res.upper()
 
     def filters(self):
         return {
