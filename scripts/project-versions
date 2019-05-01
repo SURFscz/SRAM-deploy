@@ -16,7 +16,8 @@ GIT_CONF="git@gitlab.surfnet.nl:SCZ/SCZ-deploy-surf.git"
 N="\e[0m"
 I="\e[38;5;32m"
 O="\e[38;5;40m"
-W="\e[38;5;196m"
+W="\e[38;5;227m"
+E="\e[38;5;196m"
 
 function do_echo {
 	echo "$@$N"
@@ -51,7 +52,7 @@ function check_main_repo {
 	if output=$(git status --porcelain) && [ -z "$output" ]; then
 	  do_echo "  ${O}Repository is clean"
 	else
-	  do_echo "  ${W}Uncommited changes found"
+	  do_echo "  ${E}Uncommited changes found"
 	  git status
 	  exit 1
 	fi
@@ -78,7 +79,7 @@ function check_main_repo {
 	if [ $release_commit_ahead -eq 0 ]; then
 		do_echo "  ${O}Release branch $branch_latest and release tag $tag_latest are in sync"
 	else
-		do_echo "  ${W}Release branch $branch_latest is $release_commit_ahead ahead of release tag $tag_latest"
+		do_echo "  ${E}Release branch $branch_latest is $release_commit_ahead ahead of release tag $tag_latest"
 	fi
 
 	# compare master and latest branch
@@ -88,10 +89,14 @@ function check_main_repo {
 		if [ $master_release_behind -eq 0 ]; then
 			do_echo "  ${O}master branch is in sync with branch $branch_latest"
 		else
-			do_echo "  ${W}master branch is $master_release_behind commits behind branch $branch_latest"
+			do_echo "  ${E}master branch is $master_release_behind commits behind branch $branch_latest"
 		fi
 	else
-		do_echo "  ${W}master branch is $master_release_ahead commits ahead of and $master_release_behind commits behind branch $branch_latest"
+		if [ $master_release_behind -eq 0 ]; then
+			do_echo "  ${W}master branch is $master_release_ahead commits ahead of branch $branch_latest"
+		else
+			do_echo "  ${E}master branch is $master_release_ahead commits ahead of and $master_release_behind commits behind branch $branch_latest"
+		fi
 	fi
 
 	do_echo
@@ -118,11 +123,11 @@ function check_conf_repo {
 
 	# check if directory is clean
 	if output=$(git status --porcelain) && [ -z "$output" ]; then
-	  do_echo "  ${O}Repository is clean"
+		do_echo "  ${O}Repository is clean"
 	else
-	  do_echo "  ${W}Uncommited changes found"
-	  git status
-	  exit 1
+		do_echo "  ${E}Uncommited changes found"
+		git status
+		exit 1
 	fi
 
 	do_echo "  Checkout master"
@@ -131,12 +136,12 @@ function check_conf_repo {
 
 	# get latest branch
 	branch_latest=$(
-		git branch -a --list --format '%(refname:short) %(objectname)' --sort=upstream --sort=creatordate \
-			| grep -E '^scz/v' \
-			| tail -1 \
-			| cut '--delimiter= ' -f1
-	)
-	do_echo "  Latest branch is ${branch_latest}"
+	git branch -a --list --format '%(refname:short) %(objectname)' --sort=upstream --sort=creatordate \
+		| grep -E '^scz/v' \
+		| tail -1 \
+		| cut '--delimiter= ' -f1
+			)
+			do_echo "  Latest branch is ${branch_latest}"
 
 	# get tags in latest branch
 	tag_latest=$(git tag --sort='creatordate' --merged ${branch_latest} | tail -1)
@@ -147,7 +152,7 @@ function check_conf_repo {
 	if [ $release_commit_ahead -eq 0 ]; then
 		do_echo "  ${O}Release branch $branch_latest and release tag $tag_latest are in sync"
 	else
-		do_echo "  ${W}Release branch $branch_latest is $release_commit_ahead ahead of release tag $tag_latest"
+		do_echo "  ${E}Release branch $branch_latest is $release_commit_ahead ahead of release tag $tag_latest"
 	fi
 
 	# compare master and latest branch
@@ -157,13 +162,17 @@ function check_conf_repo {
 		if [ $master_release_behind -eq 0 ]; then
 			do_echo "  ${O}master branch is in sync with branch $branch_latest"
 		else
-			do_echo "  ${W}master branch is $master_release_behind commits behind branch $branch_latest"
+			do_echo "  ${E}master branch is $master_release_behind commits behind branch $branch_latest"
 		fi
 	else
-		do_echo "  ${W}master branch is $master_release_ahead commits ahead of and $master_release_behind commits behind branch $branch_latest"
+		if [ $master_release_behind -eq 0 ]; then
+			do_echo "  ${W}master branch is $master_release_ahead commits ahead of branch $branch_latest"
+		else
+			do_echo "  ${E}master branch is $master_release_ahead commits ahead of and $master_release_behind commits behind branch $branch_latest"
+		fi
 	fi
 
-    # checkout latest release branch, as this might be ahead of master
+	# checkout latest release branch, as this might be ahead of master
 	git checkout --quiet ${branch_latest}
 
 	cd "$pwd"
