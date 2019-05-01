@@ -58,6 +58,8 @@ config:
         name_id_format: ['urn:oasis:names:tc:SAML:2.0:nameid-format:persistent', 'urn:oasis:names:tc:SAML:2.0:nameid-format:transient']
         policy:
           default:
+            sign_assertion: true
+            sign_response: true
             attribute_restrictions: null
             fail_on_missing_requested: false
             lifetime: {minutes: 15}
