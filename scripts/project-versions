@@ -255,8 +255,11 @@ check_repo COmanage-fixedattributeenroller.git co_fae        master
 check_repo COmanage-yoda.git                   co_yoda       master
 check_repo COmanage-templatemanager.git        co_tmpl       master
 
-check_repo pyFF                                pyff          scz
-check_repo CMservice                           cmservice     master
+check_repo SBS.git                             sbs           master
+
 check_repo SATOSA                              satosa        scz
 check_repo SATOSA-micro_services               satosa_ms     master
+
+check_repo pyFF                                pyff          scz
+check_repo CMservice                           cmservice     master
 
