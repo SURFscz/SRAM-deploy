@@ -1,6 +1,5 @@
 ---
 sudo: required
-dist: xenial
 
 services:
   - docker
@@ -27,7 +26,7 @@ notifications:
 
 language: python
 python:
-  - 3.7
+  - 3.6
 
 cache:
   pip: true
