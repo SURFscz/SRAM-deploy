@@ -9,10 +9,10 @@ class FilterModule(object):
     @staticmethod
     def _sha1_b64(str):
         m = hashlib.sha1()
-        m.update(str)
+        m.update(str.encode('ASCII'))
         hash_bin = m.digest()
         hash_b64 = base64.b64encode(hash_bin)
-        return hash_b64
+        return hash_b64.decode('ASCII')
 
     def filters(self):
         return {
