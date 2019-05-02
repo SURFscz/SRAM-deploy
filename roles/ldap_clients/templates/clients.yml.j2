@@ -1,6 +1,6 @@
 ---
 ldap_uri: 'ldapi:///var/run/slapd/ldapi'
-clients_base: dc=clients,dc=vnet
+clients_base: {{ clients_ldap.basedn }}
 clients:
 {% for client in clients_ldap_clients %}
   {{ client }}:
