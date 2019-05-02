@@ -16,9 +16,13 @@
 
     - name: Count upgradeable packages
       copy:
-        src: count_upgradeable
-        dest: /usr/local/sbin/count_upgradeable
+        src: "{{ item }}"
+        dest: "/usr/local/sbin/{{ item }}"
         mode: 0755
+      with_items:
+        - count_upgradeable
+        - restart_kernel
+        - restart_services
 
     - name: Register Host
       local_action:

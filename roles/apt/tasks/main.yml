@@ -49,6 +49,7 @@
       - unzip
       - apt-transport-https
       - python-apt
+      - needrestart
 
 - name: Upgrade packages
   apt:
