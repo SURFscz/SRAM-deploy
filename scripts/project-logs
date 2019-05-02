@@ -1,49 +1,130 @@
-#!/bin/bash
-set -e
-shopt -s xpg_echo
+#!/usr/bin/env python3
 
-dir_my="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
-dir_base="$HOME/.cache/SURFscz"
+import os
+import sys
+import subprocess
+import yaml
+from pathlib import Path
+from typing import Dict, Optional
+from subprocess import STDOUT, PIPE
 
-GIT_MAIN="git@github.com:SURFscz/SCZ-deploy.git"
-GIT_CONF="git@gitlab.surfnet.nl:SCZ/SCZ-deploy-surf.git"
 
-ver1=$1
-ver2=$2
+dir_base = Path(Path.home(), ".cache", "SURFscz")
+dir_main = Path(dir_base, "SCZ-deploy")
+dir_conf = Path(dir_base, "SCZ-deploy-surf")
 
-N="\e[0m"
-I="\e[38;5;32m"
-O="\e[38;5;40m"
-W="\e[38;5;196m"
+GIT_MAIN = "git@github.com:SURFscz/SCZ-deploy.git"
+GIT_CONF = "git@gitlab.surfnet.nl:SCZ/SCZ-deploy-surf.git"
 
-function do_echo {
-	echo "$@$N"
-}
+if len(sys.argv) != 3:
+    print('Please specify two git commits to compare')
+    sys.exit(1)
 
-function repo_log {
-	repo=$1
-	src=$2
-	dest=$3
+ver1 = sys.argv[1]
+ver2 = sys.argv[2]
 
-	do_echo ==========================================
-	do_echo "Examining repository $I$repo$N"
-	do_echo ==========================================
+if '/' not in ver1:
+    ver1 = "scz/" + ver1
+if '/' not in ver2:
+    ver2 = "scz/" + ver2
 
-	cd $dir_base/$repo && \
-	git log --pretty=format:"%h  %cd   %Cgreen%s%Creset (%ae)" --date=format:%Y-%m-%d --color=always ${src}..${dest} | cat
-}
 
-repo_log SCZ-deploy                           scz/v$ver1    scz/v$ver2
-repo_log SCZ-deploy-surf                      scz/v$ver1    scz/v$ver2
-repo_log pyFF                                 scz-$ver1 scz-$ver2
-repo_log CMservice                            scz-$ver1 scz-$ver2
-repo_log SATOSA                               scz-$ver1 scz-$ver2
-repo_log SATOSA-micro_services                scz-$ver1 scz-$ver2
-repo_log comanage-registry                    scz-$ver1 scz-$ver2
-repo_log COmanage-emailprovisioner.git        scz-$ver1 scz-$ver2
-repo_log COmanage-ldapfixedprovisioner.git    scz-$ver1 scz-$ver2
-repo_log COmanage-samlsource.git              scz-$ver1 scz-$ver2
-repo_log COmanage-zoneprovisioner.git         scz-$ver1 scz-$ver2
-repo_log COmanage-fixedattributeenroller.git  scz-$ver1 scz-$ver2
-repo_log COmanage-yoda.git                    scz-$ver1 scz-$ver2
+class Colors:
+    normal = "\033[0m"
+    info   = "\033[38;5;32m"
+    ok     = "\033[38;5;40m"
+    warn   = "\033[38;5;227m"
+    err    = "\033[38;5;196m"
 
+
+def do_print(text: str) -> None:
+    print(text, Colors.normal)
+
+
+def init_git(git: str, dest: Path, bare: bool = True) -> None:
+    dir_base.mkdir(parents=True, exist_ok=True)
+    try:
+        if dest.exists():
+            # update repo
+            subprocess.run(['git', 'fetch', '-f', '--all', '--tags', '--prune-tags'],
+                           cwd=dest, check=True, text=True, stdout=PIPE, stderr=STDOUT)
+        else:
+            # repo doesn't exist yet, clone it
+            cmd = ['git', 'clone', str(git), str(dest)]
+            if bare:
+                cmd.insert(2, '--bare')
+            else:
+                cmd.insert(2, '--origin=scz')
+
+            subprocess.run(cmd, check=True, text=True, stdout=PIPE, stderr=STDOUT)
+    except subprocess.CalledProcessError as e:
+        print(f"Can't execute '{e.cmd}':")
+        print(e.stdout)
+        sys.exit(1)
+
+
+def get_versions_from_config(version: str) -> Dict:
+    try:
+        subprocess.run(['git', 'checkout', version],
+                       cwd=dir_conf, check=True, text=True, stdout=PIPE, stderr=STDOUT)
+    except subprocess.CalledProcessError as e:
+        print(f"{Colors.err}Can't checkout version '{version}' in '{dir_conf}'")
+        print(e.stdout)
+        sys.exit(1)
+
+    config_file = Path(dir_conf, 'group_vars', 'all.yml')
+    with open(config_file, encoding='utf-8') as f:
+        config = yaml.safe_load(f.read())
+    if 'scz_repo' not in config:
+        raise Exception(f"Can't find key 'scz_repo' in file '{config_file}'")
+    return config['scz_repo']
+
+
+def repo_log(repo: str, dirname: os.PathLike, v1: Optional[str], v2: str) -> None:
+    do_print("==========================================")
+    do_print(f"Examining repository {Colors.info}{repo}")
+    do_print("==========================================")
+
+    if v1 == v2:
+        do_print("No changes")
+        return
+
+    if v1 is None:
+        ref = v2
+    else:
+        ref = f'{v1}..{v2}'
+
+    cmd = ['git', '--no-pager', 'log', '--pretty=format:%h  %cd   %Cgreen%s%Creset (%ae)',
+                  '--date=format:%Y-%m-%d', '--color=always', ref]
+    try:
+        subprocess.run(cmd, cwd=dirname, check=True, text=True, stderr=PIPE)
+        print()
+    except subprocess.CalledProcessError as e:
+        print(f"Can't execute '{' '.join(e.cmd)}' in {dirname}:")
+        print(e.stderr)
+
+
+# first show main and config
+init_git(GIT_MAIN, dir_main, bare=False)
+init_git(GIT_CONF, dir_conf, bare=False)
+
+repo_log(GIT_MAIN, dir_main, ver1, ver2)
+repo_log(GIT_CONF, dir_conf, ver1, ver2)
+
+
+# then show all other repos
+components_v1 = get_versions_from_config(ver1)
+components_v2 = get_versions_from_config(ver2)
+
+for c in components_v2.keys():
+    git = components_v2[c]['src']
+    dirname = Path(dir_base, git.rpartition('/')[-1].rpartition('.git')[0])
+    init_git(git, dirname)
+
+    if c in components_v1:
+        comp_v1 = components_v1[c]['version']
+    else:
+        comp_v1 = None
+    comp_v2 = components_v2[c]['version']
+
+    repo_log(git, dirname, comp_v1, comp_v2)
