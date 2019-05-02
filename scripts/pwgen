@@ -1,0 +1,28 @@
+#!/bin/bash
+
+set -e
+
+CHARS_ALLOWED="[:alnum:]/#%_+-"
+LEN=32
+
+ENCRYPT=0
+if [ $1 = '-e' ]
+then
+    ENCRYPT=1
+fi
+
+pw=""
+while [ ${#pw} -lt $LEN ]
+do
+    pw=$pw$( openssl rand 256 | tr -cd "$CHARS_ALLOWED" )
+    pw=${pw:0:$LEN}
+done
+
+echo "$pw"
+
+if [ $ENCRYPT -eq 1 ]
+then
+    echo -n "$pw" | ansible-vault encrypt_string --stdin-name password
+fi
+
+exit 0
