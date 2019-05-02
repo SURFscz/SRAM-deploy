@@ -19,12 +19,12 @@ clients_ldap_dbdir: "/var/lib/ldap/clients"
 client_ldap:
   basedn: "dc=client,dc=vnet"
   o: "Client"
-  binddn: "cn=admin,dc=client,{{ldap.base_dn}}"
+  binddn: "cn=admin,dc=client,{{ldap.basedn}}"
 
 clients_ldap:
   basedn: "dc=clients,dc=vnet"
   o: "Clients"
-  binddn: "cn=admin,dc=clients,{{ldap.base_dn}}"
+  binddn: "cn=admin,dc=clients,{{ldap.basedn}}"
 
 clients_ldap_clients:
   - Rebel Allianz
