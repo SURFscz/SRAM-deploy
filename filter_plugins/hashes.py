@@ -1,4 +1,5 @@
 import hashlib
+import bcrypt
 import base64
 
 
@@ -22,9 +23,18 @@ class FilterModule(object):
         res = hashlib.sha1(hashlib.sha1(str2).digest()).hexdigest()
         return '*' + res.upper()
 
+    @staticmethod
+    def _bcrypt_apache(passwd):
+        p = passwd.encode('ASCII')
+        h = bcrypt.hashpw(p, bcrypt.gensalt())
+        # apache's htpasswd format annotates bcrypt hashes with the obsolete '$2y$' instead of '$2b$'
+        h = b'$2y$' + h[4:]
+        return h
+
     def filters(self):
         return {
-            'sha1_b64':   self._sha1_b64,
-            'slapd_hash': lambda a: '{SHA}' + self._sha1_b64(a)
-            'mysql_hash': self._sha1_mysql
+            'sha1_b64':      self._sha1_b64,
+            'slapd_hash':    lambda a: '{SHA}' + self._sha1_b64(a),
+            'mysql_hash':    self._sha1_mysql,
+            'htpasswd_hash': self._bcrypt_apache
         }

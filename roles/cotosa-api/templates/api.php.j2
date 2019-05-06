@@ -1,0 +1,71 @@
+<?php
+# vim:ft=php
+
+include "config.php";
+
+function getConnection() {
+    include "config.php";
+    $con = mysqli_connect($db_host, $db_user, $db_pass, $db_name);
+    mysqli_set_charset($con, "utf8");
+    if (!$con) {
+        error_log("Error: " . mysqli_connect_error());
+        http_response_code(500);
+        exit();
+    }
+    return $con;
+}
+
+function closeConnection($con) {
+    mysqli_close($con);
+}
+
+function getUserData($iuid,$spid) {
+    $con = getConnection();
+
+    $sql = "SELECT p.`attributes` FROM `zone_people` p "
+          ."JOIN `zone_person_zone_service` ps ON p.`id`=ps.`zone_person_id` "
+          ."JOIN `zone_services` z ON ps.`zone_service_id`=z.`id` "
+          ."WHERE p.`uid` =? AND z.`metadata`=?";
+    $stmt = mysqli_prepare($con,$sql);
+    mysqli_stmt_bind_param($stmt,"ss",$iuid,$spid);
+    mysqli_stmt_execute($stmt);
+    mysqli_stmt_bind_result($stmt, $attribute);
+
+    $ret = array();
+    while (mysqli_stmt_fetch($stmt)) {
+        array_push($ret,$attribute);
+    }
+
+    closeConnection($con);
+    return $ret;
+}
+
+
+$headers = getallheaders();
+
+$iuid = urldecode(filter_input(INPUT_GET, 'iuid', FILTER_SANITIZE_ENCODED));
+$spid = urldecode(filter_input(INPUT_GET, 'spid', FILTER_SANITIZE_ENCODED));
+
+error_log("iuid: $iuid , spid: $spid");
+$userdata = getUserData($iuid, $spid);
+
+$ret = "[\n";
+
+$len = count($userdata);
+foreach ($userdata as $value) {
+    $ret .= $value;
+    if ($i < $len -1) {
+        $ret.=",";
+    }
+    $ret .= "\n";
+    $i++;
+}
+
+$ret .= "\n]";
+
+
+header('Content-Type: application/json');
+
+echo $ret;
+
+?>

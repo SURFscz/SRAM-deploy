@@ -1,0 +1,30 @@
+---
+- name: create directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+  with_items:
+    - "{{ cotosa_api_path }}"
+    - "{{ cotosa_api_webroot }}"
+
+- name: copy script
+  template:
+    src: "api.php.j2"
+    dest: "{{ cotosa_api_webroot }}/api.php"
+
+- name: copy config
+  template:
+    src: "config.php.j2"
+    dest: "{{ cotosa_api_path }}/config.php"
+
+- name: copy password
+  template:
+    src: "htpasswd.j2"
+    dest: "{{ cotosa_api_path }}/htpasswd"
+
+- name: install apache config
+  template:
+    src: "apache.conf.j2"
+    dest: "/etc/apache2/sites_enabled/scz-cotosa-api.conf"
+  notify: Restart Apache

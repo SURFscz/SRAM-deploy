@@ -62,6 +62,10 @@
   roles:
     - { role: db_server,        tags: ['db', 'db-server'] }
 
+- hosts: eduteams-comanage
+  roles:
+    - { role: cotosa-api,          tags: ['cotosa-api'] }
+
 - hosts: client
   roles:
     - { role: client-base,          tags: ['client','client-base'  ] }
