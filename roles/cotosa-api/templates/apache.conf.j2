@@ -1,3 +1,5 @@
+# vim:ft=apache
+Listen {{cotosa_api_port}}
 <VirtualHost *:{{cotosa_api_port}}>
     ServerName {{ cotosa_api_hostname }}
     ServerAdmin {{ mail.admin_address }}
@@ -6,7 +8,6 @@
 
     <FilesMatch "\.php$">
         SetHandler application/x-httpd-php
-        SSLOptions +StdEnvVars
     </FilesMatch>
 
     <Directory "{{ cotosa_api_webroot }}">
@@ -15,7 +16,7 @@
     </Directory>
 
     ErrorLog ${APACHE_LOG_DIR}/cotosa_api-error.log
-    CustomLog ${APACHE_LOG_DIR}/cotoa_api-access.log combined
+    CustomLog ${APACHE_LOG_DIR}/cotosa_api-access.log combined
 
     <Location "/">
         Require valid-user

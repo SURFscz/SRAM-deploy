@@ -1,4 +1,10 @@
 ---
+- name: Ensure that packages are installed
+  apt:
+    name: python-passlib
+    state: present
+    install_recommends: no
+
 - name: create directories
   file:
     path: "{{ item }}"
@@ -19,12 +25,13 @@
     dest: "{{ cotosa_api_path }}/config.php"
 
 - name: copy password
-  template:
-    src: "htpasswd.j2"
-    dest: "{{ cotosa_api_path }}/htpasswd"
+  htpasswd:
+    path: "{{ cotosa_api_path }}/htpasswd"
+    name: "{{ cotosa_api_user }}"
+    password: "{{ cotosa_api_passwd }}"
 
 - name: install apache config
   template:
     src: "apache.conf.j2"
-    dest: "/etc/apache2/sites_enabled/scz-cotosa-api.conf"
+    dest: "/etc/apache2/sites-enabled/scz-cotosa-api.conf"
   notify: Restart Apache

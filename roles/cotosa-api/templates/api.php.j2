@@ -1,17 +1,20 @@
 <?php
 # vim:ft=php
 
-include "config.php";
 
 function getConnection() {
-    include "config.php";
+    if (!include("{{ cotosa_api_path }}/config.php")) {
+            http_response_code(500);
+            exit();
+    }
+
     $con = mysqli_connect($db_host, $db_user, $db_pass, $db_name);
-    mysqli_set_charset($con, "utf8");
     if (!$con) {
         error_log("Error: " . mysqli_connect_error());
         http_response_code(500);
         exit();
     }
+    mysqli_set_charset($con, "utf8");
     return $con;
 }
 
