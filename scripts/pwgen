@@ -6,7 +6,7 @@ CHARS_ALLOWED="[:alnum:]/#%_+-"
 LEN=32
 
 ENCRYPT=0
-if [ $1 = '-e' ]
+if [ "$1" = '-e' ]
 then
     ENCRYPT=1
 fi
