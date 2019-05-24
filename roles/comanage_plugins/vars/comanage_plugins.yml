@@ -29,4 +29,5 @@ comanage_plugin_configurations:
   - { src: ldapfixedprovisioner.php.j2, dest: ldapfixedprovisioner.php }
   - { src: scz.php.j2, dest: scz.php }
   - { src: templatemanager.php.j2, dest: templatemanager.php }
+  - { src: samlsource.php.j2, dest: samlsource.php }
 
