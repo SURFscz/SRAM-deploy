@@ -18,4 +18,16 @@
       args:
         chdir: "{{ comanage_path }}/app"
 
+    - name: Reprovision all COs over for ZoneProvisioner
+      command: ./Console/cake provision -t ZoneProvisioner
+      become_user: "{{ comanage_www_user }}"
+      args:
+        chdir: "{{ comanage_path }}/app"
+
+    - name: Reprovision all COs over for LdapFixedProvisioner
+      command: ./Console/cake provision -t LdapFixedProvisioner
+      become_user: "{{ comanage_www_user }}"
+      args:
+        chdir: "{{ comanage_path }}/app"
+
   become_user: "{{ comanage_www_user }}"
