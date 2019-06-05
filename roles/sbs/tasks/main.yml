@@ -90,6 +90,7 @@
     virtualenv: "{{ sbs_env_dir }}"
     virtualenv_python: python3
     requirements: "{{ sbs_git_dir }}/server/requirements/test.txt"
+  notify: restart Apache
 
 - name: check for yarn dependencies
   stat:
@@ -113,11 +114,13 @@
   template:
     src: config.yml.j2
     dest: "{{ sbs_git_dir }}/server/config/config.yml"
+  notify: restart Apache
 
 - name: Create SBS wsgi file
   template:
     src: sbs-api.wsgi.j2
     dest: "{{ sbs_git_dir }}/sbs-api.wsgi"
+  notify: restart Apache
 
 - name: Create SBS environment disclaimer file
   template:
@@ -139,6 +142,7 @@
   with_items:
     - auth_openidc
     - wsgi
+  notify: restart Apache
 
 - name: Configure Apache vhost
   template:
