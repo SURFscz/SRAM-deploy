@@ -1,0 +1,15 @@
+---
+ldap:
+  src:
+    uri: ldapi:///
+    basedn: {{ ldap.basedn }}
+    binddn: external
+    passwd: changethispassword
+  dst:
+    uri: ldapi:///
+    basedn: {{ clients_ldap.basedn }}
+    binddn: external
+    passwd: changethispassword
+pwd: changethispassword
+uid: 1000
+gid: 1000

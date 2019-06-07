@@ -1,0 +1,12 @@
+[Unit]
+Description=PLSC Runner
+
+[Service]
+User=root
+Group=root
+Type=oneshot
+WorkingDirectory={{ plsc_dir }}
+ExecStart={{ plsc_dir }}/sync_services plsc.yml
+ExecStart={{ plsc_dir }}/plsc plsc.yml
+RuntimeMaxSec=120
+
