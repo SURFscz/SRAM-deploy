@@ -79,6 +79,7 @@
     - { role: client-orcid-idp,     tags: ['client','client-orcid' ] }
     - { role: client-microsoft-idp, tags: ['client','client-ms'    ] }
     - { role: client-oidc-rp,       tags: ['client','client-rp'    ] }
+    - { role: client-2fa,           tags: ['client','client-2fa'   ] }
 
 - hosts: proxy
   roles:

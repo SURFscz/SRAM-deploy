@@ -19,6 +19,7 @@ hostnames:
   sp:       sp-test.{{base_domain}}
   idp:      idp-test.{{base_domain}}
   google:   google-test.{{base_domain}}
+  tfa:      2fa-test.{{base_domain}}
   pam:      pam.{{base_domain}}
   orcid:    orcid-test.{{base_domain}}
   orcid_sb: orcid-sb-test.{{base_domain}}
@@ -31,6 +32,7 @@ google_test_port: 84
 orcid_test_port: 85
 orcid_sb_test_port: 86
 ms_test_port: 87
+tfa_test_port: 88
 pam_clients_port: 8087
 
 # COmanage-ldap configuration
@@ -78,6 +80,10 @@ loadbalancer:
     http: true
     backend_hosts: "{{groups['vm-client']}}"
     backend_port: "{{google_test_port}}"
+  - hostname: "{{hostnames.tfa}}"
+    http: true
+    backend_hosts: "{{groups['vm-client']}}"
+    backend_port: "{{tfa_test_port}}"
   - hostname: "{{hostnames.orcid}}"
     http: true
     backend_hosts: "{{groups['vm-client']}}"
