@@ -146,34 +146,3 @@
     src: sbs.conf.j2
     dest: /etc/apache2/sites-enabled/000-default.conf
   notify: restart Apache
-
-# SBS Provisioning...
-
-- name: Install required packages
-  apt:
-    name:
-      - libsasl2-dev
-      - python-dev
-      - libldap2-dev
-
-- name: Create python3 virtualenv
-  pip:
-    virtualenv: "{{ sbs_env_dir }}"
-    virtualenv_python: python3
-    requirements: "{{ sbs_git_dir }}/ldap/requirements.txt"
-
-- name: Copy prompt logrotate configuration
-  copy: src=provisioning
-        dest=/etc/logrotate.d/provisioning
-
-- name: Create provisioning run file
-  template:
-    src: provisioning.sh.j2
-    dest: "/usr/local/bin/provisioning.sh"
-    mode: 0100
-
-- name: Create cronjob to schedule automatic provisioning SBS to LDAP
-  cron:
-    name: "SBS Provisioning"
-    minute: "*/5"
-    job: "/usr/local/bin/provisioning.sh"
