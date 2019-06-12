@@ -22,7 +22,6 @@
       - python-pymysql
       - yarn
       - python3-virtualenv
-      - python-setuptools
       - python3-setuptools
       - build-essential
       - virtualenv
@@ -149,5 +148,5 @@
 - name: Configure Apache vhost
   template:
     src: sbs.conf.j2
-    dest: /etc/apache2/sites-enabled/000-default.conf
+    dest: /etc/apache2/sites-enabled/sbs.conf
   notify: restart Apache
