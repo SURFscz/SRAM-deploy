@@ -18,6 +18,8 @@ oidc_uppercase: False
 mail:
   host: {{ mail.relay_host }}
   port: 25
+  sender_name: {{ sbs_mail_sender_name }}
+  sender_email: {{ sbs_mail_sender_email }}
 
 base_url: {{ sbs_base_url }}
 
