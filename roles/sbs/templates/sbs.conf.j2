@@ -18,6 +18,7 @@
         OIDCRedirectURI {{ sbs_base_url }}redirect_uri
         OIDCCryptoPassphrase randompassword
         OIDCRemoteUserClaim cmuid
+        OIDCSessionInactivityTimeout {{ sbs_openidc_timeout }}
 
         WSGIDaemonProcess server user=www-data group=www-data threads=5
 
