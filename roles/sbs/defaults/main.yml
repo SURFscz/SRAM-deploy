@@ -3,6 +3,8 @@ mod_auth_openidc_url: "https://github.com/zmartzone/\
   mod_auth_openidc/releases/download/v2.3.11/\
   libapache2-mod-auth-openidc_2.3.11-1.stretch+1_amd64.deb"
 
+sbs_openidc_timeout: 86400
+
 sbs_repository: https://github.com/SURFscz/SBS.git
 sbs_version: master
 
