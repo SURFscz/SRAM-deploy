@@ -19,3 +19,8 @@ sbs_mail_port: "1025"
 
 sbs_disclaimer_color: "#a29c13"
 sbs_disclaimer_label: wsgi
+
+sbs_mail_sender_name: "SURFnet"
+sbs_mail_sender_email: "no-reply@surfnet.nl"
+
+sbs_wiki_link: "https://wiki.surfnet.nl/display/SCZ/SCZ+Public+Space"
