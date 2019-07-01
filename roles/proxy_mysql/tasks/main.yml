@@ -1,18 +1,13 @@
 ---
-- name: Copy create_db file
+- name: Copy script files
   copy:
-    src: "create_db.sql"
+    src: "{{ item }}"
     dest: /tmp
-
-- name: Copy foreign keys file
-  copy:
-    src: "fkeys.sql"
-    dest: /tmp
-
-- name: Copy views file
-  copy:
-    src: "views.sql"
-    dest: /tmp
+  with_items:
+    - "create_db.sql"
+    - "fkeys.sql"
+    - "views.sql"
+    - "copersoncol.sql"
 
 - name: create database for CoManage-Proxy linkup
   mysql_db:
@@ -41,6 +36,14 @@
           --execute "source  /tmp/views.sql"
   register: viewcreation
   changed_when: viewcreation.stderr is not search("45000.*view exists")
+  become: Yes
+
+- name: Add additional ID columns
+  command: >
+    mysql --batch --silent --raw --database "{{ comanage_proxy_db_name }}"
+          --execute "source  /tmp/copersoncol.sql"
+  register: copersoncolcreation
+  changed_when: copersoncolcreation.stderr is not search("45000.*column exists")
   become: Yes
 
 - name: create user for mysql with all privilege
