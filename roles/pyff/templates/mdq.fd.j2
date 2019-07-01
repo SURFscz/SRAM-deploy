@@ -24,6 +24,9 @@
 {% if hostnames.ms is defined %}
        - {{http_proto}}://{{ hostnames.ms }}/saml/saml2/idp/metadata.php
 {% endif %}
+{% if hostnames.tfa is defined %}
+       - {{http_proto}}://{{ hostnames.tfa }}/saml/saml2/idp/metadata.php
+{% endif %}
 {% if pyff_metadata_extra is defined %}
 {% for m in pyff_metadata_extra %}
        - {{m}}

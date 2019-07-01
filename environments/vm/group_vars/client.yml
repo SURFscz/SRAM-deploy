@@ -6,10 +6,11 @@ firewall_v4_incoming:
   - { name: loadbalancer, src: "{{iprange.lb}}",      dport:  "{{sp_test_port}}", proto: tcp }
   - { name: loadbalancer, src: "{{iprange.lb}}",      dport:  "{{oidc_test_port}}", proto: tcp }
   - { name: loadbalancer, src: "{{iprange.lb}}",      dport:  "{{google_test_port}}", proto: tcp }
+  - { name: loadbalancer, src: "{{iprange.lb}}",      dport:  "{{tfa_test_port}}", proto: tcp }
   - { name: vnet,         src: "{{iprange.vm}}",      dport: "22,80,443", proto: tcp }
 
 # TODO: move to role default
 # SimpleSAMLphp
 simplesaml_download_url: "https://github.com/simplesamlphp/simplesamlphp/releases/download"
-simplesaml_version: "1.15.3"
+simplesaml_version: "1.17.2"
 simplesaml_project_dir: "/opt/simplesaml"
