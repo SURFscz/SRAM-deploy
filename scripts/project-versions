@@ -82,6 +82,13 @@ function check_main_repo {
 		do_echo "  ${E}Release branch $branch_latest is $release_commit_ahead ahead of release tag $tag_latest"
 	fi
 
+	prs=$(hub pr list)
+	if [ -n "$prs" ]
+	then
+		echo "  Outstanding pull requests:"
+		hub pr list --format="%sC%>(10)%i%Creset  %t (%Cblue%au%Creset, %cr)%n"
+	fi
+
 	# compare master and latest branch
 	master_release_ahead=$(git rev-list --left-right --count master...${branch_latest} | cut -f1)
 	master_release_behind=$(git rev-list --left-right --count master...${branch_latest} | cut -f2)
@@ -228,6 +235,13 @@ function check_repo {
 	# get tags in latest branch
 	tag_latest=$(git tag --sort='creatordate' --merged ${branch_latest} | tail -1)
 	do_echo "  Latest tag in branch ${branch_latest} is ${tag_latest}"
+
+	prs=$(hub pr list)
+	if [ -n "$prs" ]
+	then
+		echo "  Outstanding pull requests:"
+		hub pr list --format="%sC%>(10)%i%Creset  %t (%Cblue%au%Creset, %cr)%n"
+	fi
 
 	# compare latest tag and latest release branch
 	release_commit_ahead=$(git rev-list --count ${tag_latest}..${branch_latest})
