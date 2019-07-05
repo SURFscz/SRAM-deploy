@@ -52,6 +52,7 @@
   with_items:
     - auth_openidc
     - rewrite
+    - headers
 
 - name: Remove stable python 3 version
   apt:
