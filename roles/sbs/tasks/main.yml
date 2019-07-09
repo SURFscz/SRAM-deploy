@@ -73,13 +73,6 @@
     priv: 'sbs.*:ALL'
     login_unix_socket: /var/run/mysqld/mysqld.sock
 
-- set_fact:
-    sbs_version: "master"
-  when: ansible_limit == "test-sbs"
-
-- debug:
-    msg: Deploying SBS version {{ sbs_version }}
-
 - name: Clone SBS repository
   git:
     repo: "{{ sbs_repository }}"
