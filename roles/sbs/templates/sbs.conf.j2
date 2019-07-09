@@ -30,6 +30,11 @@
         WSGIApplicationGroup %{GLOBAL}
         WSGIPassAuthorization On
 
+        Header set Content-Security-Policy "default-src 'self'; script-src 'self'; frame-ancestors 'none'; form-action 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;"
+        Header set X-Frame-Options "DENY"
+        Header set Referrer-Policy "same-origin"
+        Header set X-Content-Type-Options "nosniff"
+
         <Directory {{ sbs_git_dir }}>
             WSGIProcessGroup server
             Require all granted
