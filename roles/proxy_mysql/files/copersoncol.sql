@@ -7,7 +7,7 @@ BEGIN NOT ATOMIC
     DELETE from zone_people;
     DELETE from zone_services;
     ALTER TABLE zone_people ADD COLUMN co_person_id INT not null;
-    ALTER TABLE zone_people ADD COLUMN modified TIMESTAMP;
+    ALTER TABLE zone_services ADD COLUMN modified TIMESTAMP;
     ALTER TABLE zone_services ADD COLUMN co_service_id INT not null;
   END IF;
 END $
