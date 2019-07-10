@@ -80,7 +80,7 @@
     backup: yes
 
 - name: Check for ChallengeResponseAuthentication in sshd
-  shell: grep 'ChallengeResponseAuthentication yes' /etc/ssh/sshd_config
+  shell: /bin/grep 'ChallengeResponseAuthentication yes' /etc/ssh/sshd_config
   register: cra_check
   ignore_errors: true
 

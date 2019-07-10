@@ -3,9 +3,8 @@
   apt:
     name:
       - apache2
-      - libapache2-mod-php7.0
+      - libapache2-mod-php
       - php-date
-      - php-mcrypt
       - php-json
       - php-xml
       - php-mbstring
@@ -54,16 +53,6 @@
     state: link
   with_items:
     - idp
-  notify: restart Apache
-
-- name: Listen to IdP port
-  blockinfile:
-    path: "/etc/apache2/ports.conf"
-    insertbefore: BOF
-    marker: "# {mark} ANSIBLE MANAGED BLOCK {{ hostnames.idp }}"
-    create: yes
-    block: |
-      Listen {{ idp_test_port }}
   notify: restart Apache
 
 - name: Create simplesaml project dir

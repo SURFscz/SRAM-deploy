@@ -6,13 +6,13 @@
   apt:
     state: present
     name:
-      - libapache2-mod-php7.0
-      - php7.0
-      - php7.0-fpm
-      - php7.0-ldap
-      - php7.0-mbstring
-      - php7.0-mysql
-      - php7.0-xsl
+      - libapache2-mod-php
+      - php7.3
+      - php7.3-fpm
+      - php7.3-ldap
+      - php7.3-mbstring
+      - php7.3-mysql
+      - php7.3-xsl
 
 - name: install xdebug
   apt:
@@ -22,4 +22,4 @@
 - name: config xdebug
   template:
     src: xdebug.ini.j2
-    dest: "/etc/php/7.0/apache2/conf.d/99-xdebug.ini"
+    dest: "/etc/php/7.3/apache2/conf.d/99-xdebug.ini"

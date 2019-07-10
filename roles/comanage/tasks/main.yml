@@ -1,6 +1,12 @@
 ---
 - include_vars: comanage.yml
 
+- name: Ensure that packages are installed
+  apt:
+    state: present
+    name:
+      - cron
+
 - name: Check for old comanage directories
   find:
     path: /var/www/

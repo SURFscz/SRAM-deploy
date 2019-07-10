@@ -21,14 +21,6 @@
   with_items:
     - sp
 
-- name: Listen to SP port
-  blockinfile:
-    path: "/etc/apache2/ports.conf"
-    insertafter: EOF
-    marker: "# {mark} ANSIBLE MANAGED BLOCK {{ hostnames.sp }}"
-    block: |
-      Listen {{ sp_test_port }}
-
 - name: SimpleSaml {{ environment_string }} metadata
   template:
     src: "{{ item }}.j2"

@@ -23,16 +23,9 @@
       - yarn
       - python3-virtualenv
       - python3-setuptools
+      - python-setuptools
       - build-essential
       - virtualenv
-
-# really need systemd from testing, because otherwise the python deps from testing will BREAK
-# systemd from stable
-- name: Install required packages from testing
-  apt:
-    default_release: testing
-    state: latest
-    name:
       - python3.7
       - python3.7-dev
       - python3-distutils
@@ -40,10 +33,8 @@
       - systemd
       - nodejs
       - mariadb-server
-
-- name: Get mod_auth_openidc from github releases
-  apt:
-    deb: "{{ mod_auth_openidc_url  }}"
+      - libapache2-mod-auth-openidc
+      - exim4-daemon-light
 
 - name: Enable mod_auth_openidc
   apache2_module:

@@ -43,12 +43,3 @@
     - oidc
   notify: restart Apache
 
-- name: Listen to OIDC port
-  blockinfile:
-    path: "/etc/apache2/ports.conf"
-    insertafter: EOF
-    marker: "# {mark} ANSIBLE MANAGED BLOCK {{ hostnames.oidc }}"
-    block: |
-      Listen {{ oidc_test_port }}
-  notify: restart Apache
-

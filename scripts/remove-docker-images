@@ -199,7 +199,7 @@ GatherImages() {
         if [[ -n ${rm_tag+x}} ]]; then
             image="$image:$rm_tag"
         fi
-        deb=$(docker images debian:stretch --format="{{.ID}}")
+        deb=$(docker images debian:buster --format="{{.ID}}")
         images="$images $deb"
     fi
 

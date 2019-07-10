@@ -23,16 +23,6 @@
     - google
   notify: restart Apache
 
-- name: Listen to Google IdP port
-  when: google_client_id is defined
-  blockinfile:
-    path: "/etc/apache2/ports.conf"
-    insertafter: EOF
-    marker: "# {mark} ANSIBLE MANAGED BLOCK {{ hostnames.google }}"
-    block: |
-      Listen {{ google_test_port }}
-  notify: restart Apache
-
 - name: Install OIDC module
   composer:
     working_dir: "{{ simplesaml_project_dir }}/simplesaml"

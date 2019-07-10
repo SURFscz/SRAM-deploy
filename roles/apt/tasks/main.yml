@@ -50,6 +50,7 @@
       - apt-transport-https
       - python-apt
       - needrestart
+      - rsyslog
 
 - name: Upgrade packages
   apt:

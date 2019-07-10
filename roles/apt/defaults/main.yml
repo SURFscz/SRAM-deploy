@@ -1,6 +1,6 @@
 ---
 debian:
-  dist: 'stretch'
+  dist: 'buster'
   mirror: 'http://ftp.de.debian.org/debian/'
   security_mirror: 'http://security.debian.org/'
 

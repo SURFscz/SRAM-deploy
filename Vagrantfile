@@ -103,7 +103,7 @@ Vagrant.configure("2") do |config|
     # atop our current OS) we put box information inside the providers that actually
     # need to download the box
     config.vm.provider "virtualbox" do |vb, override|
-        override.vm.box = "debian/stretch64"
+        override.vm.box = "debian/buster64"
         vb.cpus = cpus
         vb.memory = memory
 
@@ -112,7 +112,7 @@ Vagrant.configure("2") do |config|
     end
 
     config.vm.provider "libvirt" do |lv, override|
-        override.vm.box = "debian/stretch64"
+        override.vm.box = "debian/buster64"
         lv.cpus = cpus
         lv.memory = memory
         lv.graphics_type = "spice"

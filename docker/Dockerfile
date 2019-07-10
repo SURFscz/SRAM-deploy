@@ -1,4 +1,4 @@
-FROM debian:stretch as scz-base
+FROM debian:buster as scz-base
 MAINTAINER SURFnet <info@surfnet.nl>
 
 ARG DEBIAN_FRONTEND=noninteractive
@@ -6,9 +6,9 @@ ARG RUNLEVEL=1
 ENV TERM linux
 
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections  && \
-    echo "deb http://ftp.de.debian.org/debian/ stretch-backports main" >> /etc/apt/sources.list  && \
+    echo "deb http://ftp.de.debian.org/debian/ buster-backports main" >> /etc/apt/sources.list  && \
     apt-get update -y  && \
-    apt-get -t stretch-backports install -y systemd  && \
+    apt-get install -y systemd  && \
     apt-get install -y openssh-server python2.7 python3 python sudo locales  && \
     apt-get clean -y && apt-get autoremove -y && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*  && \
     update-locale  && \
