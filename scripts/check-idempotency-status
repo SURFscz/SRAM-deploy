@@ -8,6 +8,7 @@ import json
 WHITELIST = {
     'comanage_enable':      2,
     'client-microsoft-idp': 3,
+    'pam_websso':           1,
     'pam_websso_daemon':    1,
     'http_apache':          1,
     'cmservice':            2,
@@ -19,6 +20,10 @@ WHITELIST = {
     'client-orcid-idp':     4,
     'comanage':             8,
     'client-google-idp':    2,
+    'apt':                  4, # nullmailer/exim for sbs
+    'mail':                 2, # nullmailer/exim for sbs
+    'sbs':                  2, # nullmailer/exim + yarn
+    'basic':                1, # sshd_config reset for sandbox pam
 }
 
 

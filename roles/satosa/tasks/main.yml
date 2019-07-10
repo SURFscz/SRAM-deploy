@@ -9,6 +9,7 @@
   command: apt-get update
   args:
     warn: false
+  changed_when: false
 
 - name: Ensure that packages are installed
   apt:
