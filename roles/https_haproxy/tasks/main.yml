@@ -32,6 +32,21 @@
     - restart haproxy
   when: enable_https
 
+- name: Copy ocsp script
+  copy:
+    src: ocsp.sh
+    dest: /usr/local/bin/ocsp.sh
+    mode: 0755
+
+- name: Copy ocsp service files
+  template:
+    src: "{{item}}.j2"
+    dest: "/etc/systemd/system/{{item}}"
+  with_items:
+    - ocsp.service
+    - ocsp.timer
+  notify:
+    - enable ocsp job
+
 - name: enable haproxy
   systemd: daemon_reload=yes name=haproxy state=started enabled=true
-
