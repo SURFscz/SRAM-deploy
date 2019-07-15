@@ -1,10 +1,11 @@
-export SBS_HOST="http://sbs.{{base_domain}}"
+export SBS_HOST="sbs.{{base_domain}}"
+export SBS_PROT="{{ sbs_host_protocol }}"
 
 export API_USER="sysread"
 export API_PASS="{{ sbs_sysread_password }}"
 
 export LDAP_HOST="ldap.{{base_domain}}"
-export LDAP_PROT="ldap://"
+export LDAP_PROT="{{ sbs_ldap_protocol }}"
 export LDAP_PASS="{{ ldap_password }}"
 export LDAP_USER="{{ ldap.binddn }}"
 export LDAP_BASE="{{ ldap.basedn }}"

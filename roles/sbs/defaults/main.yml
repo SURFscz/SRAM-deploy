@@ -16,6 +16,9 @@ sbs_db_name: "sbs"
 sbs_db_user: "sbs"
 sbs_db_host: "localhost"
 
+sbs_host_protocol: "https"
+sbs_ldap_protocol: "ldaps"
+
 sbs_mail_host: "localhost"
 sbs_mail_port: "25"
 
