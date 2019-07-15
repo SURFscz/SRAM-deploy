@@ -1,0 +1,11 @@
+/var/log/provisioning.log {
+        weekly
+
+        rotate 24
+        dateext
+        missingok
+        copytruncate
+        olddir /var/log/provisioning/archive
+        compress
+        depaycompress
+}
