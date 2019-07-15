@@ -1,0 +1,3 @@
+#!/bin/sh
+needrestart -b -r l -k | grep 'NEEDRESTART-KSTA:' | grep -Eo '[0-9]'
+

@@ -18,6 +18,7 @@
         OIDCRedirectURI {{ sbs_base_url }}redirect_uri
         OIDCCryptoPassphrase randompassword
         OIDCRemoteUserClaim cmuid
+        OIDCSessionInactivityTimeout {{ sbs_openidc_timeout }}
 
         WSGIDaemonProcess server user=www-data group=www-data threads=5
 
@@ -29,6 +30,11 @@
 
         WSGIApplicationGroup %{GLOBAL}
         WSGIPassAuthorization On
+
+        Header set Content-Security-Policy "default-src 'self'; script-src 'self'; frame-ancestors 'none'; form-action 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;"
+        Header set X-Frame-Options "DENY"
+        Header set Referrer-Policy "same-origin"
+        Header set X-Content-Type-Options "nosniff"
 
         <Directory {{ sbs_git_dir }}>
             WSGIProcessGroup server

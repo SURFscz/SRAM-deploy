@@ -222,8 +222,11 @@
   with_items:
     - lsc.service
     - lsc.timer
+    - plsc.service
+    - plsc.timer
   notify:
     - enable lsc job
+    - enable plsc job
 
 - name: Install backup scripts
   template:
@@ -242,35 +245,35 @@
 
 - name: Make sure clients sync directory exists
   file:
-    path: "{{ clients_sync_dir }}"
+    path: "{{ plsc_dir }}"
     state: directory
     mode: 0755
 
-- name: Copy clients requirements file and sync_clients script
-  copy:
-    src: "{{ item }}"
-    dest: "{{ clients_sync_dir }}/{{ item }}"
-    mode: 0644
-  with_items:
-    - clients_requirements.txt
-    - sync_clients
+- name: fetch plsc from {{ plsc_repo_url }}, version {{ plsc_repo_version }}
+  git:
+    repo: "{{ plsc_repo_url }}"
+    dest: "{{ plsc_dir }}"
+    version: "{{ plsc_repo_version }}"
+    accept_hostkey: "yes"
+    force: "yes"
+  register: pam_websso_git
 
-- name: Create clients.yml source if it doesn't exist
+- name: Create plsc.yml source if it doesn't exist
   template:
-    src: "clients.yml.j2"
-    dest: "{{ clients_sync_dir }}/clients.yml"
+    src: "plsc.yml.j2"
+    dest: "{{ plsc_dir }}/plsc.yml"
     mode: 0644
     force: no
 
 - name: Install virtualenv from requirements.txt
   pip:
-    requirements: "{{ clients_sync_dir }}/clients_requirements.txt"
-    virtualenv: "{{ clients_sync_dir }}"
+    requirements: "{{ plsc_dir }}/requirements.txt"
+    virtualenv: "{{ plsc_dir }}"
     virtualenv_python: python3
 
 - name: Run sync_clients
   command: >
-    "{{ clients_sync_dir }}/bin/python" sync_clients
+    "{{ plsc_dir }}/bin/python" sync_services plsc.yml
   changed_when: false
   args:
-    chdir: "{{ clients_sync_dir }}"
+    chdir: "{{ plsc_dir }}"

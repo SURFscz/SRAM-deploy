@@ -7,7 +7,7 @@ $config=array(
     'authority' => '{{ environment_name }}.scz.surf.nl',
     'export_uid_attribute' => false,
     'attributes' => array(
-      '{{ comanage_proxy_attribute }}' => array('attribute'=>'uid','use_org'=>True, 'type'=>'eppn'),
+      '{{ comanage_proxy_attribute }}' => array('attribute'=>'uid','use_org'=>True, 'type'=>'sorid'),
       'urn:mace:dir:attribute-def:cn' => array('attribute'=>'cn', 'multiple'=>'single'),
       'urn:mace:dir:attribute-def:givenName'=>array('attribute'=>'givenName', 'multiple'=>'single'),
       'urn:mace:dir:attribute-def:sn' => array('attribute'=>'sn', 'multiple'=>'single'),

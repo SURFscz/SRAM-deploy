@@ -85,7 +85,7 @@
     - { role: pyff,          tags: ['proxy','pyff'      ] }
     - { role: satosa,        tags: ['proxy','satosa'    ] }
     - { role: cmservice,     tags: ['proxy','cmservice' ] }
-    - { role: proxy_mysql,   tags: ['proxy','mysql'     ] }
+    - { role: proxy_mysql,   tags: ['proxy','mysql','dothis'     ] }
 
 - hosts: comanage
   roles:

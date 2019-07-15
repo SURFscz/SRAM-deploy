@@ -5,3 +5,10 @@
     enabled: true
     state: started
     daemon_reload: true
+
+- name: enable plsc job
+  systemd:
+    name: plsc.timer
+    enabled: true
+    state: started
+    daemon_reload: true
