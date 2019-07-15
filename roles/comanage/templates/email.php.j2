@@ -21,11 +21,12 @@
 class EmailConfig {
 
 	public $default = array(
-		'transport' => 'Mail',
+		'transport' => 'Smtp',
 		'from' => '{{comanage_email_from}}',
+		'host' => '{{mail.relay_host}}',
+		'port' => '{{mail.relay_port}}',
 		'charset' => 'utf-8',
 		'headerCharset' => 'utf-8',
 	);
 
 }
-
