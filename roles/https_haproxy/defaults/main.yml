@@ -1,6 +1,7 @@
 ---
 enable_https: true
 use_fixed_cert: false
+enable_ratelimit: true
 
 haproxy:
   custom_dhparam: true

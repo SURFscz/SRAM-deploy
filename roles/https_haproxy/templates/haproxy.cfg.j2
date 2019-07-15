@@ -83,9 +83,16 @@ frontend fe_https
 	http-request set-header Forwarded "for=%[src]; proto=http; by=%[dst]"
 {% endif %}
 
+{% if enable_ratelimit %}
+	http-request track-sc0 src table proxy_rates
+	http-request track-sc1 url32+src table proxy_req_rates unless { path_end .css .js .png .jpeg .gif .ico .woff2 }
+	acl exceeds_limit sc_gpc0_rate(0) gt 15
+	http-request sc-inc-gpc0(0) if { sc_http_req_rate(1) eq 1 } !exceeds_limit
+	http-request deny deny_status 429 if exceeds_limit
+{% endif %}
+
 {% if iprange.vpn is defined %}
 	acl vpn src {% for vpnname in iprange.vpn %}{{iprange.vpn[vpnname]}} {% endfor %}
-
 {% endif %}
 
 {% for host in lb_http %}
@@ -121,8 +128,8 @@ listen proxy_{{host.hostname}}_{{host.frontend_port}}
 	option	tcpka
 	option	tcplog
 
-    timeout client 900s
-    timeout server 901s
+	timeout client 900s
+	timeout server 901s
 
 	{% for be_server in host.backend_hosts -%}
 	server {{be_server}} {{be_server}}:{{host.backend_port}} check
@@ -130,3 +137,9 @@ listen proxy_{{host.hostname}}_{{host.frontend_port}}
 
 {% endfor %}
 
+{% if enable_ratelimit %}
+backend proxy_req_rates
+        stick-table type binary len 8 size 1m expire 24h store http_req_rate(24h)
+backend proxy_rates
+        stick-table type ip size 1m expire 24h store gpc0,gpc0_rate(30s)
+{% endif %}
