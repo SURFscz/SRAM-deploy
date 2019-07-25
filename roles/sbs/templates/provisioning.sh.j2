@@ -6,8 +6,8 @@ export API_PASS="{{ sbs_sysread_password }}"
 
 export LDAP_HOST="ldap.{{base_domain}}"
 export LDAP_PROT="{{ sbs_ldap_protocol }}"
-export LDAP_PASS="{{ ldap_password }}"
-export LDAP_USER="{{ ldap.binddn }}"
-export LDAP_BASE="{{ ldap.basedn }}"
+export LDAP_PASS="{{ clients_ldap_password }}"
+export LDAP_USER="{{ clients_ldap.binddn }}"
+export LDAP_BASE="{{ clients_ldap.basedn }}"
 
-{{ sbs_env_dir }}/bin/python {{ sbs_git_dir }}/ldap/provisioner.py > /var/log/provisioning.log
+{{ sbs_env_dir }}/bin/python {{ sbs_git_dir }}/ldap/slp.py > /var/log/slp.log
