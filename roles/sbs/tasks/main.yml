@@ -22,7 +22,6 @@
       - python-pymysql
       - yarn
       - python3-virtualenv
-      - python-setuptools
       - python3-setuptools
       - build-essential
       - virtualenv

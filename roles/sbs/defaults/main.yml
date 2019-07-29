@@ -20,7 +20,7 @@ sbs_host_protocol: "https"
 sbs_ldap_protocol: "ldaps"
 
 sbs_mail_host: "localhost"
-sbs_mail_port: "25"
+sbs_mail_port: "1025"
 
 sbs_disclaimer_color: "#a29c13"
 sbs_disclaimer_label: wsgi
