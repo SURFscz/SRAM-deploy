@@ -1,0 +1,10 @@
+---
+slp_repository: https://github.com/SURFscz/SLP.git
+slp_version: master
+
+slp_work_dir: "/opt/slp"
+slp_git_dir: "{{ sbs_work_dir }}/slp"
+slp_env_dir: "{{ sbs_work_dir }}/slp-env"
+
+slp_host_protocol: "https"
+slp_ldap_protocol: "ldaps"

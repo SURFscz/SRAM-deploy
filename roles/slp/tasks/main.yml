@@ -1,0 +1,36 @@
+---
+- name: Install required packages
+  apt:
+    name:
+      - libsasl2-dev
+      - python-dev
+      - libldap2-dev
+
+- name: Clone SLP repository
+  git:
+    repo: "{{ slp_repository }}"
+    dest: "{{ slp_git_dir }}"
+    version: "{{ slp_version }}"
+    force: yes
+
+- name: Create python3 virtualenv
+  pip:
+    virtualenv: "{{ slp_env_dir }}"
+    virtualenv_python: python3
+    requirements: "{{ slp_git_dir }}/ldap/requirements.txt"
+
+- name: Copy prompt logrotate configuration
+  copy: src=provisioning
+        dest=/etc/logrotate.d/provisioning
+
+- name: Create provisioning run file
+  template:
+    src: provisioning.sh.j2
+    dest: "/usr/local/bin/provisioning.sh"
+    mode: 0100
+
+- name: Create cronjob to schedule automatic provisioning SBS to LDAP
+  cron:
+    name: "SBS Provisioning"
+    minute: "*/5"
+    job: "/usr/local/bin/provisioning.sh"
