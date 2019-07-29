@@ -5,6 +5,10 @@
       - libsasl2-dev
       - python-dev
       - libldap2-dev
+      - build-essential
+      - python3
+      - python3-virtualenv
+      - python3-setuptools
 
 - name: Clone SLP repository
   git:
@@ -17,7 +21,7 @@
   pip:
     virtualenv: "{{ slp_env_dir }}"
     virtualenv_python: python3
-    requirements: "{{ slp_git_dir }}/ldap/requirements.txt"
+    requirements: "{{ slp_git_dir }}/requirements.txt"
 
 - name: Copy prompt logrotate configuration
   copy: src=provisioning
