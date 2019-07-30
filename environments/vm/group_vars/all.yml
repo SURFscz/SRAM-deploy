@@ -45,7 +45,6 @@ mail:
   relay_to: "outgoing.{{base_domain}}"
   relay_for:
     - "{{iprange.mgnt}}"
-  relay_port: "25"
   domain: "{{base_domain}}"
   admin_address: "root@{{base_domain}}"
 
@@ -127,3 +126,4 @@ sbs_api_url: "{{ http_proto }}://{{ hostnames.sbs }}/"
 
 # No Zabbix on VM/Travis
 zabbix_enabled: false
+
