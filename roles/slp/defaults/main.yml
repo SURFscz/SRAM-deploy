@@ -7,4 +7,4 @@ slp_git_dir: "{{ slp_work_dir }}/slp"
 slp_env_dir: "{{ slp_work_dir }}/slp-env"
 
 slp_host_protocol: "https"
-slp_ldap_protocol: "ldaps"
+slp_ldap_protocol: "ldap"
