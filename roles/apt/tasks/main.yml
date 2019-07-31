@@ -103,3 +103,5 @@
   register: result
   changed_when: "'0 upgraded, 0 newly installed, 0 to remove' not in result.stdout"
 
+- debug: var=result.stdout_lines
+
