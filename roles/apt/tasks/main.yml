@@ -50,6 +50,8 @@
       - apt-transport-https
       - python-apt
       - needrestart
+      - logrotate
+      - nullmailer
       - rsyslog
 
 - name: Upgrade packages
