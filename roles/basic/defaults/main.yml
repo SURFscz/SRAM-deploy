@@ -6,4 +6,7 @@ enable_ipv6: false
 # in DNS (e.g., for vagrant)
 fake_hostnames: false
 
+# set this to true to enable pam-based challenge-response logins via ssh
+sshd_authn_CR: false
+
 sudo_groups: [ ]

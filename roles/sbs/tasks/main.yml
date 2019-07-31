@@ -34,7 +34,6 @@
       - nodejs
       - mariadb-server
       - libapache2-mod-auth-openidc
-      - exim4-daemon-light
 
 - name: Enable mod_auth_openidc
   apache2_module:
@@ -89,18 +88,17 @@
     path: "{{ sbs_git_dir }}/client/node_modules"
   register: yarn_deps
 
-- name: debug
-  debug: var=yarn_deps
-
 - name: Install yarn dependancies
   yarn:
     path: "{{ sbs_git_dir }}/client"
+  register: yarn_install
   when: git_apps.changed or not yarn_deps.stat.exists
 
 - name: Build client yarn
   command: yarn build
   args:
     chdir: "{{ sbs_git_dir }}/client"
+  when: git_apps.changed or yarn_install.changed
 
 - name: Create SBS config file
   template:

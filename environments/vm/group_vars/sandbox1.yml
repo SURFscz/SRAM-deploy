@@ -1,0 +1,3 @@
+---
+# pam_websso needs pam-based challenge-reponse enabled in sshd
+sshd_authn_CR: true

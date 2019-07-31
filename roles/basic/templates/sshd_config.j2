@@ -2,6 +2,8 @@ PermitRootLogin no
 PubkeyAuthentication yes
 HostbasedAuthentication no
 PasswordAuthentication no
+ChallengeResponseAuthentication {% if sshd_authn_CR %}yes{% else %}no{% endif %}
+
 PermitEmptyPasswords no
 
 UsePAM yes
