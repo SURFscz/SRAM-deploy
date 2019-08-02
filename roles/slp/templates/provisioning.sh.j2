@@ -1,3 +1,7 @@
+#!/bin/sh
+
+set -e
+
 export SBS_HOST="sbs.{{base_domain}}"
 export SBS_PROT="{{ slp_host_protocol }}"
 
@@ -10,4 +14,4 @@ export LDAP_PASS="{{ clients_ldap_password }}"
 export LDAP_USER="{{ clients_ldap.binddn }}"
 export LDAP_BASE="{{ clients_ldap.basedn }}"
 
-{{ slp_env_dir }}/bin/python {{ slp_git_dir }}/slp.py > /var/log/slp.log
+exec {{ slp_env_dir }}/bin/python {{ slp_git_dir }}/slp.py
