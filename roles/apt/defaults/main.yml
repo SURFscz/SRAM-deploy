@@ -1,6 +1,6 @@
 ---
 debian:
   dist: 'buster'
-  mirror: 'http://ftp.us.debian.org/debian/'
-  security_mirror: 'http://ftp.us.debian.org/'
+  mirror: 'http://deb.debian.org/debian/'
+  security_mirror: 'http://deb.debian.org/debian-security/'
 
