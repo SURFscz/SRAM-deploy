@@ -53,5 +53,12 @@
   notify:
     - enable ocsp job
 
+- name: Copy ocsp service files for certbot/letsencrypt
+  template:
+    src: "ocsp-letsencrypt.j2"
+    dest: "/etc/letsencrypt/renewal-hooks/post/"
+    mode: '0755'
+  when: enable_https and not use_fixed_cert
+
 - name: enable haproxy
   systemd: daemon_reload=yes name=haproxy state=started enabled=true

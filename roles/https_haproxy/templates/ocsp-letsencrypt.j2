@@ -1,0 +1,11 @@
+#!/bin/sh
+# renew OCSP files for updated certs
+test -e
+bin={{haproxy_oscp_bin_dir}}/ocsp.sh
+if [ -x "$bin" ]
+then
+    cd "$RENEWED_LINEAGE"
+    $bin
+fi
+exit 0
+

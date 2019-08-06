@@ -36,7 +36,7 @@
 # extra renewal is necessary, because certbot does not run its renew_hook when the
 # certificate is first created
 - name: renew certificates
-  command: '/usr/bin/certbot certonly --noninteractive --force-renewal --domains={{item}}'
+  command: '/usr/bin/certbot renew --noninteractive --force-renewal --cert-name={{item}}'
   register: result
   changed_when: '"Your certificate and chain have been saved" in result.stdout'
   args:
