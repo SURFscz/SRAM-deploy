@@ -75,3 +75,4 @@
   file:
     dest: "/etc/logrotate.d/provisioning"
     state: absent
+  removes: "/var/spool/cron/crontabs/root"
