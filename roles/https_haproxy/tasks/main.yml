@@ -42,6 +42,8 @@
     src: ocsp.sh
     dest: "{{haproxy_oscp_bin_dir}}"
     mode: 0755
+  notify:
+    - run ocsp update
 
 - name: Copy ocsp service files
   template:
