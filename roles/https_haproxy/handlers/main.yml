@@ -6,7 +6,7 @@
     state: started
     daemon_reload: true
 
-- notify: run ocsp update
+- name: run ocsp update
   systemd:
     name: ocsp.service
     state: started
