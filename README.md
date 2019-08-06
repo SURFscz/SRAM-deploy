@@ -1,5 +1,5 @@
 # Science Collaboration Zone
-[![Build Status](https://travis-ci.org/SURFscz/SCZ-deploy.svg?branch=travis-docker)](https://travis-ci.org/SURFscz/SCZ-deploy)
+[![Build Status](https://travis-ci.com/SURFscz/SCZ-deploy.svg?branch=travis-docker)](https://travis-ci.org/SURFscz/SCZ-deploy)
 
 
 The Science Collaboration Zone (SCZ) project offers an Identity Management solution
