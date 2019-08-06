@@ -66,19 +66,21 @@ To get started, do the following:
         and add your user to the libvirt group: `adduser $(whoami) libvirt`
 - add the following entries to `/etc/hosts`:
     ```
-    172.20.1.24 lb.vm.scz-vm.net oidc-test.scz-vm.net sp-test.scz-vm.net idp-test.scz-vm.net proxy.scz-vm.net mdq.scz-vm.net cm.scz-vm.net comanage.scz-vm.net ldap.scz-vm.net meta.scz-vm.net
+    172.20.1.24 lb.vm.scz-vm.net oidc-test.scz-vm.net sp-test.scz-vm.net idp-test.scz-vm.net proxy.scz-vm.net mdq.scz-vm.net cm.scz-vm.net comanage.scz-vm.net ldap.scz-vm.net meta.scz-vm.net sbs.scz-vm.net
     172.20.1.20 ldap.vm.scz-vm.net
     172.20.1.21 comanage.vm.scz-vm.net
     172.20.1.22 proxy.vm.scz-vm.net
     172.20.1.23 meta.vm.scz-vm.net
     172.20.1.25 client.vm.scz-vm.net
+    172.20.1.26 sandbox1.vm.scz-vm.net
+    172.20.1.27 sbs.vm.scz-vm.net
     ```
 - set up the VMs and start the deploy:
     - docker (recommended): `./start-vm --provider docker`
     - libvirt: `./start-vm --provider libvirt`
     - virtualbox: `./start-vm --provider virtualbox`
 
-    This will boot 6 containers/VMs and run ansible to deploy SCZ to these 6 hosts.
+    This will boot 8 containers/VMs and run ansible to deploy SCZ to these 8 hosts.
 
 - when the deploy finishes, you should be able to browse to
   <https://comanage.scz-vm.net> and login using the default platform admin
