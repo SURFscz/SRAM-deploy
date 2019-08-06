@@ -32,10 +32,15 @@
     - restart haproxy
   when: enable_https
 
+- name: Create bin directory
+  file:
+    path: "{{haproxy_oscp_bin_dir}}"
+    state: directory
+
 - name: Copy ocsp script
   copy:
     src: ocsp.sh
-    dest: /usr/local/bin/ocsp.sh
+    dest: "{{haproxy_oscp_bin_dir}}"
     mode: 0755
 
 - name: Copy ocsp service files

@@ -10,5 +10,5 @@ WorkingDirectory={{ cert_dir }}
 {% elif enable_https %}
 WorkingDirectory={{ letsencrypt.cert_dir }}
 {% endif %}
-ExecStart=/usr/local/bin/ocsp.sh
+ExecStart={{ haproxy_oscp_bin_dir }}/ocsp.sh
 
