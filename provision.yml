@@ -63,6 +63,7 @@
     - { role: ldap,               tags: ['ldap'                  ] }
     - { role: ldap_clients,       tags: ['ldap', 'ldap-clients'  ] }
     - { role: pam_websso_daemon,  tags: ['client','websso-daemon'] }
+    - { role: slp,                tags: ['slp'] }
 
 - hosts:
     - proxy
