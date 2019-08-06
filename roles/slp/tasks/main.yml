@@ -1,0 +1,78 @@
+---
+- name: Install required packages
+  apt:
+    name:
+      - libsasl2-dev
+      - python-dev
+      - libldap2-dev
+      - build-essential
+      - python3
+      - python3-virtualenv
+      - python3-setuptools
+
+- name: create group
+  user:
+    state: present
+    system: yes
+    name: "{{ slp_job_group }}"
+
+- name: create user
+  user:
+    state: present
+    system: yes
+    name: "{{ slp_job_user }}"
+    group: "{{ slp_job_group }}"
+    password: "*"
+    home: "{{ slp_work_dir }}"
+    shell: "/bin/false"
+
+- name: Clone SLP repository
+  git:
+    repo: "{{ slp_repository }}"
+    dest: "{{ slp_git_dir }}"
+    version: "{{ slp_version }}"
+    force: yes
+
+- name: Create python3 virtualenv
+  pip:
+    virtualenv: "{{ slp_env_dir }}"
+    virtualenv_python: python3
+    requirements: "{{ slp_git_dir }}/requirements.txt"
+
+- name: Create provisioning run file
+  template:
+    src: provisioning.sh.j2
+    dest: "{{ slp_work_dir }}/provisioning.sh"
+    owner: "{{ slp_job_user }}"
+    group: "{{ slp_job_group }}"
+    mode: 0700
+
+- name: Install systemd service
+  template:
+    src: "{{item}}.j2"
+    dest: "/etc/systemd/system/{{item}}"
+  with_items:
+    - "scz-slp.service"
+    - "scz-slp.timer"
+  notify:
+    - "enable slp job"
+
+
+# moved to /opt/slp
+- name: Remove obsolete provisioning run file
+  file:
+    dest: "/usr/local/bin/provisioning.sh"
+    state: absent
+
+# replaced by systemd time
+- name: Remove obsolete cronjob
+  cron:
+    name: "SBS Provisioning"
+    state: absent
+
+# replaced by systemd/journald logs
+- name: Remove obsolete logrotate configuration
+  file:
+    dest: "/etc/logrotate.d/provisioning"
+    state: absent
+  removes: "/var/spool/cron/crontabs/root"
