@@ -70,9 +70,14 @@
     name: "SBS Provisioning"
     state: absent
 
+- name: check if crontab exists
+  stat:
+    path: "/etc/logrotate.d/provisioning"
+  register: crontab
+
 # replaced by systemd/journald logs
 - name: Remove obsolete logrotate configuration
   file:
     dest: "/etc/logrotate.d/provisioning"
     state: absent
-  removes: "/var/spool/cron/crontabs/root"
+  when: crontab.stat.exists
