@@ -46,8 +46,8 @@ defaults
 # -------------------------------------------------------------------
 frontend fe_https
 {% if enable_https %}
-	bind    *:443 ssl {% for host in lb_http %} crt {{host.hostname}}/priv+fullchain.pem{% endfor %} transparent
-	bind [::]:443 ssl {% for host in lb_http %} crt {{host.hostname}}/priv+fullchain.pem{% endfor %} transparent
+	bind    *:443 ssl crt-list /etc/haproxy/crt-list.txt transparent alpn h2,http/1.1
+	bind [::]:443 ssl crt-list /etc/haproxy/crt-list.txt transparent alpn h2,http/1.1
 {% else %}
 	bind    *:80 transparent
 	bind [::]:80 transparent

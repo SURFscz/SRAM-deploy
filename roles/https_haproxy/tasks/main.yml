@@ -26,6 +26,12 @@
   notify:
     - restart haproxy
 
+- name: install haproxy config
+  template: src=crt-list.txt.j2 dest=/etc/haproxy/crt-list.txt mode=0644 owner=root group=root
+  notify:
+    - restart haproxy
+  when: enable_https
+
 - name: enable haproxy
   systemd: daemon_reload=yes name=haproxy state=started enabled=true
 
