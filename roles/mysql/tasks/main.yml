@@ -31,4 +31,3 @@
     append_privs: true
     state: present
   with_items: "{{mysql_users}}"
-

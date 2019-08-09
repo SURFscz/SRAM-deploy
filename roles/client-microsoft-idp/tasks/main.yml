@@ -19,16 +19,6 @@
     - microsoft
   notify: restart Apache
 
-- name: Listen to Microsoft IdP port
-  when: ms_client_id is defined
-  blockinfile:
-    path: "/etc/apache2/ports.conf"
-    insertafter: EOF
-    marker: "# {mark} ANSIBLE MANAGED BLOCK {{ hostnames.ms }}"
-    block: |
-      Listen {{ ms_test_port }}
-  notify: restart Apache
-
 - name: Insert Microsoft authsource
   when: ms_client_id is defined
   blockinfile:

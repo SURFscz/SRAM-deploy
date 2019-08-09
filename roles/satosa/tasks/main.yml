@@ -1,4 +1,16 @@
 ---
+# See https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=916107
+- name: Add stretch repository for MongoDB
+  copy:
+    src: stretch.list
+    dest: "/etc/apt/sources.list.d/stretch.list"
+
+- name: Update cache
+  command: apt-get update
+  args:
+    warn: false
+  changed_when: false
+
 - name: Ensure that packages are installed
   apt:
     name:
@@ -6,7 +18,7 @@
       - git
       - xmlsec1
       - libffi-dev
-      - python3.5
+      - python3.7
       - python-dev
       - python-setuptools
       - python3-pip
@@ -14,6 +26,12 @@
       - mongodb-server
       - libmariadbclient-dev
     state: present
+
+- name: pacify python-mysqlclient
+  file:
+    src: /usr/bin/mariadb_config
+    dest: /usr/bin/mysql_config
+    state: link
 
 - name: install python3 virtualenv
   pip:

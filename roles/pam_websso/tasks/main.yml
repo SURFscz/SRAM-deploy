@@ -32,6 +32,7 @@
 - name: install PAM WebSSO
   pip:
     name: "{{ pam_websso.project_dir }}"
+    state: latest
   when: pam_websso_git.changed
 
 - name: install PAM WebSSO settings
@@ -78,16 +79,3 @@
     replace: >-
       \n\nsession required pam_mkhomedir.so umask=0022 skel=/etc/skel\1
     backup: yes
-
-- name: Check for ChallengeResponseAuthentication in sshd
-  shell: grep 'ChallengeResponseAuthentication yes' /etc/ssh/sshd_config
-  register: cra_check
-  ignore_errors: true
-
-- name: Enable ssh ChallengeResponseAuthentication
-  replace:
-    path: /etc/ssh/sshd_config
-    regexp: '(\nUsePAM yes)\n\n'
-    replace: '\1\nChallengeResponseAuthentication yes\n\n'
-    backup: yes
-  when: cra_check is failed

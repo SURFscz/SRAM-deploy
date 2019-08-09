@@ -23,16 +23,9 @@
       - yarn
       - python3-virtualenv
       - python3-setuptools
+      - python-setuptools
       - build-essential
       - virtualenv
-
-# really need systemd from testing, because otherwise the python deps from testing will BREAK
-# systemd from stable
-- name: Install required packages from testing
-  apt:
-    default_release: testing
-    state: latest
-    name:
       - python3.7
       - python3.7-dev
       - python3-distutils
@@ -40,10 +33,7 @@
       - systemd
       - nodejs
       - mariadb-server
-
-- name: Get mod_auth_openidc from github releases
-  apt:
-    deb: "{{ mod_auth_openidc_url  }}"
+      - libapache2-mod-auth-openidc
 
 - name: Enable mod_auth_openidc
   apache2_module:
@@ -98,18 +88,17 @@
     path: "{{ sbs_git_dir }}/client/node_modules"
   register: yarn_deps
 
-- name: debug
-  debug: var=yarn_deps
-
 - name: Install yarn dependancies
   yarn:
     path: "{{ sbs_git_dir }}/client"
+  register: yarn_install
   when: git_apps.changed or not yarn_deps.stat.exists
 
 - name: Build client yarn
   command: yarn build
   args:
     chdir: "{{ sbs_git_dir }}/client"
+  when: git_apps.changed or yarn_install.changed
 
 - name: Create SBS config file
   template:
