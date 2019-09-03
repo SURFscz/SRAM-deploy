@@ -1,7 +1,7 @@
 <?php # vim:ft=php
 $config=array(
   'fixedldap' => array(
-    'basedn'  => '{{ ldap.basedn }}',
+    'basedn'  => '{{ master_ldap.basedn }}',
     'dn_attribute_name' => 'uid',
     'dn_identifier_type' => 'uid',
 
@@ -9,9 +9,9 @@ $config=array(
     'scope_suffix' => '{{ comanage_scope }}',
 
     'server' => array(
-      'url' => '{{ comanage_ldap_host }}',
-      'binddn' => '{{ ldap.binddn }}',
-      'password' => '{{ ldap_password }}',
+      'url' => '{{ master_ldap.host }}',
+      'binddn' => '{{ master_ldap.binddn }}',
+      'password' => '{{ master_ldap_password }}',
      ),
 
     # list all additional objectclasses for a COPerson record

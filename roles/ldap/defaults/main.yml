@@ -1,11 +1,6 @@
 ---
-ldap_install_dir: /etc/ldap
-ldap_bin_dir: "{{ ldap_install_dir }}/bin"
-ldap_download_dir: "{{ ldap_install_dir }}/downloads"
-ldap_ldif_dir: "{{ ldap_install_dir }}/schema"
-ldap_schema_dir: "{{ ldap_install_dir }}/schema"
+ldap_ldif_dir: "/etc/ldap/schema"
+ldap_backup_dir: "{{backup_base}}/ldap"
 
 ldap_user: openldap
 ldap_group: openldap
-
-ldap_backup_dir: "{{backup_base}}/ldap"

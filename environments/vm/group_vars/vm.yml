@@ -33,9 +33,6 @@ orcid_sb_test_port: 86
 ms_test_port: 87
 pam_clients_port: 8087
 
-# COmanage-ldap configuration
-comanage_ldap_host: "ldap.vm.scz-vm.net"
-
 # TODO: get rid of hardcoded ports for proxy vhosts
 loadbalancer:
   - hostname: "{{hostnames.proxy}}"
@@ -98,4 +95,9 @@ loadbalancer:
     http: false
     frontend_port: 636
     backend_hosts: "{{groups['vm-ldap']}}"
+    backend_port: 389
+  - hostname: "{{hostnames.comanage}}"
+    http: false
+    frontend_port: 1636
+    backend_hosts: "{{groups['vm-comanage']}}"
     backend_port: 389

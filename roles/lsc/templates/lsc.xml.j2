@@ -3,9 +3,9 @@
   <connections>
     <ldapConnection>
       <name>ldap-src-conn</name>
-      <url>ldap://localhost:389/{{ ldap.basedn }}</url>
-      <username>{{ ldap.binddn }}</username>
-      <password>{{ ldap_password }}</password>
+      <url>ldap://{{ master_ldap.host }}/{{ master_ldap.basedn }}</url>
+      <username>{{ master_ldap.binddn }}</username>
+      <password>{{ master_ldap_password }}</password>
       <authentication>SIMPLE</authentication>
       <referral>IGNORE</referral>
       <derefAliases>NEVER</derefAliases>
@@ -16,9 +16,9 @@
     </ldapConnection>
     <ldapConnection>
       <name>ldap-dst-conn</name>
-      <url>ldap://localhost:389/{{ clients_ldap.basedn }}</url>
-      <username>cn=admin,{{ clients_ldap.basedn }}</username>
-      <password>{{ clients_ldap_password }}</password>
+      <url>ldap://{{ services_ldap.host }}/{{ services_ldap.basedn }}</url>
+      <username>cn=admin,{{ services_ldap.basedn }}</username>
+      <password>{{ services_ldap_password }}</password>
       <authentication>SIMPLE</authentication>
       <referral>IGNORE</referral>
       <derefAliases>NEVER</derefAliases>
@@ -45,7 +45,7 @@
       <ldapSourceService>
         <name>openldap-src-service</name>
         <connection reference="ldap-src-conn" />
-        <baseDn>{{ ldap.basedn }}</baseDn>
+        <baseDn>{{ master_ldap.basedn }}</baseDn>
         <pivotAttributes>
           <string>uid</string>
         </pivotAttributes>
@@ -66,7 +66,7 @@
       <ldapDestinationService>
         <name>ldap-dst-service</name>
         <connection reference="ldap-dst-conn" />
-        <baseDn>dc={{ client }},{{ clients_ldap.basedn }}</baseDn>
+        <baseDn>dc={{ client }},{{ services_ldap.basedn }}</baseDn>
         <pivotAttributes>
           <string>uid</string>
         </pivotAttributes>
@@ -87,7 +87,7 @@
         <mainIdentifier>rjs:<![CDATA[
           uid = srcBean.getDatasetFirstValueById("uid");
           o = srcBean.getDatasetFirstValueById("o");
-          "uid=" + uid + ",ou=People,o=" + o + ",dc={{ client }},{{ clients_ldap.basedn }}";
+          "uid=" + uid + ",ou=People,o=" + o + ",dc={{ client }},{{ services_ldap.basedn }}";
         ]]></mainIdentifier>
         <defaultDelimiter>;</defaultDelimiter>
         <defaultPolicy>FORCE</defaultPolicy>
@@ -127,7 +127,7 @@
           <forceValues>
             <string>rjs:<![CDATA[
                o = srcBean.getDatasetFirstValueById("o");
-               dn = "cn=uidNumberSequence,ou=Sequence,o=" + o + ",dc={{ client }},{{ clients_ldap.basedn }}";
+               dn = "cn=uidNumberSequence,ou=Sequence,o=" + o + ",dc={{ client }},{{ services_ldap.basedn }}";
                SequencesFactory.getInstance(ldap.getJndiServices()).getNextValue(dn, "serialNumber");
              ]]></string>
           </forceValues>
@@ -138,7 +138,7 @@
           <forceValues>
             <string>rjs:<![CDATA[
                o = srcBean.getDatasetFirstValueById("o");
-               dn = "cn=gidNumberSequence,ou=Sequence,o=" + o + ",dc={{ client }},{{ clients_ldap.basedn }}";
+               dn = "cn=gidNumberSequence,ou=Sequence,o=" + o + ",dc={{ client }},{{ services_ldap.basedn }}";
                SequencesFactory.getInstance(ldap.getJndiServices()).getNextValue(dn, "serialNumber");
              ]]></string>
           </forceValues>
@@ -151,7 +151,7 @@
       <ldapSourceService>
         <name>openldap-src-groups</name>
         <connection reference="ldap-src-conn" />
-        <baseDn>{{ ldap.basedn }}</baseDn>
+        <baseDn>{{ master_ldap.basedn }}</baseDn>
         <pivotAttributes>
           <string>cn</string>
         </pivotAttributes>
@@ -168,7 +168,7 @@
       <ldapDestinationService>
         <name>ldap-dst-groups</name>
         <connection reference="ldap-dst-conn" />
-        <baseDn>dc={{ client }},{{ clients_ldap.basedn }}</baseDn>
+        <baseDn>dc={{ client }},{{ services_ldap.basedn }}</baseDn>
         <pivotAttributes>
           <string>description</string>
         </pivotAttributes>
@@ -188,7 +188,7 @@
             o    = srcBean.getDatasetFirstValueById("o");
             cn   = srcBean.getDatasetFirstValueById("cn");
             group = cn.match(/^(?:GRP)?(?:CO)?(?:COU)?:(.*?)$/);
-            "cn=" + type + (group[1]?"_" + group[1]:"") + ",ou=Groups,o=" + o + ",dc={{ client }},{{ clients_ldap.basedn }}"
+            "cn=" + type + (group[1]?"_" + group[1]:"") + ",ou=Groups,o=" + o + ",dc={{ client }},{{ services_ldap.basedn }}"
           ]]>
         </mainIdentifier>
         <defaultDelimiter>;</defaultDelimiter>
@@ -268,7 +268,7 @@
           <createValues>
           <string>rjs:<![CDATA[
                o = srcBean.getDatasetFirstValueById("o");
-               dn = "cn=gidNumberSequence,ou=Sequence,o=" + o + ",dc={{ client }},{{ clients_ldap.basedn }}";
+               dn = "cn=gidNumberSequence,ou=Sequence,o=" + o + ",dc={{ client }},{{ services_ldap.basedn }}";
                SequencesFactory.getInstance(ldap.getJndiServices()).getNextValue(dn, "serialNumber");
              ]]></string>
           </createValues>

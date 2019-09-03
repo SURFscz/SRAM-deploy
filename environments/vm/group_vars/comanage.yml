@@ -1,4 +1,7 @@
 ---
+firewall_v4_incoming:
+  - { name: vnet,         src: "{{iprange.vm}}",       dport: "22,80,389,443", proto: tcp }
+
 domain: "{{base_domain}}"
 
 sp_protocol: "{{http_proto}}://"
