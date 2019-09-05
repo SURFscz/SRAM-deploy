@@ -29,3 +29,8 @@
 - name: enable haproxy
   systemd: daemon_reload=yes name=haproxy state=started enabled=true
 
+- name: install LDAP (un)fencing scripts
+  template: src="{{ item }}.j2" dest="/opt/{{ item }}" mode=0755 owner=root group=root
+  with_items:
+    - fence.sh
+    - unfence.sh
