@@ -12,7 +12,7 @@ sbs_db_name: "sbs"
 sbs_db_user: "sbs"
 sbs_db_host: "localhost"
 
-sbs_mail_host: "localhost"
+sbs_mail_host: "{{ mail.relay_host }}"
 sbs_mail_port: "1025"
 
 sbs_disclaimer_color: "#a29c13"
