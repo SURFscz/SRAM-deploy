@@ -7,5 +7,5 @@
         copytruncate
         olddir /var/log/provisioning/archive
         compress
-        depaycompress
+        delaycompress
 }
