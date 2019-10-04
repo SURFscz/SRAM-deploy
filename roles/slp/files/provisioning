@@ -1,11 +1,12 @@
-/var/log/provisioning.log {
+/var/log/slp.log {
         weekly
 
         rotate 24
         dateext
         missingok
         copytruncate
-        olddir /var/log/provisioning/archive
+        olddir /var/log/slp
+        createtolddir 0750 root adm
         compress
         delaycompress
 }
