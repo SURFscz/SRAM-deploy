@@ -68,6 +68,7 @@
 - hosts:
     - proxy
     - comanage
+    - sbs
   roles:
     - { role: mysql, tags: ['mysql'] }
 
