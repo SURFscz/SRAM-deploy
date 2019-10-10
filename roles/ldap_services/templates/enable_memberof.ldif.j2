@@ -1,0 +1,25 @@
+# enable server-component voor Reverse Group Membership Maintenance
+# see https://openldap.org/doc/admin24/overlays.html
+dn: cn=module{0},cn=config
+changetype: modify
+add: olcModuleLoad
+olcModuleLoad: memberof.la
+olcModuleLoad: refint.la
+
+# Enable memberof overlay for first mdb
+dn: olcOverlay=memberof,olcDatabase={1}mdb,cn=config
+changeType: add
+objectClass: olcMemberOf
+objectClass: olcOverlayConfig
+olcOverlay: memberof
+olcMemberOfRefInt: TRUE
+olcMemberOfGroupOC: sczGroup
+olcMemberOfMemberAD: sczMember
+olcMemberOfMemberOfAD: memberOf
+
+dn: olcOverlay=refint,olcDatabase={1}mdb,cn=config
+changeType: add
+objectClass: olcOverlayConfig
+objectClass: olcRefintConfig
+olcOverlay: refint
+olcRefintAttribute: memberof member

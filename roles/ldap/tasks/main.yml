@@ -22,7 +22,6 @@
     - ldapPublicKey.ldif
     - eduMember.ldif
     - voPerson.ldif
-    - sczGroup.ldif
 
 - name: Generate ldif from template
   become_user: "{{ ldap_user }}"
@@ -35,7 +34,6 @@
     - { src: "set_loglevel_stats.ldif.j2", dest: "set_loglevel_stats.ldif" }
     - { src: "enable_syncprov.ldif.j2", dest: "enable_syncprov.ldif" }
     - { src: "enable_dynlist.ldif.j2", dest: "enable_dynlist.ldif" }
-    - { src: "enable_memberof.ldif.j2", dest: "enable_memberof.ldif" }
 
 - name: Set loglevel to stats
   command: ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f "{{ ldap_ldif_dir }}/set_loglevel_stats.ldif"
@@ -57,14 +55,6 @@
   register: result
   failed_when: result.rc not in [0,20,68]
   changed_when: result.rc != 20
-
-- name: Enable memberof/refint overlay
-  command: ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f "{{ ldap_ldif_dir }}/enable_memberof.ldif"
-  # return code 20 means entry already exists
-  register: result
-  failed_when: result.rc not in [0,20,68]
-  changed_when: result.rc not in [20,68]
-
 
 # OpenLDAP does not like adding existing entries again. Only add the
 # schema if it has not been added already. This does not yet take care

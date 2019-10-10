@@ -42,6 +42,7 @@
   with_items:
     - { src: "set_root_credentials.ldif.j2", dest: "set_root_credentials.ldif" }
     - { src: "initial_setup.ldif.j2", dest: "initial_setup.ldif" }
+    - { src: "enable_memberof.ldif.j2", dest: "enable_memberof.ldif" }
 
 - name: Ensure the ldap admin credentials are set
   command: >
@@ -67,3 +68,11 @@
   changed_when: result.rc not in [20,68]
   tags: ldap
   when: emptyDIT.stdout == ""
+
+- name: Enable memberof/refint overlay
+  command: >
+    ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f "{{ ldap_ldif_dir }}/enable_memberof.ldif"
+  # return code 20 means entry already exists
+  register: result
+  failed_when: result.rc not in [0,20,68]
+  changed_when: result.rc not in [20,68]
