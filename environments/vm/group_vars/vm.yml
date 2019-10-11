@@ -33,6 +33,11 @@ orcid_sb_test_port: 86
 ms_test_port: 87
 pam_clients_port: 8087
 
+# Local services ports
+metadata_backend_port: 81
+comanage_backend_port: 82
+sbs_backend_port: 83
+
 # COmanage-ldap configuration
 comanage_ldap_host: "ldap.vm.scz-vm.net"
 
@@ -53,15 +58,15 @@ loadbalancer:
   - hostname: "{{hostnames.comanage}}"
     http: true
     backend_hosts: "{{groups['vm-comanage']}}"
-    backend_port: 80
+    backend_port: "{{ comanage_backend_port }}"
   - hostname: "{{hostnames.sbs}}"
     http: true
     backend_hosts: "{{groups['vm-sbs']}}"
-    backend_port: 80
+    backend_port: "{{ sbs_backend_port }}"
   - hostname: "{{hostnames.meta}}"
     http: true
     backend_hosts: "{{groups['vm-meta']}}"
-    backend_port: 80
+    backend_port: "{{ metadata_backend_port }}"
   - hostname: "{{hostnames.oidc}}"
     http: true
     backend_hosts: "{{groups['vm-client']}}"

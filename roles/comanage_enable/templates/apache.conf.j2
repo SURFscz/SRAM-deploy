@@ -1,14 +1,8 @@
 #######################################################################
 {{ ansible_managed | comment('plain') }}
 #######################################################################
-{% if comanage_port == 443 %}
-<VirtualHost *:80>
-    ServerName {{ comanage_full_hostname }}
-    Redirect / https://{{ comanage_full_hostname }}/
-</VirtualHost>
-{% endif %}
-
-<VirtualHost *:{{ comanage_port }}>
+Listen {{ comanage_backend_port }}
+<VirtualHost *:{{ comanage_backend_port }}>
 {#
     # by adding the protocol to the ServerName, we can
     # fix the HTTP->HTTPS translation issue when we pass
@@ -100,13 +94,6 @@
         MellonMergeEnvVars Off
 
     </Location>
-
-{% if comanage_port == 443 %}
-    # enabling SSL access, which is normally terminated at the LB
-    SSLEngine on
-    SSLCertificateFile      /etc/ssl/certs/ssl-cert-snakeoil.pem
-    SSLCertificateKeyFile /etc/ssl/private/ssl-cert-snakeoil.key
-{% endif %}
 
 </VirtualHost>
 
