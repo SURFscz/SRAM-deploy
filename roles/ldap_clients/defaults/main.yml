@@ -12,7 +12,7 @@ lsc_config_dir: "{{ lsc_install_dir }}/config.d"
 lsc_backup_dir: "{{backup_base}}/lsc"
 
 plsc_repo_url: "https://github.com/SURFscz/plsc.git"
-plsc_repo_version: "master"
+plsc_repo_version: "sbs-ordered-flat"
 plsc_dir: "/opt/plsc"
 
 client_ldap_dbdir: "/var/lib/ldap/client"

@@ -33,8 +33,9 @@
     dest: "/usr/local/bin/provisioning.sh"
     mode: 0100
 
-- name: Create cronjob to schedule automatic provisioning SBS to LDAP
+- name: Remove cronjob to schedule automatic provisioning SBS to LDAP
   cron:
     name: "SBS Provisioning"
     minute: "*/5"
     job: "/usr/local/bin/provisioning.sh"
+    disabled: yes

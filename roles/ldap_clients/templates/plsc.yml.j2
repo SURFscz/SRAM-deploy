@@ -10,6 +10,11 @@ ldap:
     basedn: {{ clients_ldap.basedn }}
     binddn: external
     passwd: changethispassword
+sbs:
+  src:
+    host: https://{{ hostnames.sbs }}
+    user: sysread
+    passwd: {{ sbs_sysread_password }}
 pwd: changethispassword
 uid: 1000
 gid: 1000
