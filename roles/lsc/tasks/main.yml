@@ -99,7 +99,7 @@
 
 - name: Run sync_clients
   command: >
-    "{{ plsc_dir }}/bin/python" sync_services plsc.yml
+    "{{ plsc_dir }}"/run plsc.yml
   changed_when: false
   args:
     chdir: "{{ plsc_dir }}"
