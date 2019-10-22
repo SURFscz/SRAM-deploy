@@ -258,12 +258,11 @@
     force: "yes"
   register: pam_websso_git
 
-- name: "Create plsc.yml source if it doesn't exist"
+- name: "Copt plsc.yml source"
   template:
     src: "plsc.yml.j2"
     dest: "{{ plsc_dir }}/plsc.yml"
     mode: 0644
-    force: no
 
 - name: Install virtualenv from requirements.txt
   pip:
