@@ -1,0 +1,103 @@
+---
+# playbook to setup services LDAP DIT
+- name: Install LDAP
+  apt:
+    state: present
+    name:
+      - slapd
+      - ldap-utils
+    install_recommends: no
+
+- name: Copying alternative service script
+  become: true
+  copy:
+    src: slapd.service
+    dest: /etc/systemd/system
+  notify: systemd daemon-reload
+  when: ansible_virtualization_type == "docker"
+
+- name: Ensure that a number of directories exist
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ ldap_user }}"
+    group: "{{ ldap_group }}"
+    mode: 0755
+  tags: ldap
+  with_items:
+    - "{{ ldap_ldif_dir }}"
+    - /var/run/slapd
+
+- name: Enable LDAP
+  service: name=slapd state=restarted enabled=yes
+  changed_when: False
+
+- name: Copy schema(s)
+  become_user: "{{ ldap_user }}"
+  copy:
+    src: "{{ item }}"
+    dest: "{{ ldap_ldif_dir }}/{{ item }}"
+    mode: 0755
+  with_items:
+    - sczGroup.ldif
+
+- name: Generate ldif from template
+  become_user: "{{ ldap_user }}"
+  become: true
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ ldap_ldif_dir }}/{{ item.dest }}"
+    mode: 0644
+  with_items:
+    - { src: "set_root_credentials.ldif.j2", dest: "set_root_credentials.ldif" }
+    - { src: "initial_setup.ldif.j2", dest: "initial_setup.ldif" }
+    - { src: "enable_memberof.ldif.j2", dest: "enable_memberof.ldif" }
+
+- name: Ensure the ldap admin credentials are set
+  command: >
+    ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f "{{ ldap_ldif_dir }}/set_root_credentials.ldif"
+  # return code 20 means entry already exists
+  register: result
+  failed_when: result.rc not in [0,20,68]
+  changed_when: result.rc not in [0,20,68]
+
+- name: Check if DIT has been created before
+  command: >
+    ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// -b "{{ services_ldap.basedn }}" "(cn=admin)" dn
+  register: emptyDIT
+  failed_when: emptyDIT.rc not in [0, 32]
+  changed_when: False
+
+- name: Initialize DIT
+  command: >
+    ldapadd -c -x -D "{{ services_ldap.binddn }}" -w "{{ services_ldap_password }}"
+    -f "{{ ldap_ldif_dir }}/initial_setup.ldif"
+  register: result
+  failed_when: result.rc not in [0,20,68]
+  changed_when: result.rc not in [20,68]
+  tags: ldap
+  when: emptyDIT.stdout == ""
+
+- name: Check if the sczGroup schema is already present
+  shell: >
+    ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// -b 'cn=schema,cn=config' '(cn=*)' dn
+    | grep -i 'cn={[0-9]\+}sczgroup,cn=schema,cn=config'
+  register:
+    voPersonTask
+  failed_when: voPersonTask.rc not in [0, 1]
+  changed_when: False
+
+- name: Ensure the sczGroup schema is added to LDAP
+  become: true
+  command: >
+    ldapadd -Q -Y EXTERNAL -H ldapi:///
+    -f "{{ ldap_ldif_dir }}/sczGroup.ldif"
+  when: voPersonTask.stdout == ""
+
+- name: Enable memberof/refint overlay
+  command: >
+    ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f "{{ ldap_ldif_dir }}/enable_memberof.ldif"
+  # return code 20 means entry already exists
+  register: result
+  failed_when: result.rc not in [0,20,68]
+  changed_when: result.rc not in [20,68]

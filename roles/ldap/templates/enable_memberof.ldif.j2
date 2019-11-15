@@ -1,8 +1,0 @@
-# enable server-component voor Reverse Group Membership Maintenance
-# see https://openldap.org/doc/admin24/overlays.html
-dn: cn=module{0},cn=config
-changetype: modify
-add: olcModuleLoad
-olcModuleLoad: memberof.la
-olcModuleLoad: refint.la
-

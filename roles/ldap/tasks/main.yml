@@ -1,23 +1,5 @@
 ---
 # playbook to install and configure general components of the LDAP
-- include_vars: "ldap.yml"
-
-- name: Install LDAP
-  apt:
-    state: present
-    name:
-      - slapd
-      - unzip
-      - ldap-utils
-
-- name: Copying alternative service script
-  become: true
-  copy:
-    src: slapd.service
-    dest: /etc/systemd/system
-  notify: systemd daemon-reload
-  when: ansible_virtualization_type == "docker"
-
 - name: Ensure that a number of directories exist
   file:
     path: "{{ item }}"
@@ -27,22 +9,19 @@
     mode: 0755
   tags: ldap
   with_items:
-    - "{{ ldap_bin_dir }}"
-    - "{{ ldap_schema_dir }}"
     - "{{ ldap_ldif_dir }}"
-    - "{{ ldap_download_dir }}"
-    - /var/run/slapd
 
-- name: Enable LDAP
-  service: name=slapd state=restarted enabled=yes
-  changed_when: False
-
-- name: Copy schema2ldif
+- name: Copy schemas
   become_user: "{{ ldap_user }}"
   copy:
-    src: roles/ldap/files/schema2ldif
-    dest: "{{ ldap_bin_dir }}"
+    src: "{{ item }}"
+    dest: "{{ ldap_ldif_dir }}/{{ item }}"
     mode: 0755
+  with_items:
+    - eduPerson.ldif
+    - ldapPublicKey.ldif
+    - eduMember.ldif
+    - voPerson.ldif
 
 - name: Generate ldif from template
   become_user: "{{ ldap_user }}"
@@ -52,20 +31,9 @@
     dest: "{{ ldap_ldif_dir }}/{{ item.dest }}"
     mode: 0644
   with_items:
-    - { src: "initial_setup.ldif.j2", dest: "initial_setup.ldif" }
-    - { src: "set_root_credentials.ldif.j2", dest: "set_root_credentials.ldif" }
     - { src: "set_loglevel_stats.ldif.j2", dest: "set_loglevel_stats.ldif" }
     - { src: "enable_syncprov.ldif.j2", dest: "enable_syncprov.ldif" }
     - { src: "enable_dynlist.ldif.j2", dest: "enable_dynlist.ldif" }
-    - { src: "enable_memberof.ldif.j2", dest: "enable_memberof.ldif" }
-    - { src: "enable_memberof_1mdb.ldif.j2", dest: "enable_memberof_1mdb.ldif" }
-
-- name: Ensure the ldap admin credentials are set
-  command: ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f "{{ ldap_ldif_dir }}/set_root_credentials.ldif"
-  # return code 20 means entry already exists
-  register: result
-  failed_when: result.rc not in [0,20,68]
-  changed_when: result.rc not in [20,68]
 
 - name: Set loglevel to stats
   command: ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f "{{ ldap_ldif_dir }}/set_loglevel_stats.ldif"
@@ -88,119 +56,6 @@
   failed_when: result.rc not in [0,20,68]
   changed_when: result.rc != 20
 
-- name: Enable memberof/refint overlay
-  command: ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f "{{ ldap_ldif_dir }}/enable_memberof.ldif"
-  # return code 20 means entry already exists
-  register: result
-  failed_when: result.rc not in [0,20,68]
-  changed_when: result.rc not in [20,68]
-
-- name: Check memberof/refint overlay for 1mdb
-  shell: >
-    ldapsearch -Q -Y EXTERNAL -H ldapi:///
-    -b 'olcDatabase={1}mdb,cn=config' '(olcOverlay=memberof)' dn
-    | grep -i 'dn: olcOverlay={[0-9]\+}memberof,olcDatabase={1}mdb,cn=config'
-  register:
-    memberOfOverlayPresent
-  failed_when: memberOfOverlayPresent.rc not in [0,1]
-  changed_when: False
-
-- name: Configure memberof/refint overlay for 1mdb
-  command: ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f "{{ ldap_ldif_dir }}/enable_memberof_1mdb.ldif"
-  # return code 20 means entry already exists
-  register: result
-  failed_when: result.rc not in [0,20,68]
-  changed_when: result.rc not in [20,68]
-  when: memberOfOverlayPresent.rc != 0
-
-- name: Check for presence of eduPerson ldif
-  stat:
-    path: "{{ ldap_schema_dir }}/{{ eduPersonSchema_ldif }}"
-  register: edupersonstat
-
-- name: Check for presence of LdapPublicKey ldif
-  stat:
-    path: "{{ ldap_schema_dir }}/{{ ldapPublicKey_ldif }}"
-  register: ldappkstat
-
-- name: Check for presence of eduMember ldif
-  stat:
-    path: "{{ ldap_schema_dir }}/{{ eduMember_ldif }}"
-  register: edumemberstat
-
-- name: Check for presence of voPerson ldif
-  stat:
-    path: "{{ ldap_schema_dir }}/{{ voPerson_ldif }}"
-  register: vopersonstat
-
-- name: Fetch the eduPerson schema
-  become: true
-  get_url:
-    owner: "{{ ldap_user }}"
-    group: "{{ ldap_user }}"
-    url: "{{ eduPersonSchema_url }}"
-    dest: "{{ ldap_download_dir }}"
-  when:  edupersonstat.stat.exists == False
-
-# Of course the unarchive module should be used here, but the things is,
-# it seems broken in 2.2.0, although it should be fixed in 2.1.1. I guess
-# porting the fix to 2.2.0 has been forgotten...
-- name: Unzipping downloaded schema
-  become_user: "{{ ldap_user }}"
-  become: true
-  command: unzip -o "{{ ldap_download_dir }}/{{ eduPersonSchema_zip }}" -d /tmp
-  when: edupersonstat.stat.exists == False
-
-- name: Copy the unpacked ldifs
-  become: true
-  become_user: "{{ ldap_user }}"
-  copy:
-    src: /tmp/{{ eduPersonSchema_ldif }}
-    dest: "{{ ldap_schema_dir }}/{{ eduPersonSchema_ldif }}"
-    remote_src: true
-    owner: "{{ ldap_user }}"
-    group: "{{ ldap_user }}"
-  when: edupersonstat.stat.exists == False
-
-- name: Fetch LdapPublicKey schema
-  become: true
-  get_url:
-    owner: "{{ ldap_user }}"
-    group: "{{ ldap_user }}"
-    url: "{{ ldapPublicKeySchema_url }}"
-    dest: "{{ ldap_schema_dir }}/{{ ldapPublicKey }}.schema"
-  when: ldappkstat.stat.exists == False
-
-- name: Convert LdapPublicKey schema to ldif format
-  command: "{{ ldap_bin_dir }}/schema2ldif {{ ldap_schema_dir }}/{{ ldapPublicKey }}.schema"
-  become: true
-  become_user: "{{ ldap_user }}"
-  when: ldappkstat.stat.exists == False
-
-- name: Fetch eduMember schema
-  become: true
-  get_url:
-    owner: "{{ ldap_user }}"
-    group: "{{ ldap_user }}"
-    url: "{{ eduMemberSchema_url }}"
-    dest: "{{ ldap_schema_dir }}/{{ eduMember }}.schema"
-  when: edumemberstat.stat.exists == False
-
-- name: Convert eduMember schema to ldif format
-  command: "{{ ldap_bin_dir }}/schema2ldif {{ ldap_schema_dir }}/{{ eduMember }}.schema"
-  become: true
-  become_user: "{{ ldap_user }}"
-  when: edumemberstat.stat.exists == False
-
-- name: Fetch voPerson ldif
-  become: true
-  get_url:
-    owner: "{{ ldap_user }}"
-    group: "{{ ldap_user }}"
-    url: "{{ voPersonLdif_url }}"
-    dest: "{{ ldap_schema_dir }}/{{ voPerson }}.ldif"
-  when: vopersonstat.stat.exists == False
-
 # OpenLDAP does not like adding existing entries again. Only add the
 # schema if it has not been added already. This does not yet take care
 # of changes in the eduPerson schema.
@@ -220,8 +75,7 @@
   become: true
   command: >
     ldapadd -Q -Y EXTERNAL -H ldapi:///
-    -f {{ ldap_schema_dir }}/{{ eduPersonSchema_ldif }}
-    -D "cn=config" -w "{{ ldap_password }}"
+    -f "{{ ldap_ldif_dir }}/eduPerson.ldif"
   when: eduPersonSchemaPresent.stdout == ""
 
 - name: Check if the ldapPublicKey schema is already present
@@ -237,8 +91,7 @@
   become: true
   command: >
     ldapadd -Q -Y EXTERNAL -H ldapi:///
-    -f "{{ ldap_schema_dir }}/{{ ldapPublicKey_ldif }}"
-    -D "cn=config" -w "{{ ldap_password }}"
+    -f "{{ ldap_ldif_dir }}/ldapPublicKey.ldif"
   when: ldapPublicKeyTask.stdout == ""
 
 - name: Check if the eduMember schema is already present
@@ -254,8 +107,7 @@
   become: true
   command: >
     ldapadd -Q -Y EXTERNAL -H ldapi:///
-    -f "{{ ldap_schema_dir }}/{{ eduMember_ldif }}"
-    -D "cn=config" -w "{{ ldap_password }}"
+    -f "{{ ldap_ldif_dir }}/eduMember.ldif"
   when: eduMemberTask.stdout == ""
 
 - name: Check if the voPerson schema is already present
@@ -271,26 +123,8 @@
   become: true
   command: >
     ldapadd -Q -Y EXTERNAL -H ldapi:///
-    -f "{{ ldap_schema_dir }}/{{ voPerson_ldif }}"
-    -D "cn=config" -w "{{ ldap_password }}"
+    -f "{{ ldap_ldif_dir }}/voPerson.ldif"
   when: voPersonTask.stdout == ""
-
-- name: Check if DIT has been created before
-  command:
-    ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// -b "{{ ldap.basedn }}" "(ou=group)" dn
-  register: emptyDIT
-  failed_when: emptyDIT.rc not in [0, 32]
-  changed_when: False
-
-- name: Initialize DIT
-  command: >
-    ldapadd -c -x -D "{{ ldap.binddn }}" -w "{{ ldap_password }}"
-    -f "{{ ldap_ldif_dir }}/initial_setup.ldif"
-  register: result
-  failed_when: result.rc not in [0,20,68]
-  changed_when: result.rc not in [20,68]
-  tags: ldap
-  when: emptyDIT.stdout == ""
 
 - name: Redirect slapd log to /var/log/slapd.log
   copy:

@@ -1,0 +1,14 @@
+[Unit]
+Description = LDAP server
+
+[Service]
+Type = forking
+ExecStartPre=-/bin/mkdir -p /var/run/slapd
+ExecStartPre=-/bin/chown openldap. /var/run/slapd
+ExecStart = /usr/sbin/slapd -F /etc/ldap/slapd.d -u openldap -g openldap -h 'ldap:/// ldapi:///'
+Restart = always
+RestartSec = 30
+PIDFile = /var/run/slapd/slapd.pid
+
+[Install]
+WantedBy = multi-user.target

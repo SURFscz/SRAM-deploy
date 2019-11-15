@@ -1,0 +1,36 @@
+# install a haproxy on the load balancer
+---
+
+##########################################
+## handle generation of dh params
+##
+- name: install openssl
+  apt: name=openssl state=present
+  when: enable_https and haproxy.custom_dhparam
+
+- name: generate Diffie-Hellman group
+  command: openssl dhparam -out {{ haproxy.dhparam_file }} {{ haproxy.dhparam_keysize }}
+  args:
+    creates: "{{ haproxy.dhparam_file }}"
+  when: enable_https and haproxy.custom_dhparam
+
+
+##########################################
+## install haproxy
+##
+- name: install haproxy
+  apt: name=haproxy state=present
+
+- name: install haproxy config
+  template: src=haproxy.cfg.j2 dest=/etc/haproxy/haproxy.cfg mode=0644 owner=root group=root
+  notify:
+    - restart haproxy
+
+- name: enable haproxy
+  systemd: daemon_reload=yes name=haproxy state=started enabled=true
+
+- name: install LDAP (un)fencing scripts
+  template: src="{{ item }}.j2" dest="/opt/{{ item }}" mode=0755 owner=root group=root
+  with_items:
+    - fence.sh
+    - unfence.sh
