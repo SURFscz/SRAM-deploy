@@ -56,14 +56,7 @@
     - role: tls_fixed_cert
       tags: ['lb','tls_fixedcert']
       when: enable_https and use_fixed_cert
-    - { role: https_haproxy,   tags: ['lb','haproxy'] }
-
-- hosts: ldap
-  roles:
-    - { role: ldap,               tags: ['ldap'                  ] }
-    - { role: ldap_clients,       tags: ['ldap', 'ldap-clients'  ] }
-    - { role: pam_websso_daemon,  tags: ['client','websso-daemon'] }
-    - { role: slp,                tags: ['slp'] }
+    - { role: lb_haproxy,   tags: ['lb','haproxy'] }
 
 - hosts:
     - proxy
@@ -83,25 +76,35 @@
 
 - hosts: proxy
   roles:
-    - { role: pyff,          tags: ['proxy','pyff'      ] }
-    - { role: satosa,        tags: ['proxy','satosa'    ] }
-    - { role: cmservice,     tags: ['proxy','cmservice' ] }
-    - { role: proxy_mysql,   tags: ['proxy','mysql','dothis'     ] }
+    - { role: pyff,          tags: ['proxy','pyff'          ] }
+    - { role: satosa,        tags: ['proxy','satosa'        ] }
+    - { role: cmservice,     tags: ['proxy','cmservice'     ] }
+    - { role: proxy_mysql,   tags: ['proxy','mysql','dothis'] }
 
 - hosts: comanage
   roles:
-    - { role: http_apache,      tags: ['comanage', 'web'] }
-    - { role: comanage_mysql,   tags: ['comanage', 'db' ] }
-    - { role: php,              tags: ['comanage', 'web'] }
-    - { role: auth_mellon,      tags: ['comanage', 'web'] }
-    - { role: comanage,         tags: ['comanage', 'web'] }
-    - { role: comanage_idp,     tags: ['comanage', 'web'] }
-    - { role: comanage_enable,  tags: ['comanage', 'web'] }
-    - { role: comanage_plugins, tags: ['comanage', 'web'] }
+    - { role: ldap_master,      tags: ['ldap', 'ldap-master'] }
+    - { role: ldap,             tags: ['ldap'               ] }
+    - { role: http_apache,      tags: ['comanage', 'web'    ] }
+    - { role: comanage_mysql,   tags: ['comanage', 'db'     ] }
+    - { role: php,              tags: ['comanage', 'web'    ] }
+    - { role: auth_mellon,      tags: ['comanage', 'web'    ] }
+    - { role: comanage,         tags: ['comanage', 'web'    ] }
+    - { role: comanage_idp,     tags: ['comanage', 'web'    ] }
+    - { role: comanage_enable,  tags: ['comanage', 'web'    ] }
+    - { role: comanage_plugins, tags: ['comanage', 'web'    ] }
+
+- hosts: ldap
+  roles:
+    - { role: ldap_services,      tags: ['ldap', 'ldap-services' ] }
+    - { role: ldap,               tags: ['ldap'                  ] }
+    - { role: lsc,                tags: ['ldap', 'ldap-lsc'      ] }
+    - { role: pam_websso_daemon,  tags: ['client','websso-daemon'] }
+    - { role: slp,                tags: ['slp'                   ] }
 
 - hosts: meta
   roles:
-    - { role: http_dummy,  tags: ['meta','http']     }
+    - { role: http_dummy,  tags: ['meta','http'    ] }
     - { role: metadata,    tags: ['meta','metadata'] }
 
 - hosts: sbs
@@ -110,4 +113,4 @@
 
 - hosts: sandbox1
   roles:
-    - { role: pam_websso,         tags: ['client','pam-websso'   ] }
+    - { role: pam_websso,         tags: ['client','pam-websso'] }

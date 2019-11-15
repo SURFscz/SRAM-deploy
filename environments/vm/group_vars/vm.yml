@@ -31,12 +31,10 @@ google_test_port: 84
 orcid_test_port: 85
 orcid_sb_test_port: 86
 ms_test_port: 87
+metadata_backend_port: 88
+comanage_backend_port: 89
+sbs_backend_port: 90
 pam_clients_port: 8087
-
-# Local services ports
-metadata_backend_port: 81
-comanage_backend_port: 82
-sbs_backend_port: 83
 
 # COmanage-ldap configuration
 comanage_ldap_host: "ldap.vm.scz-vm.net"
@@ -44,63 +42,68 @@ comanage_ldap_host: "ldap.vm.scz-vm.net"
 # TODO: get rid of hardcoded ports for proxy vhosts
 loadbalancer:
   - hostname: "{{hostnames.proxy}}"
-    http: true
+    protocol: http
     backend_hosts: "{{groups['vm-proxy']}}"
     backend_port: 8080
   - hostname: "{{hostnames.mdq}}"
-    http: true
+    protocol: http
     backend_hosts: "{{groups['vm-proxy']}}"
     backend_port: 8081
   - hostname: "{{hostnames.consent}}"
-    http: true
+    protocol: http
     backend_hosts: "{{groups['vm-proxy']}}"
     backend_port: 8082
   - hostname: "{{hostnames.comanage}}"
-    http: true
+    protocol: http
     backend_hosts: "{{groups['vm-comanage']}}"
     backend_port: "{{ comanage_backend_port }}"
   - hostname: "{{hostnames.sbs}}"
-    http: true
+    protocol: http
     backend_hosts: "{{groups['vm-sbs']}}"
     backend_port: "{{ sbs_backend_port }}"
   - hostname: "{{hostnames.meta}}"
-    http: true
+    protocol: http
     backend_hosts: "{{groups['vm-meta']}}"
     backend_port: "{{ metadata_backend_port }}"
   - hostname: "{{hostnames.oidc}}"
-    http: true
+    protocol: http
     backend_hosts: "{{groups['vm-client']}}"
     backend_port: "{{oidc_test_port}}"
   - hostname: "{{hostnames.sp}}"
-    http: true
+    protocol: http
     backend_hosts: "{{groups['vm-client']}}"
     backend_port: "{{sp_test_port}}"
   - hostname: "{{hostnames.idp}}"
-    http: true
+    protocol: http
     backend_hosts: "{{groups['vm-client']}}"
     backend_port: "{{idp_test_port}}"
   - hostname: "{{hostnames.google}}"
-    http: true
+    protocol: http
     backend_hosts: "{{groups['vm-client']}}"
     backend_port: "{{google_test_port}}"
   - hostname: "{{hostnames.orcid}}"
-    http: true
+    protocol: http
     backend_hosts: "{{groups['vm-client']}}"
     backend_port: "{{orcid_test_port}}"
   - hostname: "{{hostnames.orcid_sb}}"
-    http: true
+    protocol: http
     backend_hosts: "{{groups['vm-client']}}"
     backend_port: "{{orcid_sb_test_port}}"
   - hostname: "{{hostnames.ms}}"
-    http: true
+    protocol: http
     backend_hosts: "{{groups['vm-client']}}"
     backend_port: "{{ms_test_port}}"
   - hostname: "{{hostnames.pam}}"
-    http: true
+    protocol: http
     backend_hosts: "{{groups['vm-ldap']}}"
     backend_port: "{{pam_clients_port}}"
   - hostname: "{{hostnames.ldap}}"
-    http: false
+    protocol: ldap
     frontend_port: 636
     backend_hosts: "{{groups['vm-ldap']}}"
+    backend_port: 389
+  - hostname: "{{hostnames.comanage}}"
+    protocol: ldap
+    frontend_port: 1636
+    backend_hosts: "{{groups['vm-comanage']}}"
     backend_port: 389

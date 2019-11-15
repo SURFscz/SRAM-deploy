@@ -1,0 +1,4 @@
+---
+- name: systemd daemon-reload
+  systemd: name=slapd daemon_reload=yes
+

@@ -1,0 +1,11 @@
+# Create the base dc, which will contain all COs
+dn: {{ services_ldap.basedn }}
+o: {{ services_ldap.o }}
+dc: {{ services_ldap.basedn | regex_replace('^dc=([^,]+).*', '\\1') }}
+objectClass: dcObject
+objectClass: organization
+
+# Create the admin identity
+dn: {{ services_ldap.binddn }}
+cn: admin
+objectClass: organizationalRole

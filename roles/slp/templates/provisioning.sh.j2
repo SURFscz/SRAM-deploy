@@ -10,8 +10,8 @@ export API_PASS="{{ sbs_sysread_password }}"
 
 export LDAP_HOST="localhost"
 export LDAP_PROT="{{ slp_ldap_protocol }}"
-export LDAP_PASS="{{ clients_ldap_password }}"
-export LDAP_USER="{{ clients_ldap.binddn }}"
-export LDAP_BASE="{{ clients_ldap.basedn }}"
+export LDAP_PASS="{{ services_ldap_password }}"
+export LDAP_USER="{{ services_ldap.binddn }}"
+export LDAP_BASE="{{ services_ldap.basedn }}"
 
 exec {{ slp_env_dir }}/bin/python {{ slp_git_dir }}/slp.py
