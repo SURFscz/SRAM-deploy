@@ -5,6 +5,7 @@
       - python-pip
       - libxml2-dev
       - libxmlsec1-dev
+      - libz-dev
     state: present
 
 - name: fetch PAM WebSSO from {{ pam_websso.repo_url }}, version {{ pam_websso.repo_version }}

@@ -6,6 +6,7 @@
       - libpam-python
       - pamtester
       - libxml2-dev
+      - libz-dev
       - libxmlsec1-dev
       - build-essential
       - python-dev
