@@ -53,6 +53,7 @@
       - logrotate
       - nullmailer
       - rsyslog
+      - aptitude
 
 - name: Upgrade packages
   apt:
