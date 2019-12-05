@@ -1,7 +1,7 @@
 ---
 ldap:
   src:
-    uri: ldap://{{ master_ldap.host }}/
+    uri: ldaps://{{ master_ldap.host }}/
     basedn: {{ master_ldap.basedn }}
     binddn: {{ master_ldap.binddn }}
     passwd: {{ master_ldap_password }}

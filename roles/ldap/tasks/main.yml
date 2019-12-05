@@ -10,6 +10,7 @@
   tags: ldap
   with_items:
     - "{{ ldap_ldif_dir }}"
+    - "{{ ldap_certs_dir }}"
 
 - name: Copy schemas
   become_user: "{{ ldap_user }}"
@@ -34,6 +35,18 @@
     - { src: "set_loglevel_stats.ldif.j2", dest: "set_loglevel_stats.ldif" }
     - { src: "enable_syncprov.ldif.j2", dest: "enable_syncprov.ldif" }
     - { src: "enable_dynlist.ldif.j2", dest: "enable_dynlist.ldif" }
+    - { src: "enable_tls.ldif.j2", dest: "enable_tls.ldif" }
+
+- name: Generate ldap.conf
+  template:
+    src: ldap.conf.j2
+    dest: "{{ ldap_dir }}/ldap.conf"
+    mode: 0644
+
+- name: Copy slapd defaults to enable ldaps:///
+  copy:
+    src: "default_slapd"
+    dest: "/etc/default/slapd"
 
 - name: Set loglevel to stats
   command: ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f "{{ ldap_ldif_dir }}/set_loglevel_stats.ldif"
@@ -55,6 +68,29 @@
   register: result
   failed_when: result.rc not in [0,20,68]
   changed_when: result.rc != 20
+
+- name: Enable tls
+  command: ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f "{{ ldap_ldif_dir }}/enable_dynlist.ldif"
+  # return code 20 means entry already exists
+  register: result
+  failed_when: result.rc not in [0,20,68]
+  changed_when: result.rc != 20
+
+- name: write certificate key
+  copy: >
+    content="{{wildcard_backend_cert.priv}}"
+    dest={{ldap_certs_dir}}/{{ internal_base_domain }}.key
+    mode=0600
+    owner: "{{ ldap_user }}"
+    group: "{{ ldap_group }}"
+
+- name: write certificate pub
+  copy: >
+    content="{{wildcard_backend_cert.pub}}"
+    dest={{ldap_certs_dir}}/{{ internal_base_domain }}.crt
+    mode=0600
+    owner: "{{ ldap_user }}"
+    group: "{{ ldap_group }}"
 
 # OpenLDAP does not like adding existing entries again. Only add the
 # schema if it has not been added already. This does not yet take care

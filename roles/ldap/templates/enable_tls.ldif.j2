@@ -1,0 +1,10 @@
+dn: cn=config
+changetype: modify
+replace: olcTLSCertificateFile
+olcTLSCertificateFile: /etc/ldap/certs/{{ internal_base_domain }}.crt
+-
+replace: olcTLSCertificateKeyFile
+olcTLSCertificateKeyFile: /etc/ldap/certs/{{ internal_base_domain }}key
+-
+replace: olcTLSCipherSuite
+olcTLSCipherSuite: SECURE256:-VERS-SSL3.0
