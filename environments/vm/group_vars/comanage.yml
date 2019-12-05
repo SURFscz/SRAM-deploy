@@ -15,7 +15,6 @@ sp_technical_contact: "ict@{{ domain }}"
 sp_organisation: "example Ltd."
 sp_organisation_url: "https://www.example.com"
 
-comanage_port: 80
 comanage_repo_url: "https://github.com/SURFscz/comanage-registry.git"
 comanage_repo_version: "scz"
 comanage_db_user: comanage

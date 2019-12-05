@@ -42,10 +42,10 @@ wget https://{{ hostnames.proxy }}/md/SamlIdP.xml $WFLAGS -O proxy_idp.xml
 wget https://{{ hostnames.proxy }}/md/SamlSP.xml  $WFLAGS -O proxy_sp.xml
 
 #rm -f /var/www/html/*.xml
-cp *.xml /var/www/html
+cp *.xml "{{ metadata_documentroot }}"
 
 # remove old xml files in the www dir that don't have a newly generated equivalent
-for f in /var/www/html/*.xml
+for f in "{{ metadata_documentroot }}"/*.xml
 do
     f_base=$(basename $f)
     if ! [ -e "$dir/$f_base" ]

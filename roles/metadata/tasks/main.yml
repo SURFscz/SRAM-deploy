@@ -16,7 +16,20 @@
   file: path="{{ metadata_project_dir }}" state=directory mode=0755
 
 - name: Create html directory
-  file: path="/var/www/html" state=directory mode=0755
+  file: path="{{ metadata_documentroot }}" state=directory mode=0755
+
+- name: Copy metadata nginx configuration
+  template:
+    src: metadata.nginx.j2
+    dest: "/etc/nginx/sites-available/metadata"
+    mode: 0755
+
+- name: Create symlink to metadata in /etc/nginx/sites-enabled
+  file:
+    src: "/etc/nginx/sites-available/metadata"
+    dest: "/etc/nginx/sites-enabled/00-metadata"
+    state: link
+  notify: restart nginx
 
 - name: List all xml/xsl files
   find:
@@ -68,7 +81,7 @@
 - name: Install logos
   copy:
     src: "{{item}}"
-    dest: "/var/www/html/{{item}}"
+    dest: "{{ metadata_documentroot }}/{{item}}"
     owner: www-data
     group: www-data
   with_items:
