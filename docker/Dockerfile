@@ -22,7 +22,9 @@ RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selectio
     install -d -o ansible -m 0700 /home/ansible/.ssh  && \
     echo -n 'ansible:ansible' | chpasswd  && \
     mkdir -p /etc/sudoers.d && install -b -m 0440 /dev/null /etc/sudoers.d/ansible  && \
-    echo 'ansible ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers.d/ansible
+    echo 'ansible ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers.d/ansible && \
+    /bin/echo -e '#!/bin/sh\ncp /tmp/authorized_keys ~ansible/.ssh\nchown ansible:ansible ~ansible/.ssh/authorized_keys' >> /etc/rc.local && \
+    chmod 755 /etc/rc.local
 
 # sshd services in all containers
 EXPOSE 22

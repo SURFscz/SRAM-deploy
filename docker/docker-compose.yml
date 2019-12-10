@@ -20,7 +20,7 @@ services:
       - sbs.scz-vm.net:172.20.1.24
     hostname: ldap
     volumes:
-      - "./ansible_key.pub:/home/ansible/.ssh/authorized_keys"
+      - "./ansible_key.pub:/tmp/authorized_keys"
       - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
     privileged: true
     networks:
@@ -46,7 +46,7 @@ services:
       - sbs.scz-vm.net:172.20.1.24
     hostname: comanage
     volumes:
-      - "./ansible_key.pub:/home/ansible/.ssh/authorized_keys"
+      - "./ansible_key.pub:/tmp/authorized_keys"
       - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
     privileged: true
     networks:
@@ -72,7 +72,7 @@ services:
       - sbs.scz-vm.net:172.20.1.24
     hostname: proxy
     volumes:
-      - "./ansible_key.pub:/home/ansible/.ssh/authorized_keys"
+      - "./ansible_key.pub:/tmp/authorized_keys"
       - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
     privileged: true
     networks:
@@ -98,7 +98,7 @@ services:
       - sbs.scz-vm.net:172.20.1.24
     hostname: meta
     volumes:
-      - "./ansible_key.pub:/home/ansible/.ssh/authorized_keys"
+      - "./ansible_key.pub:/tmp/authorized_keys"
       - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
     privileged: true
     networks:
@@ -124,7 +124,7 @@ services:
       - sbs.scz-vm.net:172.20.1.27
     hostname: lb
     volumes:
-      - "./ansible_key.pub:/home/ansible/.ssh/authorized_keys"
+      - "./ansible_key.pub:/tmp/authorized_keys"
       - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
     privileged: true
     networks:
@@ -150,7 +150,7 @@ services:
       - sbs.scz-vm.net:172.20.1.24
     hostname: client
     volumes:
-      - "./ansible_key.pub:/home/ansible/.ssh/authorized_keys"
+      - "./ansible_key.pub:/tmp/authorized_keys"
       - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
     privileged: true
     networks:
@@ -176,7 +176,7 @@ services:
       - sbs.scz-vm.net:172.20.1.24
     hostname: sandbox1
     volumes:
-      - "./ansible_key.pub:/home/ansible/.ssh/authorized_keys"
+      - "./ansible_key.pub:/tmp/authorized_keys"
       - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
     privileged: true
     networks:
@@ -202,7 +202,7 @@ services:
       - sbs.scz-vm.net:172.20.1.24
     hostname: sbs
     volumes:
-      - "./ansible_key.pub:/home/ansible/.ssh/authorized_keys"
+      - "./ansible_key.pub:/tmp/authorized_keys"
       - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
     privileged: true
     networks:
@@ -228,7 +228,7 @@ services:
       - sbs.scz-vm.net:172.20.1.24
     hostname: db
     volumes:
-      - "./ansible_key.pub:/home/ansible/.ssh/authorized_keys"
+      - "./ansible_key.pub:/tmp/authorized_keys"
       - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
     privileged: true
     networks:
