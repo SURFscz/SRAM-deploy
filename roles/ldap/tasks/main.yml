@@ -1,5 +1,13 @@
 ---
 # playbook to install and configure general components of the LDAP
+- name: Copying alternative service script
+  become: true
+  copy:
+    src: slapd.service
+    dest: /etc/systemd/system
+  notify: systemd daemon-reload
+#  when: ansible_virtualization_type == "docker"
+
 - name: Ensure that a number of directories exist
   file:
     path: "{{ item }}"
@@ -43,11 +51,6 @@
     dest: "{{ ldap_dir }}/ldap.conf"
     mode: 0644
 
-- name: Copy slapd defaults to enable ldaps:///
-  copy:
-    src: "default_slapd"
-    dest: "/etc/default/slapd"
-
 - name: Set loglevel to stats
   command: ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f "{{ ldap_ldif_dir }}/set_loglevel_stats.ldif"
   # return code 20 means entry already exists
@@ -69,28 +72,29 @@
   failed_when: result.rc not in [0,20,68]
   changed_when: result.rc != 20
 
-- name: Enable tls
-  command: ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f "{{ ldap_ldif_dir }}/enable_dynlist.ldif"
-  # return code 20 means entry already exists
-  register: result
-  failed_when: result.rc not in [0,20,68]
-  changed_when: result.rc != 20
-
 - name: write certificate key
   copy: >
     content="{{wildcard_backend_cert.priv}}"
     dest={{ldap_certs_dir}}/{{ internal_base_domain }}.key
     mode=0600
-    owner: "{{ ldap_user }}"
-    group: "{{ ldap_group }}"
+    owner="{{ ldap_user }}"
+    group="{{ ldap_group }}"
 
 - name: write certificate pub
   copy: >
     content="{{wildcard_backend_cert.pub}}"
     dest={{ldap_certs_dir}}/{{ internal_base_domain }}.crt
     mode=0600
-    owner: "{{ ldap_user }}"
-    group: "{{ ldap_group }}"
+    owner="{{ ldap_user }}"
+    group="{{ ldap_group }}"
+
+- name: Enable tls
+  command: ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f "{{ ldap_ldif_dir }}/enable_tls.ldif"
+  # return code 20 means entry already exists
+  register: result
+  failed_when: result.rc not in [0,20,68]
+  changed_when: result.rc != 20
+  notify: restart slapd
 
 # OpenLDAP does not like adding existing entries again. Only add the
 # schema if it has not been added already. This does not yet take care

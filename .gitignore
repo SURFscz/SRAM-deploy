@@ -12,3 +12,4 @@ core
 .venv/
 .idea/
 secret
+ansible_key*

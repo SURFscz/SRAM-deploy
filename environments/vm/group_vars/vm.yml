@@ -5,6 +5,7 @@ sudo_groups:
 environment_name: vm
 environment_string: "SCZ VM"
 base_domain: "scz-vm.net"
+internal_base_domain: "vm.scz-vm.net"
 
 # externally visible!
 hostnames:

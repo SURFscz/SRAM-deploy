@@ -1,0 +1,279 @@
+version: "2"
+
+services:
+
+  ldap:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    extra_hosts:
+      - proxy.scz-vm.net:172.20.1.24
+      - mdq.scz-vm.net:172.20.1.24
+      - cm.scz-vm.net:172.20.1.24
+      - comanage.scz-vm.net:172.20.1.24
+      - ldap.scz-vm.net:172.20.1.24
+      - meta.scz-vm.net:172.20.1.24
+      - oidc-test.scz-vm.net:172.20.1.24
+      - sp-test.scz-vm.net:172.20.1.24
+      - idp-test.scz-vm.net:172.20.1.24
+      - google-test.scz-vm.net:172.20.1.24
+      - sandbox1.scz-vm.net:172.20.1.24
+      - sbs.scz-vm.net:172.20.1.24
+    hostname: ldap
+    volumes:
+      - "./ansible_key.pub:/home/ansible/.ssh/authorized_keys"
+      - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
+    privileged: true
+    networks:
+      scznet:
+        ipv4_address: 172.20.1.20
+        aliases:
+          - ldap.vm.scz-vm.net
+
+  comanage:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    extra_hosts:
+      - proxy.scz-vm.net:172.20.1.24
+      - mdq.scz-vm.net:172.20.1.24
+      - cm.scz-vm.net:172.20.1.24
+      - comanage.scz-vm.net:172.20.1.24
+      - ldap.scz-vm.net:172.20.1.24
+      - meta.scz-vm.net:172.20.1.24
+      - oidc-test.scz-vm.net:172.20.1.24
+      - sp-test.scz-vm.net:172.20.1.24
+      - idp-test.scz-vm.net:172.20.1.24
+      - google-test.scz-vm.net:172.20.1.24
+      - sandbox1.scz-vm.net:172.20.1.24
+      - sbs.scz-vm.net:172.20.1.24
+    hostname: comanage
+    volumes:
+      - "./ansible_key.pub:/home/ansible/.ssh/authorized_keys"
+      - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
+    privileged: true
+    networks:
+      scznet:
+        ipv4_address: 172.20.1.21
+        aliases:
+          - comanage.vm.scz-vm.net
+
+  proxy:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    extra_hosts:
+      - proxy.scz-vm.net:172.20.1.24
+      - mdq.scz-vm.net:172.20.1.24
+      - cm.scz-vm.net:172.20.1.24
+      - comanage.scz-vm.net:172.20.1.24
+      - ldap.scz-vm.net:172.20.1.24
+      - meta.scz-vm.net:172.20.1.24
+      - oidc-test.scz-vm.net:172.20.1.24
+      - sp-test.scz-vm.net:172.20.1.24
+      - idp-test.scz-vm.net:172.20.1.24
+      - google-test.scz-vm.net:172.20.1.24
+      - sandbox1.scz-vm.net:172.20.1.24
+      - sbs.scz-vm.net:172.20.1.24
+    hostname: proxy
+    volumes:
+      - "./ansible_key.pub:/home/ansible/.ssh/authorized_keys"
+      - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
+    privileged: true
+    networks:
+      scznet:
+        ipv4_address: 172.20.1.22
+        aliases:
+          - proxy.vm.scz-vm.net
+
+  meta:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    extra_hosts:
+      - proxy.scz-vm.net:172.20.1.24
+      - mdq.scz-vm.net:172.20.1.24
+      - cm.scz-vm.net:172.20.1.24
+      - comanage.scz-vm.net:172.20.1.24
+      - ldap.scz-vm.net:172.20.1.24
+      - meta.scz-vm.net:172.20.1.24
+      - oidc-test.scz-vm.net:172.20.1.24
+      - sp-test.scz-vm.net:172.20.1.24
+      - idp-test.scz-vm.net:172.20.1.24
+      - google-test.scz-vm.net:172.20.1.24
+      - sandbox1.scz-vm.net:172.20.1.24
+      - sbs.scz-vm.net:172.20.1.24
+    hostname: meta
+    volumes:
+      - "./ansible_key.pub:/home/ansible/.ssh/authorized_keys"
+      - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
+    privileged: true
+    networks:
+      scznet:
+        ipv4_address: 172.20.1.23
+        aliases:
+          - meta.vm.scz-vm.net
+
+  lb:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    extra_hosts:
+      - proxy.scz-vm.net:172.20.1.22
+      - mdq.scz-vm.net:172.20.1.22
+      - cm.scz-vm.net:172.20.1.22
+      - comanage.scz-vm.net:172.20.1.21
+      - ldap.scz-vm.net:172.20.1.20
+      - meta.scz-vm.net:172.20.1.23
+      - oidc-test.scz-vm.net:172.20.1.25
+      - sp-test.scz-vm.net:172.20.1.25
+      - idp-test.scz-vm.net:172.20.1.25
+      - google-test.scz-vm.net:172.20.1.25
+      - sandbox1.scz-vm.net:172.20.1.26
+      - sbs.scz-vm.net:172.20.1.27
+    hostname: lb
+    volumes:
+      - "./ansible_key.pub:/home/ansible/.ssh/authorized_keys"
+      - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
+    privileged: true
+    networks:
+      scznet:
+        ipv4_address: 172.20.1.24
+        aliases:
+          - lb.vm.scz-vm.net
+
+  client:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    extra_hosts:
+      - proxy.scz-vm.net:172.20.1.24
+      - mdq.scz-vm.net:172.20.1.24
+      - cm.scz-vm.net:172.20.1.24
+      - comanage.scz-vm.net:172.20.1.24
+      - ldap.scz-vm.net:172.20.1.24
+      - meta.scz-vm.net:172.20.1.24
+      - oidc-test.scz-vm.net:172.20.1.24
+      - sp-test.scz-vm.net:172.20.1.24
+      - idp-test.scz-vm.net:172.20.1.24
+      - google-test.scz-vm.net:172.20.1.24
+      - sandbox1.scz-vm.net:172.20.1.24
+      - sbs.scz-vm.net:172.20.1.24
+    hostname: client
+    volumes:
+      - "./ansible_key.pub:/home/ansible/.ssh/authorized_keys"
+      - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
+    privileged: true
+    networks:
+      scznet:
+        ipv4_address: 172.20.1.25
+        aliases:
+          - client.vm.scz-vm.net
+
+  sandbox1:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    extra_hosts:
+      - proxy.scz-vm.net:172.20.1.24
+      - mdq.scz-vm.net:172.20.1.24
+      - cm.scz-vm.net:172.20.1.24
+      - comanage.scz-vm.net:172.20.1.24
+      - ldap.scz-vm.net:172.20.1.24
+      - meta.scz-vm.net:172.20.1.24
+      - oidc-test.scz-vm.net:172.20.1.24
+      - sp-test.scz-vm.net:172.20.1.24
+      - idp-test.scz-vm.net:172.20.1.24
+      - google-test.scz-vm.net:172.20.1.24
+      - sandbox1.scz-vm.net:172.20.1.24
+      - sbs.scz-vm.net:172.20.1.24
+    hostname: sandbox1
+    volumes:
+      - "./ansible_key.pub:/home/ansible/.ssh/authorized_keys"
+      - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
+    privileged: true
+    networks:
+      scznet:
+        ipv4_address: 172.20.1.26
+        aliases:
+          - sandbox1.vm.scz-vm.net
+
+  sbs:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    extra_hosts:
+      - proxy.scz-vm.net:172.20.1.24
+      - mdq.scz-vm.net:172.20.1.24
+      - cm.scz-vm.net:172.20.1.24
+      - comanage.scz-vm.net:172.20.1.24
+      - ldap.scz-vm.net:172.20.1.24
+      - meta.scz-vm.net:172.20.1.24
+      - oidc-test.scz-vm.net:172.20.1.24
+      - sp-test.scz-vm.net:172.20.1.24
+      - idp-test.scz-vm.net:172.20.1.24
+      - google-test.scz-vm.net:172.20.1.24
+      - sandbox1.scz-vm.net:172.20.1.24
+      - sbs.scz-vm.net:172.20.1.24
+    hostname: sbs
+    volumes:
+      - "./ansible_key.pub:/home/ansible/.ssh/authorized_keys"
+      - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
+    privileged: true
+    networks:
+      scznet:
+        ipv4_address: 172.20.1.27
+        aliases:
+          - sbs.vm.scz-vm.net
+
+  db:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    extra_hosts:
+      - proxy.scz-vm.net:172.20.1.24
+      - mdq.scz-vm.net:172.20.1.24
+      - cm.scz-vm.net:172.20.1.24
+      - comanage.scz-vm.net:172.20.1.24
+      - ldap.scz-vm.net:172.20.1.24
+      - meta.scz-vm.net:172.20.1.24
+      - oidc-test.scz-vm.net:172.20.1.24
+      - sp-test.scz-vm.net:172.20.1.24
+      - idp-test.scz-vm.net:172.20.1.24
+      - google-test.scz-vm.net:172.20.1.24
+      - sandbox1.scz-vm.net:172.20.1.24
+      - sbs.scz-vm.net:172.20.1.24
+    hostname: db
+    volumes:
+      - "./ansible_key.pub:/home/ansible/.ssh/authorized_keys"
+      - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
+    privileged: true
+    networks:
+      scznet:
+        ipv4_address: 172.20.1.28
+        aliases:
+          - db.vm.scz-vm.net
+
+  #testbox:
+    #build:
+      #context: .
+      #dockerfile: Dockerfile
+    #hostname: testbox.vm.scz-vm.net
+    #volumes:
+      #- "./ansible_key.pub:/home/ansible/.ssh/authorized_keys"
+      #- "/sys/fs/cgroup:/sys/fs/cgroup:ro"
+    #privileged: true
+    #networks:
+      #scznet:
+        #ipv4_address: 172.20.1.99
+        #aliases:
+          #- testbox.vm.scz-vm.net
+
+networks:
+  scznet:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.1.0/24
+          gateway: 172.20.1.1
