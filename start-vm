@@ -3,7 +3,7 @@ set -e
 
 if [ ! -f docker/ansible_key.pub ]; then
     echo "No ansible key found"
-    ssh-keygen -f docker/ansible_key -N ""
+    ssh-keygen -t rsa -f docker/ansible_key -N ""
 fi
 
 # build single docker image before docker-compose starts
@@ -23,17 +23,17 @@ fi
 echo "Bringing docker containers up"
 time docker-compose -f docker/docker-compose.yml up -d
 
-echo "See if dockers are running"
-docker-compose -f docker/docker-compose.yml ps
+# echo "See if dockers are running"
+# docker-compose -f docker/docker-compose.yml ps
 
-echo "Ping test"
+# echo "Ping test"
 # ping -c5 172.20.1.26
-
-echo "Check Ansible key"
-ls -la /home/travis/build/SURFscz/SCZ-deploy/environments/vm/../../docker
 
 echo "Chmod docker directory"
 chmod 0700 /home/travis/build/SURFscz/SCZ-deploy/environments/vm/../../docker
+
+echo "Check Ansible key"
+ls -la /home/travis/build/SURFscz/SCZ-deploy/environments/vm/../../docker
 
 echo "Check Ansible ssh command"
 ssh -v -o ControlMaster=auto -o ControlPersist=3600s -o 'IdentityFile="/home/travis/build/SURFscz/SCZ-deploy/environments/vm/../../docker/ansible_key"' \
