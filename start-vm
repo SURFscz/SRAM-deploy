@@ -1,21 +1,27 @@
 #!/bin/bash
 set -e
 
-if [ ! -f ansible_key.pub ]; then
+if [ ! -f docker/ansible_key.pub ]; then
     echo "No ansible key found"
-    ssh-keygen -f ansible_key -N ""
+    ssh-keygen -f docker/ansible_key -N ""
 fi
 
-# build single docker image before vagrant starts
-if [ $(docker-compose ps -q | wc -l) -eq 0 ]; then
-    echo "No images found"
-    echo "Building docker images"
-    time docker-compose build --force-rm --parallel
+# build single docker image before docker-compose starts
+if [ -n "$TRAVIS" -a -z "$REENTRANT" ]
+then
+    scz_image=$(docker image list scz-base -q)
+    if [ -z "$scz_image" ]
+    then
+        echo "Building docker image"
+        time docker build -t scz-base --target=scz-base docker/
+    else
+        echo "Docker image found"
+    fi
 fi
 
 # bring up the VMs if they're not running
 echo "Bringing docker containers up"
-time docker-compose up -d
+time docker-compose -f docker/docker-compose.yml up -d
 
 echo "Starting ansible"
 time \
