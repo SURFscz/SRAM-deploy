@@ -4,7 +4,7 @@ set -e
 if [ ! -f docker/ansible_key.pub ]; then
     echo "No ansible key found"
     ssh-keygen -f docker/ansible_key -N ""
-    chown 1000:1000 docker/ansible_key.pub
+#     chown 1000:1000 docker/ansible_key.pub
 fi
 
 # build single docker image before docker-compose starts
