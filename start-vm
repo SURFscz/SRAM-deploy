@@ -23,6 +23,9 @@ fi
 echo "Bringing docker containers up"
 time docker-compose -f docker/docker-compose.yml up -d
 
+echo "See if dockers are running"
+docker-compose -f docker/docker-compose.yml ps
+
 echo "Starting ansible"
 time \
 ansible-playbook provision.yml \
