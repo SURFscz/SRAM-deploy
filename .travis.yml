@@ -52,7 +52,7 @@ before_install:
       for f in $HOME/docker/*.tar.gz;
       do
         echo "Loading '$f' into docker";
-        zcat "$f" | docker load || true;
+        #zcat "$f" | docker load || true;
       done;
     fi
 
@@ -67,8 +67,8 @@ before_cache:
     echo "scz-image is id ${IMG}";
     if ! [ -e $HOME/docker/$IMG.tar.gz ]; then
       echo "scz-base image has changed, clearing out cache and writing new image"
-      # rm -rf $HOME/docker;
-      # mkdir -p $HOME/docker;
+      rm -rf $HOME/docker;
+      mkdir -p $HOME/docker;
       docker save scz-base | gzip -c6 > $HOME/docker/${IMG}.tar.gz;
     else
       echo "scz-base image exists; nothing to do"
