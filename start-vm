@@ -27,7 +27,16 @@ echo "See if dockers are running"
 docker-compose -f docker/docker-compose.yml ps
 
 echo "Ping test"
-ping -c5 172.20.1.26
+# ping -c5 172.20.1.26
+
+echo "Check Ansible key"
+ls -sla /home/travis/build/SURFscz/SCZ-deploy/environments/vm/../../docker/ansible_key
+
+echo "Check Ansible ssh command"
+ssh -v -o ControlMaster=auto -o ControlPersist=3600s -o 'IdentityFile="/home/travis/build/SURFscz/SCZ-deploy/environments/vm/../../docker/ansible_key"' \
+-o KbdInteractiveAuthentication=no -o PreferredAuthentications=gssapi-with-mic,gssapi-keyex,hostbased,publickey -o PasswordAuthentication=no \
+-o User=ansible -o ConnectTimeout=10 -o StrictHostKeyChecking=false 172.20.1.22 \
+'/bin/sh -c "sudo -H -S -n -u root /bin/sh -c hostname"'
 
 echo "Starting ansible"
 time \
