@@ -3,7 +3,7 @@ set -e
 
 if [ ! -f docker/ansible_key.pub ]; then
     echo "No ansible key found"
-    ssh-keygen -t rsa -f docker/ansible_key -N ""
+    ssh-keygen -f docker/ansible_key -N ""
 fi
 
 # build single docker image before docker-compose starts
@@ -36,7 +36,7 @@ echo "Check Ansible key"
 ls -la /home/travis/build/SURFscz/SCZ-deploy/environments/vm/../../docker
 
 echo "Check Ansible ssh command"
-ssh -v -o ControlMaster=auto -o ControlPersist=3600s -o 'IdentityFile="/home/travis/build/SURFscz/SCZ-deploy/environments/vm/../../docker/ansible_key"' \
+ssh -vvv -o ControlMaster=auto -o ControlPersist=3600s -o 'IdentityFile="/home/travis/build/SURFscz/SCZ-deploy/environments/vm/../../docker/ansible_key"' \
 -o KbdInteractiveAuthentication=no -o PreferredAuthentications=gssapi-with-mic,gssapi-keyex,hostbased,publickey -o PasswordAuthentication=no \
 -o User=ansible -o ConnectTimeout=10 -o StrictHostKeyChecking=false 172.20.1.22 \
 '/bin/sh -c "sudo -H -S -n -u root /bin/sh -c hostname"'
