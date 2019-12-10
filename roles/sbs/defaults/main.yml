@@ -22,3 +22,5 @@ sbs_mail_sender_name: "SURFnet"
 sbs_mail_sender_email: "no-reply@surfnet.nl"
 
 sbs_wiki_link: "https://wiki.surfnet.nl/display/SCZ/SCZ+Public+Space"
+
+sbs_backend_port: 80
