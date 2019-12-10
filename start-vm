@@ -27,7 +27,7 @@ echo "See if dockers are running"
 docker-compose -f docker/docker-compose.yml ps
 
 echo "Ping test"
-ping -c5 sandbox1.vm.scz-vm.net
+ping -c5 172.20.1.26
 
 echo "Starting ansible"
 time \
