@@ -26,6 +26,9 @@ time docker-compose -f docker/docker-compose.yml up -d
 echo "See if dockers are running"
 docker-compose -f docker/docker-compose.yml ps
 
+echo "Ping test"
+ping -c5 sandbox1.vm.scz-vm.net
+
 echo "Starting ansible"
 time \
 ansible-playbook provision.yml \
