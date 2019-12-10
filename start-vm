@@ -24,8 +24,8 @@ fi
 echo "Bringing docker containers up"
 time docker-compose -f docker/docker-compose.yml up -d
 
-# echo "See if dockers are running"
-# docker-compose -f docker/docker-compose.yml ps
+echo "See if dockers are running"
+docker-compose -f docker/docker-compose.yml ps
 
 echo "travis id test"
 id
@@ -35,6 +35,9 @@ chmod 0700 /home/travis/build/SURFscz/SCZ-deploy/environments/vm/../../docker
 
 echo "Check Ansible key"
 ls -nla /home/travis/build/SURFscz/SCZ-deploy/environments/vm/../../docker
+
+echo "Ping proxy"
+ping -c 172.20.1.22
 
 echo "Check Ansible ssh command"
 ssh -vvv -o ControlMaster=auto -o ControlPersist=3600s -o 'IdentityFile="/home/travis/build/SURFscz/SCZ-deploy/environments/vm/../../docker/ansible_key"' \
