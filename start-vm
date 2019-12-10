@@ -33,7 +33,7 @@ echo "Check Ansible key"
 ls -la /home/travis/build/SURFscz/SCZ-deploy/environments/vm/../../docker
 
 echo "Chmod docker directory"
-chmod 0600 /home/travis/build/SURFscz/SCZ-deploy/environments/vm/../../docker
+chmod 0700 /home/travis/build/SURFscz/SCZ-deploy/environments/vm/../../docker
 
 echo "Check Ansible ssh command"
 ssh -v -o ControlMaster=auto -o ControlPersist=3600s -o 'IdentityFile="/home/travis/build/SURFscz/SCZ-deploy/environments/vm/../../docker/ansible_key"' \
