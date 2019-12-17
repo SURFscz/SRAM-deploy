@@ -260,14 +260,14 @@ init
 check_main_repo
 check_conf_repo
 
-check_repo comanage-registry                   comanage      scz
-check_repo COmanage-zoneprovisioner.git        co_zone       master
-check_repo COmanage-ldapfixedprovisioner.git   co_lfp        master
-check_repo COmanage-emailprovisioner.git       co_email      master
-check_repo COmanage-samlsource.git             co_saml       master
-check_repo COmanage-fixedattributeenroller.git co_fae        master
-check_repo COmanage-yoda.git                   co_yoda       master
-check_repo COmanage-templatemanager.git        co_tmpl       master
+# check_repo comanage-registry                   comanage      scz
+# check_repo COmanage-zoneprovisioner.git        co_zone       master
+# check_repo COmanage-ldapfixedprovisioner.git   co_lfp        master
+# check_repo COmanage-emailprovisioner.git       co_email      master
+# check_repo COmanage-samlsource.git             co_saml       master
+# check_repo COmanage-fixedattributeenroller.git co_fae        master
+# check_repo COmanage-yoda.git                   co_yoda       master
+# check_repo COmanage-templatemanager.git        co_tmpl       master
 
 check_repo SBS.git                             sbs           master
 

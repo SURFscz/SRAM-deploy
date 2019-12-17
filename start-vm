@@ -6,7 +6,7 @@ if [ ! -f docker/ansible_key.pub ]; then
     ssh-keygen -f docker/ansible_key -N ""
 fi
 
-# build single docker image before docker-compose starts
+# Build single docker image before docker-compose starts
 if [ -z "$REENTRANT" ]; then
     scz_image=$(docker image list scz-base -q)
     if [ -z "$scz_image" ]
@@ -18,7 +18,7 @@ if [ -z "$REENTRANT" ]; then
     fi
 fi
 
-# bring up the VMs if they're not running
+# Bring up the VMs if they're not running
 echo "Bringing docker containers up"
 time docker-compose -f docker/docker-compose.yml up -d
 

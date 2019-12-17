@@ -3,10 +3,10 @@ name: AttributeFilter
 config:
     attribute_allow:
         default:
-            # Allow all to comanage SP ("" matches everything)
+{#            # Allow all to comanage SP ("" matches everything)
             "https://{{hostnames.comanage}}/registry/auth/sp/metadata":
                 "":
-                   - ""
+                   - "" #}
             "sbs-server":
                 "":
                    - ""
@@ -16,10 +16,10 @@ config:
                     - ""
     attribute_deny:
         default:
-            # Skip deny for comanage SP ("^$" matches nothing)
+{#            # Skip deny for comanage SP ("^$" matches nothing)
             "https://{{hostnames.comanage}}/registry/auth/sp/metadata":
                 "^$":
-                    - ""
+                    - "" #}
             "sbs-server":
                 "^$":
                     - ""

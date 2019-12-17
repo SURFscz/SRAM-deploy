@@ -6,18 +6,18 @@ import json
 # ideally, everything should be zero (fully idempotent), but let's make at least sure the
 # amount of non-idempotent tests doen't increase
 WHITELIST = {
-    'comanage_enable':      2,
+    #'comanage_enable':      2,
     'client-microsoft-idp': 3,
     'pam_websso_daemon':    1,
     'http_apache':          1,
     'cmservice':            2,
     'pyff':                 1,
     'auth_mellon':          1,
-    'comanage_idp':         1,
-    'comanage_plugins':     1,
+    #'comanage_idp':         1,
+    #'comanage_plugins':     1,
     'client-base':          4,
     'client-orcid-idp':     4,
-    'comanage':             8,
+    #'comanage':             8,
     'client-google-idp':    2,
 }
 

@@ -1,0 +1,11 @@
+---
+sbs_db_host: "{{ db.host }}"
+
+sbs_repository: "{{scz_repo.sbs.src}}"
+sbs_version: "{{scz_repo.sbs.version}}"
+
+firewall_v4_incoming:
+  - name: loadbalancer
+    src: "{{lb_ip}}"
+    dport:  "{{sbs_server_port}}"
+    proto: tcp
