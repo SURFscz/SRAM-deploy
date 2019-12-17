@@ -20,7 +20,7 @@
 
 - name: Create symlink to default in /etc/nginx/sites-enabled
   file:
-    src: "/etc/nginx/sites-available/default"
+    src: "/etc/nginx/sites-available/scz-default"
     dest: "/etc/nginx/sites-enabled/00-scz-default"
     state: link
   notify: restart nginx
