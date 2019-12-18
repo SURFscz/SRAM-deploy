@@ -18,16 +18,12 @@
     dest: /etc/mysql/mariadb.conf.d/60-scz.cnf
   notify: restart MariaDB
 
-- name: Add SBS database
-  mysql_db:
-    name: '{{ sbs_db_name }}'
-    encoding: utf8
+- name: Add admin user
+  mysql_user:
+    name: '{{ db_admin_user }}'
+    host: '%'
+    password: '{{ db_admin_password }}'
+    priv: '*.*:ALL,GRANT'
     login_unix_socket: /var/run/mysqld/mysqld.sock
 
-- name: Add SBS user
-  mysql_user:
-    name: '{{ sbs_db_user }}'
-    host: '%'
-    password: '{{ sbs_db_password }}'
-    priv: '{{ sbs_db_name }}.*:ALL'
-    login_unix_socket: /var/run/mysqld/mysqld.sock
+

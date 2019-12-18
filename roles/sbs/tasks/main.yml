@@ -49,19 +49,23 @@
     autoremove: yes
     purge: yes
 
-#- name: Add SBS database
-  #mysql_db:
-    #name: sbs
-    #encoding: utf8
-    #login_unix_socket: /var/run/mysqld/mysqld.sock
+- name: Add SBS database
+  mysql_db:
+    login_host: '{{ db_host }}'
+    login_user: '{{ db_admin_user }}'
+    login_password: '{{ db_admin_password }}'
+    name: '{{ sbs_db_name }}'
+    encoding: utf8
 
-#- name: Add SBS user
-  #mysql_user:
-    #name: sbs
-    #host: "{{sbs_db_host}}"
-    #password: "{{ sbs_db_password }}"
-    #priv: 'sbs.*:ALL'
-    #login_unix_socket: /var/run/mysqld/mysqld.sock
+- name: Add SBS user
+  mysql_user:
+    login_host: '{{ db_host }}'
+    login_user: '{{ db_admin_user }}'
+    login_password: '{{ db_admin_password }}'
+    name: '{{ sbs_db_user }}'
+    host: '%'
+    password: '{{ sbs_db_password }}'
+    priv: '{{ sbs_db_name }}.*:ALL'
 
 - name: Clone SBS repository
   git:

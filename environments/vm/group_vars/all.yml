@@ -124,12 +124,10 @@ services_ldap:
 #comanage_proxy_db_name: "cotosa"
 comanage_proxy_attribute: "cmuid"
 
-db:
-  host: "{{ groups['db'][0] }}"
+db_host: "{{ groups['db'][0] }}"
 
 sbs_db_name: "sbs"
 sbs_db_user: "sbs"
-sbs_db_host: "{{ db.host }}"
 
 sbs_client_id: sbs-server
 sbs_base_url: "https://{{hostnames.sbs}}/"
