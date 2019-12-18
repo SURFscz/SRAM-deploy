@@ -102,9 +102,9 @@
   roles:
     - { role: ldap_services,      tags: ['ldap', 'ldap-services' ] }
     - { role: ldap,               tags: ['ldap'                  ] }
-    - { role: lsc,                tags: ['ldap', 'ldap-lsc'      ] }
+    - { role: plsc,               tags: ['ldap', 'ldap-plsc'     ] }
     - { role: pam_websso_daemon,  tags: ['client','websso-daemon'] }
-    - { role: slp,                tags: ['slp'                   ] }
+    #- { role: slp,                tags: ['slp'                   ] }
 
 - hosts: meta
   roles:

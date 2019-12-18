@@ -77,9 +77,9 @@
 
 - name: fetch plsc from {{ plsc_repo_url }}, version {{ plsc_repo_version }}
   git:
-    repo: "{{ plsc_repo_url }}"
+    repo: "{{ scz_repo.plsc.src }}"
     dest: "{{ plsc_dir }}"
-    version: "{{ plsc_repo_version }}"
+    version: "{{ scz_repo.plsc.version }}"
     accept_hostkey: "yes"
     force: "yes"
 
@@ -98,7 +98,7 @@
 
 - name: Run sync_clients
   command: >
-    "{{ plsc_dir }}/bin/python" sync_services plsc.yml
+    {{ plsc_dir }}/run plsc.yml
   changed_when: false
   args:
     chdir: "{{ plsc_dir }}"

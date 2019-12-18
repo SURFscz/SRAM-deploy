@@ -72,7 +72,7 @@ scz_repo:
   pyff:      { name: "pyFF",                   version: "scz-0.8.1",  src: "https://github.com/SURFscz/pyFF.git"                           }
   cmservice: { name: "CMservice",              version: "scz-0.4",    src: "https://github.com/SURFscz/CMservice.git"                      }
   sbs:       { name: "SBS",                    version: "v16",        src: "https://github.com/SURFscz/SBS.git"                            }
-  plsc:      { name: "pLSC",                   version: "v1",         src: "https://github.com/SURFscz/plsc.git"                           }
+  plsc:      { name: "pLSC",                   version: "sbs-ordered-flat", src: "https://github.com/SURFscz/plsc.git"                     }
 
 # poor man's user management
 root:
