@@ -63,7 +63,7 @@
     login_user: '{{ db_admin_user }}'
     login_password: '{{ db_admin_password }}'
     name: '{{ sbs_db_user }}'
-    host: '%'
+    host: '{{ ansible_default_ipv4.address }}'
     password: '{{ sbs_db_password }}'
     priv: '{{ sbs_db_name }}.*:ALL'
 
