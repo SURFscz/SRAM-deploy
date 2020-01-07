@@ -8,14 +8,11 @@ ENV TERM linux
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections  && \
     echo "deb http://ftp.de.debian.org/debian/ buster-backports main" >> /etc/apt/sources.list  && \
     apt update -y  && \
-    apt install -y openssh-server python2.7 python3 python sudo locales python-setuptools && \
+    apt install -y openssh-server python2.7 python3 python sudo locales python-setuptools \
+    vim net-tools bash-completion git && \
     apt clean -y && apt-get autoremove -y && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*  && \
     update-locale  && \
     systemctl enable ssh.service  && \
-    systemctl disable getty@  && \
-    systemctl disable getty.target  && \
-    rm /lib/systemd/system/multi-user.target.wants/getty.target  && \
-    rm /lib/systemd/system/getty.target.wants/getty-static.service  && \
     systemctl disable systemd-timesyncd.service  && \
     echo "exit 0" > /usr/sbin/policy-rc.d  && \
     useradd --create-home -s /bin/bash ansible  && \
@@ -44,6 +41,7 @@ EXPOSE 8080
 EXPOSE 8081
 EXPOSE 8082
 
-VOLUME [ "/sys/fs/cgroup" ]
+STOPSIGNAL SIGRTMIN+3
+
 CMD ["/lib/systemd/systemd"]
 

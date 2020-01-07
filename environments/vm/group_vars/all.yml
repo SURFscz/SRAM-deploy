@@ -87,16 +87,6 @@ users:
               pRvP88TEgaNAXrKMD9qbWYvnSLeDOe."
     sshkey: ""
 
-mysql_users:
-  - name: scz_ro
-    hash: "*8E0BCAC26AAA6C79D77D9F8FDDA6DCDD03BDB93F"
-    priv: "*.*:ALL,GRANT"
-    host: localhost
-  - name: scz_ro
-    hash: "*8E0BCAC26AAA6C79D77D9F8FDDA6DCDD03BDB93F"
-    priv: "*.*:ALL,GRANT"
-    host: "%"
-
 firewall_v4_incoming:
   - { name: bastion,  src: "{{iprange.bastion}}", dport: "22,80,443", proto: tcp }
   - { name: vnet,     src: "{{iprange.vm}}",      dport: "22,80,443", proto: tcp }

@@ -22,7 +22,16 @@ services:
     volumes:
       - "./ansible_key.pub:/tmp/authorized_keys"
       - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
-    privileged: true
+    privileged: false
+    tmpfs:
+      - /run
+      - /run/lock
+      - /tmp
+    security_opt:
+      - seccomp:unconfined
+    cap_add:
+      - SYS_ADMIN
+      - SYS_PTRACE
     networks:
       scznet:
         ipv4_address: 172.20.1.20
@@ -48,7 +57,16 @@ services:
     volumes:
       - "./ansible_key.pub:/tmp/authorized_keys"
       - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
-    privileged: true
+    privileged: false
+    tmpfs:
+      - /run
+      - /run/lock
+      - /tmp
+    security_opt:
+      - seccomp:unconfined
+    cap_add:
+      - SYS_ADMIN
+      - SYS_PTRACE
     networks:
       scznet:
         ipv4_address: 172.20.1.22
@@ -74,7 +92,16 @@ services:
     volumes:
       - "./ansible_key.pub:/tmp/authorized_keys"
       - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
-    privileged: true
+    privileged: false
+    tmpfs:
+      - /run
+      - /run/lock
+      - /tmp
+    security_opt:
+      - seccomp:unconfined
+    cap_add:
+      - SYS_ADMIN
+      - SYS_PTRACE
     networks:
       scznet:
         ipv4_address: 172.20.1.23
@@ -100,7 +127,16 @@ services:
     volumes:
       - "./ansible_key.pub:/tmp/authorized_keys"
       - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
-    privileged: true
+    privileged: false
+    tmpfs:
+      - /run
+      - /run/lock
+      - /tmp
+    security_opt:
+      - seccomp:unconfined
+    cap_add:
+      - SYS_ADMIN
+      - SYS_PTRACE
     networks:
       scznet:
         ipv4_address: 172.20.1.24
@@ -126,7 +162,16 @@ services:
     volumes:
       - "./ansible_key.pub:/tmp/authorized_keys"
       - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
-    privileged: true
+    privileged: false
+    tmpfs:
+      - /run
+      - /run/lock
+      - /tmp
+    security_opt:
+      - seccomp:unconfined
+    cap_add:
+      - SYS_ADMIN
+      - SYS_PTRACE
     networks:
       scznet:
         ipv4_address: 172.20.1.25
@@ -152,7 +197,16 @@ services:
     volumes:
       - "./ansible_key.pub:/tmp/authorized_keys"
       - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
-    privileged: true
+    privileged: false
+    tmpfs:
+      - /run
+      - /run/lock
+      - /tmp
+    security_opt:
+      - seccomp:unconfined
+    cap_add:
+      - SYS_ADMIN
+      - SYS_PTRACE
     networks:
       scznet:
         ipv4_address: 172.20.1.26
@@ -178,7 +232,16 @@ services:
     volumes:
       - "./ansible_key.pub:/tmp/authorized_keys"
       - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
-    privileged: true
+    privileged: false
+    tmpfs:
+      - /run
+      - /run/lock
+      - /tmp
+    security_opt:
+      - seccomp:unconfined
+    cap_add:
+      - SYS_ADMIN
+      - SYS_PTRACE
     networks:
       scznet:
         ipv4_address: 172.20.1.27
@@ -204,39 +267,21 @@ services:
     volumes:
       - "./ansible_key.pub:/tmp/authorized_keys"
       - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
-    privileged: true
+    privileged: false
+    tmpfs:
+      - /run
+      - /run/lock
+      - /tmp
+    security_opt:
+      - seccomp:unconfined
+    cap_add:
+      - SYS_ADMIN
+      - SYS_PTRACE
     networks:
       scznet:
         ipv4_address: 172.20.1.28
         aliases:
           - db.vm.scz-vm.net
-
-  #comanage:
-    #image: scz-base
-    #extra_hosts:
-      #- proxy.scz-vm.net:172.20.1.24
-      #- mdq.scz-vm.net:172.20.1.24
-      #- cm.scz-vm.net:172.20.1.24
-      #- comanage.scz-vm.net:172.20.1.24
-      #- ldap.scz-vm.net:172.20.1.24
-      #- meta.scz-vm.net:172.20.1.24
-      #- oidc-test.scz-vm.net:172.20.1.24
-      #- sp-test.scz-vm.net:172.20.1.24
-      #- idp-test.scz-vm.net:172.20.1.24
-      #- google-test.scz-vm.net:172.20.1.24
-      #- sandbox1.scz-vm.net:172.20.1.24
-      #- sbs.scz-vm.net:172.20.1.24
-    #hostname: comanage
-    #volumes:
-      #- "./ansible_key.pub:/tmp/authorized_keys"
-      #- "/sys/fs/cgroup:/sys/fs/cgroup:ro"
-    #privileged: true
-    #networks:
-      #scznet:
-        #ipv4_address: 172.20.1.21
-        #aliases:
-          #- comanage.vm.scz-vm.net
-
 
 networks:
   scznet:

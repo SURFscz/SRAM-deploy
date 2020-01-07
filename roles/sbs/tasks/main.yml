@@ -32,7 +32,7 @@
       - libapache2-mod-wsgi-py3
       - systemd
       - nodejs
-      - mariadb-server
+      #- mariadb-server
       - libapache2-mod-auth-openidc
 
 - name: Enable mod_auth_openidc

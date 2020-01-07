@@ -58,15 +58,11 @@
       when: enable_https and use_fixed_cert
     - { role: lb_haproxy,   tags: ['lb','haproxy'] }
 
+- hosts: lb1
+
 - hosts: db
   roles:
     - { role: db_server,        tags: ['db', 'db-server'] }
-
-- hosts:
-    - proxy
-    #- comanage
-  roles:
-    - { role: mysql, tags: ['mysql'] }
 
 - hosts: client
   roles:
