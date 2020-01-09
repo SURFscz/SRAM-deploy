@@ -58,8 +58,6 @@
       when: enable_https and use_fixed_cert
     - { role: lb_haproxy,   tags: ['lb','haproxy'] }
 
-- hosts: lb1
-
 - hosts: db
   roles:
     - { role: db_server,        tags: ['db', 'db-server'] }
@@ -78,7 +76,7 @@
   roles:
     - { role: pyff,          tags: ['proxy','pyff'          ] }
     - { role: satosa,        tags: ['proxy','satosa'        ] }
-    - { role: cmservice,     tags: ['proxy','cmservice'     ] }
+#    - { role: cmservice,     tags: ['proxy','cmservice'     ] }
 #    - { role: proxy_mysql,   tags: ['proxy','mysql','dothis'] }
 
 #- hosts: comanage
