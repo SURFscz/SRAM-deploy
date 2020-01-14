@@ -15,6 +15,9 @@ oidc_id: "cmuid"
 oidc_prefix: "OIDC_CLAIM_"
 oidc_uppercase: False
 
+base_scope: "{{ base_domain }}"
+generate_multiple_eppn: True
+
 mail:
   host: {{ sbs_mail_host }}
   port: {{ sbs_mail_port }}

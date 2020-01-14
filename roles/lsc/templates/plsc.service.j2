@@ -6,7 +6,6 @@ User=root
 Group=root
 Type=oneshot
 WorkingDirectory={{ plsc_dir }}
-ExecStart={{ plsc_dir }}/bin/python {{ plsc_dir }}/sync_services plsc.yml
-ExecStart={{ plsc_dir }}/bin/python {{ plsc_dir }}/plsc plsc.yml
+ExecStart={{ plsc_dir }}/run plsc.yml
 RuntimeMaxSec=120
 
