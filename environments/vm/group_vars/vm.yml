@@ -49,9 +49,14 @@ loadbalancer:
     backend_hosts: "{{groups['vm-proxy']}}"
     backend_port: 8082
   #- hostname: "{{hostnames.comanage}}"
-    #protocol: http
-    #backend_hosts: "{{groups['vm-comanage']}}"
-    #backend_port: 80
+  #  protocol: http
+  #  backend_hosts: "{{groups['vm-comanage']}}"
+  #  backend_port: 80
+  #- hostname: "{{hostnames.comanage}}"
+  #  protocol: ldap
+  #  frontend_port: 1636
+  #  backend_hosts: "{{groups['vm-comanage']}}"
+  #  backend_port: 389
   - hostname: "{{hostnames.sbs}}"
     protocol: http
     backend_hosts: "{{groups['vm-sbs']}}"
@@ -97,8 +102,3 @@ loadbalancer:
     frontend_port: 636
     backend_hosts: "{{groups['vm-ldap']}}"
     backend_port: 389
-  #- hostname: "{{hostnames.comanage}}"
-    #protocol: ldap
-    #frontend_port: 1636
-    #backend_hosts: "{{groups['vm-comanage']}}"
-    #backend_port: 389

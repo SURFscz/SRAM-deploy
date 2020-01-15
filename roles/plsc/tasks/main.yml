@@ -1,12 +1,12 @@
 ---
 #- name: Add LSC repository key
-  #apt_key:
-    #data: "{{ lookup('file', 'GPG-KEY-lsc') }}"
+#  apt_key:
+#    data: "{{ lookup('file', 'GPG-KEY-lsc') }}"
 
 #- name: Add LSC repository
-  #apt_repository:
-    #repo: "deb https://lsc-project.org/debian lsc main"
-    #update_cache: yes
+#  apt_repository:
+#    repo: "deb https://lsc-project.org/debian lsc main"
+#    update_cache: yes
 
 - name: Ensure that packages are installed
   apt:
@@ -25,22 +25,22 @@
     install_recommends: no
 
 #- name: Configure clients
-  #include: lsc_client.yml
-  #with_items: "{{ clients_ldap_services }}"
-  #loop_control:
-    #loop_var: item_client
+#  include: lsc_client.yml
+#  with_items: "{{ clients_ldap_services }}"
+#  loop_control:
+#    loop_var: item_client
 
 #- name: Copy run_lsc batchfile
-  #template:
-    #src: "run_lsc_tasks.j2"
-    #dest: "{{lsc_install_dir}}/run_lsc_tasks"
-    #mode: 0755
+#  template:
+#    src: "run_lsc_tasks.j2"
+#    dest: "{{lsc_install_dir}}/run_lsc_tasks"
+#    mode: 0755
 
 #- name: Copy LSC log config
-  #copy:
-    #src: "logback.xml"
-    #dest: "{{lsc_config_dir}}/logback.xml"
-    #mode: 0644
+#  copy:
+#    src: "logback.xml"
+#    dest: "{{lsc_config_dir}}/logback.xml"
+#    mode: 0644
 
 - name: Copy plsc service files
   template:
@@ -56,18 +56,18 @@
     - enable plsc job
 
 #- name: Install backup scripts
-  #template:
-    #src: "{{item}}.j2"
-    #dest: "{{backup_runparts}}/{{item}}"
-    #mode: 0755
-  #with_items:
-    #- lsc-backup.sh
+#  template:
+#    src: "{{item}}.j2"
+#    dest: "{{backup_runparts}}/{{item}}"
+#    mode: 0755
+#  with_items:
+#    - lsc-backup.sh
 
 #- name: Install LSC logrotate config
-  #copy:
-    #src: "logrotate_lsc"
-    #dest: "/etc/logrotate.d/lsc"
-    #mode: 0644
+#  copy:
+#    src: "logrotate_lsc"
+#    dest: "/etc/logrotate.d/lsc"
+#    mode: 0644
 
 - name: Make sure clients sync directory exists
   file:
@@ -83,7 +83,7 @@
     accept_hostkey: "yes"
     force: "yes"
 
-- name: Create plsc.yml source if it doesn't exist
+- name: "Create plsc.yml source if it doesn't exist"
   template:
     src: "plsc.yml.j2"
     dest: "{{ plsc_dir }}/plsc.yml"
