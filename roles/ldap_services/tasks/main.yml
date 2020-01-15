@@ -6,6 +6,7 @@
     name:
       - slapd
       - ldap-utils
+      - python-ldap # for ansible ldap modules
     install_recommends: no
 
 - name: Ensure that a number of directories exist
@@ -19,10 +20,6 @@
   with_items:
     - "{{ ldap_ldif_dir }}"
     - /var/run/slapd
-
-- name: Enable LDAP
-  service: name=slapd state=restarted enabled=yes
-  changed_when: False
 
 - name: Copy schema(s)
   become_user: "{{ ldap_user }}"

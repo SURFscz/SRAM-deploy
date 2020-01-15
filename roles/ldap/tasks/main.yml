@@ -43,7 +43,6 @@
     - { src: "set_loglevel_stats.ldif.j2", dest: "set_loglevel_stats.ldif" }
     - { src: "enable_syncprov.ldif.j2", dest: "enable_syncprov.ldif" }
     - { src: "enable_dynlist.ldif.j2", dest: "enable_dynlist.ldif" }
-    - { src: "enable_tls.ldif.j2", dest: "enable_tls.ldif" }
 
 - name: Generate ldap.conf
   template:
@@ -88,13 +87,35 @@
     owner="{{ ldap_user }}"
     group="{{ ldap_group }}"
 
+# Workaround: oldTLSCertifcateFile and olcTLSCertificateKeyFile need to be added in a single
+# transaction.  Will be fixed by ldap_attrS module  https://github.com/ansible/ansible/pull/62701
+#- name: Enable tls
+#  ldap_attrs:
+#    dn: "cn=config"
+#    state: exact
+#    attributes:
+#      olcTLSCertificateKeyFile: "/etc/ldap/certs/{{ internal_base_domain }}.key"
+#      olcTLSCertificateFile: "/etc/ldap/certs/{{ internal_base_domain }}.crt"
+#      olcTLSCipherSuite: "SECURE256:-VERS-SSL3.0"
 - name: Enable tls
-  command: ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f "{{ ldap_ldif_dir }}/enable_tls.ldif"
-  # return code 20 means entry already exists
-  register: result
-  failed_when: result.rc not in [0,20,68]
-  changed_when: result.rc != 20
-  notify: restart slapd
+  ldap_attr:
+    dn: "cn=config"
+    state: exact
+    name: "{{item.key}}"
+    values: "{{item.value}}"
+  with_dict:
+    olcTLSCertificateKeyFile: "/etc/ldap/certs/{{ internal_base_domain }}.key"
+  ignore_errors: true
+- name: Enable tls
+  ldap_attr:
+    dn: "cn=config"
+    state: exact
+    name: "{{item.key}}"
+    values: "{{item.value}}"
+  with_dict:
+    olcTLSCertificateFile: "/etc/ldap/certs/{{ internal_base_domain }}.crt"
+    olcTLSCertificateKeyFile: "/etc/ldap/certs/{{ internal_base_domain }}.key"
+    olcTLSCipherSuite: "SECURE256:-VERS-SSL3.0"
 
 # OpenLDAP does not like adding existing entries again. Only add the
 # schema if it has not been added already. This does not yet take care
