@@ -21,7 +21,16 @@ fi
 echo
 
 # magick to use multiple CPUs for checking
-numcpu=$( grep "^processor" /proc/cpuinfo | wc -l )
+if [ -e "/proc/cpuinfo" ]
+then
+    numcpu=$( grep "^processor" /proc/cpuinfo | wc -l )
+elif [ -x "/usr/sbin/sysctl" ]
+then
+    numcpu=$( /usr/sbin/sysctl -n hw.logicalcpu )
+else
+    echo "Woops, only Linux and MacOS are supported"
+    exit 1
+fi
 numj2=$(  find . -name '*.j2'  | wc -l )
 numyml=$( find . -name '*.yml' | wc -l )
 
