@@ -6,15 +6,8 @@
     name:
       - slapd
       - ldap-utils
+      - python-ldap # for ansible ldap modules
     install_recommends: no
-
-- name: Copying alternative service script
-  become: true
-  copy:
-    src: slapd.service
-    dest: /etc/systemd/system
-  notify: systemd daemon-reload
-  when: ansible_virtualization_type == "docker"
 
 - name: Ensure that a number of directories exist
   file:
@@ -27,10 +20,6 @@
   with_items:
     - "{{ ldap_ldif_dir }}"
     - /var/run/slapd
-
-- name: Enable LDAP
-  service: name=slapd state=restarted enabled=yes
-  changed_when: False
 
 - name: Copy schema(s)
   become_user: "{{ ldap_user }}"

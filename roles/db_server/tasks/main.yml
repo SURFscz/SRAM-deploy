@@ -1,0 +1,27 @@
+---
+- name: Update cache
+  command: apt-get update
+  args:
+    warn: false
+  changed_when: false
+
+- name: Ensure that packages are installed
+  apt:
+    name:
+      - mariadb-server
+      - python-pymysql
+    state: present
+
+- name: listen to public IP
+  copy:
+    src: 60-scz.cnf
+    dest: /etc/mysql/mariadb.conf.d/60-scz.cnf
+  notify: restart MariaDB
+
+- name: Add admin user
+  mysql_user:
+    name: '{{ db_admin_user }}'
+    host: '%'
+    password: '{{ db_admin_password }}'
+    priv: '*.*:ALL,GRANT'
+    login_unix_socket: /var/run/mysqld/mysqld.sock

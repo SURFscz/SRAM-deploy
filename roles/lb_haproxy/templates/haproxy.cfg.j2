@@ -101,8 +101,9 @@ frontend fe_https
 {% for host in lb_http %}
 backend be_{{host.hostname}}
     mode    http
+    cookie  SERVERID insert indirect nocache
     {% for be_server in host.backend_hosts -%}
-    server {{host.hostname}} {{be_server}}:{{host.backend_port}} check
+    server  {{be_server}} {{be_server}}:{{host.backend_port}} check cookie {{be_server}}
     {% endfor %}
 
 {% endfor %}

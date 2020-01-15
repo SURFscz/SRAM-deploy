@@ -58,11 +58,9 @@
       when: enable_https and use_fixed_cert
     - { role: lb_haproxy,   tags: ['lb','haproxy'] }
 
-- hosts:
-    - proxy
-    - comanage
+- hosts: db
   roles:
-    - { role: mysql, tags: ['mysql'] }
+    - { role: db_server,        tags: ['db', 'db-server'] }
 
 - hosts: client
   roles:
@@ -78,29 +76,29 @@
   roles:
     - { role: pyff,          tags: ['proxy','pyff'          ] }
     - { role: satosa,        tags: ['proxy','satosa'        ] }
-    - { role: cmservice,     tags: ['proxy','cmservice'     ] }
-    - { role: proxy_mysql,   tags: ['proxy','mysql','dothis'] }
+#   - { role: cmservice,     tags: ['proxy','cmservice'     ] }
+#   - { role: proxy_mysql,   tags: ['proxy','mysql','dothis'] }
 
-- hosts: comanage
-  roles:
-    - { role: ldap_master,      tags: ['ldap', 'ldap-master'] }
-    - { role: ldap,             tags: ['ldap'               ] }
-    - { role: http_apache,      tags: ['comanage', 'web'    ] }
-    - { role: comanage_mysql,   tags: ['comanage', 'db'     ] }
-    - { role: php,              tags: ['comanage', 'web'    ] }
-    - { role: auth_mellon,      tags: ['comanage', 'web'    ] }
-    - { role: comanage,         tags: ['comanage', 'web'    ] }
-    - { role: comanage_idp,     tags: ['comanage', 'web'    ] }
-    - { role: comanage_enable,  tags: ['comanage', 'web'    ] }
-    - { role: comanage_plugins, tags: ['comanage', 'web'    ] }
+#- hosts: comanage
+#  roles:
+#   - { role: ldap_master,      tags: ['ldap', 'ldap-master'] }
+#   - { role: ldap,             tags: ['ldap'               ] }
+#   - { role: http_apache,      tags: ['comanage', 'web'    ] }
+#   - { role: comanage_mysql,   tags: ['comanage', 'db'     ] }
+#   - { role: php,              tags: ['comanage', 'web'    ] }
+#   - { role: auth_mellon,      tags: ['comanage', 'web'    ] }
+#   - { role: comanage,         tags: ['comanage', 'web'    ] }
+#   - { role: comanage_idp,     tags: ['comanage', 'web'    ] }
+#   - { role: comanage_enable,  tags: ['comanage', 'web'    ] }
+#   - { role: comanage_plugins, tags: ['comanage', 'web'    ] }
 
 - hosts: ldap
   roles:
     - { role: ldap_services,      tags: ['ldap', 'ldap-services' ] }
     - { role: ldap,               tags: ['ldap'                  ] }
-    - { role: lsc,                tags: ['ldap', 'ldap-lsc'      ] }
+    - { role: plsc,               tags: ['ldap', 'ldap-plsc'     ] }
     - { role: pam_websso_daemon,  tags: ['client','websso-daemon'] }
-    - { role: slp,                tags: ['slp'                   ] }
+#   - { role: slp,                tags: ['slp'                   ] }
 
 - hosts: meta
   roles:

@@ -32,7 +32,7 @@
       - libapache2-mod-wsgi-py3
       - systemd
       - nodejs
-      - mariadb-server
+      #- mariadb-client
       - libapache2-mod-auth-openidc
 
 - name: Enable mod_auth_openidc
@@ -51,17 +51,21 @@
 
 - name: Add SBS database
   mysql_db:
-    name: sbs
+    login_host: '{{ db_host }}'
+    login_user: '{{ db_admin_user }}'
+    login_password: '{{ db_admin_password }}'
+    name: '{{ sbs_db_name }}'
     encoding: utf8
-    login_unix_socket: /var/run/mysqld/mysqld.sock
 
 - name: Add SBS user
   mysql_user:
-    name: sbs
-    host: "{{sbs_db_host}}"
-    password: "{{ sbs_db_password }}"
-    priv: 'sbs.*:ALL'
-    login_unix_socket: /var/run/mysqld/mysqld.sock
+    login_host: '{{ db_host }}'
+    login_user: '{{ db_admin_user }}'
+    login_password: '{{ db_admin_password }}'
+    name: '{{ sbs_db_user }}'
+    host: '{{ ansible_default_ipv4.address }}'
+    password: '{{ sbs_db_password }}'
+    priv: '{{ sbs_db_name }}.*:ALL'
 
 - name: Clone SBS repository
   git:

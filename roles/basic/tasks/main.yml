@@ -2,7 +2,20 @@
 
 - name: set nameservers
   template: src=resolv.conf.j2 dest=/etc/resolv.conf force=yes
-  when: ansible_virtualization_type != "docker"
+  when:
+    - not is_aws
+    - ansible_virtualization_type != "docker"
+
+- name: fix dhclient.conf
+  template: src=dhclient.conf.j2 dest=/etc/dhcp/dhclient.conf force=yes
+  when:
+    - is_aws
+    - ansible_virtualization_type != "docker"
+  register: dhclient
+
+- name: Restart networking
+  service: name=networking state=restarted
+  when: dhclient.changed
 
 - name: set localtime
   file: state=link src=/usr/share/zoneinfo/{{timezone}} dest=/etc/localtime
@@ -16,7 +29,9 @@
 
 - name: set /etc/hosts
   template: src=hosts.j2 dest=/etc/hosts force=yes
-  when: ansible_virtualization_type != "docker"
+  when:
+    - not is_aws
+    - ansible_virtualization_type != "docker"
 
 - name: check that hostname and fqdn are set up correctly
   command: "hostname --fqdn"

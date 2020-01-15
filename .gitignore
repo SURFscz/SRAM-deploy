@@ -11,3 +11,5 @@ __pycache__/
 core
 .venv/
 .idea/
+secret
+ansible_key*

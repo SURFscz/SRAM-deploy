@@ -29,6 +29,15 @@
     src: 00-scz-update
     dest: /etc/apt/apt.conf.d/00-scz-update
 
+- name: remove unneccessary packages
+  apt:
+    state: absent
+    purge: yes
+    autoremove: yes
+    name:
+      - cloud-init
+      - unattended-upgrades
+
 - name: Install common tools / clients
   apt:
     update_cache: yes
@@ -53,6 +62,7 @@
       - logrotate
       - nullmailer
       - rsyslog
+      - aptitude
 
 - name: Upgrade packages
   apt:
@@ -61,14 +71,6 @@
     update_cache: yes
     autoclean: yes
   when: "environment_name != 'vm'"
-
-- name: remove unneccessary packages
-  apt:
-    state: absent
-    purge: yes
-    autoremove: yes
-    name:
-      - cloud-init
 
 - name: remove cloud-init network config
   lineinfile:
@@ -83,21 +85,6 @@
       - open-vm-tools
       - open-vm-tools-dkms
   when: ansible_virtualization_type == "VMware"
-
-- name: install Qemu clients
-  apt:
-    state: present
-    name:
-      - qemu-guest-agent
-  when: ansible_virtualization_type == "kvm"
-
-#- name: install VirtualBox clients
-#  apt:
-#    state: present
-#    name:
-#      - virtualbox-guest-dkms
-#      - virtualbox-guest-utils
-#  when: ansible_virtualization_type == "virtualbox"
 
 # apt module doesn't support autoremove very well, yet
 - name: Remove obsolete packages

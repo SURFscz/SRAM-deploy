@@ -1,5 +1,7 @@
 ---
-ldap_ldif_dir: "/etc/ldap/schema"
+ldap_dir: "/etc/ldap"
+ldap_ldif_dir: "{{ ldap_dir }}/schema"
+ldap_certs_dir: "{{ ldap_dir }}/certs"
 ldap_backup_dir: "{{backup_base}}/ldap"
 
 ldap_user: openldap

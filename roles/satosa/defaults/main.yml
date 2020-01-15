@@ -1,7 +1,7 @@
 ---
 http_proto: https
 mongodb_host: "127.0.0.1"
-comange_entityid: "{{http_proto}}://{{hostnames.comanage}}/registry/auth/sp/metadata"
+#comange_entityid: "{{http_proto}}://{{hostnames.comanage}}/registry/auth/sp/metadata"
 
 # SATOSA configuration
 satosa_repo_url: "https://github.com/SURFscz/SATOSA.git"

@@ -13,7 +13,7 @@
        - {{http_proto}}://{{ hostnames.proxy }}/md/SamlSP.xml
        - {{http_proto}}://{{ hostnames.sp }}/saml/module.php/saml/sp/metadata.php/default-sp
        - {{http_proto}}://{{ hostnames.idp }}/saml/saml2/idp/metadata.php
-       - {{http_proto}}://{{ hostnames.comanage }}/registry/auth/sp/metadata
+{#       - {{http_proto}}://{{ hostnames.comanage }}/registry/auth/sp/metadata #}
        - {{http_proto}}://{{ hostnames.pam }}/md
 {% if hostnames.google is defined %}
        - {{http_proto}}://{{ hostnames.google }}/saml/saml2/idp/metadata.php

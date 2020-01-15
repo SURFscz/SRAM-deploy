@@ -1,5 +1,13 @@
 ---
 # playbook to install and configure general components of the LDAP
+- name: Copying alternative service script
+  become: true
+  copy:
+    src: slapd.service
+    dest: /etc/systemd/system
+  notify: systemd daemon-reload
+#  when: ansible_virtualization_type == "docker"
+
 - name: Ensure that a number of directories exist
   file:
     path: "{{ item }}"
@@ -10,6 +18,7 @@
   tags: ldap
   with_items:
     - "{{ ldap_ldif_dir }}"
+    - "{{ ldap_certs_dir }}"
 
 - name: Copy schemas
   become_user: "{{ ldap_user }}"
@@ -35,6 +44,12 @@
     - { src: "enable_syncprov.ldif.j2", dest: "enable_syncprov.ldif" }
     - { src: "enable_dynlist.ldif.j2", dest: "enable_dynlist.ldif" }
 
+- name: Generate ldap.conf
+  template:
+    src: ldap.conf.j2
+    dest: "{{ ldap_dir }}/ldap.conf"
+    mode: 0644
+
 - name: Set loglevel to stats
   command: ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f "{{ ldap_ldif_dir }}/set_loglevel_stats.ldif"
   # return code 20 means entry already exists
@@ -55,6 +70,52 @@
   register: result
   failed_when: result.rc not in [0,20,68]
   changed_when: result.rc != 20
+
+- name: write certificate key
+  copy: >
+    content="{{wildcard_backend_cert.priv}}"
+    dest={{ldap_certs_dir}}/{{ internal_base_domain }}.key
+    mode=0600
+    owner="{{ ldap_user }}"
+    group="{{ ldap_group }}"
+
+- name: write certificate pub
+  copy: >
+    content="{{wildcard_backend_cert.pub}}"
+    dest={{ldap_certs_dir}}/{{ internal_base_domain }}.crt
+    mode=0600
+    owner="{{ ldap_user }}"
+    group="{{ ldap_group }}"
+
+# Workaround: oldTLSCertifcateFile and olcTLSCertificateKeyFile need to be added in a single
+# transaction.  Will be fixed by ldap_attrS module  https://github.com/ansible/ansible/pull/62701
+#- name: Enable tls
+#  ldap_attrs:
+#    dn: "cn=config"
+#    state: exact
+#    attributes:
+#      olcTLSCertificateKeyFile: "/etc/ldap/certs/{{ internal_base_domain }}.key"
+#      olcTLSCertificateFile: "/etc/ldap/certs/{{ internal_base_domain }}.crt"
+#      olcTLSCipherSuite: "SECURE256:-VERS-SSL3.0"
+- name: Enable tls
+  ldap_attr:
+    dn: "cn=config"
+    state: exact
+    name: "{{item.key}}"
+    values: "{{item.value}}"
+  with_dict:
+    olcTLSCertificateKeyFile: "/etc/ldap/certs/{{ internal_base_domain }}.key"
+  ignore_errors: true
+- name: Enable tls
+  ldap_attr:
+    dn: "cn=config"
+    state: exact
+    name: "{{item.key}}"
+    values: "{{item.value}}"
+  with_dict:
+    olcTLSCertificateFile: "/etc/ldap/certs/{{ internal_base_domain }}.crt"
+    olcTLSCertificateKeyFile: "/etc/ldap/certs/{{ internal_base_domain }}.key"
+    olcTLSCipherSuite: "SECURE256:-VERS-SSL3.0"
 
 # OpenLDAP does not like adding existing entries again. Only add the
 # schema if it has not been added already. This does not yet take care

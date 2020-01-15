@@ -1,0 +1,104 @@
+---
+#- name: Add LSC repository key
+#  apt_key:
+#    data: "{{ lookup('file', 'GPG-KEY-lsc') }}"
+
+#- name: Add LSC repository
+#  apt_repository:
+#    repo: "deb https://lsc-project.org/debian lsc main"
+#    update_cache: yes
+
+- name: Ensure that packages are installed
+  apt:
+    state: present
+    name:
+      #- lsc
+      #- openjdk-11-jdk
+      - python-ldap
+      - python3-ldap3
+      - python3-dev
+      - libldap2-dev
+      - libsasl2-dev
+      - python-setuptools
+      - virtualenv
+      - build-essential
+    install_recommends: no
+
+#- name: Configure clients
+#  include: lsc_client.yml
+#  with_items: "{{ clients_ldap_services }}"
+#  loop_control:
+#    loop_var: item_client
+
+#- name: Copy run_lsc batchfile
+#  template:
+#    src: "run_lsc_tasks.j2"
+#    dest: "{{lsc_install_dir}}/run_lsc_tasks"
+#    mode: 0755
+
+#- name: Copy LSC log config
+#  copy:
+#    src: "logback.xml"
+#    dest: "{{lsc_config_dir}}/logback.xml"
+#    mode: 0644
+
+- name: Copy plsc service files
+  template:
+    src: "{{item}}.j2"
+    dest: "/etc/systemd/system/{{item}}"
+  with_items:
+    #- lsc.service
+    #- lsc.timer
+    - plsc.service
+    - plsc.timer
+  notify:
+    #- enable lsc job
+    - enable plsc job
+
+#- name: Install backup scripts
+#  template:
+#    src: "{{item}}.j2"
+#    dest: "{{backup_runparts}}/{{item}}"
+#    mode: 0755
+#  with_items:
+#    - lsc-backup.sh
+
+#- name: Install LSC logrotate config
+#  copy:
+#    src: "logrotate_lsc"
+#    dest: "/etc/logrotate.d/lsc"
+#    mode: 0644
+
+- name: Make sure clients sync directory exists
+  file:
+    path: "{{ plsc_dir }}"
+    state: directory
+    mode: 0755
+
+- name: fetch plsc from {{ plsc_repo_url }}, version {{ plsc_repo_version }}
+  git:
+    repo: "{{ scz_repo.plsc.src }}"
+    dest: "{{ plsc_dir }}"
+    version: "{{ scz_repo.plsc.version }}"
+    accept_hostkey: "yes"
+    force: "yes"
+
+- name: "Create plsc.yml source if it doesn't exist"
+  template:
+    src: "plsc.yml.j2"
+    dest: "{{ plsc_dir }}/plsc.yml"
+    mode: 0644
+    force: no
+
+- name: Install virtualenv from requirements.txt
+  pip:
+    requirements: "{{ plsc_dir }}/requirements.txt"
+    virtualenv: "{{ plsc_dir }}"
+    virtualenv_python: python3
+
+- name: Run sync_clients
+  command: >
+    {{ plsc_dir }}/run plsc.yml
+  changed_when: false
+  args:
+    chdir: "{{ plsc_dir }}"

@@ -40,8 +40,6 @@ before_install:
   - 'echo "options timeout:5"  | sudo tee -a /etc/resolvconf/resolv.conf.d/tail'
   - 'echo "options attempts:5" | sudo tee -a /etc/resolvconf/resolv.conf.d/tail'
   - sudo service resolvconf restart
-  - sudo wget https://releases.hashicorp.com/vagrant/2.1.2/vagrant_2.1.2_x86_64.deb -P /tmp
-  - sudo dpkg -i /tmp/vagrant_2.1.2_x86_64.deb
   - sudo apt-add-repository -y ppa:ansible/ansible-2.7
   - sudo apt -q update
   - sudo apt -y install ansible bridge-utils
@@ -54,7 +52,7 @@ before_install:
       for f in $HOME/docker/*.tar.gz;
       do
         echo "Loading '$f' into docker";
-        zcat "$f" | docker load || true;
+        #zcat "$f" | docker load || true;
       done;
     fi
 

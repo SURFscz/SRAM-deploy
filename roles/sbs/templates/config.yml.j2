@@ -1,5 +1,5 @@
 database:
-  uri: "mysql+pymysql://{{ sbs_db_user }}:{{ sbs_db_password }}@{{ sbs_db_host }}/{{ sbs_db_name }}"
+  uri: "mysql+pymysql://{{ sbs_db_user }}:{{ sbs_db_password }}@{{ db_host }}/{{ sbs_db_name }}"
 
 secret_key: {{ sbs_db_secret }}
 
@@ -28,6 +28,11 @@ mail:
 aup:
   pdf: SURFresearch-Access-Management-AUP-01122019-0001.pdf
   pdf_link: http://localhost:8080/static/SURFresearch-Access-Management-AUP-01122019-0001.pdf
+  html: SURFresearch-Access-Management-AUP-01122019-0001.html
+
+aup:
+  pdf: SURFresearch-Access-Management-AUP-01122019-0001.pdf
+  pdf_link: https://{{ sbs_base_url }}/static/SURFresearch-Access-Management-AUP-01122019-0001.pdf
   html: SURFresearch-Access-Management-AUP-01122019-0001.html
 
 base_url: {{ sbs_base_url }}

@@ -5,13 +5,14 @@ sudo_groups:
 environment_name: vm
 environment_string: "SCZ VM"
 base_domain: "scz-vm.net"
+internal_base_domain: "vm.scz-vm.net"
 
 # externally visible!
 hostnames:
   proxy:    proxy.{{base_domain}}
   mdq:      mdq.{{base_domain}}
   consent:  cm.{{base_domain}}
-  comanage: comanage.{{base_domain}}
+  #comanage: comanage.{{base_domain}}
   ldap:     ldap.{{base_domain}}
   meta:     meta.{{base_domain}}
   sbs:      sbs.{{base_domain}}
@@ -53,10 +54,15 @@ loadbalancer:
     protocol: http
     backend_hosts: "{{groups['vm-proxy']}}"
     backend_port: 8082
-  - hostname: "{{hostnames.comanage}}"
-    protocol: http
-    backend_hosts: "{{groups['vm-comanage']}}"
-    backend_port: "{{ comanage_backend_port }}"
+  #- hostname: "{{hostnames.comanage}}"
+  #  protocol: http
+  #  backend_hosts: "{{groups['vm-comanage']}}"
+  #  backend_port: "{{ comanage_backend_port }}"
+  #- hostname: "{{hostnames.comanage}}"
+  #  protocol: ldap
+  #  frontend_port: 1636
+  #  backend_hosts: "{{groups['vm-comanage']}}"
+  #  backend_port: 389
   - hostname: "{{hostnames.sbs}}"
     protocol: http
     backend_hosts: "{{groups['vm-sbs']}}"
@@ -101,9 +107,4 @@ loadbalancer:
     protocol: ldap
     frontend_port: 636
     backend_hosts: "{{groups['vm-ldap']}}"
-    backend_port: 389
-  - hostname: "{{hostnames.comanage}}"
-    protocol: ldap
-    frontend_port: 1636
-    backend_hosts: "{{groups['vm-comanage']}}"
     backend_port: 389

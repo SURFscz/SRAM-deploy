@@ -7,6 +7,12 @@ plsc_repo_url: "https://github.com/SURFscz/plsc.git"
 plsc_repo_version: "master"
 plsc_dir: "/opt/plsc"
 
+scz_repo:
+  plsc:
+    name: "pLSC"
+    version: "sbs-ordered-flat"
+    src: "https://github.com/SURFscz/plsc.git"
+
 clients_ldap_services:
   - Rebel Allianz
   - Roman Empire

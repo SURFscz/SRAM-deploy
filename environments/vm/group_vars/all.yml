@@ -2,13 +2,15 @@
 ansible_ssh_common_args: '-o StrictHostKeyChecking=false'
 # note: {{playbook_dir}} would probably be nicer, but it turns out that that is
 # a relative path, which ssh doesn't understand
-ansible_ssh_user: "vagrant"
-ansible_ssh_private_key_file: "{{inventory_dir}}/../../.vagrant/id_rsa"
+ansible_ssh_user: "ansible"
+ansible_ssh_private_key_file: "{{inventory_dir}}/../../docker/ansible_key"
 
 secrets_file: "environments/vm/secrets/all.yml"
 secrets_users_file: "environments/vm/secrets/users.yml"
 
 admin_email: "admin@{{base_domain}}"
+
+is_aws: false
 
 servers:
   dns:
@@ -37,7 +39,7 @@ iprange:
     - "192.168.121.0/24"
   bastion:    "172.20.1.1"
   lb:         "172.20.1.24"
-  comanage:   "172.20.1.21"
+  #comanage:   "172.20.1.21"
   mgnt:       "172.20.1.0/24"
 
 mail:
@@ -55,6 +57,24 @@ admin:
   email: "{{admin_email}}"
   sho: "{{base_domain}}"
 
+# versions
+# yamllint disable rule:line-length
+scz_repo:
+  #comanage:  { name: "COmanage",               version: "scz-0.12",   src: "https://github.com/SURFscz/comanage-registry.git"              }
+  #co_zone:   { name: "Zoneprovisioner",        version: "scz-0.13",   src: "https://github.com/SURFscz/COmanage-zoneprovisioner.git"       }
+  #co_lfp:    { name: "LdapFixedProvisioner",   version: "scz-0.12",   src: "https://github.com/SURFscz/COmanage-ldapfixedprovisioner.git"  }
+  #co_email:  { name: "EmailProvisioner",       version: "scz-0.1",    src: "https://github.com/SURFscz/COmanage-emailprovisioner.git"      }
+  #co_saml:   { name: "SAMLSource",             version: "scz-0.13",   src: "https://github.com/SURFscz/COmanage-samlsource.git"            }
+  #co_fae:    { name: "FixedAttributeEnroller", version: "scz-0.7",    src: "https://github.com/SURFscz/COmanage-fixedattributeenroller.git"}
+  #co_yoda:   { name: "Yoda plugin",            version: "scz-0.10",   src: "https://github.com/SURFscz/COmanage-yoda.git"                  }
+  #co_tmpl:   { name: "Template manager",       version: "scz-0.12",   src: "https://github.com/SURFscz/COmanage-templatemanager.git"       }
+  satosa:    { name: "SATOSA",                 version: "scz-0.10",   src: "https://github.com/SURFscz/SATOSA.git"                         }
+  satosa_ms: { name: "SATOSA microservices",   version: "scz-0.11",   src: "https://github.com/SURFscz/SATOSA-micro_services.git"          }
+  pyff:      { name: "pyFF",                   version: "scz-0.8.1",  src: "https://github.com/SURFscz/pyFF.git"                           }
+  cmservice: { name: "CMservice",              version: "scz-0.4",    src: "https://github.com/SURFscz/CMservice.git"                      }
+  sbs:       { name: "SBS",                    version: "v16",        src: "https://github.com/SURFscz/SBS.git"                            }
+  plsc:      { name: "pLSC",                   version: "sbs-ordered-flat", src: "https://github.com/SURFscz/plsc.git"                     }
+# yamllint enable rule:line-length
 
 # poor man's user management
 root:
@@ -69,16 +89,6 @@ users:
               pRvP88TEgaNAXrKMD9qbWYvnSLeDOe."
     sshkey: ""
 
-mysql_users:
-  - name: scz_ro
-    hash: "*8E0BCAC26AAA6C79D77D9F8FDDA6DCDD03BDB93F"
-    priv: "*.*:ALL,GRANT"
-    host: localhost
-  - name: scz_ro
-    hash: "*8E0BCAC26AAA6C79D77D9F8FDDA6DCDD03BDB93F"
-    priv: "*.*:ALL,GRANT"
-    host: "%"
-
 firewall_v4_incoming:
   - { name: bastion,  src: "{{iprange.bastion}}", dport: "22,80,443", proto: tcp }
   - { name: vnet,     src: "{{iprange.vm}}",      dport: "22,80,443", proto: tcp }
@@ -87,11 +97,11 @@ backup_base: "/opt/backups"
 backup_runparts: "{{backup_base}}/run.d"
 
 # LDAP definition is here, because we need it in both the Ldap and Comanage groups
-master_ldap:
-  host:   "{{ groups['comanage'][0] }}"
-  basedn: "dc=scz,dc=vnet"
-  o:      "SCZ"
-  binddn: "cn=admin,dc=scz,dc=vnet"
+#master_ldap:
+#  host:   "{{ groups['comanage'][0] }}"
+#  basedn: "dc=scz,dc=vnet"
+#  o:      "SCZ"
+#  binddn: "cn=admin,dc=scz,dc=vnet"
 
 services_ldap:
   host:   "{{ groups['ldap'][0] }}"
@@ -101,16 +111,21 @@ services_ldap:
 
 # Comanage-Proxy database configuration is here, because it is needed in both the
 # Proxy and Comanage groups.
-comanage_proxy_db: "{{ groups['proxy'][0] }}"
-comanage_proxy_db_user: "scz"
-comanage_proxy_db_name: "cotosa"
+#comanage_proxy_db: "{{ groups['proxy'][0] }}"
+#comanage_proxy_db_user: "scz"
+#comanage_proxy_db_name: "cotosa"
 comanage_proxy_attribute: "cmuid"
 
-php_debug: true
-php_xdebug_host: "{{iprange.bastion}}"
+db_host: "{{ groups['db'][0] }}"
+
+sbs_db_name: "sbs"
+sbs_db_user: "sbs"
 
 sbs_client_id: sbs-server
 sbs_base_url: "https://{{hostnames.sbs}}/"
+
+php_debug: true
+php_xdebug_host: "{{iprange.bastion}}"
 
 # Docker ports
 docker_ports:

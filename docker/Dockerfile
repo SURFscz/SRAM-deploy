@@ -1,4 +1,4 @@
-FROM debian:buster as scz-base
+FROM debian:buster AS scz-base
 MAINTAINER SURFnet <info@surfnet.nl>
 
 ARG DEBIAN_FRONTEND=noninteractive
@@ -7,23 +7,21 @@ ENV TERM linux
 
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections  && \
     echo "deb http://ftp.de.debian.org/debian/ buster-backports main" >> /etc/apt/sources.list  && \
-    apt-get update -y  && \
-    apt-get install -y systemd  && \
-    apt-get install -y openssh-server python2.7 python3 python sudo locales  && \
-    apt-get clean -y && apt-get autoremove -y && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*  && \
+    apt update -y  && \
+    apt install -y openssh-server python2.7 python3 python sudo locales python-setuptools \
+    vim net-tools bash-completion git && \
+    apt clean -y && apt-get autoremove -y && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*  && \
     update-locale  && \
     systemctl enable ssh.service  && \
-    systemctl disable getty@  && \
-    systemctl disable getty.target  && \
-    rm /lib/systemd/system/multi-user.target.wants/getty.target  && \
-    rm /lib/systemd/system/getty.target.wants/getty-static.service  && \
     systemctl disable systemd-timesyncd.service  && \
     echo "exit 0" > /usr/sbin/policy-rc.d  && \
-    useradd --create-home -s /bin/bash vagrant  && \
-    install -d -o vagrant -m 0700 /home/vagrant/.ssh  && \
-    echo -n 'vagrant:vagrant' | chpasswd  && \
-    mkdir -p /etc/sudoers.d && install -b -m 0440 /dev/null /etc/sudoers.d/vagrant  && \
-    echo 'vagrant ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers.d/vagran
+    useradd --create-home -s /bin/bash ansible  && \
+    install -d -o ansible -m 0700 /home/ansible/.ssh  && \
+    echo -n 'ansible:ansible' | chpasswd  && \
+    mkdir -p /etc/sudoers.d && install -b -m 0440 /dev/null /etc/sudoers.d/ansible  && \
+    echo 'ansible ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers.d/ansible && \
+    /bin/echo -e '#!/bin/sh\ncp /tmp/authorized_keys ~ansible/.ssh\nchown ansible:ansible ~ansible/.ssh/authorized_keys' >> /etc/rc.local && \
+    chmod 755 /etc/rc.local
 
 # sshd services in all containers
 EXPOSE 22
@@ -43,10 +41,7 @@ EXPOSE 8080
 EXPOSE 8081
 EXPOSE 8082
 
-VOLUME [ "/sys/fs/cgroup", "/run", "/run/lock", "/tmp" ]
+STOPSIGNAL SIGRTMIN+3
+
 CMD ["/lib/systemd/systemd"]
 
-FROM scz-base as scz
-ARG ssh_pub_key
-# save ssh public key; Note: this is the only thing that is different for the containers up until we run ansible
-RUN echo "${ssh_pub_key}" >> /home/vagrant/.ssh/authorized_keys
