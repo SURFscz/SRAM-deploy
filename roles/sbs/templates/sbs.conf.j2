@@ -14,7 +14,7 @@ Listen {{ sbs_backend_port }}
         OIDCClientSecret {{ sbs_client_secret }}
         OIDCResponseType "code"
         OIDCScope "openid email profile"
-        OIDCAuthRequestParams claims={"userinfo":{"edumember_is_member_of":null,"schac_home_organisation":null,"eduperson_affiliation":null,"nickname":null,"name":null,"cmuid":null,"email":null,"family_name":null,"eppn":null}}
+        OIDCAuthRequestParams claims={"userinfo":{"edumember_is_member_of":null,"schac_home_organisation":null,"eduperson_affiliation":null,"eduperson_entitlement":null,"nickname":null,"name":null,"cmuid":null,"email":null,"family_name":null,"eppn":null}}
 
         OIDCRedirectURI {{ sbs_base_url }}redirect_uri
         OIDCCryptoPassphrase randompassword
