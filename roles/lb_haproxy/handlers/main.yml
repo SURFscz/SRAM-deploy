@@ -1,4 +1,17 @@
 ---
+- name: enable ocsp job
+  systemd:
+    name: ocsp.timer
+    enabled: true
+    state: started
+    daemon_reload: true
+
+- name: run ocsp update
+  systemd:
+    name: ocsp.service
+    state: started
+    daemon_reload: true
+
 - name: restart haproxy
   systemd: daemon_reload=yes name=haproxy state=restarted
 

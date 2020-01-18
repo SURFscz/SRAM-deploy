@@ -1,0 +1,8 @@
+[Unit]
+Description=Create OSCP timer
+
+[Timer]
+OnCalendar=*:00
+
+[Install]
+WantedBy=multi-user.target

@@ -1,8 +1,11 @@
 ---
 enable_https: true
 use_fixed_cert: false
+enable_ratelimit: true
 
 haproxy:
   custom_dhparam: true
   dhparam_file: /etc/ssl/dh_param.pem
   dhparam_keysize: 2048
+
+haproxy_oscp_bin_dir: "/opt/scz-misc/bin/"

@@ -26,6 +26,42 @@
   notify:
     - restart haproxy
 
+- name: install haproxy config
+  template: src=crt-list.txt.j2 dest=/etc/haproxy/crt-list.txt mode=0644 owner=root group=root
+  notify:
+    - restart haproxy
+  when: enable_https
+
+- name: Create bin directory
+  file:
+    path: "{{haproxy_oscp_bin_dir}}"
+    state: directory
+
+- name: Copy ocsp script
+  copy:
+    src: ocsp.sh
+    dest: "{{haproxy_oscp_bin_dir}}"
+    mode: 0755
+  notify:
+    - run ocsp update
+
+- name: Copy ocsp service files
+  template:
+    src: "{{item}}.j2"
+    dest: "/etc/systemd/system/{{item}}"
+  with_items:
+    - ocsp.service
+    - ocsp.timer
+  notify:
+    - enable ocsp job
+
+- name: Copy ocsp service files for certbot/letsencrypt
+  template:
+    src: "ocsp-letsencrypt.j2"
+    dest: "/etc/letsencrypt/renewal-hooks/post/"
+    mode: '0755'
+  when: enable_https and not use_fixed_cert
+
 - name: enable haproxy
   systemd: daemon_reload=yes name=haproxy state=started enabled=true
 
