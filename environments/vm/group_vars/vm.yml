@@ -90,7 +90,7 @@ loadbalancer:
     backend_hosts: "{{groups['vm-client']}}"
     backend_port: "{{google_test_port}}"
   - hostname: "{{hostnames.tfa}}"
-    http: true
+    protocol: http
     backend_hosts: "{{groups['vm-client']}}"
     backend_port: "{{tfa_test_port}}"
   - hostname: "{{hostnames.orcid}}"
