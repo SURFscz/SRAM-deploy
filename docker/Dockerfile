@@ -8,8 +8,9 @@ ENV TERM linux
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections  && \
     echo "deb http://ftp.de.debian.org/debian/ buster-backports main" >> /etc/apt/sources.list  && \
     apt update -y  && \
-    apt install -y openssh-server python2.7 python3 python sudo locales python-setuptools \
-    vim net-tools bash-completion git && \
+    apt install -y openssh-server python2.7 python3 python sudo locales python-setuptools vim net-tools \
+        bash-completion sudo bash zsh vim locales-all curl ca-certificates gnupg2 net-tools git subversion \
+        acl bzip2 unzip apt-transport-https python-apt needrestart logrotate nullmailer rsyslog aptitude && \
     apt clean -y && apt-get autoremove -y && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*  && \
     update-locale  && \
     systemctl enable ssh.service  && \
@@ -22,6 +23,8 @@ RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selectio
     echo 'ansible ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers.d/ansible && \
     /bin/echo -e '#!/bin/sh\ncp /tmp/authorized_keys ~ansible/.ssh\nchown ansible:ansible ~ansible/.ssh/authorized_keys' >> /etc/rc.local && \
     chmod 755 /etc/rc.local
+
+
 
 # sshd services in all containers
 EXPOSE 22
