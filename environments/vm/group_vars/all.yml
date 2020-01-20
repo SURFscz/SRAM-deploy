@@ -28,6 +28,7 @@ fake_hostnames: true
 use_logserver: false
 
 enable_https: true
+use_fixed_cert: true
 http_proto: "http{% if enable_https %}s{% endif %}"
 
 # onderstaande is breekbaar; ansible_default_ipv4 kan best een dhcp-ip zijn
