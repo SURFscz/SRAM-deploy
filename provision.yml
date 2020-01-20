@@ -58,7 +58,7 @@
 
 - hosts: lb
   roles:
-    - { role: https_haproxy,   tags: ['lb','haproxy'] }
+    - { role: lb_haproxy,   tags: ['lb','haproxy'] }
 
 - hosts: db
   roles:
