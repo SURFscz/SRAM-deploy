@@ -61,8 +61,8 @@
         state: absent
 
     - name: create nextcloud database
-      shell: >
-        cat {{nextcloud_dir}}/nextcloud.sql | sqlite3 {{nextcloud_dir}}/data/nextcloud.sqlite.db"
+      shell: |
+        cat {{nextcloud_dir}}/nextcloud.sql | sqlite3 {{nextcloud_dir}}/data/nextcloud.sqlite.db
 
   become: yes
   become_user: "www-data"

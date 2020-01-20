@@ -114,13 +114,7 @@
 - hosts: vm-sandbox
   roles:
     - { role: mod_mellon,         tags: ['sandbox','mod_mellon'   ] }
-    - { role: pam_websso,         tags: ['client','pam-websso'    ] }
-    - { role: nextcloud,          tags: ['sandbox','nextcloud'    ] }
-
-- hosts: sandbox
-  roles:
-    - { role: mod_mellon,         tags: ['sandbox','mod_mellon'   ] }
-    - role: tls_letsencrypt,
+    - role: tls_letsencrypt
       tags: ['tls','tls_letsencrypt']
       when: enable_https and not use_fixed_cert
     - role: tls_fixed_cert
