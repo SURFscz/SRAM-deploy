@@ -129,7 +129,6 @@ php_xdebug_host: "{{iprange.bastion}}"
 
 docker_ports:
   nextcloud: 8001
-  nextcloud: 8001
   sbs: 8321
 
 # Enable SBS deploy

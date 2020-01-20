@@ -37,31 +37,32 @@
     dest: "{{nextcloud_dir}}/nextcloud.sql"
 
 - block:
-  - name: install nextcloud user_saml plugin
-    git:
-      repo: "https://github.com/nextcloud/user_saml.git"
-      version: "{{ nextcloud_user_saml_version }}"
-      dest: "{{nextcloud_dir}}/custom_apps/user_saml"
-      update: no
+    - name: install nextcloud user_saml plugin
+      git:
+        repo: "https://github.com/nextcloud/user_saml.git"
+        version: "{{ nextcloud_user_saml_version }}"
+        dest: "{{nextcloud_dir}}/custom_apps/user_saml"
+        update: no
 
-  - name: patch user_saml plugin
-    patch:
-      src: user_saml.patch
-      basedir: "{{nextcloud_dir}}/custom_apps/user_saml"
-      strip: 1
+    - name: patch user_saml plugin
+      patch:
+        src: user_saml.patch
+        basedir: "{{nextcloud_dir}}/custom_apps/user_saml"
+        strip: 1
 
-  - name: make data dir a data dir
-    file:
-      path: "{{nextcloud_dir}}/data/.ocdata"
-      state: touch
+    - name: make data dir a data dir
+      file:
+        path: "{{nextcloud_dir}}/data/.ocdata"
+        state: touch
 
-  - name: remove nextcloud database
-    file:
-      path: "{{nextcloud_dir}}/data/nextcloud.sqlite.db"
-      state: absent
+    - name: remove nextcloud database
+      file:
+        path: "{{nextcloud_dir}}/data/nextcloud.sqlite.db"
+        state: absent
 
-  - name: create nextcloud database
-    shell: "cat {{nextcloud_dir}}/nextcloud.sql | sqlite3 {{nextcloud_dir}}/data/nextcloud.sqlite.db"
+    - name: create nextcloud database
+      shell: >
+        cat {{nextcloud_dir}}/nextcloud.sql | sqlite3 {{nextcloud_dir}}/data/nextcloud.sqlite.db"
 
   become: yes
   become_user: "www-data"
@@ -98,4 +99,3 @@
     name: nextcloud.service
     state: started
     enabled: yes
-

@@ -1,3 +1,3 @@
 ---
 nextcloud_dir: /opt/nextcloud
-nextcloud_user_saml_version: v2.1.0
+nextcloud_user_saml_version: "v2.1.0"
