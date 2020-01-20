@@ -4,72 +4,73 @@
 
 ##########################################
 # VM environment
-[vm-lb]
+[vm_lb]
 lb.vm.scz-vm.net ansible_host=172.20.1.24
 
-[vm-proxy]
+[vm_proxy]
 proxy.vm.scz-vm.net ansible_host=172.20.1.22
 
-#[vm-comanage]
+#[vm_comanage]
 #comanage.vm.scz-vm.net ansible_host=172.20.1.21
 
-[vm-ldap]
+[vm_ldap]
 ldap.vm.scz-vm.net ansible_host=172.20.1.20
 
-[vm-meta]
+[vm_meta]
 meta.vm.scz-vm.net ansible_host=172.20.1.23
 
-[vm-client]
+[vm_client]
 client.vm.scz-vm.net ansible_host=172.20.1.25
 
-[vm-sandbox1]
+[vm_sandbox1]
 sandbox1.vm.scz-vm.net ansible_host=172.20.1.26
 
-[vm-sbs]
+[vm_sbs]
 sbs.vm.scz-vm.net ansible_host=172.20.1.27
 
-[vm-db]
+[vm_db]
 db.vm.scz-vm.net ansible_host=172.20.1.28
 
 [vm:children]
-vm-lb
-vm-proxy
-#vm-comanage
-vm-ldap
-vm-meta
-vm-client
-vm-sandbox1
-vm-sbs
-vm-db
+vm_lb
+vm_proxy
+#vm_comanage
+vm_ldap
+vm_meta
+vm_client
+vm_sandbox1
+vm_sbs
+vm_db
 
 ##########################################
 # role-based groups
 [lb:children]
-vm-lb
+vm_lb
 
 [proxy:children]
-vm-proxy
+vm_proxy
 
 #[comanage:children]
-#vm-comanage
+#vm_comanage
 
 [ldap:children]
-vm-ldap
+vm_ldap
 
 [meta:children]
-vm-meta
+vm_meta
 
 [client:children]
-vm-client
+vm_client
 
 [sandbox1:children]
-vm-sandbox1
+vm_sandbox1
 
 [sbs:children]
-vm-sbs
+vm_sbs
 
 [db:children]
-vm-db
+vm_db
+
 ##########################################
 # all
 [all:children]

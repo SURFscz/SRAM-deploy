@@ -38,13 +38,13 @@
     - { role: backups,       tags: ['common','backups']  }
     - { role: zabbix-agent,  tags: ['common','zabbix']   }
 
-- hosts: mgnt1
-  roles:
-    - { role: dns-master,    tags: ['test'] }
-
-- hosts: mgnt2
-  roles:
-    - { role: syslog-server,   tags: ['syslog'] }
+#- hosts: mgnt1
+#  roles:
+#    - { role: dns-master,    tags: ['test'] }
+#
+#- hosts: mgnt2
+#  roles:
+#    - { role: syslog-server,   tags: ['syslog'] }
 
 - hosts: lb
   roles:
