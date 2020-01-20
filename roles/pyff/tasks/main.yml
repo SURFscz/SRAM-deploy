@@ -37,13 +37,13 @@
         requirements: "{{ pyff_project_dir }}/requirements.txt"
         virtualenv: "{{ pyff_env_dir }}"
         virtualenv_python: python2
-      notify: restart nginx
+      notify: "restart pyff"
 
     - name: Create pyFF mdq configuration
       template: src=mdq.fd.j2
                 dest="{{ pyff_env_dir }}/mdq.fd"
       become_method: sudo
-      notify: restart nginx
+      notify: "restart pyff"
 
     - name: Create local metadata directory
       file:
@@ -68,7 +68,7 @@
         creates: "{{ pyff_env_dir }}/certs/{{ item }}.crt"
       with_items:
         - signing
-      notify: restart nginx
+      notify: "restart pyff"
 
   become: "yes"
   become_user: pyff

@@ -17,3 +17,8 @@
     name: nginx
     state: restarted
 
+- name: restart pyff
+  service:
+    name: pyff
+    state: restarted
+
