@@ -1,2 +1,2 @@
-{% set lb_http  = loadbalancer|selectattr("http")|list %}
+{% set lb_http  = loadbalancer|selectattr("protocol", "equalto", "http")|list %}
 {% for host in lb_http %} {{host.hostname}}/priv+fullchain.pem {{host.hostname}}{% endfor %}
