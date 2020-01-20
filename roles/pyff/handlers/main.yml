@@ -1,13 +1,24 @@
 ---
 - name: restart filebeat
-  service:  name=filebeat state=restarted
+  service:
+    name: filebeat
+    state: restarted
   when: use_logserver
   listen: "restart filebeat"
 
 - name: restart rsyslog
-  service:  name=rsyslog state=restarted
+  service:
+    name: rsyslog
+    state: restarted
   listen: "restart rsyslog"
 
 - name: restart nginx
-  service: name=nginx state=restarted
+  service:
+    name: nginx
+    state: restarted
+
+- name: restart pyff
+  service:
+    name: pyff
+    state: restarted
 
