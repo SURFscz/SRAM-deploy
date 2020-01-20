@@ -37,21 +37,26 @@
         requirements: "{{ pyff_project_dir }}/requirements.txt"
         virtualenv: "{{ pyff_env_dir }}"
         virtualenv_python: python2
+      notify: restart nginx
 
     - name: Create pyFF mdq configuration
       template: src=mdq.fd.j2
                 dest="{{ pyff_env_dir }}/mdq.fd"
       become_method: sudo
-
-    - name: Create pyFF systemd service
-      template: src=pyff.service.j2
-                dest="{{ pyff_env_dir }}/pyff.service"
+      notify: restart nginx
 
     - name: Create local metadata directory
-      file: path={{ pyff_env_dir }}/metadata state=directory mode=0755 owner=pyff
+      file:
+        path: "{{ pyff_env_dir }}/metadata"
+        state: directory
+        mode: 0755
+        owner: pyff
 
     - name: Create certs directory
-      file: path="{{ pyff_env_dir }}/certs" state=directory mode=0755
+      file:
+        path: "{{ pyff_env_dir }}/certs"
+        state: directory
+        mode: 0755
 
     - name: create self-signed Metadata Signing SSL certs
       shell: >
@@ -63,24 +68,24 @@
         creates: "{{ pyff_env_dir }}/certs/{{ item }}.crt"
       with_items:
         - signing
+      notify: restart nginx
 
   become: "yes"
   become_user: pyff
 
-- name: Copy to pyff.service in /etc/systemd/system
-  # systemd/ctl can not enable symlinked services :(
-  # https://github.com/systemd/systemd/issues/3010
-  #- name: Create symlink to pyff.service in /etc/systemd/system
-  #  file: src="{{ pyff_env_dir }}/pyff.service" dest=/etc/systemd/system/pyff.service state=link
-  copy:
-    src: "{{ pyff_env_dir }}/pyff.service"
-    dest: /etc/systemd/system/pyff.service
-    remote_src: yes
+- name: Create pyFF systemd service
+  template:
+    src: "pyff.service.j2"
+    dest: "/etc/systemd/system/pyff.service"
+  register: pyff_systemd
 
-# stupid pyff want to create files in /var/run, even if it isn't run as root
-# now fixed by a pre-exec command in the service file, instead
-#- name: Create pyff-owned pyff.pid file
-#  file: path=/var/run/pyff.pid state=touch owner=pyff
+- name: enable pyff
+  systemd:
+    name: pyff
+    state: restarted
+    daemon_reload: yes
+    enabled: yes
+  when: pyff_systemd.changed
 
 - name: Install filebeat configuration
   template:
@@ -89,18 +94,15 @@
   notify: "restart filebeat"
 
 - name: Copy rsyslog config
-  copy: >
-    src=rsyslog_pyffd.conf
-    dest=/etc/rsyslog.d/pyffd.conf
+  copy:
+    src: "rsyslog_pyffd.conf"
+    dest: "/etc/rsyslog.d/pyffd.conf"
   notify: "restart rsyslog"
 
 - name: Copy logrotate config
-  copy: >
-    src=logrotate_pyffd
-    dest=/etc/logrotate.d/pyffd
-
-- name: restart pyff
-  systemd: daemon_reload=yes name=pyff state=restarted enabled=yes
+  copy:
+    src: "logrotate_pyffd"
+    dest: "/etc/logrotate.d/pyffd"
 
 - name: set up nxginx proxy
   include: nginx.yml
