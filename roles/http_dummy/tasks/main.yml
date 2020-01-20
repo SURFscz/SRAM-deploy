@@ -14,9 +14,9 @@
     - "/etc/nginx/sites-enabled/00-default"
 
 - name: install our NGINX default file
-  copy:
-    src: default
-    dest: /etc/nginx/sites-available/scz-default
+  template:
+    src: "default.j2"
+    dest: "/etc/nginx/sites-available/scz-default"
 
 - name: Create symlink to default in /etc/nginx/sites-enabled
   file:
