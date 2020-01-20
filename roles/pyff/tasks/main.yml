@@ -17,13 +17,24 @@
     executable: pip
 
 - name: create pyFF user
-  user: name=pyff shell="/bin/false" state=present
+  user:
+    name: pyff
+    shell: "/bin/false"
+    state: present
 
 - name: Create project directory
-  file: path={{ pyff_project_dir }} state=directory mode=0755 owner=pyff
+  file:
+    path: "{{ pyff_project_dir }}"
+    state: directory
+    mode: 0755
+    owner: pyff
 
 - name: Create metadata directory
-  file: path={{ pyff_metadata_dir }} state=directory mode=0755 owner=pyff
+  file:
+    path: "{{ pyff_metadata_dir }}"
+    state: directory
+    mode: 0755
+    owner: pyff
 
 - block:
     # requirements.txt can be generated from virtualenv/bin/pip freeze
@@ -40,9 +51,9 @@
       notify: "restart pyff"
 
     - name: Create pyFF mdq configuration
-      template: src=mdq.fd.j2
-                dest="{{ pyff_env_dir }}/mdq.fd"
-      become_method: sudo
+      template:
+        src: mdq.fd.j2
+        dest: "{{ pyff_env_dir }}/mdq.fd"
       notify: "restart pyff"
 
     - name: Create local metadata directory
@@ -50,7 +61,6 @@
         path: "{{ pyff_env_dir }}/metadata"
         state: directory
         mode: 0755
-        owner: pyff
 
     - name: Create certs directory
       file:
