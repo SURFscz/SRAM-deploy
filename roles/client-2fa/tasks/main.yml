@@ -5,13 +5,13 @@
       - jq
     state: present
 
-- name: Add Google IdP vhost
+- name: Add 2FA IdP vhost
   template:
     src: "{{ item }}.conf.j2"
     dest: "/etc/apache2/sites-available/{{ item }}.conf"
     mode: 0644
   with_items:
-    - google
+    - 2fa
   notify: restart Apache
 
 - name: Enable Google IdP vhost
@@ -20,7 +20,17 @@
     dest: "/etc/apache2/sites-enabled/00-{{ item }}.conf"
     state: link
   with_items:
-    - google
+    - 2fa
+  notify: restart Apache
+
+- name: Listen to 2FA IdP port
+  when: google_client_id is defined
+  blockinfile:
+    path: "/etc/apache2/ports.conf"
+    insertafter: EOF
+    marker: "# {mark} ANSIBLE MANAGED BLOCK {{ hostnames.tfa }}"
+    block: |
+      Listen {{ tfa_test_port }}
   notify: restart Apache
 
 - name: Install OIDC module
@@ -28,6 +38,13 @@
     working_dir: "{{ simplesaml_project_dir }}/simplesaml"
     command: require
     arguments: bradjonesllc/simplesamlphp-module-openidconnect dev-master
+    optimize_autoloader: False
+
+- name: Install authWebAuthn module
+  composer:
+    working_dir: "{{ simplesaml_project_dir }}/simplesaml"
+    command: require
+    arguments: mrvanes/simplesamlphp-module-authwebauthn dev-master
     optimize_autoloader: False
 
 - name: Insert Google authsource
@@ -47,27 +64,27 @@
             'sslcapath'           => '/etc/ssl/certs',
         ),
 
-- name: Insert Google IdP hosted
+- name: Insert 2FA IdP hosted
   when: google_client_id is defined
   blockinfile:
     path: "{{ simplesaml_project_dir }}/simplesaml/metadata/saml20-idp-hosted.php"
     insertafter: EOF
-    marker: "# {mark} ANSIBLE MANAGED BLOCK {{ hostnames.google }}"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK {{ hostnames.tfa }}"
     block: |
-        $metadata['__DYNAMIC:2__'] = array(
-                'host' => '{{ hostnames.google }}',
-                'OrganizationName' => '{{ environment_string }} Google IdP',
-                'OrganizationDisplayName' => '{{ environment_string }} Google IdP',
-                'OrganizationURL' => '{{ hostnames.google }}',
+        $metadata['__DYNAMIC:6__'] = array(
+                'host' => '{{ hostnames.tfa }}',
+                'OrganizationName' => '{{ environment_string }} Google 2FA IdP',
+                'OrganizationDisplayName' => '{{ environment_string }} Google 2FA IdP',
+                'OrganizationURL' => '{{ hostnames.tfa }}',
                 'UIInfo' => array(
                 'DisplayName' => array(
-                        'en' => '{{ environment_string }} Google IdP'
+                        'en' => '{{ environment_string }} Google 2FA IdP'
                     ),
                     'Description' => array(
-                        'en' => '{{ environment_string }} Google IdP description'
+                        'en' => '{{ environment_string }} Google 2FA IdP description'
                     ),
                     'Logo' => array( array(
-                        'url' => 'https://{{ hostnames.google }}'
+                        'url' => 'https://{{ hostnames.tfa }}'
                                 .'/saml/resources/icons/ssplogo-fish-small.png',
                         'width' => 60,
                         'height' => 41
@@ -94,6 +111,11 @@
                         120 => array('class' => 'saml:AttributeNameID',
                             'attribute' => 'urn:mace:dir:attribute-def:eduPersonPrincipalName',
                             'Format' => 'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent',
+                        ),
+                        130 => array('class' => 'authwebauthn:WebAuthn',
+                            'id' => 'urn:mace:dir:attribute-def:eduPersonPrincipalName',
+                            'database' => '/var/tmp/keys.sq3',
+                            'purpose' => 'fallback'
                         ),
                 ),
         );
