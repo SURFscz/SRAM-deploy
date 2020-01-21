@@ -20,6 +20,7 @@ fi
 
 # Bring up the VMs if they're not running
 echo "Bringing docker containers up"
+./docker/docker-compose.yml.py > ./docker/docker-compose.yml
 time docker-compose -f docker/docker-compose.yml up -d
 
 echo "Starting ansible"

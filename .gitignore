@@ -13,3 +13,4 @@ core
 .idea/
 secret
 ansible_key*
+docker/docker-compose.yml
