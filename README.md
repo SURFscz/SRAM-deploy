@@ -17,8 +17,8 @@ More information can be obtained from <https://wiki.surfnet.nl/display/SCZ>.
 
 The SCZ is comprised of a number of existing, open source components:
 
-### COmanage
-<https://spaces.internet2.edu/display/COmanage>
+### SBS
+<https://github.com/SURFscz/SBS>
 
 ### Satosa
 <https://github.com/IdentityPython/SATOSA>
@@ -46,38 +46,14 @@ memory, as the script will create 6 VMs with 768MB of memory each.
 
 To get started, do the following:
 
-- install Vagrant (>=1.9) and Ansible (>=2.4.3)
-    - Ubuntu/Debian: `apt install ansible vagrant`
-    - OpenSUSE Tumbleweed: `zypper install ansible vagrant`
+- install Docker (>=19.03) and Ansible (>=2.7)
+    - Ubuntu/Debian: `apt install ansible docker.io docker-compose`
+    - OpenSUSE Tumbleweed: `zypper install ansible docker docker-compose`
     - MacOS: see
       <http://docs.ansible.com/ansible/latest/intro_installation.html#latest-releases-on-mac-osx>
-      and <https://www.vagrantup.com/downloads.html>
-- install either one of:
-    - docker:
-      - (Debian/Ubuntu): `sudo apt install docker-compose docker.io` and add yourself to the docker group:
-        `adduser $(whoami) docker`
-      - (openSUSE Tumbleweed): `sudo zypper install docker docker-compose` and if you want the docker deamon to start
-        automatically: `sudo systemctl enable docker`.  Add yourself tot he docker group: `sudo usermod -a -G docker`
-    - virtualbox:
-      - (Debian/Ubuntu): `apt install virtualbox`
-      - (openSUSE Tumbleweed): `zypper install virtualbox`
-    - libvirt and qemu:
-      - (Debian/Ubuntu): `apt install libvirt-daemon-system virt-manager gir1.2-spice-client-gtk-3.0 qemu qemu-kvm`
-        and add your user to the libvirt group: `adduser $(whoami) libvirt`
-- add the following entries to `/etc/hosts`:
-    ```
-    172.20.1.24 lb.vm.scz-vm.net oidc-test.scz-vm.net sp-test.scz-vm.net idp-test.scz-vm.net proxy.scz-vm.net mdq.scz-vm.net cm.scz-vm.net ldap.scz-vm.net meta.scz-vm.net sbs.scz-vm.net
-    172.20.1.20 ldap.vm.scz-vm.net
-    172.20.1.22 proxy.vm.scz-vm.net
-    172.20.1.23 meta.vm.scz-vm.net
-    172.20.1.25 client.vm.scz-vm.net
-    172.20.1.26 sandbox1.vm.scz-vm.net
-    172.20.1.27 sbs.vm.scz-vm.net
-    ```
-- set up the VMs and start the deploy:
-    - docker (recommended): `./start-vm --provider docker`
-    - libvirt: `./start-vm --provider libvirt`
-    - virtualbox: `./start-vm --provider virtualbox`
+      and <https://docs.docker.com/docker-for-mac/>
+- set up the containers and start the deploy:
+    - `./start-vm`
 
     This will boot 8 containers/VMs and run ansible to deploy SCZ to these 8 hosts.
 
