@@ -162,7 +162,7 @@ RemoveImages() {
         tput bold
         echo -n "$image..."
         if [[ $dry_run == 0 ]]; then
-            docker rmi $image 2>&1 >/dev/null
+            docker rmi -f $image 2>&1 >/dev/null
         fi
         tput sgr0
         tput setaf 2
