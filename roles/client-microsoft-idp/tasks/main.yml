@@ -60,8 +60,8 @@
                     'Logo' => array( array(
                         'url' => 'https://{{ hostnames.ms }}'
                                 .'/saml/resources/icons/ssplogo-fish-small.png',
-                        'width' => '60',
-                        'height' => '41'
+                        'width' => 60,
+                        'height' => 41
                     ) )
                 ),
                 'privatekey' => 'server.pem',

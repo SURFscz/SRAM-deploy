@@ -49,5 +49,9 @@ echo -n "Running yamllint... "
 find . -name '*.yml' -print0 | xargs -0 -n${maxyml} -P${numcpu} yamllint            || RESULT=1
 echo done
 
+echo -n "Running Ansible check... "
+ansible-playbook --syntax-check provision.yml \
+    -i ./environments/vm/inventory --extra-vars="secrets_file=environments/vm/secrets/all.yml" || RESULT=1
+
 exit $RESULT
 

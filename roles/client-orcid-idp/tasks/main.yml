@@ -67,8 +67,8 @@
                         'Logo' => array( array(
                             'url' => 'https://{{ hostnames.orcid }}'
                                     .'/saml/resources/icons/ssplogo-fish-small.png',
-                            'width' => '60',
-                            'height' => '41'
+                            'width' => 60,
+                            'height' => 41
                         ) )
                     ),
                     'privatekey' => 'server.pem',
@@ -147,8 +147,8 @@
                         'Logo' => array( array(
                             'url' => 'https://{{ hostnames.orcid_sb }}'
                                     .'/saml/resources/icons/ssplogo-fish-small.png',
-                            'width' => '60',
-                            'height' => '41'
+                            'width' => 60,
+                            'height' => 41
                         ) )
                     ),
                     'privatekey' => 'server.pem',

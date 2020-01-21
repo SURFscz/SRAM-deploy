@@ -1,4 +1,13 @@
 ---
+- name: Ensure that packages are installed
+  apt:
+    name:
+      - python3-pymysql
+      - python-pymysql
+      - python-mysqldb
+      - python-mysql.connector
+  state: present
+
 - name: Copy script files
   copy:
     src: "{{ item }}"
