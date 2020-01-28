@@ -1,0 +1,3 @@
+---
+ntp_minpol: 1
+ntp_maxpol: 12

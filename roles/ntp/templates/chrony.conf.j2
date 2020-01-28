@@ -1,9 +1,12 @@
 # make sure our traffic get back through the firewall
 acquisitionport 123
 
+bindcmdaddress 127.0.0.1
+cmdallow all
+
 # upstream servers
 {% for s in servers.ntp %}
-server {{s}} iburst presend 9 maxpoll 12
+server {{s}} iburst presend 9 minpoll {{ntp_minpol}} maxpoll {{ntp_maxpoll}}
 {% endfor %}
 
 # This directive specify the location of the file containing ID/key pairs for
