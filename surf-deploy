@@ -13,13 +13,13 @@ ARG=${1#--}
 if [ "$ARG" = "bhr" -o "$ARG" = "beheer" ]
 then
     ENV=bhr
-    CONF_DIR=./environments/aws_bhr/
+    CONFDIR=./environments/aws_bhr/
     EXTRA="${EXTRA} --ask-vault-pass"
     shift
 elif [ "$ARG" = "prd" -o "$ARG" = "prod" ]
 then
     ENV=prd
-    CONF_DIR=./environments/aws_prd/
+    CONFDIR=./environments/aws_prd/
     EXTRA="${EXTRA} --ask-vault-pass"
     shift
 elif [ "$ARG" = "acc" ]
@@ -72,7 +72,7 @@ fi
 
 
 CMD="ansible-playbook provision.yml \
-    -i "$CONF_DIR/inventory" \
+    -i "$CONFDIR/inventory" \
     --limit=${ENV} \
     --ask-become \
     --diff \
