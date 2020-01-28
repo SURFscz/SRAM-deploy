@@ -1,4 +1,5 @@
 ---
+meta_port: 80
 metadata_project_dir: "/opt/metadata"
 metadata_documentroot: "/var/www/metadata"
 edugain_feed: "https://metadata.surfconext.nl/edugain-downstream.xml"

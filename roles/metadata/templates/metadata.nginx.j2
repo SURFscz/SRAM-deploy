@@ -1,6 +1,6 @@
 server {
-        listen {{ metadata_backend_port }} default_server;
-        listen [::]:{{ metadata_backend_port }} default_server;
+        listen {{ meta_port }} default_server;
+        listen [::]:{{ meta_port }} default_server;
 
         root {{ metadata_documentroot }};
 

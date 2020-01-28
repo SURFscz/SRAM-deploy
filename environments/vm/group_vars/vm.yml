@@ -38,6 +38,7 @@ comanage_backend_port: 89
 sbs_backend_port: 90
 tfa_test_port: 91
 pam_clients_port: 8087
+meta_port: 80
 
 # COmanage-ldap configuration
 comanage_ldap_host: "ldap.vm.scz-vm.net"
