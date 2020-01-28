@@ -4,6 +4,9 @@ set -e
 ENV=test
 LOGDIR=logs
 
+# https://github.com/jmespath/jmespath.py/pull/188
+export PYTHONWARNINGS=ignore
+
 mkdir -p $LOGDIR || true
 
 ARG=${1#--}
