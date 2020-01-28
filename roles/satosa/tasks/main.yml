@@ -125,6 +125,7 @@
       template:
         src: consent.yaml.j2
         dest: "{{ satosa_env_dir }}/plugins/micro_services/consent.yaml"
+      when: cmservice_port is defined
 
     - name: Create r_and_s_acl.yaml definition
       template:
