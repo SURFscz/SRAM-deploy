@@ -6,7 +6,7 @@ cmdallow all
 
 # upstream servers
 {% for s in servers.ntp %}
-server {{s}} iburst presend 9 minpoll {{ntp_minpol}} maxpoll {{ntp_maxpoll}}
+server {{s}} iburst presend 9 minpoll {{ntp_minpoll}} maxpoll {{ntp_maxpoll}}
 {% endfor %}
 
 # This directive specify the location of the file containing ID/key pairs for
