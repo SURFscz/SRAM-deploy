@@ -91,6 +91,8 @@ users:
               pRvP88TEgaNAXrKMD9qbWYvnSLeDOe."
     sshkey: ""
 
+removed_users: []
+
 firewall_v4_incoming:
   - { name: bastion,  src: "{{iprange.bastion}}", dport: "22,80,443", proto: tcp }
   - { name: vnet,     src: "{{iprange.vm}}",      dport: "22,80,443", proto: tcp }

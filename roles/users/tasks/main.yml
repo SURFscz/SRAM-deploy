@@ -2,35 +2,58 @@
 # in the future, we'll probably want a central ldap or so to manage the users
 ---
 - name: set account defaults (1)
-  lineinfile: dest=/etc/adduser.conf line={{item.line}} regexp={{item.regexp}} state=present
+  lineinfile:
+    dest: "/etc/adduser.conf"
+    line: "{{item.line}}"
+    regexp: "{{item.regexp}}"
+    state: present
   with_items:
     - { line: "FIRST_UID=10000", regexp: "^FIRST_UID\\s*=" }
     - { line: "FIRST_GID=10000", regexp: "^FIRST_GID\\s*=" }
 
 - name: set account defaults (2)
-  lineinfile: dest=/etc/login.defs line={{item.line}} regexp={{item.regexp}} state=present
+  lineinfile:
+    dest: "/etc/login.defs"
+    line: "{{item.line}}"
+    regexp: "{{item.regexp}}"
+    state: present
   with_items:
     - { line: "UID_MIN 10000", regexp: "^UID_MIN\\s* " }
     - { line: "GID_MIN 10000", regexp: "^GID_MIN\\s* " }
 
 - name: set root password
-  user: name=root update_password=always password={{root.pw_hash}}
+  user:
+    name: root
+    update_password: always
+    password: "{{root.pw_hash}}"
   with_items: "{{users}}"
 
 - name: remove default users
-  user: name={{item}} state=absent remove=yes
+  user:
+    name: "{{item}}"
+    state: absent
+    remove: yes
   with_items:
     - surf
     - debian
 
 - name: create groups
-  group: name={{item}} state=present
+  group:
+    name: "{{item}}"
+    state: present
   with_items:
     - "{{users|map(attribute='groups')|flatten|uniq}}"
 
+- name: remove users
+  user:
+    name: "{{item}}"
+    state: absent
+  with_items: "{{removed_users}}"
+
 - name: create users
-  user: name={{item.uid}} state=present
-  args:
+  user:
+    name: "{{item.uid}}"
+    state: present
     group: "{{item.groups[0]}}"
     groups: "{{item.groups}}"
     password: "{{item.pw_hash}}"
@@ -40,6 +63,10 @@
   with_items: "{{users}}"
 
 - name: copy ssh keys
-  authorized_key: user={{item.uid}} key={{item.sshkey}} state=present manage_dir=yes
+  authorized_key:
+    user: "{{item.uid}}"
+    key: "{{item.sshkey}}"
+    state: present
+    manage_dir: yes
   with_items: "{{users}}"
 
