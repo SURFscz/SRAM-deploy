@@ -37,9 +37,9 @@ LoadPlugin uptime
         Server "{{ servers.syslog }}" "25826"
 </Plugin>
 <Plugin ping>
-        Host "{{ servers.syslog }}"
-        Host "{{ servers.dns[0] }}"
-        Host "{{ external_ping }}"
+{% for h in servers.ping %}
+        Host "{{ h }}"
+{% endfor %}
 </Plugin>
 <Include "/etc/collectd/collectd.conf.d">
         Filter "*.conf"
