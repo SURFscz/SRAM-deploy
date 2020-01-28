@@ -52,6 +52,7 @@
       - ca-certificates
       - gnupg2
       - net-tools
+      - dnsutils
       - git
       - acl
       - bzip2
