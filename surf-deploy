@@ -34,6 +34,9 @@ fi
 
 LOG=$LOGDIR/deploy-${ENV}.$(date '+%Y%m%d_%H%M').log
 
+SSH_USER=admin
+SSH_PRIVKEY=$(realpath .)/../SCZ-terraform/sshkey.priv
+
 # first check that deploy and config repos are clean and are using the same version
 # deploy
 if ! git diff-index --quiet HEAD --
@@ -70,6 +73,8 @@ CMD="ansible-playbook provision.yml \
     --limit=${ENV} \
     --ask-become \
     --diff \
+    --extra-vars="ansible_ssh_private_key_file=$SSH_PRIVKEY" \
+    --extra-vars="ansible_ssh_user=$SSH_USER" \
     ${EXTRA} \
     "$@"
 "
