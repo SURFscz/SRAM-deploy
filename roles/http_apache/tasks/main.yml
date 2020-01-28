@@ -12,6 +12,11 @@
     name:
       - apache2
 
+- name: Replace ports.conf
+  template:
+    src: "ports.conf.j2"
+    dest: "/etc/apache2/ports.conf"
+
 # Apache mpm modules need to be handled separately, see
 - name: Change apache worker
   apache2_module:

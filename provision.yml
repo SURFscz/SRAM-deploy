@@ -92,7 +92,8 @@
 
 - hosts: sbs
   roles:
-    - { role: sbs,     tags: ['sbs']  }
+    - { role: http_apache, tags: ['sbs']  }
+    - { role: sbs,         tags: ['sbs']  }
 
 - hosts: sandbox1
   roles:

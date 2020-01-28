@@ -18,24 +18,21 @@
 - name: Install required packages
   apt:
     name:
-      - apache2
-      - python-pymysql
       - yarn
+      - nodejs
+      - build-essential
       - python3-virtualenv
       - python3-setuptools
       - python-setuptools
-      - build-essential
+      - python-pymysql
       - virtualenv
       - python3.7
       - python3.7-dev
       - python3-distutils
       - libapache2-mod-wsgi-py3
-      - systemd
-      - nodejs
-      #- mariadb-client
       - libapache2-mod-auth-openidc
 
-- name: Enable mod_auth_openidc
+- name: enable Apache modules
   apache2_module:
     state: present
     name: "{{item}}"
@@ -43,11 +40,15 @@
     - auth_openidc
     - rewrite
     - headers
+    - wsgi
+  notify: restart Apache
 
-- name: Remove stable python 3 version
-  apt:
-    autoremove: yes
-    purge: yes
+- name: Configure Apache vhost
+  template:
+    src: sbs.conf.j2
+    dest: /etc/apache2/sites-enabled/sbs.conf
+  notify: restart Apache
+
 
 - name: Add SBS database
   mysql_db:
@@ -128,18 +129,3 @@
     owner: www-data
     group: www-data
     mode: 0755
-
-- name: enable Apache modules
-  apache2_module:
-    name: "{{item}}"
-    state: present
-  with_items:
-    - auth_openidc
-    - wsgi
-  notify: restart Apache
-
-- name: Configure Apache vhost
-  template:
-    src: sbs.conf.j2
-    dest: /etc/apache2/sites-enabled/sbs.conf
-  notify: restart Apache
