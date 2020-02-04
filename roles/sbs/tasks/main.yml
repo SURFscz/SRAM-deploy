@@ -123,7 +123,10 @@
     dest: "{{ sbs_git_dir }}/server/static/disclaimer.css"
 
 - name: Copy static files to apache document root
-  command: cp {{ sbs_git_dir }}/server/static/* {{ sbs_git_dir }}/client/build/static
+  copy:
+    src: "{{ sbs_git_dir }}/server/static/"
+    dest: "{{ sbs_git_dir }}/client/build/static"
+    remote_src: yes
 
 - name: touch sbs.log file
   file:
