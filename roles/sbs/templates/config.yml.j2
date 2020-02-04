@@ -17,12 +17,26 @@ oidc_uppercase: False
 
 base_scope: "{{ base_domain }}"
 generate_multiple_eppn: True
+collaboration_creation_allowed_entitlement: "urn:mace:surf.nl:sram:allow-create-co"
+
+# All services in the white list can be requested in the create-restricted-co API
+# The default organisation is a fallback for when the administrator has no schac_home_org
+restricted_co:
+  services_white_list: ["https://cloud"]
+  default_organisation: "example.com"
 
 mail:
   host: {{ mail.relay_host }}
   port: 25
   sender_name: {{ sbs_mail_sender_name }}
   sender_email: {{ sbs_mail_sender_email }}
+  suppress_sending_mails: False
+  info_email: scz-support@surfnet.nl
+
+aup:
+  pdf: SURFresearch-Access-Management-AUP-01122019-0001.pdf
+  pdf_link: "{{ base_domain }}static/SURFresearch-Access-Management-AUP-01122019-0001.pdf"
+  html: SURFresearch-Access-Management-AUP-01122019-0001.html
 
 base_url: {{ sbs_base_url }}
 wiki_link: {{ sbs_wiki_link }}
