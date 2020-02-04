@@ -128,6 +128,9 @@
     src: disclaimer.css.j2
     dest: "{{ sbs_git_dir }}/server/static/disclaimer.css"
 
+- name: Copy static files to apache document root
+  command: cp {{ sbs_git_dir }}/server/static/* {{ sbs_git_dir }}/client/build/static
+
 - name: touch sbs.log file
   file:
     path: /opt/sbs/sbs/log
