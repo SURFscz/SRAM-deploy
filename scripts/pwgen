@@ -3,7 +3,13 @@
 set -e
 
 CHARS_ALLOWED="A-Za-z0-9/#%~@&*_+-.;:"
-LEN=32
+
+if [ $# = 1 -a $(( $1 + 0 )) -gt 0 ]
+then
+    LEN=$1
+else
+    LEN=32
+fi
 
 ENCRYPT=0
 if [ "$1" = '-e' ]
