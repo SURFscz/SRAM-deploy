@@ -1,0 +1,86 @@
+#!/usr/bin/env python3
+
+# see https://github.com/baszoetekouw/mkpasswd
+
+import sys
+import getopt
+
+from typing import Optional
+
+import passlib.hash
+import passlib.registry
+
+def usage():
+    pass
+
+
+def do(password: bytes, method: str, rounds: Optional[int] = None, salt: Optional[bytes] = None) -> str:
+    handler = passlib.registry.get_crypt_handler(method)
+
+    settings = dict()
+    if rounds is not None:
+        settings['rounds'] = rounds
+    if salt is not None:
+        settings['salt'] = salt.decode('ASCII')
+
+    if settings:
+        handler = handler.using(**settings)
+
+    hash = handler.hash(password)
+    return hash
+
+
+def main():
+    try:
+        opts, args = getopt.gnu_getopt(sys.argv[1:], "hm:S:R:", ["help","method=","salt=","rounds="])
+    except getopt.GetoptError as err:
+        print(err)
+        usage()
+        sys.exit(2)
+
+    method: str = "sha512_crypt"
+    salt: Optional[bytes] = None
+    rounds: Optional[int] = None
+
+    for opt, argument in opts:
+        if opt in ("-h","--help"):
+            usage()
+            sys.exit()
+        elif opt in ("-m","--method"):
+            method = argument.lower().replace('-','_')
+        elif opt in ("-S","--salt"):
+            salt = bytes(argument,'ASCII')
+        elif opt in ("-R","--rounds"):
+            rounds = int(argument)
+
+
+    if method not in passlib.registry.list_crypt_handlers():
+        print(f"Method '{method}' not found")
+        print("Available methods: ", end="")
+        print(", ".join(passlib.registry.list_crypt_handlers()))
+        sys.exit(1)
+
+    if rounds is not None and rounds<=0:
+        print(f"Invalid number of rounds '{rounds}'")
+        sys.exit(1)
+
+    # workaround weirdness in bcrypt implementation
+    # dumb passlib requires base64-encoded _input_ instead of just requiring 128 random raw bits
+    if "bcrypt" in method and salt is not None:
+        # bcrypt salt is 128 bits, but 22 base64 chars encode 132 bits.  So last byte must be padded with 4 zero bits
+        # last character only encodes two bytes: b000000=0='.', b010000=16='0', 100000=32='e', 110000=48='u'
+        # so below, we'll decode the last base64 char (6 bits), clear the lower 4 bits, and recalcute the last char of
+        # the salt
+        base64code: bytes = b"./ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+        value = base64code.find(salt[-1])
+        value &= 0b110000
+        salt = salt[:-1] + bytes([base64code[value]])
+
+    password: bytes = args[0].encode('ASCII')
+
+    hash = do(password, method, salt=salt, rounds=rounds)
+    print(hash)
+
+
+if __name__ == "__main__":
+    main()

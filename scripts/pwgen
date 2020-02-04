@@ -2,7 +2,7 @@
 
 set -e
 
-CHARS_ALLOWED="[:alnum:]/#%_+-"
+CHARS_ALLOWED="A-Za-z0-9/#%~@&*_+-.;:"
 LEN=32
 
 ENCRYPT=0
