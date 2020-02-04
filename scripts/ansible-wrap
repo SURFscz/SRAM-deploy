@@ -1,0 +1,52 @@
+#!/usr/bin/env python3
+
+# takes variable name as argument and variable value from stdin and outputs a formatted, indented ansible string
+
+import sys
+import re
+
+linewidth = 100
+
+globalvarname = None
+if len(sys.argv)==2:
+    globalvarname = sys.argv[1]
+
+linenum=0
+for line in map(str.rstrip, sys.stdin):
+    linenum += 1
+
+    # find name of the variable
+    if globalvarname is None:
+        # read variable name from stdin
+        match = re.fullmatch(r'([^:]+): "?(.*?)"?\s*', line)
+        if match:
+            varname = match.group(1)
+            line = match.group(2)
+        else:
+            print(f"ERROR: No variable found on line {linenum}")
+            sys.exit(2)
+    else:
+        # use variable name from command line
+        varname = globalvarname
+
+    indent = len(varname)+3         # number of spaces to indent with
+    wrapwidth = linewidth - indent  # number of positions available for the variable on each line
+
+    # first line contains variable name and first part of the variable
+    print(f'{varname}: "', end='')
+    print(line[:wrapwidth], end='')
+
+    # remove the part of the line we've already processed
+    line = line[wrapwidth:]
+
+    while line:
+        # break, indent, and continue wrapping the variable value
+        print('\\')
+        print(' ' * indent, end='')
+        print(line[:wrapwidth], end='')
+
+        # remove the part of the line we've already processed
+        line = line[wrapwidth:]
+
+    # close the string quote
+    print('"')
