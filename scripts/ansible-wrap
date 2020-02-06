@@ -29,8 +29,8 @@ for line in map(str.rstrip, sys.stdin):
         # use variable name from command line
         varname = globalvarname
 
-    indent = len(varname)+3         # number of spaces to indent with
-    wrapwidth = linewidth - indent  # number of positions available for the variable on each line
+    indent = len(varname)+3             # number of spaces to indent with
+    wrapwidth = linewidth - indent - 1  # number of positions available for the variable on each line
 
     # first line contains variable name and first part of the variable
     print(f'{varname}: "', end='')

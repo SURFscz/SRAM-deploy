@@ -3,6 +3,7 @@
 set -e
 
 CHARS_ALLOWED="A-Za-z0-9~!@#\$%^&*()_=+[]{}\\|;:<>,./?-"
+CHARS_ALLOWED="A-Za-z0-9_=+!?-"
 
 if [ $# = 1 -a $(( $1 + 0 )) -gt 0 ]
 then
