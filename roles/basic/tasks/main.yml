@@ -46,8 +46,30 @@
 - name: install sudo permissions
   template: src=scz-sudo.j2 dest=/etc/sudoers.d/scz-sudo owner=root group=root mode=0600 force=yes
 
-- name: set up ssh config
-  template: dest=/etc/ssh/sshd_config src=sshd_config.j2
+- name: make sure ed25519 key exists
+  command:
+    cmd: "ssh-keygen -f '{{item}}' -N '' -t ed25519"
+    creates: "{{item}}"
+  with_items:
+    - "/etc/ssh/ssh_host_ed25519_key"
   notify:
     - restart sshd
 
+- name: set up ssh config
+  template:
+    dest: "/etc/ssh/sshd_config"
+    src: "sshd_config.j2"
+  notify:
+    - restart sshd
+
+- name: remove obsolete ssh host keys
+  file:
+    path: "/etc/ssh/ssh_host_{{item}}"
+    state: absent
+  with_items:
+    - "dsa_key"
+    - "dsa_key.pub"
+    - "rsa_key"
+    - "rsa_key.pub"
+    - "ecdsa_key"
+    - "ecdsa_key.pub"
