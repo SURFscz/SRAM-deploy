@@ -1,8 +1,8 @@
 {% if ansible_distribution == 'Debian' %}
 {%   set sections = "main" %}
-deb {{debian.mirror}} {{debian.dist}} {{sections}}
-deb {{debian.mirror}} {{debian.dist}}-updates {{sections}}
-deb {{debian.security_mirror}} {{debian.dist}}/updates {{sections}}
+deb {{debian.mirror}} {{debian_dist}} {{sections}}
+deb {{debian.mirror}} {{debian_dist}}-updates {{sections}}
+deb {{debian.security_mirror}} {{debian_dist}}/updates {{sections}}
 {% endif -%}
 {% if ansible_distribution == 'Ubuntu' %}
 deb     http://de.archive.ubuntu.com/ubuntu xenial           main restricted universe multiverse

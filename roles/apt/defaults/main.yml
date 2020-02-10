@@ -1,6 +1,7 @@
 ---
+debian_dist: 'buster'
+
 debian:
-  dist: 'buster'
   mirror: 'http://deb.debian.org/debian/'
   security_mirror: 'http://deb.debian.org/debian-security/'
 
