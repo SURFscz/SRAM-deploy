@@ -1,11 +1,11 @@
 ---
 - name: set up mail relay
   include: mailrelay.yml
-  when: "inventory_hostname == mail.relay_host"
+  when: "mail_relay == true"
 
 - name: set up mail
   include: mailleaf.yml
-  when: "inventory_hostname != mail.relay_host"
+  when: "mail_relay == false"
 
 - name: clean up after exim
   apt:

@@ -1,2 +1,3 @@
 ---
 mail_relay_port: 25
+mail_relay: false
