@@ -6,8 +6,8 @@
   service: name=postfix state=restarted
 
 - name: postalias
-  command: /usr/bin/strace /usr/sbin/postalias hash:/etc/postfix/aliases
-  args:
+  command:
+    cmd: "/usr/sbin/postalias hash:/etc/postfix/aliases"
     chdir: /etc/postfix
   notify: restart postfix
 
