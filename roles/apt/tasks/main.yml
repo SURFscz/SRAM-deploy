@@ -4,6 +4,7 @@
     src: sources.list.j2
     dest: /etc/apt/sources.list
     force: yes
+  register: apt_sources
 
 - name: set up apt pinning for official packages
   template:
@@ -22,7 +23,7 @@
   command: apt-get update
   args:
     warn: false
-  when: apt_default_release.changed
+  when: apt_default_release.changed or apt_sources.changed
 
 - name: regularly update package lists
   copy:
