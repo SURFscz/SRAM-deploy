@@ -48,15 +48,12 @@
 
 - hosts: lb
   roles:
-    - role: http_nginx
-      tags: ['lb','http_nginx']
-    - role: tls_letsencrypt
-      tags: ['lb','tls_letsencrypt']
-      when: enable_https and not use_fixed_cert
-    - role: tls_fixed_cert
-      tags: ['lb','tls_fixedcert']
-      when: enable_https and use_fixed_cert
-    - { role: lb_haproxy,   tags: ['lb','haproxy'] }
+    - { role: http_nginx,      tags: ['lb','http_nginx']       }
+    - { role: tls_letsencrypt, tags: ['lb','tls_letsencrypt'],
+        when: enable_https and not use_fixed_cert              }
+    - { role: tls_fixed_cert,  tags: ['lb','tls_fixedcert'],
+        when: enable_https and use_fixed_cert                  }
+    - { role: lb_haproxy,      tags: ['lb','haproxy']          }
 
 - hosts: db
   roles:
