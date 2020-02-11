@@ -68,7 +68,7 @@
     - { role: client-orcid-idp,     tags: ['client','client-orcid' ] }
     - { role: client-microsoft-idp, tags: ['client','client-ms'    ] }
     - { role: client-oidc-rp,       tags: ['client','client-rp'    ] }
-    - { role: client-2fa,           tags: ['client','client-2fa'   ] }
+    - { role: client-2fa,           tags: ['client','client-2fa'   ], when: experimental_features }
 
 - hosts: proxy
   roles:
@@ -80,7 +80,7 @@
     - { role: ldap_services,      tags: ['ldap', 'ldap-services' ] }
     - { role: ldap,               tags: ['ldap'                  ] }
     - { role: plsc,               tags: ['ldap', 'ldap-plsc'     ] }
-    - { role: pam_websso_daemon,  tags: ['client','websso-daemon'] }
+    - { role: pam_websso_daemon,  tags: ['client','websso-daemon'], when: experimental_features }
 
 - hosts: meta
   roles:
@@ -94,4 +94,4 @@
 
 - hosts: sandbox1
   roles:
-    - { role: pam_websso,         tags: ['client','pam-websso'] }
+    - { role: pam_websso,         tags: ['client','pam-websso'], when: experimental_features }
