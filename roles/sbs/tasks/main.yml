@@ -33,7 +33,7 @@
     dest: /etc/apache2/sites-enabled/sbs.conf
   notify: restart Apache
 
-
+# TODO: make sure this only happens once
 - name: Add SBS database
   mysql_db:
     login_host: '{{ db_host }}'
@@ -79,13 +79,14 @@
 
 - name: Install yarn dependancies
   yarn:
+    executable: "/usr/bin/yarnpkg"
     path: "{{ sbs_git_dir }}/client"
   register: yarn_install
   when: git_apps.changed or not yarn_deps.stat.exists
 
 - name: Build client yarn
-  command: yarn build
-  args:
+  command:
+    cmd: "yarnpkg build"
     chdir: "{{ sbs_git_dir }}/client"
   when: git_apps.changed or yarn_install.changed
 
