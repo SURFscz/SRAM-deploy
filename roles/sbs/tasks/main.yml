@@ -1,24 +1,8 @@
 ---
-- name: Copy yarn.gpg to the server
-  copy:
-    src: yarn.gpg
-    dest: /tmp/yarn.gpg
-
-- name: Add yarn repo key
-  apt_key:
-    file: /tmp/yarn.gpg
-    state: present
-
-- name: Add yarn repository
-  apt_repository:
-    repo: deb https://dl.yarnpkg.com/debian/ stable main
-    state: present
-    update_cache: yes
-
 - name: Install required packages
   apt:
     name:
-      - yarn
+      - yarnpkg
       - nodejs
       - build-essential
       - python3-virtualenv
