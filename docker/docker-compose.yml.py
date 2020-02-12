@@ -57,7 +57,8 @@ compose['networks'] = {
         'ipam': {
             'driver': 'default',
             'config': [ { 'subnet': f'{subnet}.0/24', 'gateway': f'{subnet}.1' } ]
-        }
+        },
+        'driver_opts': { "com.docker.network.bridge.name": "br-sram" }
     }
 }
 compose['services'] = { h: host_config(ip, h) for h, ip in hosts.items() }
