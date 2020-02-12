@@ -73,3 +73,13 @@
     - "rsa_key.pub"
     - "ecdsa_key"
     - "ecdsa_key.pub"
+
+- name: write backend wildcard key
+  copy: >
+    content="{{wildcard_backend_cert.priv}}"
+    dest={{ssl_certs_dir}}/{{ internal_base_domain }}.key
+
+- name: write backend wildcard pub
+  copy: >
+    content="{{wildcard_backend_cert.pub}}"
+    dest={{ssl_certs_dir}}/{{ internal_base_domain }}.crt

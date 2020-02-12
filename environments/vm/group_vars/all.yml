@@ -101,6 +101,8 @@ firewall_v4_incoming:
 backup_base: "/opt/backups"
 backup_runparts: "{{backup_base}}/run.d"
 
+ssl_certs_dir: "/etc/ssl"
+
 # LDAP definition is here, because we need it in both the Ldap and Comanage groups
 #master_ldap:
 #  host:   "{{ groups['comanage'][0] }}"

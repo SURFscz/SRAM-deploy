@@ -5,8 +5,9 @@
   copy:
     src: slapd.service
     dest: /etc/systemd/system
-  notify: systemd daemon-reload
-#  when: ansible_virtualization_type == "docker"
+  notify:
+    - systemd daemon-reload
+    - restart LDAP
 
 - name: Ensure that a number of directories exist
   file:
@@ -18,7 +19,6 @@
   tags: ldap
   with_items:
     - "{{ ldap_ldif_dir }}"
-    - "{{ ldap_certs_dir }}"
 
 - name: Copy schemas
   become_user: "{{ ldap_user }}"
@@ -71,21 +71,15 @@
   failed_when: result.rc not in [0,20,68]
   changed_when: result.rc != 20
 
-- name: write certificate key
-  copy: >
-    content="{{wildcard_backend_cert.priv}}"
-    dest={{ldap_certs_dir}}/{{ internal_base_domain }}.key
-    mode=0600
-    owner="{{ ldap_user }}"
-    group="{{ ldap_group }}"
-
-- name: write certificate pub
-  copy: >
-    content="{{wildcard_backend_cert.pub}}"
-    dest={{ldap_certs_dir}}/{{ internal_base_domain }}.crt
-    mode=0600
-    owner="{{ ldap_user }}"
-    group="{{ ldap_group }}"
+- name: Change ownership of backend certificate
+  file:
+    path: "{{ item }}"
+    owner: "{{ ldap_user }}"
+    group: "{{ ldap_group }}"
+    mode: 0600
+  with_items:
+    - "{{ ssl_certs_dir }}/{{ internal_base_domain }}.key"
+    - "{{ ssl_certs_dir }}/{{ internal_base_domain }}.crt"
 
 # Workaround: oldTLSCertifcateFile and olcTLSCertificateKeyFile need to be added in a single
 # transaction.  Will be fixed by ldap_attrS module  https://github.com/ansible/ansible/pull/62701
@@ -101,20 +95,20 @@
   ldap_attr:
     dn: "cn=config"
     state: exact
-    name: "{{item.key}}"
-    values: "{{item.value}}"
+    name: "{{ item.key }}"
+    values: "{{ item.value }}"
   with_dict:
-    olcTLSCertificateKeyFile: "/etc/ldap/certs/{{ internal_base_domain }}.key"
+    olcTLSCertificateKeyFile: "{{ ssl_certs_dir }}/{{ internal_base_domain }}.key"
   ignore_errors: true
 - name: Enable tls
   ldap_attr:
     dn: "cn=config"
     state: exact
-    name: "{{item.key}}"
-    values: "{{item.value}}"
+    name: "{{ item.key }}"
+    values: "{{ item.value }}"
   with_dict:
-    olcTLSCertificateFile: "/etc/ldap/certs/{{ internal_base_domain }}.crt"
-    olcTLSCertificateKeyFile: "/etc/ldap/certs/{{ internal_base_domain }}.key"
+    olcTLSCertificateFile: "{{ ssl_certs_dir }}/{{ internal_base_domain }}.crt"
+    olcTLSCertificateKeyFile: "{{ ssl_certs_dir }}/{{ internal_base_domain }}.key"
     olcTLSCipherSuite: "SECURE256:-VERS-SSL3.0"
 
 # OpenLDAP does not like adding existing entries again. Only add the

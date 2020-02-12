@@ -25,6 +25,7 @@
     - rewrite
     - headers
     - wsgi
+    - ssl
   notify: restart Apache
 
 - name: Configure Apache vhost

@@ -40,6 +40,7 @@ defaults
     errorfile 502 /etc/haproxy/errors/502.http
     errorfile 503 /etc/haproxy/errors/503.http
     errorfile 504 /etc/haproxy/errors/504.http
+    default-server ca-file /etc/ssl/vm.scz-vm.net.crt
 
 #--------------------------------------------------------------------
 #  frontend
@@ -110,7 +111,7 @@ backend be_{{host.hostname}}
     mode    http
     cookie  SERVERID insert indirect nocache
     {% for be_server in host.backend_hosts -%}
-    server  {{be_server}} {{be_server}}:{{host.backend_port}} check cookie {{be_server}}
+    server  {{be_server}} {{be_server}}:{{host.backend_port}} ssl check cookie {{be_server}}
     {% endfor %}
 
 {% endfor %}
@@ -125,9 +126,9 @@ listen ldap_{{host.hostname}}_{{host.frontend_port}}
     bind [::]:{{host.frontend_port}} transparent
 {% endif %}
 
-    server {{host.backend_hosts[0]}} {{host.backend_hosts[0]}}:{{host.backend_port}} check weight 10 on-marked-up shutdown-backup-sessions
+    server {{host.backend_hosts[0]}} {{host.backend_hosts[0]}}:{{host.backend_port}} ssl check weight 10 on-marked-up shutdown-backup-sessions
 {% for be_server in host.backend_hosts[1:] -%}
-    server {{be_server}} {{be_server}}:{{host.backend_port}} check weight 10 backup
+    server {{be_server}} {{be_server}}:{{host.backend_port}} ssl check weight 10 backup
 {% endfor %}
 
     timeout client 900s
@@ -140,7 +141,9 @@ listen ldap_{{host.hostname}}_{{host.frontend_port}}
 
     option tcp-check
 
-    tcp-check connect port {{host.backend_port}}
+    # Ugly hack, I don't know how to connect SSL
+    # So we need to keep 389 alive, also for Apache Directory Studio
+    tcp-check connect port 389
     tcp-check send-binary 300c0201 # LDAP bind request "<ROOT>" simple
     tcp-check send-binary 01 # message ID
     tcp-check send-binary 6007 # protocol Op
