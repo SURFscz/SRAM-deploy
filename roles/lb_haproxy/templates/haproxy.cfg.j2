@@ -1,5 +1,7 @@
 {% set lb_http = loadbalancer|selectattr("protocol", "equalto", "http")|list %}
 {% set lb_ldap = loadbalancer|selectattr("protocol", "equalto", "ldap")|list %}
+{# add a "name" atribute to the dict #}
+{% for h in lb_http %}{% set _ = h.update({'name': h['hostname'].split('.')[0]}) %}{% endfor %}
 global
     log /dev/log    local0
     log /dev/log    local1 notice
@@ -101,22 +103,24 @@ frontend fe_https
     acl acl_ip_{{host.hostname}} src 127.0.0.1 ::1 {{host.acl}}
     http-request deny if acl_{{host.hostname}} !acl_ip_{{host.hostname}}
 {% endif %}
-    use_backend be_{{host.hostname}} if acl_{{host.hostname}}
+    use_backend be_{{host.name}} if acl_{{host.hostname}}
 
 {% endfor %}
 
 {% for host in lb_http %}
-backend be_{{host.hostname}}
+backend be_{{host.name}}
     mode    http
     cookie  SERVERID insert indirect nocache
     {% for be_server in host.backend_hosts -%}
-    server  {{be_server}} {{be_server}}:{{host.backend_port}} check cookie {{be_server}}
+    {% set server_name = be_server.split('.')[0] -%}
+    server {{server_name}} {{be_server}}:{{host.backend_port}} check cookie {{be_server}}
     {% endfor %}
 
 {% endfor %}
 
 {% for host in lb_ldap %}
-listen ldap_{{host.hostname}}_{{host.frontend_port}}
+{% set name = host.hostname.split('.')[0] -%}
+listen ldap_{{name}}_{{host.frontend_port}}
 {% if enable_https %}
     bind    *:{{host.frontend_port}} ssl crt {{host.hostname}}/priv+fullchain.pem transparent
     bind [::]:{{host.frontend_port}} ssl crt {{host.hostname}}/priv+fullchain.pem transparent
@@ -125,9 +129,10 @@ listen ldap_{{host.hostname}}_{{host.frontend_port}}
     bind [::]:{{host.frontend_port}} transparent
 {% endif %}
 
-    server {{host.backend_hosts[0]}} {{host.backend_hosts[0]}}:{{host.backend_port}} check weight 10 on-marked-up shutdown-backup-sessions
-{% for be_server in host.backend_hosts[1:] -%}
-    server {{be_server}} {{be_server}}:{{host.backend_port}} check weight 10 backup
+{% for be_server in host.backend_hosts %}
+{% set servername = be_server.split('.')[0] %}
+    server {{servername}} {{be_server}}:{{host.backend_port}} check weight 10 {% if loop.index==1 %}on-marked-up shutdown-backup-sessions{%else%}backup{%endif%}
+
 {% endfor %}
 
     timeout client 900s
