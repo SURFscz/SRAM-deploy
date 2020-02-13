@@ -6,22 +6,17 @@
     force: yes
   register: apt_sources
 
-- name: set up apt pinning for official packages
+- name: set default release
   template:
-    src: apt_pinning.j2
-    dest: /etc/apt/preferences.d/official_packages
-
-- name: set default release to stable
-  copy:
-    src: 00-scz-release
+    src: 00-scz-release.j2
     dest: /etc/apt/apt.conf.d/00-scz-release
   register: apt_default_release
 
 # we need to do this manually, because ansible's apt module doesn't handle the default-release
 # setting correctly
 - name: Update cache
-  command: apt-get update
-  args:
+  command:
+    cmd: apt-get update
     warn: false
   when: apt_default_release.changed or apt_sources.changed
 
@@ -35,6 +30,7 @@
     state: absent
     purge: yes
     autoremove: yes
+    update_cache: yes
     name:
       - cloud-init
       - unattended-upgrades
