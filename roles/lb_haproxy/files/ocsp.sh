@@ -17,7 +17,7 @@ do
     then
         expiry=$( openssl ocsp -respin ./priv+fullchain.pem.ocsp -text -noverify | grep -E '^ +Next Update:' | cut -d: -f2- )
         expiry_sec=$( date --date "$expiry" +%s )
-        hourleft=$( echo "($expiry_sec - $now)/3600" | bc )
+        hourleft=$(( ($expiry_sec - $now)/3600 ))
         if [ $hourleft -gt 24 ]
         then
             echo "OCSP is still valid for $hourleft hours; skipping update"
@@ -32,10 +32,18 @@ do
     # only move file in place if update succeeded
     if [ $? -eq 0 ]
     then
-        mv tmp.ocsp priv+fullchain.pem.ocsp
-        echo "OSCP for $dir updated"
+        if ! [ -e "priv+fullchain.pem.ocsp" ] || diff -q "tmp.ocsp" "priv+fullchain.pem.ocsp" > /dev/null
+        then
+            echo "OSCP for $dir updated"
+            mv tmp.ocsp priv+fullchain.pem.ocsp
+            /usr/bin/systemctl reload haproxy.service
+        else
+            echo "OSCP for $dir unchanged"
+            rm tmp.ocsp
+        fi
     else
         echo "Couldn't get OSCP response for $dir" >&2
+        rm -f tmp.ocsp
     fi
 done
 exit 0
