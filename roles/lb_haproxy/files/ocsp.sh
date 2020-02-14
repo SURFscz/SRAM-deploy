@@ -36,7 +36,7 @@ do
         then
             echo "OSCP for $dir updated"
             mv tmp.ocsp priv+fullchain.pem.ocsp
-            /usr/bin/systemctl reload haproxy.service
+            /bin/systemctl reload haproxy.service
         else
             echo "OSCP for $dir unchanged"
             rm tmp.ocsp
