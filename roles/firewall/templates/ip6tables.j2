@@ -16,15 +16,17 @@
 {{'# '}}{{l.name}}{{"\n"}}
   {#- first check if l.src is a string or a list                    -#}
   {#- if it's a string, convert to a list, so we can iterate safely -#}
-  {%- if l.src is defined     -%}
-  {%-   if l.src is string    -%}
-  {%-     set src = [ l.src ] -%}
-  {%-   else                  -%}
-  {%-     set src = l.src     -%}
-  {%-   endif                 -%}
-  {%- else                    -%}
-  {%-   set src = [False]     -%}
-  {%- endif                   -%}
+  {%- if l.src is defined          -%}
+  {%-   if l.src is string         -%}
+  {%-     set src = [ l.src ]      -%}
+  {%-   elif l.src is mapping      -%}
+  {%-     set src = l.src.values() -%}
+  {%-   else                       -%}
+  {%-     set src = l.src          -%}
+  {%-   endif                      -%}
+  {%- else                         -%}
+  {%-   set src = [False]          -%}
+  {%- endif                        -%}
   {#- now loop over all src addreses -#}
   {%- for s in src %}
     {%- if True               -%} -A INPUT                      {%- endif -%}
