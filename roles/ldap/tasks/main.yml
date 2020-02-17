@@ -2,9 +2,9 @@
 # playbook to install and configure general components of the LDAP
 - name: Copying alternative service script
   become: true
-  copy:
-    src: slapd.service
-    dest: /etc/systemd/system
+  template:
+    src: "slapd.service.j2"
+    dest: "/etc/systemd/system/slapd.service"
   notify:
     - systemd daemon-reload
     - restart LDAP
@@ -98,18 +98,11 @@
     name: "{{ item.key }}"
     values: "{{ item.value }}"
   with_dict:
-    olcTLSCertificateKeyFile: "{{ ssl_certs_dir }}/{{ internal_base_domain }}.key"
-  ignore_errors: true
-- name: Enable tls
-  ldap_attr:
-    dn: "cn=config"
-    state: exact
-    name: "{{ item.key }}"
-    values: "{{ item.value }}"
-  with_dict:
     olcTLSCertificateFile: "{{ ssl_certs_dir }}/{{ internal_base_domain }}.crt"
     olcTLSCertificateKeyFile: "{{ ssl_certs_dir }}/{{ internal_base_domain }}.key"
+    olcTLSCACertificateFile: "{{ ssl_certs_dir }}/{{ internal_base_domain }}.crt"
     olcTLSCipherSuite: "SECURE256:-VERS-SSL3.0"
+  ignore_errors: true
 
 # OpenLDAP does not like adding existing entries again. Only add the
 # schema if it has not been added already. This does not yet take care

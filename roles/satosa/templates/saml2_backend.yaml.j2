@@ -21,7 +21,7 @@ config:
 {% endfor %}
 {% endfor %}
     metadata:
-      mdq: ['http://localhost:{{ pyff_port }}']
+      mdq: ['https://{{ hostnames.mdq }}']
     entityid: <base_url>/md/<name>.xml
     entity_category:
       - 'http://www.geant.net/uri/dataprotection-code-of-conduct/v1'

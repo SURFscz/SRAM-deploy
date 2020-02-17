@@ -9,8 +9,8 @@ Listen {{ sbs_backend_port }}
         CustomLog ${APACHE_LOG_DIR}/access.log combined
 
         SSLEngine on
-        SSLCertificateFile {{ ssl_cert_dir }}/{{ internal_base_domain }}.crt
-        SSLCertificateKeyFile {{ ssl_cert_dir }}/{{ internal_base_domain }}.key
+        SSLCertificateFile {{ ssl_certs_dir }}/{{ internal_base_domain }}.crt
+        SSLCertificateKeyFile {{ ssl_certs_dir }}/{{ internal_base_domain }}.key
 
         OIDCProviderMetadataURL https://{{ hostnames.proxy }}/.well-known/openid-configuration
         OIDCSSLValidateServer Off

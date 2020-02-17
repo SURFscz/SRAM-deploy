@@ -1,23 +1,21 @@
 #!/bin/bash
-echo "enable frontend ldap_ldap.scz-vm.net_636"      | socat stdio /run/haproxy/admin.sock
-# echo "enable frontend ldap_comanage.scz-vm.net_1636" | socat stdio /run/haproxy/admin.sock
+echo "enable frontend ldap_ldap.scz-vm.net_636" | socat stdio /run/haproxy/admin.sock
 
-TARGET=10.0.0.2
+TARGET="{{ groups['vm_ldap'] | join(' ') }}"
 MAXFAIL=0
 
 COUNTER=0
 while : ; do
-  ping $TARGET -W1 -c1 &>/dev/null
+  fping ${TARGET} &>/dev/null
   if [ $? -ne 0 ]; then
     COUNTER=$((COUNTER+1))
-    if [ $COUNTER -gt $MAXFAIL ]; then
-      echo "disable frontend ldap_ldap.scz-vm.net_63"       | socat stdio /run/haproxy/admin.sock
-#       echo "disable frontend ldap_comanage.scz-vm.net_1636" | socat stdio /run/haproxy/admin.sock
+    if [ $COUNTER -gt ${MAXFAIL} ]; then
+      echo "disable frontend ldap_ldap.scz-vm.net_636" | socat stdio /run/haproxy/admin.sock
       break
     fi
   else
     COUNTER=0
   fi
-  #echo $COUNTER
+  #echo ${COUNTER}
   sleep 1;
 done

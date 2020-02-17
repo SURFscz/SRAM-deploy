@@ -1,0 +1,9 @@
+[Unit]
+Description=LDAP Fencing mechanism
+After=haproxy.service
+
+[Service]
+ExecStart=/opt/fence.sh
+
+[Install]
+WantedBy=multi-user.target

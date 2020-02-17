@@ -7,5 +7,5 @@ objectClass: organization
 
 # Create the admin identity
 dn: {{ master_ldap.binddn }}
-cn: admin
+cn: {{ master_ldap.binddn | regex_replace('^cn=([^,]+).*', '\\1') }}
 objectClass: organizationalRole

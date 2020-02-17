@@ -11,9 +11,10 @@
   apache2_module:
     state: absent
     name: "{{item}}"
+    ignore_configcheck: true
   notify: restart Apache
   with_items:
-    - auth_openidc
+    - auth_openidc_
 
 - name: Create new SP test root index.php
   template:
