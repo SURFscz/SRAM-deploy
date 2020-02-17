@@ -32,7 +32,6 @@
     autoremove: yes
     update_cache: yes
     name:
-      - cloud-init
       - unattended-upgrades
 
 - name: Install common tools / clients
@@ -60,6 +59,7 @@
       - logrotate
       - rsyslog
       - aptitude
+      - cloud-init
 
 - name: Upgrade packages
   apt:
@@ -68,12 +68,6 @@
     update_cache: yes
     autoclean: yes
   when: "environment_name != 'vm'"
-
-- name: remove cloud-init network config
-  lineinfile:
-    path: /etc/network/interfaces
-    state: absent
-    regexp: '^source '
 
 - name: install VMware clients
   apt:
