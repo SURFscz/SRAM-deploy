@@ -8,11 +8,13 @@ PermitEmptyPasswords no
 
 UsePAM yes
 
-AllowAgentForwarding yes
+AllowAgentForwarding no
 AllowTcpForwarding yes
 PrintMotd no
-X11Forwarding yes
+X11Forwarding no
 X11UseLocalhost no
+
+HostKey /etc/ssh/ssh_host_ed25519_key
 
 # Allow client to pass locale environment variables
 AcceptEnv LANG LC_*

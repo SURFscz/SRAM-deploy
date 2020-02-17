@@ -1,10 +1,12 @@
 ---
 - name: restart sshd
-  service: name=sshd state=restarted
-  when: ansible_virtualization_type != "docker"
+  service:
+    name: sshd
+    state: restarted
 
 - name: reload sysctl settings
-  systemd: name=systemd-sysctl.service state=restarted
+  systemd:
+    name: systemd-sysctl.service
+    state: restarted
   when:
-    - is_aws
     - ansible_virtualization_type != "docker"
