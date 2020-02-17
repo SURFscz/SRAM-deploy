@@ -8,7 +8,7 @@ import json
 WHITELIST = {
     #'comanage_enable':      2,
     'client-microsoft-idp': 3,
-    'pam_websso_daemon':    1,
+    'pam_websso_daemon':    2,
     'http_apache':          1,
     'cmservice':            2,
     'auth_mellon':          1,

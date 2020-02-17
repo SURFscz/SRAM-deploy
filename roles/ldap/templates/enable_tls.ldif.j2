@@ -1,0 +1,14 @@
+dn: cn=config
+changetype: modify
+replace: olcTLSCertificateFile
+olcTLSCertificateFile: "{{ ssl_certs_dir }}/{{ internal_base_domain }}.crt"
+-
+replace: olcTLSCertificateKeyFile
+olcTLSCertificateKeyFile: "{{ ssl_certs_dir }}/{{ internal_base_domain }}.key"
+-
+replace: olcTLSCACertificateFile
+olcTLSCACertificateFile: "{{ ssl_certs_dir }}/{{ internal_base_domain }}.crt"
+-
+replace: olcTLSCipherSuite
+olcTLSCipherSuite: "SECURE256:-VERS-SSL3.0"
+
