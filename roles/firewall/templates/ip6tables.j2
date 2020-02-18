@@ -9,6 +9,8 @@
 -A INPUT -p ipv6-icmp -j ACCEPT
 -A INPUT -i lo -j ACCEPT
 
+# allow dhcpv6
+-A INPUT -p udp -s fe80::/10 --sport 547 -d fe80::/10 --dport 546 -j ACCEPT
 
 # generated from group config firewall_v6_incoming
 {%  if firewall_v6_incoming is defined %}
