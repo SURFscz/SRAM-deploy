@@ -3,13 +3,27 @@
 - hosts: all
   serial: 20
   gather_facts: false
+  tags: always
+  become: false
   tasks:
     - name: Read user secrets
       include_vars: "{{ secrets_users_file }}"
-      tags: always
     - name: Read vars from secrets file
       include_vars: "{{ secrets_file }}"
-      tags: always
+    - name: Get current datetime
+      local_action:
+        module: "command"
+        cmd: "date --iso-8601=seconds --utc"
+      register: datetime_now
+      changed_when: false
+    - name: Get local git version of deploy and inventory
+      local_action:
+        module: "command"
+        cmd: "git log --pretty=format:'%h%d' -n1"
+        chdir: "{{item}}"
+      with_items: ["{{playbook_dir}}","{{inventory_dir}}"]
+      register: git_version
+      changed_when: false
 
 # first gather facts from all hosts that we're actually deploying to
 - hosts: all
@@ -25,8 +39,10 @@
       tags: ['debug']
       when: "debug | default('false') | bool"
 
-- hosts: all
-  serial: 20
+- name: "common"
+  hosts: all
+  tasks:
+    - { import_tasks: "tasks/versions.yml", tags: ['common'] }
   roles:
     - { role: basic,         tags: ['common','basic']    }
     - { role: apt,           tags: ['common','apt']      }
@@ -38,15 +54,24 @@
     - { role: backups,       tags: ['common','backups']  }
     - { role: zabbix-agent,  tags: ['common','zabbix']   }
 
-#- hosts: mgnt1
+#- name: "dns"
+#  hosts: mgnt1
+#  tasks:
+#    - { import_tasks: "tasks/versions.yml", tags: ['common'] }
 #  roles:
 #    - { role: dns-master,    tags: ['test'] }
 #
-#- hosts: mgnt2
+#- name: syslog
+#  hosts: mgnt2
+#  tasks:
+#    - { import_tasks: "tasks/versions.yml", tags: ['common'] }
 #  roles:
 #    - { role: syslog-server,   tags: ['syslog'] }
 
-- hosts: lb
+- name: "lb"
+  hosts: lb
+  tasks:
+    - { import_tasks: "tasks/versions.yml", tags: ['common'] }
   roles:
     - { role: http_nginx,      tags: ['lb','http_nginx']       }
     - { role: tls_letsencrypt, tags: ['lb','tls_letsencrypt'],
@@ -55,11 +80,17 @@
         when: enable_https and use_fixed_cert                  }
     - { role: lb_haproxy,      tags: ['lb','haproxy']          }
 
-- hosts: db
+- name: "database"
+  hosts: db
+  tasks:
+    - { import_tasks: "tasks/versions.yml", tags: ['common'] }
   roles:
     - { role: db_server,        tags: ['db', 'db-server'] }
 
-- hosts: client
+- name: "client"
+  hosts: client
+  tasks:
+    - { import_tasks: "tasks/versions.yml", tags: ['common'] }
   roles:
     - { role: client-base,          tags: ['client','client-base'  ] }
     - { role: client-saml-sp,       tags: ['client','client-sp'    ] }
@@ -70,28 +101,43 @@
     - { role: client-oidc-rp,       tags: ['client','client-rp'    ] }
     - { role: client-2fa,           tags: ['client','client-2fa'   ], when: experimental_features }
 
-- hosts: proxy
+- name: "proxy"
+  hosts: proxy
+  tasks:
+    - { import_tasks: "tasks/versions.yml", tags: ['common'] }
   roles:
     - { role: pyff,          tags: ['proxy','pyff'          ] }
     - { role: satosa,        tags: ['proxy','satosa'        ] }
 
-- hosts: ldap
+- name: "ldap"
+  hosts: ldap
+  tasks:
+    - { import_tasks: "tasks/versions.yml", tags: ['common'] }
   roles:
     - { role: ldap_services,      tags: ['ldap', 'ldap-services' ] }
     - { role: ldap,               tags: ['ldap'                  ] }
     - { role: plsc,               tags: ['ldap', 'ldap-plsc'     ] }
     - { role: pam_websso_daemon,  tags: ['client','websso-daemon'], when: experimental_features }
 
-- hosts: meta
+- name: "meta"
+  hosts: meta
+  tasks:
+    - { import_tasks: "tasks/versions.yml", tags: ['common'] }
   roles:
     - { role: http_dummy,  tags: ['meta','http'    ] }
     - { role: metadata,    tags: ['meta','metadata'] }
 
-- hosts: sbs
+- name: "sbs"
+  hosts: sbs
+  tasks:
+    - { import_tasks: "tasks/versions.yml", tags: ['common'] }
   roles:
     - { role: http_apache, tags: ['sbs']  }
     - { role: sbs,         tags: ['sbs']  }
 
-- hosts: sandbox1
+- name: "sandbox"
+  hosts: sandbox1
+  tasks:
+    - { import_tasks: "tasks/versions.yml", tags: ['common'] }
   roles:
     - { role: pam_websso,         tags: ['client','pam-websso'], when: experimental_features }
