@@ -22,7 +22,10 @@
 ##
 - name: install haproxy
   apt:
-    name: haproxy
+    name:
+      - haproxy
+      - socat
+      - fping
     state: present
 
 - name: install haproxy config
@@ -94,3 +97,16 @@
   with_items:
     - fence.sh
     - unfence.sh
+
+- name: Copying fence service script
+  become: true
+  copy:
+    src: "fence.service"
+    dest: "/etc/systemd/system/fence.service"
+
+- name: enable fence
+  systemd:
+    daemon_reload: yes
+    name: fence
+    state: started
+    enabled: true

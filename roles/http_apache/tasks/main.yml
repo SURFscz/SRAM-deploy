@@ -33,6 +33,7 @@
   apache2_module:
     state: "{{ item.value }}"
     name: "{{ item.key }}"
+    ignore_configcheck: True
   with_dict: "{{ modules }}"
   notify: Restart Apache
 

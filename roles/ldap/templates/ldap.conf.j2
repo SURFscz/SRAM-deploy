@@ -13,4 +13,4 @@
 #DEREF          never
 
 # TLS certificates (needed for GnuTLS)
-TLS_CACERT      /etc/ldap/certs/{{ internal_base_domain }}.crt
+TLS_CACERT      {{ ssl_certs_dir }}/{{ internal_base_domain }}.crt

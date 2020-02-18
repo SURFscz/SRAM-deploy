@@ -1,5 +1,10 @@
 server {
-	listen {{pyff_host}}:{{pyff_port}} default_server;
+	listen {{pyff_host}}:{{pyff_port}} default_server ssl;
+
+    ssl_certificate     {{ ssl_certs_dir }}/{{ internal_base_domain }}.crt;
+    ssl_certificate_key {{ ssl_certs_dir }}/{{ internal_base_domain }}.key;
+    ssl_protocols       TLSv1 TLSv1.1 TLSv1.2;
+    ssl_ciphers         HIGH:!aNULL:!MD5;
 
 	server_name _;
 

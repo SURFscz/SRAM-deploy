@@ -1,0 +1,26 @@
+# Configure olcSyncrepl
+dn: cn=config
+changetype: modify
+add: olcServerID
+{% for ldapserver in groups['vm_ldap'] %}
+olcServerID: {{ loop.index }} ldaps://{{ ldapserver }}/
+{% endfor %}
+
+dn: olcDatabase={1}mdb,cn=config
+changetype: modify
+add: olcSyncrepl
+{% for ldapserver in groups['vm_ldap'] %}
+olcSyncrepl: rid={{ '%03d' % loop.index }}
+  provider="ldaps://{{ ldapserver }}/"
+  searchbase="{{ services_ldap.basedn }}"
+  type=refreshAndPersist
+  bindmethod=simple
+  binddn="{{ services_ldap.binddn }}"
+  credentials={{ services_ldap_password }}
+  retry="30 +"
+  network-timeout=5
+  timeout=30
+{% endfor %}
+-
+add: olcMirrorMode
+olcMirrorMode: TRUE

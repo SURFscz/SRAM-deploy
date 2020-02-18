@@ -20,11 +20,13 @@
   apache2_module:
     state: present
     name: "{{item}}"
+    ignore_configcheck: true
   with_items:
     - auth_openidc
     - rewrite
     - headers
     - wsgi
+    - ssl
   notify: restart Apache
 
 - name: Configure Apache vhost

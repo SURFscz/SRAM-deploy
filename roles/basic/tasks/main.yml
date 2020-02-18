@@ -73,3 +73,21 @@
     - "rsa_key.pub"
     - "ecdsa_key"
     - "ecdsa_key.pub"
+
+# Normally ca-certificates does this, but
+# the first time apt hasn't run yet
+- name: Create ssl_certs_dir
+  file:
+    path: "{{ ssl_certs_dir }}"
+    state: directory
+    mode: '0755'
+
+- name: write backend wildcard key
+  copy: >
+    content="{{wildcard_backend_cert.priv}}"
+    dest={{ ssl_certs_dir }}/{{ internal_base_domain }}.key
+
+- name: write backend wildcard pub
+  copy: >
+    content="{{wildcard_backend_cert.pub}}"
+    dest={{ ssl_certs_dir }}/{{ internal_base_domain }}.crt

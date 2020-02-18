@@ -38,7 +38,7 @@ comanage_backend_port: 89
 sbs_backend_port: 90
 tfa_test_port: 91
 pam_clients_port: 8087
-meta_port: 80
+meta_port: 88
 
 # COmanage-ldap configuration
 comanage_ldap_host: "ldap.vm.scz-vm.net"
@@ -113,6 +113,5 @@ loadbalancer:
   - hostname: "{{hostnames.ldap}}"
     protocol: ldap
     frontend_port: 636
-    #backend_hosts: "{{groups['vm_ldap']}}"
-    backend_hosts: ['ldap1.ldap.ldap.com','ldap2.ldap.ldap.com']
-    backend_port: 389
+    backend_hosts: "{{groups['vm_ldap']}}"
+    backend_port: 636

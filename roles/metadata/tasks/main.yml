@@ -23,6 +23,7 @@
     src: metadata.nginx.j2
     dest: "/etc/nginx/sites-available/metadata"
     mode: 0755
+  notify: restart nginx
 
 - name: Create symlink to metadata in /etc/nginx/sites-enabled
   file:

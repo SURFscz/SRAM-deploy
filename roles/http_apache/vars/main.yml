@@ -8,5 +8,5 @@ modules:
   rewrite: present
   authn_core: present
   authz_user: present
-  ssl: absent
+  ssl: present
 

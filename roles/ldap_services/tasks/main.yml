@@ -41,6 +41,7 @@
     - { src: "set_root_credentials.ldif.j2", dest: "set_root_credentials.ldif" }
     - { src: "initial_setup.ldif.j2", dest: "initial_setup.ldif" }
     - { src: "enable_memberof.ldif.j2", dest: "enable_memberof.ldif" }
+    - { src: "enable_syncrepl.ldif.j2", dest: "enable_syncrepl.ldif" }
 
 - name: Ensure the ldap admin credentials are set
   command: >
@@ -57,9 +58,11 @@
   failed_when: emptyDIT.rc not in [0, 32]
   changed_when: False
 
+  #ldapadd -c -x -D "{{ services_ldap.binddn }}" -w "{{ services_ldap_password }}"
+
 - name: Initialize DIT
   command: >
-    ldapadd -c -x -D "{{ services_ldap.binddn }}" -w "{{ services_ldap_password }}"
+    ldapadd -Q -Y EXTERNAL -H ldapi:///
     -f "{{ ldap_ldif_dir }}/initial_setup.ldif"
   register: result
   failed_when: result.rc not in [0,20,68]
@@ -86,6 +89,14 @@
 - name: Enable memberof/refint overlay
   command: >
     ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f "{{ ldap_ldif_dir }}/enable_memberof.ldif"
+  # return code 20 means entry already exists
+  register: result
+  failed_when: result.rc not in [0,20,68]
+  changed_when: result.rc not in [20,68]
+
+- name: Configure syncrepl overlay
+  command: >
+    ldapmodify -Q -Y EXTERNAL -H ldapi:/// -c -f "{{ ldap_ldif_dir }}/enable_syncrepl.ldif"
   # return code 20 means entry already exists
   register: result
   failed_when: result.rc not in [0,20,68]

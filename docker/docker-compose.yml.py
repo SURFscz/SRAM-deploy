@@ -7,14 +7,15 @@ from typing import Dict
 
 # these are the Docker containers that need to be spun up
 hosts = {
-    'ldap':     20,
+    'ldap1':    20,
+    'ldap2':    21,
     'proxy':    22,
     'meta':     23,
     'lb':       24,
     'client':   25,
     'sandbox1': 26,
     'sbs':      27,
-    'db':       28
+    'db':       28,
 }
 
 # these are the hostnames of virtual hosts on the loadbalancer
