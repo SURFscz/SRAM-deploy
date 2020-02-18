@@ -39,6 +39,12 @@
   changed_when: false
   when: ansible_virtualization_type != "docker"
 
+- name: install journald config
+  template:
+    src: "journald.conf.j2"
+    dest: "/etc/systemd/journald.conf"
+  notify: restart journald
+
 - name: "{{'en' if enable_ipv6 else 'dis'}}able ipv6"
   template: src=99-sysctl-ipv6.conf.j2 dest=/etc/sysctl.d/99-sysctl-ipv6.conf
   notify: reload sysctl settings

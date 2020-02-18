@@ -10,3 +10,8 @@
     state: restarted
   when:
     - ansible_virtualization_type != "docker"
+
+- name: restart journald
+  systemd:
+    name: systemd-journald.service
+    state: restarted
