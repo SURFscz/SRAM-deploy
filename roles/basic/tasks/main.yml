@@ -43,6 +43,14 @@
   template: src=99-sysctl-ipv6.conf.j2 dest=/etc/sysctl.d/99-sysctl-ipv6.conf
   notify: reload sysctl settings
 
+- name: "Enable dmesg for regular users"
+  lineinfile:
+    dest: "/etc/sysctl.d/99-user-dmesg.conf"
+    create: true
+    line: "kernel.dmesg_restrict = 0"
+    state: present
+  notify: reload sysctl settings
+
 - name: install sudo permissions
   template: src=scz-sudo.j2 dest=/etc/sudoers.d/scz-sudo owner=root group=root mode=0600 force=yes
 
