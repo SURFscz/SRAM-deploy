@@ -2,14 +2,14 @@
 dn: cn=config
 changetype: modify
 add: olcServerID
-{% for ldapserver in groups['vm_ldap'] %}
+{% for ldapserver in groups['ldap'] %}
 olcServerID: {{ loop.index }} ldaps://{{ ldapserver }}/
 {% endfor %}
 
 dn: olcDatabase={1}mdb,cn=config
 changetype: modify
 add: olcSyncrepl
-{% for ldapserver in groups['vm_ldap'] %}
+{% for ldapserver in groups['ldap'] %}
 olcSyncrepl: rid={{ '%03d' % loop.index }}
   provider="ldaps://{{ ldapserver }}/"
   searchbase="{{ services_ldap.basedn }}"
