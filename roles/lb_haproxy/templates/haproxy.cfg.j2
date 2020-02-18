@@ -43,7 +43,7 @@ defaults
     errorfile 502 /etc/haproxy/errors/502.http
     errorfile 503 /etc/haproxy/errors/503.http
     errorfile 504 /etc/haproxy/errors/504.http
-    default-server ca-file /etc/ssl/vm.scz-vm.net.crt
+    default-server ca-file {{ssl_certs_dir}}/{{internal_base_domain}}.crt
 
 #--------------------------------------------------------------------
 #  frontend
