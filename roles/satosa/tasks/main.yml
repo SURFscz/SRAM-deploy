@@ -1,16 +1,4 @@
 ---
-# See https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=916107
-- name: Add stretch repository for MongoDB
-  copy:
-    src: stretch.list
-    dest: "/etc/apt/sources.list.d/stretch.list"
-
-- name: Update cache
-  command: apt-get update
-  args:
-    warn: false
-  changed_when: false
-
 - name: Ensure that packages are installed
   apt:
     name:
@@ -283,7 +271,7 @@
 - name: Create SATOSA systemd service
   template:
     src: satosa.service.j2
-    dest: "{etc/systemd/system/satosa.service"
+    dest: "/etc/systemd/system/satosa.service"
     mode: 0644
   notify: "restart satosa"
 
