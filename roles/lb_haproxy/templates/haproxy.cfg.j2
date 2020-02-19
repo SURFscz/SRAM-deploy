@@ -154,19 +154,7 @@ listen ldap_{{name}}_{{host.frontend_port}}
     option  tcplog
     option  logasap
 
-    option tcp-check
-
-    # Ugly hack, I don't know how to connect SSL
-    # So we need to keep 389 alive, also for Apache Directory Studio
-    tcp-check connect port 389
-    tcp-check send-binary 300c0201 # LDAP bind request "<ROOT>" simple
-    tcp-check send-binary 01 # message ID
-    tcp-check send-binary 6007 # protocol Op
-    tcp-check send-binary 0201 # bind request
-    tcp-check send-binary 03 # LDAP v3
-    tcp-check send-binary 04008000 # name, simple authentication
-    tcp-check expect binary 0a0100 # bind response + result code: success
-    tcp-check send-binary 30050201034200 # unbind request
+    option ldap-check
 
 {% endfor %}
 
