@@ -10,5 +10,4 @@ replace: olcTLSCACertificateFile
 olcTLSCACertificateFile: "{{ ssl_certs_dir }}/{{ internal_base_domain }}.crt"
 -
 replace: olcTLSCipherSuite
-olcTLSCipherSuite: "SECURE256:-VERS-SSL3.0"
-
+olcTLSCipherSuite: "SECURE256:-VERS-DTLS-ALL:-VERS-SSL3.0:-VERS-TLS1.0:-VERS-TLS1.1:-RSA:-DHE-RSA:-ECDHE-RSA"
