@@ -7,9 +7,7 @@ Type=simple
 User=satosa
 WorkingDirectory={{ satosa_env_dir }}
 ExecStart={{ satosa_env_dir }}/bin/python \
-    {% if http_proto!="https" %}-O{% endif %} {{ satosa_env_dir }}/bin/gunicorn \
-    --certfile={{ ssl_certs_dir }}/{{ internal_base_domain }}.crt \
-    --keyfile={{ ssl_certs_dir }}/{{ internal_base_domain }}.key \
+    -O {{ satosa_env_dir }}/bin/gunicorn \
     -b127.0.0.1:{{ satosa_internal_port }} \
     satosa.wsgi:app
 Restart=on-abort
