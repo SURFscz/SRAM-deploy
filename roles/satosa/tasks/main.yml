@@ -25,6 +25,7 @@
       - mongodb
       - mongodb-server
       - libmariadbclient-dev
+      - authbind
     state: present
 
 - name: pacify python-mysqlclient
