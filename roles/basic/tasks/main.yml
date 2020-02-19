@@ -101,8 +101,8 @@
     content: "{{wildcard_backend_cert.priv}}"
     dest: "{{ ssl_certs_dir }}/{{ internal_base_domain }}.key"
     owner: "root"
-    group: "ssl-cert"
-    mode: 0640
+    group: "root"
+    mode: 0600
 
 - name: write backend wildcard pub
   copy:
