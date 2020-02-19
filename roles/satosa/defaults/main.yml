@@ -22,7 +22,8 @@ pysaml_repo_url: "https://github.com/SURFscz/pysaml2.git"
 pysaml_repo_version: "scz"
 
 satosa_host: "0.0.0.0"
-satosa_port: "8080"
+satosa_port: "8180"
+satosa_internal_port: "8181"
 satosa_state_encryption_key: "poikjh567"
 satosa_user_id_hash_salt: "59o3gaxfwg0svem1n1g3tk22i9mihcom"
 

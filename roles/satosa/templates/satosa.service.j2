@@ -6,18 +6,11 @@ After=syslog.target network.target
 Type=simple
 User=satosa
 WorkingDirectory={{ satosa_env_dir }}
-{% if satosa_port < 1024 and ansible_virtualization_type != "docker" %}
-{% set authbind = "/bin/authbind --deep" %}
-{# if satosa runs on a low port, we need to make special arrangement in order for satosa to be able to open that port #}
-ExecStartPre=!/usr/bin/install -D --owner=satosa --mode=0600 /dev/null /etc/authbind/byport/{{satosa_port}}
-{% else %}
-{% set authbind = "" %}}
-{% endif %}
-ExecStart={{authbind}}{{ satosa_env_dir }}/bin/python \
+ExecStart={{ satosa_env_dir }}/bin/python \
     {% if http_proto!="https" %}-O{% endif %} {{ satosa_env_dir }}/bin/gunicorn \
     --certfile={{ ssl_certs_dir }}/{{ internal_base_domain }}.crt \
     --keyfile={{ ssl_certs_dir }}/{{ internal_base_domain }}.key \
-    -b{{ satosa_host }}:{{ satosa_port }} \
+    -b127.0.0.1:{{ satosa_internal_port }} \
     satosa.wsgi:app
 Restart=on-abort
 StandardOutput=syslog

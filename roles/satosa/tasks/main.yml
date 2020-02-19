@@ -25,7 +25,6 @@
       - mongodb
       - mongodb-server
       - libmariadbclient-dev
-      - authbind
     state: present
 
 - name: pacify python-mysqlclient
@@ -316,3 +315,10 @@
   copy: >
     src=logrotate_satosa
     dest=/etc/logrotate.d/satosa
+
+- name: set up nxginx proxy
+  include: nginx.yml
+
+# nginx needs to be restarted _now_ rather than at the end of the play
+- name: flush handlers
+  meta: flush_handlers
