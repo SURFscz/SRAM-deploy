@@ -1,17 +1,27 @@
 ---
 - name: restart filebeat
-  service:  name=filebeat state=restarted
+  service:
+    name: filebeat
+    state: restarted
   when: use_logserver
   listen: "restart filebeat"
 
 - name: restart rsyslog
-  service:  name=rsyslog state=restarted
+  service:
+    name: rsyslog
+    state: restarted
   listen: "restart rsyslog"
 
-- name: restart LDAP
-  service:  name=slapd state=restarted enabled=yes
-  listen: "restart slapd"
-
 - name: systemd daemon-reload
-  systemd: name=slapd daemon_reload=yes
+  systemd:
+    name: slapd
+    daemon_reload: yes
+
+- name: restart LDAP
+  systemd:
+    name: slapd
+    state: restarted
+    enabled: true
+    daemon-reload: true
+  listen: "restart slapd"
 
