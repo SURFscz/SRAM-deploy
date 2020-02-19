@@ -1,9 +1,16 @@
 ---
 - name: restart filebeat
-  service:  name=filebeat state=restarted
+  service: name=filebeat state=restarted
   when: use_logserver
   listen: "restart filebeat"
 
 - name: restart rsyslog
   service:  name=rsyslog state=restarted
   listen: "restart rsyslog"
+
+- name: restart satosa
+  systemd:
+    name: satosa
+    state: restarted
+    enabled: true
+    daemon_reload: true

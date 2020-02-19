@@ -38,6 +38,7 @@
   pip:
     name: virtualenv
     executable: pip3
+  notify: "restart satosa"
 
 - name: create SATOSA user
   user: name=satosa shell="/bin/false" state=present
@@ -66,16 +67,19 @@
         requirements: "{{ satosa_project_dir }}/requirements.txt"
         virtualenv: "{{ satosa_env_dir }}"
         virtualenv_python: python3
+      notify: "restart satosa"
 
     - name: Create SATOSA  proxy_conf configuration
       template:
         src: proxy_conf.yaml.j2
         dest: "{{ satosa_env_dir }}/proxy_conf.yaml"
+      notify: "restart satosa"
 
     - name: Copy internal_attributes.yaml definition
       template:
         src: internal_attributes.yaml.j2
         dest: "{{ satosa_env_dir }}/internal_attributes.yaml"
+      notify: "restart satosa"
 
     - name: Create backends directory
       file: path="{{ satosa_env_dir }}/plugins/backends" state=directory mode=0755
@@ -87,6 +91,7 @@
       with_items:
         - saml2_backend.yaml
         - saml2_mirrorbackend.yaml
+      notify: "restart satosa"
 
     - name: Create frontends directory
       file: path="{{ satosa_env_dir }}/plugins/frontends" state=directory mode=0755
@@ -98,11 +103,13 @@
       with_items:
         - saml2_frontend.yaml
         - saml2_mirrorfrontend.yaml
+      notify: "restart satosa"
 
     - name: Create oidc_frontend.yaml definition
       template:
         src: oidc_frontend.yaml.j2
         dest: "{{ satosa_env_dir }}/plugins/frontends/oidc_frontend.yaml"
+      notify: "restart satosa"
 
     - name: Create micro_services directory
       file: path="{{ satosa_env_dir }}/plugins/micro_services" state=directory mode=0755
@@ -111,6 +118,7 @@
       template:
         src: custom_logging_service.yaml.j2
         dest: "{{ satosa_env_dir }}/plugins/micro_services/custom_logging_service.yaml"
+      notify: "restart satosa"
 
     #- name: Create db_attributes_store.yaml definition
     #  template:
@@ -121,27 +129,32 @@
       template:
         src: sbs_attribute_store.yaml.j2
         dest: "{{ satosa_env_dir }}/plugins/micro_services/sbs_attribute_store.yaml"
+      notify: "restart satosa"
 
     - name: Create consent.yaml definition
       template:
         src: consent.yaml.j2
         dest: "{{ satosa_env_dir }}/plugins/micro_services/consent.yaml"
       when: cmservice_port is defined
+      notify: "restart satosa"
 
     - name: Create r_and_s_acl.yaml definition
       template:
         src: r_and_s_acl.yaml.j2
         dest: "{{ satosa_env_dir }}/plugins/micro_services/r_and_s_acl.yaml"
+      notify: "restart satosa"
 
     - name: Create attribute_filter.yaml definition
       template:
         src: attribute_filter.yaml.j2
         dest: "{{ satosa_env_dir }}/plugins/micro_services/attribute_filter.yaml"
+      notify: "restart satosa"
 
     - name: Create custom_uid.yaml definition
       template:
         src: custom_uid.yaml.j2
         dest: "{{ satosa_env_dir }}/plugins/micro_services/custom_uid.yaml"
+      notify: "restart satosa"
 
     - name: Create static directory
       file: path="{{ satosa_static_dir }}" state=directory mode=0755
@@ -150,11 +163,13 @@
       template:
         src: custom_alias.yaml.j2
         dest: "{{ satosa_env_dir }}/plugins/micro_services/custom_alias.yaml"
+      notify: "restart satosa"
 
     - name: Create metainfo.yaml definition
       template:
         src: metainfo.yaml.j2
         dest: "{{ satosa_env_dir }}/plugins/micro_services/metainfo.yaml"
+      notify: "restart satosa"
 
     - name: Copy error and info pages to static alias directory
       copy:
@@ -185,6 +200,7 @@
         - { dest: "signing",  cert: "{{ satosa_metadata_cert }}" }
         - { dest: "frontend", cert: "{{ satosa_frontend_cert }}" }
         - { dest: "backend",  cert: "{{ satosa_backend_cert }}"  }
+      notify: "restart satosa"
 
     - name: Copy Satosa keys
       copy:
@@ -194,7 +210,7 @@
         - { dest: "signing",  cert: "{{ satosa_metadata_cert }}" }
         - { dest: "frontend", cert: "{{ satosa_frontend_cert }}" }
         - { dest: "backend",  cert: "{{ satosa_backend_cert }}"  }
-
+      notify: "restart satosa"
 
     - name: Create keys directory
       file: path="{{ satosa_env_dir }}/keys" state=directory mode=0755
@@ -204,18 +220,14 @@
                               -pkeyopt rsa_keygen_bits:2048"
       args:
         creates: "{{ satosa_env_dir }}/keys/satosa.pem"
+      notify: "restart satosa"
 
     - name: Extract satosa public key (for CMservice)
       shell: "openssl rsa -pubout -in '{{ satosa_env_dir }}/keys/satosa.pem' \
                           -out '{{ satosa_env_dir }}/keys/satosa.pub'"
       args:
         creates: "{{ satosa_env_dir }}/keys/satosa.pub"
-
-    - name: Create SATOSA systemd service
-      template:
-        src: satosa.service.j2
-        dest: "{{ satosa_env_dir }}/satosa.service"
-        mode: 0644
+      notify: "restart satosa"
 
     - name: Create mapper directory
       file: path="{{ satosa_env_dir }}/mapper" state=directory mode=0755
@@ -269,16 +281,12 @@
   become: "yes"
   become_user: satosa
 
-- name: Copy to satosa.service in /etc/systemd/system
-  # systemd/ctl can not enable symlinked services :(
-  # https://github.com/systemd/systemd/issues/3010
-  #- name: Create symlink to satosa.service in /etc/systemd/system
-  #  file: src="{{ satosa_env_dir }}/satosa.service"
-  #        dest=/etc/systemd/system/satosa.service state=link
-  copy:
-    src: "{{ satosa_env_dir }}/satosa.service"
-    dest: /etc/systemd/system/satosa.service
-    remote_src: yes
+- name: Create SATOSA systemd service
+  template:
+    src: satosa.service.j2
+    dest: "{etc/systemd/system/satosa.service"
+    mode: 0644
+  notify: "restart satosa"
 
 - name: Copy filebeat config
   template: >
@@ -308,7 +316,3 @@
   copy: >
     src=logrotate_satosa
     dest=/etc/logrotate.d/satosa
-
-- name: restart SATOSA
-  systemd: daemon_reload=yes name=satosa state=restarted enabled=yes
-  changed_when: false
