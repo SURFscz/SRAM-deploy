@@ -9,3 +9,4 @@ haproxy:
   dhparam_keysize: 2048
 
 haproxy_oscp_bin_dir: "/opt/scz-misc/bin/"
+haproxy_admin_secret: "gehe1m"

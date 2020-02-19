@@ -48,6 +48,15 @@ defaults
 #--------------------------------------------------------------------
 #  frontend
 # -------------------------------------------------------------------
+frontend stats
+    bind localhost:81
+    mode http
+    stats enable
+    stats uri /
+    stats refresh 10s
+    stats auth admin:{{haproxy_admin_secret}}
+    stats admin if TRUE
+
 frontend fe_https
 {% if enable_https %}
     bind    *:443 ssl crt-list /etc/haproxy/crt-list.txt transparent alpn h2,http/1.1
