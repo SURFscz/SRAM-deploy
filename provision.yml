@@ -119,14 +119,6 @@
     - { role: plsc,               tags: ['ldap', 'ldap-plsc'     ] }
     - { role: pam_websso_daemon,  tags: ['client','websso-daemon'], when: experimental_features }
 
-- name: "meta"
-  hosts: meta
-  tasks:
-    - { import_tasks: "tasks/versions.yml", tags: ['common'] }
-  roles:
-    - { role: http_dummy,  tags: ['meta','http'    ] }
-    - { role: metadata,    tags: ['meta','metadata'] }
-
 - name: "sbs"
   hosts: sbs
   tasks:
@@ -134,6 +126,14 @@
   roles:
     - { role: http_apache, tags: ['sbs']  }
     - { role: sbs,         tags: ['sbs']  }
+
+- name: "meta"
+  hosts: meta
+  tasks:
+    - { import_tasks: "tasks/versions.yml", tags: ['common'] }
+  roles:
+    - { role: http_dummy,  tags: ['meta','http'    ] }
+    - { role: metadata,    tags: ['meta','metadata'] }
 
 - name: "sandbox"
   hosts: sandbox1
