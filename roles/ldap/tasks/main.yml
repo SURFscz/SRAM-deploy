@@ -72,15 +72,15 @@
   failed_when: result.rc not in [0,20,68]
   changed_when: result.rc != 20
 
-- name: Change ownership of backend certificate
-  file:
+- name: Allow access to backend certificate key
+  acl:
     path: "{{ item }}"
-    owner: "{{ ldap_user }}"
-    group: "{{ ldap_group }}"
-    mode: 0600
+    state: "present"
+    etype: "user"
+    entity: "{{ ldap_user }}"
+    permissions: "r"
   with_items:
     - "{{ ssl_certs_dir }}/{{ internal_base_domain }}.key"
-    - "{{ ssl_certs_dir }}/{{ internal_base_domain }}.crt"
 
 # Workaround: oldTLSCertifcateFile and olcTLSCertificateKeyFile need to be added in a single
 # transaction.  Will be fixed by ldap_attrS module  https://github.com/ansible/ansible/pull/62701
@@ -118,7 +118,8 @@
 - name: Enable LDAPS
   command: ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f "{{ ldap_ldif_dir }}/enable_tls.ldif"
   register: result
-  changed_when: False
+  failed_when: result.rc not in [0,20,68]
+  changed_when: result.rc != 20
 
 # OpenLDAP does not like adding existing entries again. Only add the
 # schema if it has not been added already. This does not yet take care
