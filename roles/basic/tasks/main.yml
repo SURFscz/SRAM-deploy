@@ -97,11 +97,17 @@
     mode: '0755'
 
 - name: write backend wildcard key
-  copy: >
-    content="{{wildcard_backend_cert.priv}}"
-    dest={{ ssl_certs_dir }}/{{ internal_base_domain }}.key
+  copy:
+    content: "{{wildcard_backend_cert.priv}}"
+    dest: "{{ ssl_certs_dir }}/{{ internal_base_domain }}.key"
+    owner: "root"
+    group: "ssl-cert"
+    mode: 0640
 
 - name: write backend wildcard pub
-  copy: >
-    content="{{wildcard_backend_cert.pub}}"
-    dest={{ ssl_certs_dir }}/{{ internal_base_domain }}.crt
+  copy:
+    content: "{{wildcard_backend_cert.pub}}"
+    dest: "{{ ssl_certs_dir }}/{{ internal_base_domain }}.crt"
+    owner: "root"
+    group: "ssl-cert"
+    mode: 0644
