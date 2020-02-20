@@ -6,3 +6,5 @@ ldap_backup_dir: "{{backup_base}}/ldap"
 
 ldap_user: openldap
 ldap_group: openldap
+
+ldap_loglevel: "stats"
