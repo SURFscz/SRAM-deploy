@@ -60,7 +60,7 @@ script:
   - ./scripts/travis_tests
 
 after_failure:
-  - ansible -v -i environments/vm/inventory --become "all" -m command -a "/bin/journalctl -x -100"
+  - ansible -v -i environments/vm/inventory --become "all" -m command -a "/bin/journalctl -x -n100"
   - ansible -v -i environments/vm/inventory --become "all" -m command -a "/bin/netstat -nlptu"
 
 before_cache:
