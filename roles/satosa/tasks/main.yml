@@ -1,4 +1,16 @@
 ---
+# See https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=916107
+- name: Add stretch repository for MongoDB
+  copy:
+    src: stretch.list
+    dest: "/etc/apt/sources.list.d/stretch.list"
+
+- name: Update cache
+  command: apt-get update
+  args:
+    warn: false
+  changed_when: false
+
 - name: Ensure that packages are installed
   apt:
     name:
