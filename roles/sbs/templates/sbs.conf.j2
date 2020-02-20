@@ -1,6 +1,6 @@
 Listen {{ sbs_backend_port }}
 <VirtualHost *:{{ sbs_backend_port }}>
-        ServerName {{ hostnames.sbs }}
+        ServerName {{ inventory_hostname }}
 
         ServerAdmin webmaster@localhost
         DocumentRoot {{ sbs_git_dir }}/client/build

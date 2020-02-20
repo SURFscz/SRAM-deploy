@@ -1,7 +1,7 @@
 Listen {{ ms_test_port }}
 
 <VirtualHost *:{{ ms_test_port }}>
-        ServerName {{ hostnames.ms }}
+        ServerName {{ inventory_hostname }}
 
         ServerAdmin webmaster@localhost
         DocumentRoot /var/www/html

@@ -1,5 +1,5 @@
 <VirtualHost *:{{ tfa_test_port }}>
-        ServerName {{ hostnames.tfa }}
+        ServerName {{ inventory_hostname }}
 
         ServerAdmin webmaster@localhost
         DocumentRoot /var/www/html

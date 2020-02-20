@@ -1,7 +1,7 @@
 Listen {{ idp_test_port }}
 
 <VirtualHost *:{{ idp_test_port }}>
-        ServerName {{ hostnames.idp }}
+        ServerName {{ inventory_hostname }}
 
         ServerAdmin webmaster@localhost
         DocumentRoot /var/www/html

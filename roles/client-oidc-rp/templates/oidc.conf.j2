@@ -3,7 +3,7 @@ LoadModule auth_openidc_module /usr/lib/apache2/modules/mod_auth_openidc.so
 Listen {{ oidc_test_port }}
 
 <VirtualHost *:{{ oidc_test_port }}>
-        ServerName {{ hostnames.oidc }}
+        ServerName {{ inventory_hostname }}
 
         ServerAdmin webmaster@localhost
         DocumentRoot /var/www/html

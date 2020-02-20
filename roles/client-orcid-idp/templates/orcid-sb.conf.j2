@@ -1,7 +1,7 @@
 Listen {{ orcid_sb_test_port }}
 
 <VirtualHost *:{{ orcid_sb_test_port }}>
-        ServerName {{ hostnames.orcid_sb }}
+        ServerName {{ inventory_hostname }}
 
         ServerAdmin webmaster@localhost
         DocumentRoot /var/www/html
