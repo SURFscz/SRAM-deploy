@@ -109,5 +109,5 @@
     content: "{{wildcard_backend_cert.pub}}"
     dest: "{{ ssl_certs_dir }}/{{ internal_base_domain }}.crt"
     owner: "root"
-    group: "ssl-cert"
+    group: "root"
     mode: 0644
