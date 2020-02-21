@@ -81,7 +81,7 @@ frontend fe_https
     #http-response set-header Content-Security-Policy   "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; frame-src 'none'; frame-ancestors 'none'; form-action 'self'; block-all-mixed-content;"
 
     #http-response set-header X-Frame-Options "DENY"
-    #http-response set-header X-XSS-Protection "1; mode=block"
+    http-response set-header X-XSS-Protection "1; mode=block"
     #http-response set-header X-Content-Type-Options "nosniff"
 {% endif %}
 
