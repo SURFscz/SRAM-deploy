@@ -80,11 +80,11 @@ frontend fe_https
     http-response set-header Referrer-Policy "strict-origin-when-cross-origin"
 
     # rewrite all cookies to be secure and HttpOnly
-    rspirep ^(set-cookie:.*) \1;\ Secure;\ HttpOnly;\
+    rspirep ^(set-cookie\ .*)(\s*;\s*(secure|httponly))*$    \1;secure;httponly
 
-    # TODO: insert strict CSP if none was set
-    acl no_csp_header res.hdr(Content-Security-Policy) -m len 0
-    http-response set-header Content-Security-Policy "default-src 'self'; frame-src 'none'; form-action 'self'; frame-ancestors 'none'; block-all-mixed-content;" if no_csp_header
+    # insert strict CSP if none was set
+    #acl no_csp_header res.hdr(Content-Security-Policy) -m len 0
+    #http-response set-header Content-Security-Policy "default-src 'self'; frame-src 'none'; form-action 'self'; frame-ancestors 'none'; block-all-mixed-content;" if no_csp_header
 {% endif %}
 
     http-request set-header X-Forwarded-For "%[src]"
@@ -123,7 +123,7 @@ frontend fe_https
 {% for host in lb_http %}
 backend be_{{host.name}}
     mode    http
-    cookie  SERVERID insert indirect nocache
+    cookie  SERVERID insert indirect maxidle 60m secure httponly nocache
     {% for be_server in host.backend_hosts -%}
     {% set server_name = be_server.split('.')[0] -%}
     server {{server_name}} {{be_server}}:{{host.backend_port}} ssl check cookie {{be_server}}
