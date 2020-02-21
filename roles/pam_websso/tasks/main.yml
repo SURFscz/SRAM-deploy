@@ -45,6 +45,14 @@
   template:
     src: "nslcd.conf.j2"
     dest: "/etc/nslcd.conf"
+  register: nslcd
+
+# can't used handler as we need to restart this NOW because otherwise ssh and sudo will timeout
+- name: restart nslcd
+  systemd:
+    name: nslcd
+    state: restarted
+  when: nslcd.changed
 
 - name: Copy PAM mkhomedir conf
   copy:
