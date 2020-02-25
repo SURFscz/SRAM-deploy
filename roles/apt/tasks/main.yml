@@ -45,6 +45,7 @@
       - vim
       - locales-all
       - curl
+      - netcat
       - ca-certificates
       - gnupg2
       - net-tools
