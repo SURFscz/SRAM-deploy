@@ -83,8 +83,8 @@ frontend fe_https
     rspirep ^(set-cookie\ .*)(\s*;\s*(secure|httponly))*$   \1;secure;httponly
 
     # insert strict CSP if none was set
-    #acl no_csp_header res.hdr(Content-Security-Policy) -m len 0
-    #http-response set-header Content-Security-Policy "default-src 'self'; frame-src 'none'; form-action 'self'; frame-ancestors 'none'; block-all-mixed-content;" if no_csp_header
+    acl has_csp_header res.hdr(Content-Security-Policy) -m found
+    http-response set-header Content-Security-Policy "default-src 'self'; frame-src 'none'; form-action 'self'; frame-ancestors 'none'; block-all-mixed-content;" if !has_csp_header
 {% endif %}
 
     http-request set-header X-Forwarded-For "%[src]"
