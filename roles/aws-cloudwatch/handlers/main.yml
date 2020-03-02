@@ -1,0 +1,5 @@
+---
+
+- name: restart cwagent
+  service: name=amazon-cloudwatch-agent state=restarted
+

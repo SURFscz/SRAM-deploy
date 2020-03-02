@@ -44,15 +44,16 @@
   tasks:
     - { import_tasks: "tasks/versions.yml", tags: ['common'] }
   roles:
-    - { role: basic,         tags: ['common','basic']    }
-    - { role: apt,           tags: ['common','apt']      }
-    - { role: firewall,      tags: ['common','firewall'] }
-    - { role: ntp,           tags: ['common','ntp']      }
-    - { role: users,         tags: ['common','users']    }
-    - { role: mail,          tags: ['common','mail']     }
-    - { role: syslog-client, tags: ['common','syslog']   }
-    - { role: backups,       tags: ['common','backups']  }
-    - { role: zabbix-agent,  tags: ['common','zabbix']   }
+    - { role: basic,          tags: ['common','basic']      }
+    - { role: apt,            tags: ['common','apt']        }
+    - { role: firewall,       tags: ['common','firewall']   }
+    - { role: ntp,            tags: ['common','ntp']        }
+    - { role: users,          tags: ['common','users']      }
+    - { role: mail,           tags: ['common','mail']       }
+    - { role: syslog-client,  tags: ['common','syslog']     }
+    - { role: backups,        tags: ['common','backups']    }
+    - { role: zabbix-agent,   tags: ['common','zabbix']     }
+    - { role: aws-cloudwatch, tags: ['common','cloudwatch'] }
 
 #- name: "dns"
 #  hosts: mgnt1
