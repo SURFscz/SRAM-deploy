@@ -8,6 +8,7 @@
       - ldap-utils
       - python-ldap  # for ansible ldap modules
     install_recommends: no
+  notify: restart LDAP
 
 - name: Ensure that a number of directories exist
   file:
