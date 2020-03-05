@@ -18,3 +18,9 @@
     name: haproxy
     state: restarted
 
+- name: restart fence
+  systemd:
+    daemon_reload: yes
+    name: fence
+    state: restarted
+    enabled: true
