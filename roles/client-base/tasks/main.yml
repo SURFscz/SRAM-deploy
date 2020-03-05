@@ -2,6 +2,7 @@
 - name: Ensure that packages are installed
   apt:
     name:
+      - composer
       - apache2
       - libapache2-mod-php
       - php-date
@@ -21,15 +22,6 @@
   notify: restart Apache
   with_items:
     - ssl
-
-- name: get composer installer
-  get_url:
-    url: "{{ composer_installer }}"
-    dest: /tmp/composer-installer
-    checksum: "{{ composer_installer_checksum }}"
-
-- name: install composer
-  command: "php -f /tmp/composer-installer -- --install-dir=/usr/local/bin --filename=composer"
 
 - name: Remove default index files
   file: dest=/var/www/html/{{ item }} state=absent
