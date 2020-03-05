@@ -61,7 +61,6 @@
     repo: "{{ sbs_repository }}"
     dest: "{{ sbs_git_dir }}"
     version: "{{ sbs_version }}"
-    force: yes
   notify: reload Apache
   register: git_apps
 
@@ -90,9 +89,18 @@
 
 - name: Build client yarn
   command:
-    cmd: "yarnpkg build"
+    cmd: "yarnpkg --pure-lockfile build"
     chdir: "{{ sbs_git_dir }}/client"
   when: git_apps.changed or yarn_install.changed
+
+# yarn install modifies yarn.lock (ARGRGRGR), which dirties the repository and
+# causes git pulls to fail, so clean up yarn's mess manually
+- name: Clear up yarn crap
+  command:
+    cmd: "git checkout client/yarn.lock"
+    chdir: "{{ sbs_git_dir }}"
+  when: yarn_install.changed
+  changed_when: true
 
 - name: Create SBS config file
   template:
