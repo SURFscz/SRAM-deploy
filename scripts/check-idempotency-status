@@ -8,14 +8,11 @@ import json
 WHITELIST = {
     'ldap':                 2,
     'client-microsoft-idp': 3,
-    'pam_websso_daemon':    2,
-    'http_apache':          1,
     'cmservice':            2,
     'auth_mellon':          1,
-    'client-base':          4,
+    'client-base':          2,
     'client-orcid-idp':     4,
     'client-google-idp':    2,
-    'client-2fa':           1,
 }
 
 

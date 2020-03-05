@@ -87,6 +87,8 @@
 - name: SimpleSaml enable authcrypt
   file:
     dest: "{{ simplesaml_project_dir }}/simplesaml/modules/authcrypt/enable"
+    access_time: preserve
+    modification_time: preserve
     state: touch
 
 - name: SimpleSaml {{ environment_string }} metadata
