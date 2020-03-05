@@ -34,6 +34,16 @@
     state: "{{ item.value }}"
     name: "{{ item.key }}"
     ignore_configcheck: True
-  with_dict: "{{ modules }}"
+  with_dict:
+    status: present
+    cgid: present
+    cgi: present
+    actions: present
+    alias: present
+    rewrite: present
+    authn_core: present
+    authz_user: present
+    ssl: present
+
   notify: Restart Apache
 

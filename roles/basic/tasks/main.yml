@@ -14,7 +14,9 @@
   register: dhclient
 
 - name: Restart networking
-  service: name=networking state=restarted
+  systemd:
+    name: networking
+    state: restarted
   when: dhclient.changed
 
 - name: set localtime
@@ -34,7 +36,7 @@
     - ansible_virtualization_type != "docker"
 
 - name: check that hostname and fqdn are set up correctly
-  command: "hostname --fqdn"
+  command: "/usr/bin/hostname --fqdn"
   any_errors_fatal: true
   changed_when: false
   when: ansible_virtualization_type != "docker"
