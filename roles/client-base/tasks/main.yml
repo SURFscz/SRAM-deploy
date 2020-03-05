@@ -15,28 +15,6 @@
       - php-zip
     state: present
 
-- name: Enable apache2 SSL module
-  apache2_module:
-    state: present
-    name: "{{item}}"
-  notify: restart Apache
-  with_items:
-    - ssl
-
-- name: Remove default index files
-  file: dest=/var/www/html/{{ item }} state=absent
-  with_items:
-    - index.html
-    - index.nginx-debian.html
-
-- name: Remove default website
-  file: dest=/etc/apache2/sites-enabled/{{item}} state=absent
-  with_items:
-    - "default.conf"
-    - "00-default.conf"
-    - "000-default.conf"
-  notify: restart Apache
-
 - name: Add websites
   template:
     src: "{{ item }}.conf.j2"
