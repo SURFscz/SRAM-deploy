@@ -53,6 +53,7 @@
       - git
       - acl
       - bzip2
+      - xz-utils
       - unzip
       - apt-transport-https
       - python-apt
