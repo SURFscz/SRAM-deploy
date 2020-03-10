@@ -11,6 +11,6 @@ __pycache__/
 core
 .venv/
 .idea/
-secret
+secret*
 ansible_key*
 docker/docker-compose.yml

@@ -7,12 +7,12 @@
 - name: Copy config file in place
   copy:
     src: "config.json"
-    dest: "/opt/aws/amazon-cloudwatch-agent"
+    dest: "/tmp"
 
 - name: Create CloudWatch toml configuration
   command: >
     /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl \
-    -a fetch-config -m ec2 -c file:config.json
+    -a fetch-config -m ec2 -c file:/tmp/config.json
   args:
     creates: "/opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.toml"
   notify: restart cwagent
