@@ -11,12 +11,12 @@ api_users:
       scopes: [ {{ user.scopes|join(', ') }} ]
   {% endfor %}
 
-oidc_id: "cmuid"
+oidc_id: "{{ sbs_uid_attribute }}"
 oidc_prefix: "OIDC_CLAIM_"
 oidc_uppercase: False
 
 base_scope: "{{ base_domain }}"
-generate_multiple_eppn: True
+generate_multiple_eppn: False
 collaboration_creation_allowed_entitlement: "urn:mace:surf.nl:sram:allow-create-co"
 
 # All services in the white list can be requested in the create-restricted-co API
