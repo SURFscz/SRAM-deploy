@@ -69,4 +69,8 @@ done
 
 # remove temporary files if everything went ok
 rm -rf "$dir"
+
+# remove Directories older than 7 days
+find . -type d -mtime +7 -exec rm -rf {} \;
+
 exit 0
