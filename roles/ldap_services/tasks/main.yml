@@ -10,6 +10,11 @@
     install_recommends: no
   notify: restart LDAP
 
+- name: make sure slapd can read ssl keys
+  user:
+    name: openldap
+    groups: ssl-cert
+
 - name: Ensure that a number of directories exist
   file:
     path: "{{ item }}"
