@@ -54,6 +54,7 @@
     - { role: backups,        tags: ['common','backups']    }
     - { role: zabbix-agent,   tags: ['common','zabbix']     }
     - { role: aws-cloudwatch, tags: ['common','cloudwatch'] }
+    - { role: aws-cloudlogs,  tags: ['common','cloudlogs']  }
 
 #- name: "dns"
 #  hosts: mgnt1

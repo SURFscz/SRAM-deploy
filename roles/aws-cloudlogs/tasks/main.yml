@@ -1,0 +1,36 @@
+---
+
+- name: Download CloudLogs agent
+  get_url:
+    url: "{{ cl_agent_url }}"
+    dest: "/tmp/{{ cl_agent_command }}"
+
+- name: Copy CloudLogs config
+  copy:
+    src: "syslog.conf"
+    dest: "/tmp/syslog.conf"
+
+- name: Create aws config dir
+  file: path=/root/.aws state=directory
+
+- name: Install CloudLogs
+  block:
+  - name: Copy aws credentials
+    template:
+      src: "credentials.j2"
+      dest: "/root/.aws/credentials"
+  - name: Discover region
+    shell: >
+      curl -s {{ aws_zone_url }} \
+      | sed 's/[a-z]$//'
+    args:
+      warn: false
+    register: region
+  - name: Install CloudLogs
+    command: >
+      /usr/bin/python /tmp/{{ cl_agent_command }} -r {{ region.stdout }} \
+      -c /tmp/syslog.conf -n
+    args:
+      creates: "/var/awslogs/etc/awslogs.conf"
+    notify: restart awslogs
+  when: is_aws
