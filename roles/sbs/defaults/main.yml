@@ -15,6 +15,9 @@ sbs_db_host: "localhost"
 sbs_mail_host: "{{ mail.relay_to }}"
 sbs_mail_port: "25"
 
+sbs_oidc_crypto_password: "CHANGEME"
+sbs_uid_attribute: "sub"
+
 sbs_disclaimer_color: "#a29c13"
 sbs_disclaimer_label: wsgi
 
