@@ -23,7 +23,7 @@ collaboration_creation_allowed_entitlement: "urn:mace:surf.nl:sram:allow-create-
 # The default organisation is a fallback for when the administrator has no schac_home_org
 restricted_co:
   services_white_list: ["https://cloud"]
-  default_organisation: "example.com"
+  default_organisation: "{{ sbs_restricted_co_default_org }}"
 
 mail:
   host: {{ sbs_mail_host }}
