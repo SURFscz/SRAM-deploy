@@ -11,6 +11,7 @@ WHITELIST = {
     'client-orcid-idp':     4,
     'client-google-idp':    2,
     'client-microsoft-idp': 2,
+    'client-2fa':           2,
 }
 
 
