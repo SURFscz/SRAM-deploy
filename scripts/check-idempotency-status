@@ -9,9 +9,9 @@ WHITELIST = {
     'ldap':                 2,
     'client-base':          2,
     'client-orcid-idp':     4,
-    'client-google-idp':    2,
+    'client-google-idp':    3,
     'client-microsoft-idp': 2,
-    'client-2fa':           3,
+    'client-2fa':           2,
 }
 
 
