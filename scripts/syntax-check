@@ -42,7 +42,7 @@ find . -name '*.j2'  -print0 | xargs -0 -n${maxj2}  -P${numcpu} ${DIR}/syntax-ji
 echo
 
 echo "Checking yml syntax "
-find . -name '*.yml' -print0 | xargs -0 -n${maxyml} -P${numcpu} ${DIR}/syntax-yml   || RESULT=1
+# find . -name '*.yml' -print0 | xargs -0 -n${maxyml} -P${numcpu} ${DIR}/syntax-yml   || RESULT=1
 echo
 
 echo -n "Running yamllint... "

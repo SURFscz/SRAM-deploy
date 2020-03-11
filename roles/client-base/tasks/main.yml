@@ -74,6 +74,17 @@
   with_items:
     - "{{simplesaml_project_dir}}/simplesaml/log"
 
+- name: Install composer lock file
+  copy:
+    src: "composer.lock"
+    dest: "{{ simplesaml_project_dir }}/simplesaml"
+
+- name: Install OIDC module
+  composer:
+    working_dir: "{{ simplesaml_project_dir }}/simplesaml"
+    command: install
+    optimize_autoloader: False
+
 - name: SimpleSaml configuration
   template:
     src: config.php.j2

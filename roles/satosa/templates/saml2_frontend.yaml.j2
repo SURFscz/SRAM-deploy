@@ -17,7 +17,7 @@ config:
 {% endfor %}
 {% endfor %}
     metadata:
-      mdq: ['http://localhost:{{ pyff_port }}']
+      mdq: ['https://{{ hostnames.mdq }}/']
     entityid: <base_url>/md/<name>.xml
     ignore_requested_attributes: true
     service:
