@@ -7,12 +7,11 @@ import json
 # amount of non-idempotent tests doen't increase
 WHITELIST = {
     'ldap':                 2,
-    'client-microsoft-idp': 3,
-    'cmservice':            2,
-    'auth_mellon':          1,
     'client-base':          2,
     'client-orcid-idp':     4,
-    'client-google-idp':    2,
+    'client-google-idp':    3,
+    'client-microsoft-idp': 2,
+    'client-2fa':           2,
 }
 
 

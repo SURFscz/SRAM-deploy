@@ -37,6 +37,9 @@
   file:
     path: "{{ simplesaml_project_dir }}/simplesaml/modules/authwindowslive/enable"
     state: touch
+    access_time: preserve
+    modification_time: preserve
+
 
 - name: Insert Microsoft IdP hosted
   when: ms_client_id is defined
