@@ -52,6 +52,15 @@ To get started, do the following:
     - MacOS: see
       <http://docs.ansible.com/ansible/latest/intro_installation.html#latest-releases-on-mac-osx>
       and <https://docs.docker.com/docker-for-mac/>
+
+- Supply the vm secret to decrypt the vault
+    - `echo [vault-secret] > secret_vm`
+    - OR replace the encrypted vault secrets `google_client_id` and `google_client_secret`  
+    in environment/vm/secrets/all.yml.  
+    But you still need to insert a dummy secret in secret_vm.
+
+    The `[vault-secret]` can be found on the SURFnet SRAM wiki.
+
 - set up the containers and start the deploy:
     - `./start-vm`
 
