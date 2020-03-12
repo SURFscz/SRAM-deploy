@@ -2,7 +2,7 @@
 # vim:ft=sh
 set -e
 
-WFLAGS="--verbose --server-response"
+WFLAGS="--server-response --timeout=2 --tries=1 --no-verbose"
 
 basedir={{ metadata_project_dir }}
 ds=`date '+%Y%m%d-%H%M'`
@@ -12,10 +12,23 @@ dir=$(mktemp -d -p $basedir run-${ds}.XXX)
 
 cd $dir
 
-# Redirect stdout and stderr to a logfile and only output the log when an error occurs
+# Redirect stdout and stderr to a logfile and Cproperly handle errors only output the log if an error occurs
 exec 6>&1
-exec > log.txt 2>&1
-trap "cat log.txt >&6" ERR
+#exec > log.txt 2>&1
+function on_error() {
+    LASTLINE="$1"         # line of error occurrence
+    LASTERR="$2"          # error code
+
+    # show a message in the logs
+    msg="Metadata processing failed at line ${LASTLINE} (error: ${LASTERR}).  Directory was '${dir}'"
+    echo "$msg"
+    echo "$msg" >&6
+
+    # compress debug logs to not fill disk too quickly
+    touch dummy.xml
+    xz -9 *.xml
+}
+trap 'on_error ${LINENO} ${?}' ERR
 
 # be verbose
 set -x

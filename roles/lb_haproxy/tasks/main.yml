@@ -97,16 +97,12 @@
   with_items:
     - fence.sh
     - unfence.sh
+  notify: restart fence
 
 - name: Copying fence service script
   become: true
   copy:
     src: "fence.service"
     dest: "/etc/systemd/system/fence.service"
+  notify: restart fence
 
-- name: enable fence
-  systemd:
-    daemon_reload: yes
-    name: fence
-    state: started
-    enabled: true

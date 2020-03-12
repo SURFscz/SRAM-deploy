@@ -12,7 +12,7 @@ Listen {{ sbs_backend_port }}
         SSLCertificateFile {{ ssl_certs_dir }}/{{ internal_base_domain }}.crt
         SSLCertificateKeyFile {{ ssl_certs_dir }}/{{ internal_base_domain }}.key
 
-        OIDCProviderMetadataURL https://{{ hostnames.proxy }}/.well-known/openid-configuration
+        OIDCProviderMetadataURL {{ sbs_oidc_config_url }}
         OIDCSSLValidateServer Off
         OIDCClientID {{ sbs_client_id }}
         OIDCClientSecret {{ sbs_client_secret }}

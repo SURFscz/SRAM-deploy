@@ -1,11 +1,5 @@
 ---
 # playbook to install and configure general components of Apache
-- name: purge nginx
-  apt:
-    state: absent
-    purge: true
-    name: nginx
-
 - name: Install apache
   apt:
     state: present
@@ -34,6 +28,16 @@
     state: "{{ item.value }}"
     name: "{{ item.key }}"
     ignore_configcheck: True
-  with_dict: "{{ modules }}"
+  with_dict:
+    status: present
+    cgid: present
+    cgi: present
+    actions: present
+    alias: present
+    rewrite: present
+    authn_core: present
+    authz_user: present
+    ssl: present
+
   notify: Restart Apache
 

@@ -2,6 +2,7 @@
 - name: Ensure that packages are installed
   apt:
     name:
+      - composer
       - apache2
       - libapache2-mod-php
       - php-date
@@ -13,37 +14,6 @@
       - php-sqlite3
       - php-zip
     state: present
-
-- name: Enable apache2 SSL module
-  apache2_module:
-    state: present
-    name: "{{item}}"
-  notify: restart Apache
-  with_items:
-    - ssl
-
-- name: get composer installer
-  get_url:
-    url: "{{ composer_installer }}"
-    dest: /tmp/composer-installer
-    checksum: "{{ composer_installer_checksum }}"
-
-- name: install composer
-  command: "php -f /tmp/composer-installer -- --install-dir=/usr/local/bin --filename=composer"
-
-- name: Remove default index files
-  file: dest=/var/www/html/{{ item }} state=absent
-  with_items:
-    - index.html
-    - index.nginx-debian.html
-
-- name: Remove default website
-  file: dest=/etc/apache2/sites-enabled/{{item}} state=absent
-  with_items:
-    - "default.conf"
-    - "00-default.conf"
-    - "000-default.conf"
-  notify: restart Apache
 
 - name: Add websites
   template:
@@ -117,6 +87,8 @@
 - name: SimpleSaml enable authcrypt
   file:
     dest: "{{ simplesaml_project_dir }}/simplesaml/modules/authcrypt/enable"
+    access_time: preserve
+    modification_time: preserve
     state: touch
 
 - name: SimpleSaml {{ environment_string }} metadata

@@ -35,31 +35,32 @@
     dest: /etc/apache2/sites-enabled/sbs.conf
   notify: restart Apache
 
-# TODO: make sure this only happens once
-- name: Add SBS database
-  mysql_db:
-    login_host: '{{ db_host }}'
-    login_user: '{{ db_admin_user }}'
-    login_password: '{{ db_admin_password }}'
-    name: '{{ sbs_db_name }}'
-    encoding: utf8
+- name: Initialialize database
+  throttle: 1
+  block:
+    - name: Add SBS database
+      mysql_db:
+        login_host: '{{ db_host }}'
+        login_user: '{{ db_admin_user }}'
+        login_password: '{{ db_admin_password }}'
+        name: '{{ sbs_db_name }}'
+        encoding: utf8
 
-- name: Add SBS user
-  mysql_user:
-    login_host: '{{ db_host }}'
-    login_user: '{{ db_admin_user }}'
-    login_password: '{{ db_admin_password }}'
-    name: '{{ sbs_db_user }}'
-    host: '{{ ansible_default_ipv4.address }}'
-    password: '{{ sbs_db_password }}'
-    priv: '{{ sbs_db_name }}.*:ALL'
+    - name: Add SBS user
+      mysql_user:
+        login_host: '{{ db_host }}'
+        login_user: '{{ db_admin_user }}'
+        login_password: '{{ db_admin_password }}'
+        name: '{{ sbs_db_user }}'
+        host: '{{ ansible_default_ipv4.address }}'
+        password: '{{ sbs_db_password }}'
+        priv: '{{ sbs_db_name }}.*:ALL'
 
 - name: Clone SBS repository
   git:
     repo: "{{ sbs_repository }}"
     dest: "{{ sbs_git_dir }}"
     version: "{{ sbs_version }}"
-    force: yes
   notify: reload Apache
   register: git_apps
 
@@ -88,9 +89,18 @@
 
 - name: Build client yarn
   command:
-    cmd: "yarnpkg build"
+    cmd: "yarnpkg --pure-lockfile build"
     chdir: "{{ sbs_git_dir }}/client"
   when: git_apps.changed or yarn_install.changed
+
+# yarn install modifies yarn.lock (ARGRGRGR), which dirties the repository and
+# causes git pulls to fail, so clean up yarn's mess manually
+- name: Clear up yarn crap
+  command:
+    cmd: "git checkout client/yarn.lock"
+    chdir: "{{ sbs_git_dir }}"
+  when: yarn_install.changed
+  changed_when: true
 
 - name: Create SBS config file
   template:

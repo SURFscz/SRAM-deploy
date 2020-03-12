@@ -14,3 +14,5 @@ core
 secret*
 ansible_key*
 docker/docker-compose.yml
+.DS_STORE
+.DS_Store

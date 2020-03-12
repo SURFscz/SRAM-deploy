@@ -3,6 +3,8 @@ Description = LDAP server
 
 [Service]
 Type = forking
+User = root
+SupplementaryGroups = ssl-cert
 ExecStartPre=-/bin/mkdir -p /var/run/slapd
 ExecStartPre=-/bin/chown openldap. /var/run/slapd
 ExecStart = /usr/sbin/slapd -F /etc/ldap/slapd.d -u openldap -g openldap -h 'ldapi:/// ldaps://localhost/ ldaps://{{inventory_hostname}}/'

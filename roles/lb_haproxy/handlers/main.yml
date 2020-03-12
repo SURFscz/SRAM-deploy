@@ -13,5 +13,14 @@
     daemon_reload: true
 
 - name: restart haproxy
-  systemd: daemon_reload=yes name=haproxy state=restarted
+  systemd:
+    daemon_reload: yes
+    name: haproxy
+    state: restarted
 
+- name: restart fence
+  systemd:
+    daemon_reload: yes
+    name: fence
+    state: restarted
+    enabled: true
