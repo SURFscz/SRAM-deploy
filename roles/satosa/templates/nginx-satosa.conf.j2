@@ -8,6 +8,8 @@ server {
 
 	server_name _;
 
+	access_log /var/log/nginx/access.log proxy;
+
 	location / {
 		proxy_pass         http://127.0.0.1:{{satosa_internal_port}};
 		proxy_redirect     off;
