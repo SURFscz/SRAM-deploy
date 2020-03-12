@@ -37,6 +37,7 @@ git:
   submodules: false
 
 before_install:
+  - openssl enc -aes-256-cbc -md sha256 -k ${secret_pwd} -in secret_vm.enc -out secret_vm -d
   - 'echo "options timeout:5"  | sudo tee -a /etc/resolvconf/resolv.conf.d/tail'
   - 'echo "options attempts:5" | sudo tee -a /etc/resolvconf/resolv.conf.d/tail'
   - sudo service resolvconf restart
@@ -58,6 +59,9 @@ before_install:
 
 script:
   - ./scripts/travis_tests
+
+after_script:
+  - shred secret_vm
 
 after_failure:
   - "ansible -v -i environments/vm/inventory --become 'all' \
@@ -82,3 +86,19 @@ before_cache:
       echo "scz-base image exists; nothing to do"
     fi
   - "ls -la $HOME/docker"
+
+env:
+  global:
+    - secret_pwd:
+        secure: "VZrNd6U95m5FyPZcj4TuVZhypyX4LJYeFAeIocP/j8V90Q8XYKRRtcmslum4H\
+                 YbUezcF8j2QBptoLU7+DFDX4EzsR5KqSPzz45FZRinNNfvCmS74DSBf3URn0v\
+                 etEW96+J6O7e68hJMUF4CEy2aGRBTiV2xTj3B3kB0P42ybOusQ+EkdrjJP5T2\
+                 FEbDpQsfuupLq4byra3BSEXPTR/IWjrFOCgsJrB3/BIbhlvWtsNSczVX5Hld9\
+                 u+RPcO6de8e7ky2/YabDx9Jf1R0QUHJ/LSDAYpiyqzOfEkhUczfShNz8hdHra\
+                 PrYMUKy8ppX55jrrfMrOF4jImH8gqyie8+8a6dxpXfiqQqWloWdYBvfe/eWAj\
+                 coDq8nqmEx6iWOXpjS0TXV+8NsakASBiGRWn+NHWFsm775yztKNVJS8Ks2Tfo\
+                 Myt1qKFCjxg+GHz+nkCG/GkkSXpr36Kxm9Rq0BROkhIvbMHkRgrVtyy6IsZed\
+                 6RORAp9e+VSvc8MIQLa1X0Pdckrvsp1bRoGpoPKAHUf4DvXuri/SfLjm1cCM+\
+                 kQ7l/FW+Mhjtb8/sEiLLNva/SeCP4NMZkv7Zz5Rhi9R0inwdDeq/ATErewrCR\
+                 g2KF7TlPki9gFtv77dNpKDIlQqBHQgkoSGSVXHCbciO1FhsOsOfPXoGX6/Y5H\
+                 bQ/LAwG76DBQ="
