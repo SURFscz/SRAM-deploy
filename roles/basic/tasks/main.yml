@@ -98,12 +98,18 @@
     state: directory
     mode: '0755'
 
+- name: Ensure group "ssl-cert" exists
+  group:
+    name: ssl-cert
+    state: present
+    system: true
+
 - name: write backend wildcard key
   copy:
     content: "{{wildcard_backend_cert.priv}}"
     dest: "{{ ssl_certs_dir }}/{{ internal_base_domain }}.key"
     owner: "root"
-    group: "root"
+    group: "ssl-cert"
     mode: 0640
 
 - name: write backend wildcard pub

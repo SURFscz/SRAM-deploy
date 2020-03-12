@@ -9,6 +9,9 @@
     - systemd daemon-reload
     - restart LDAP
 
+- name: force restart
+  meta: flush_handlers
+
 - name: Ensure that a number of directories exist
   file:
     path: "{{ item }}"
@@ -71,16 +74,6 @@
   register: result
   failed_when: result.rc not in [0,20,68]
   changed_when: result.rc != 20
-
-- name: Allow access to backend certificate key
-  acl:
-    path: "{{ item }}"
-    state: "present"
-    etype: "user"
-    entity: "{{ ldap_user }}"
-    permissions: "r"
-  with_items:
-    - "{{ ssl_certs_dir }}/{{ internal_base_domain }}.key"
 
 # TODO: Workaround: oldTLSCertifcateFile and olcTLSCertificateKeyFile need to be added in a single
 # transaction.

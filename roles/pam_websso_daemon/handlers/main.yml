@@ -1,0 +1,7 @@
+---
+- name: restart WebSSO daemon
+  systemd:
+    name: "websso-daemon"
+    state: "restarted"
+    enabled: true
+    daemon_reload: true

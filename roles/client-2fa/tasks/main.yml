@@ -23,16 +23,6 @@
     - 2fa
   notify: restart Apache
 
-- name: Listen to 2FA IdP port
-  when: google_client_id is defined
-  blockinfile:
-    path: "/etc/apache2/ports.conf"
-    insertafter: EOF
-    marker: "# {mark} ANSIBLE MANAGED BLOCK {{ hostnames.tfa }}"
-    block: |
-      Listen {{ tfa_test_port }}
-  notify: restart Apache
-
 - name: Install OIDC module
   composer:
     working_dir: "{{ simplesaml_project_dir }}/simplesaml"
