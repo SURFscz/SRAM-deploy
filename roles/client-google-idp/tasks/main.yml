@@ -23,17 +23,6 @@
     - google
   notify: restart Apache
 
-- name: Install composer lock file
-  copy:
-    src: "composer.lock"
-    dest: "{{ simplesaml_project_dir }}"
-
-- name: Install OIDC module
-  composer:
-    working_dir: "{{ simplesaml_project_dir }}/simplesaml"
-    command: install
-    optimize_autoloader: False
-
 - name: Insert Google authsource
   when: google_client_id is defined
   blockinfile:

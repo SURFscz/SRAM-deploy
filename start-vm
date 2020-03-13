@@ -28,6 +28,7 @@ time \
 ansible-playbook provision.yml \
     -i ./environments/vm/inventory \
     --extra-vars="secrets_file=environments/vm/secrets/all.yml" \
+    --vault-password-file=secret_vm \
     $@
 
 # restart proxy to reload all metadata (chicken finds eggs)
