@@ -35,3 +35,6 @@
     src: websso-daemon.service.j2
     dest: "/etc/systemd/system/websso-daemon.service"
     mode: 0644
+
+- name: set up nxginx proxy
+  include: nginx.yml
