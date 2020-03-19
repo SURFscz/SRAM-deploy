@@ -53,8 +53,8 @@
     - { role: syslog-client,  tags: ['common','syslog']     }
     - { role: backups,        tags: ['common','backups']    }
     - { role: zabbix-agent,   tags: ['common','zabbix']     }
-    - { role: aws-cloudwatch, tags: ['common','cloudwatch'] }
-    - { role: aws-cloudlogs,  tags: ['common','cloudlogs']  }
+    - { role: aws-cloudwatch, tags: ['common','cloudwatch'], when: is_aws }
+    - { role: aws-cloudlogs,  tags: ['common','cloudlogs'], when: is_aws  }
 
 #- name: "dns"
 #  hosts: mgnt1
@@ -119,8 +119,12 @@
   roles:
     - { role: ldap_services,      tags: ['ldap', 'ldap-services' ] }
     - { role: ldap,               tags: ['ldap'                  ] }
-    - { role: plsc,               tags: ['ldap', 'ldap-plsc'     ] }
     - { role: pam_websso_daemon,  tags: ['client','websso-daemon'], when: experimental_features }
+
+- name: "first ldap"
+  hosts: ldap[0]
+  roles:
+    - { role: plsc,               tags: ['ldap', 'ldap-plsc'     ] }
 
 - name: "sbs"
   hosts: sbs
