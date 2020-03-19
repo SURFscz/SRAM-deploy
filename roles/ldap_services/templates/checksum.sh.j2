@@ -1,0 +1,2 @@
+#!/bin/sh
+slapcat -H ldaps:///{{ services_ldap.basedn }} -a '(!(entryDN:={{ services_ldap.basedn }}))' 2>/dev/null | sort | sha1sum | awk '{ print $1 }'
