@@ -20,6 +20,7 @@
 - name: install NGINX config file
   template: src=http-redirect.conf.j2 dest=/etc/nginx/sites-enabled/00-http-redirect.conf
   notify: restart nginx
+  when: letsencrypt is defined
 
 - name: install proxy_log config file
   copy:

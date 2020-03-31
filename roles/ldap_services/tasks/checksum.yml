@@ -1,26 +1,10 @@
 ---
-- name: install NGINX
-  apt:
-    name: nginx
-    state: present
-
-- name: remove default NGINX sites
-  file:
-    dest: /etc/nginx/sites-enabled/default
-    state: absent
-  notify: restart nginx
 
 - name: install NGINX config file
   template:
     src: nginx-checksum.conf.j2
     dest: /etc/nginx/sites-enabled/00-checksum.conf
   notify: restart nginx
-
-- name: enable NGINX
-  service:
-    name: nginx
-    state: started
-    enabled: true
 
 - name: Ensure that ldap_checksum_dir exist
   file:
