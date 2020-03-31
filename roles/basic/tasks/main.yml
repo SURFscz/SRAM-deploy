@@ -126,4 +126,5 @@
 
     - name: update certificates
       command: update-ca-certificates
+      changed_when: false
   when: enable_https and use_fixed_cert
