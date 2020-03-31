@@ -37,7 +37,7 @@ metadata_backend_port: 88
 comanage_backend_port: 89
 sbs_backend_port: 90
 tfa_test_port: 91
-pam_clients_port: 8087
+pam_backend_port: 92
 meta_port: 88
 
 # COmanage-ldap configuration
@@ -109,7 +109,7 @@ loadbalancer:
   - hostname: "{{hostnames.pam}}"
     protocol: http
     backend_hosts: "{{groups['vm_ldap']}}"
-    backend_port: "{{pam_clients_port}}"
+    backend_port: "{{pam_backend_port}}"
   - hostname: "{{hostnames.ldap}}"
     protocol: ldap
     frontend_port: 636

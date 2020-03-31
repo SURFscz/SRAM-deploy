@@ -5,3 +5,8 @@
     state: "restarted"
     enabled: true
     daemon_reload: true
+
+- name: restart nginx
+  service:
+    name: nginx
+    state: restarted
