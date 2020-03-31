@@ -10,7 +10,7 @@
     state: absent
   with_items:
     - "default"
-    - "00-http-redirect.j2"
+    - "00-http-redirect.conf"
   notify: restart nginx
 
 - name: remove old nginx config file
