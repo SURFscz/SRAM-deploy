@@ -119,3 +119,11 @@
     owner: "root"
     group: "root"
     mode: 0644
+
+- block:
+    - name: write certificate
+      copy: content={{https_cert.cert}} dest={{ca_cert_dir}}/scz-vm.crt mode=0600 owner=root
+
+    - name: update certificates
+      command: update-ca-certificates
+  when: enable_https and use_fixed_cert
