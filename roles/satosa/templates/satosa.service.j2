@@ -5,6 +5,7 @@ After=syslog.target network.target
 [Service]
 Type=simple
 User=satosa
+Environment="REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt"
 WorkingDirectory={{ satosa_env_dir }}
 ExecStart={{ satosa_env_dir }}/bin/python \
     -O {{ satosa_env_dir }}/bin/gunicorn \
