@@ -32,8 +32,8 @@ satosa_backup_dir: "{{backup_base}}/satosa"
 satosa_idp_country_attribute: "idpcountry"
 satosa_idp_name_attribute: "idpname"
 
-satosa_sbs_api_user: "user"
-satosa_sbs_api_password: "geheim"
+satosa_sbs_api_user: "sysread"
+satosa_sbs_api_password: "{{ sbs_api_users.sysread.password }}"
 
 satosa_md:
   organisation:
