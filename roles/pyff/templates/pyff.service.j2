@@ -6,6 +6,7 @@ After=syslog.target network.target
 Type=simple
 User=pyff
 LimitNOFILE=10240
+Environment="REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt"
 WorkingDirectory={{ pyff_env_dir }}
 ExecStartPre=-+/usr/bin/touch /var/run/pyff.pid
 ExecStartPre=-+/bin/chown pyff. /var/run/pyff.pid
