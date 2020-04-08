@@ -32,6 +32,9 @@ use_logserver: false
 enable_https: true
 http_proto: "http{% if enable_https %}s{% endif %}"
 
+use_fixed_cert: true
+cert_dir: "/etc/ssl/scz"
+
 # onderstaande is breekbaar; ansible_default_ipv4 kan best een dhcp-ip zijn
 # dat niet in de inventory is gedefinieerd. (afhankelijk van je configuratie
 # van libvirt etc)
@@ -75,7 +78,7 @@ scz_repo:
   satosa_ms: { name: "SATOSA microservices",   version: "scz-0.11",   src: "https://github.com/SURFscz/SATOSA-micro_services.git"          }
   pyff:      { name: "pyFF",                   version: "scz-0.8.1",  src: "https://github.com/SURFscz/pyFF.git"                           }
   cmservice: { name: "CMservice",              version: "scz-0.4",    src: "https://github.com/SURFscz/CMservice.git"                      }
-  sbs:       { name: "SBS",                    version: "v16",        src: "https://github.com/SURFscz/SBS.git"                            }
+  sbs:       { name: "SBS",                    version: "master",     src: "https://github.com/SURFscz/SBS.git"                            }
   plsc:      { name: "pLSC",                   version: "sbs-ordered-flat", src: "https://github.com/SURFscz/plsc.git"                     }
 # yamllint enable rule:line-length
 

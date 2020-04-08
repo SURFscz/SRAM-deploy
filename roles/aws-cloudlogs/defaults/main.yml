@@ -1,0 +1,6 @@
+---
+
+aws_zone_url: 'http://169.254.169.254/latest/meta-data/placement/availability-zone'
+cl_agent_command: 'awslogs-agent-setup.py'
+cl_agent_url: "https://s3.amazonaws.com/aws-cloudwatch/\
+  downloads/latest/{{ cl_agent_command }}"

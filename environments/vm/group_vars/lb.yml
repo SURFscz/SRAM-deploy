@@ -1,9 +1,6 @@
 ---
 enable_ipv6: true
 
-use_fixed_cert: true
-cert_dir: "/etc/ssl/scz"
-
 haproxy:
   custom_dhparam: false
   dhparam_keysize: 2048
