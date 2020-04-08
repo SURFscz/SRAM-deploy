@@ -8,6 +8,8 @@ server {
 
 	server_name _;
 
+	access_log /var/log/nginx/access.log proxy;
+
 	location /static {
 		root {{pyff_static_dir}};
 		gzip on;

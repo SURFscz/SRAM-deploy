@@ -21,6 +21,11 @@
   template: src=http-redirect.conf.j2 dest=/etc/nginx/sites-enabled/00-http-redirect.conf
   notify: restart nginx
 
+- name: install proxy_log config file
+  copy:
+    src: "proxy_log.conf"
+    dest: "/etc/nginx/conf.d"
+
 - name: enable NGINX
   service: name=nginx state=started enabled=true
 

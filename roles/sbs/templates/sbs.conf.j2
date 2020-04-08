@@ -5,8 +5,10 @@ Listen {{ sbs_backend_port }}
         ServerAdmin webmaster@localhost
         DocumentRoot {{ sbs_git_dir }}/client/build
 
+        LogFormat "%{X-Forwarded-For}i %l %u %t \"%r\" %>s %O \"%{Referer}i\" \"%{User-Agent}i\"" proxy
+
         ErrorLog ${APACHE_LOG_DIR}/error.log
-        CustomLog ${APACHE_LOG_DIR}/access.log combined
+        CustomLog ${APACHE_LOG_DIR}/access.log proxy
 
         SSLEngine on
         SSLCertificateFile {{ ssl_certs_dir }}/{{ internal_base_domain }}.crt
