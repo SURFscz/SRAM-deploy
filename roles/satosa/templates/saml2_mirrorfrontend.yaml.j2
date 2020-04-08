@@ -9,7 +9,7 @@ config:
     key_file: certs/frontend.key
     cert_file: certs/frontend.crt
     metadata:
-      mdq: ['http://localhost:{{ pyff_port }}']
+      mdq: ['https://{{ hostnames.mdq }}/']
     entityid: <base_url>/md/<name>.xml
     ignore_requested_attributes: true
     service:
