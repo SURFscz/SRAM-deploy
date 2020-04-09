@@ -18,6 +18,12 @@
     dest: "{{ ldap_checksum_dir }}/checksum.sh"
     mode: 0755
 
+- name: Copy ldifchecksum.py script
+  copy:
+    src: ldifchecksum.py
+    dest: "{{ ldap_checksum_dir }}/ldifchecksum.py"
+    mode: 0755
+
 - name: Copy checksum service files
   template:
     src: "{{item}}.j2"
