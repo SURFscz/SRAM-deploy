@@ -5,6 +5,6 @@
     create: true
     state: present
     insertafter: "EOF"
-    line: "{{datetime_now.stdout}} {{ansible_user}} {{ansible_play_name}} \
+    line: "{{datetime_now.stdout}} {{ lookup('pipe', 'whoami') }} {{ansible_play_name}} \
       {{git_version.results[0].stdout}} {{git_version.results[1].stdout}}"
   changed_when: false
