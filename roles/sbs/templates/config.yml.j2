@@ -14,6 +14,8 @@ api_users:
 oidc_id: "cmuid"
 oidc_prefix: "OIDC_CLAIM_"
 oidc_uppercase: False
+voperson_application_uid: "voperson_application_uid"
+eduperson_principal_name: "eduperson_principal_name"
 
 base_scope: "{{ base_domain }}"
 generate_multiple_eppn: True
@@ -45,3 +47,8 @@ admin_users:
   {% for admin_user in sbs_admin_users %}
   - uid: "{{ admin_user.uid }}"
   {% endfor %}
+
+feature:
+  admin_users_upgrade: False
+  admin_users_upgrade_url: "{{ sbs_base_url }}api/users/upgrade_super_user
+  admin_users_upgrade_redirect_url: {{ sbs_base_url }}
