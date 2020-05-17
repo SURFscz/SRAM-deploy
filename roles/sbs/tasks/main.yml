@@ -23,6 +23,7 @@
       - yarn
       - python3-virtualenv
       - python3-setuptools
+      - libc6-dev
       - build-essential
       - virtualenv
 
