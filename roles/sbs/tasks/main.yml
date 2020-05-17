@@ -31,7 +31,7 @@
 # systemd from stable
 - name: Install required packages from testing
   apt:
-    default_release: testing
+#    default_release: testing
     state: latest
     name:
       - python3.7
