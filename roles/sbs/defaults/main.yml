@@ -15,8 +15,14 @@ sbs_db_host: "localhost"
 sbs_mail_host: "{{ mail.relay_to }}"
 sbs_mail_port: "25"
 
+sbs_oidc_crypto_password: "CHANGEME"
+sbs_uid_attribute: "sub"
+
 sbs_disclaimer_color: "#a29c13"
 sbs_disclaimer_label: wsgi
+
+sbs_urn_namespace: "urn:example:sbs"
+sbs_restricted_co_default_org: "example.org"
 
 sbs_mail_sender_name: "SURFnet"
 sbs_mail_sender_email: "no-reply@surfnet.nl"

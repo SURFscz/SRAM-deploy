@@ -11,19 +11,19 @@ api_users:
       scopes: [ {{ user.scopes|join(', ') }} ]
   {% endfor %}
 
-oidc_id: "cmuid"
+oidc_id: "{{ sbs_uid_attribute }}"
 oidc_prefix: "OIDC_CLAIM_"
 oidc_uppercase: False
 
 base_scope: "{{ base_domain }}"
-generate_multiple_eppn: True
+entitlement_group_namespace: "{{ sbs_urn_namespace }}"
 collaboration_creation_allowed_entitlement: "urn:mace:surf.nl:sram:allow-create-co"
 
 # All services in the white list can be requested in the create-restricted-co API
 # The default organisation is a fallback for when the administrator has no schac_home_org
 restricted_co:
   services_white_list: ["https://cloud"]
-  default_organisation: "example.com"
+  default_organisation: "{{ sbs_restricted_co_default_org }}"
 
 mail:
   host: {{ sbs_mail_host }}
