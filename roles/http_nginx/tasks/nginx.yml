@@ -28,7 +28,7 @@
 - name: enable NGINX
   systemd:
     daemon_reload: yes
-    name: nxginx
+    name: nginx
     state: started
     enabled: true
 
