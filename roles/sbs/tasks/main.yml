@@ -5,13 +5,12 @@
       - yarnpkg
       - nodejs
       - build-essential
+      - python3
       - python3-virtualenv
       - python3-setuptools
       - python-setuptools
       - python-pymysql
       - virtualenv
-      - python3.7
-      - python3.7-dev
       - python3-distutils
       - libapache2-mod-wsgi-py3
       - libapache2-mod-auth-openidc
