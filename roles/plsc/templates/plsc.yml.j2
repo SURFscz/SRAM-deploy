@@ -15,6 +15,7 @@ sbs:
     host: "{{ sbs_base_url }}"
     user: sysread
     passwd: "{{ sbs_sysread_password }}"
+    verify_ssl: {{ false if environment_name=='vm' else true }}
 pwd: changethispassword
 uid: 1000
 gid: 1000
