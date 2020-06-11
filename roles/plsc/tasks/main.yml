@@ -88,7 +88,6 @@
     src: "plsc.yml.j2"
     dest: "{{ plsc_dir }}/plsc.yml"
     mode: 0644
-    force: no
 
 - name: Install virtualenv from requirements.txt
   pip:
