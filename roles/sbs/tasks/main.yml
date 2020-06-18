@@ -132,3 +132,11 @@
     owner: www-data
     group: www-data
     mode: 0755
+
+- name: Comment MinProtocol in openssl.conf on dockers
+  replace:
+    path: /etc/ssl/openssl.cnf
+    regexp: '(^MinProtocol.*)'
+    replace: '#\1'
+  when: not is_aws and use_fixed_cert
+
