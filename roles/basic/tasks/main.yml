@@ -120,11 +120,22 @@
     group: "root"
     mode: 0644
 
-- block:
-    - name: write certificate
-      copy: content={{https_cert.cert}} dest={{ca_cert_dir}}/scz-vm.crt mode=0600 owner=root
+- name: write vm certificate
+  copy:
+    content: "{{wildcard_backend_cert.pub}}"
+    dest: "{{ ca_cert_dir }}/vm.scz-vm.crt"
+    owner: "root"
+    group: "root"
+    mode: 0600
 
-    - name: update certificates
-      command: update-ca-certificates
-      changed_when: false
+- name: write https certificate
+  copy:
+    content: "{{https_cert.cert}}"
+    dest: "{{ ca_cert_dir }}/scz-vm.crt"
+    owner: "root"
+    mode: 0600
   when: enable_https and use_fixed_cert
+
+- name: update certificates
+  command: update-ca-certificates
+  changed_when: false
