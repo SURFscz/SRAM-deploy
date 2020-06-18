@@ -55,6 +55,7 @@
         host: '{{ ansible_default_ipv4.address }}'
         password: '{{ sbs_db_password }}'
         priv: '{{ sbs_db_name }}.*:ALL,REQUIRESSL'
+      changed_when: false
 
 - name: Clone SBS repository
   git:
