@@ -112,6 +112,14 @@
     - { role: pyff,          tags: ['proxy','pyff'          ] }
     - { role: satosa,        tags: ['proxy','satosa'        ] }
 
+- name: "sbs"
+  hosts: sbs
+  tasks:
+    - { import_tasks: "tasks/versions.yml", tags: ['common'] }
+  roles:
+    - { role: http_apache, tags: ['sbs']  }
+    - { role: sbs,         tags: ['sbs']  }
+
 - name: "ldap"
   hosts: ldap
   tasks:
@@ -125,14 +133,6 @@
   hosts: ldap[0]
   roles:
     - { role: plsc,               tags: ['ldap', 'ldap-plsc'     ] }
-
-- name: "sbs"
-  hosts: sbs
-  tasks:
-    - { import_tasks: "tasks/versions.yml", tags: ['common'] }
-  roles:
-    - { role: http_apache, tags: ['sbs']  }
-    - { role: sbs,         tags: ['sbs']  }
 
 - name: "meta"
   hosts: meta
