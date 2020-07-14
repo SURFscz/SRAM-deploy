@@ -33,9 +33,9 @@ global
 defaults
     log     global
     option  dontlognull
-    timeout connect 5000
-    timeout client  10000
-    timeout server  5000
+    timeout connect 4s
+    timeout client  15s
+    timeout server  15s
     errorfile 400 /etc/haproxy/errors/400.http
     errorfile 403 /etc/haproxy/errors/403.http
     errorfile 408 /etc/haproxy/errors/408.http
