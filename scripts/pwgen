@@ -18,7 +18,8 @@ then
     ENCRYPT=1
 fi
 
-pw=""
+# make sure the password starts with a safe character
+pw=$( openssl rand 256 | tr -cd '0-9A-Za-z' | cut -c1 )
 while [ ${#pw} -lt $LEN ]
 do
     pw=$pw$( openssl rand 256 | tr -cd "$CHARS_ALLOWED" )
