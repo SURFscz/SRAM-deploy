@@ -4,6 +4,12 @@
   import_role:
     name: "pyff"
 
+- name: Create local metadata directory
+  file:
+    path: "{{ pyff_env_dir }}/metadata"
+    state: directory
+    mode: 0755
+
 - name: Create pyFF mdq configuration
   template:
     src: mdq.fd.j2

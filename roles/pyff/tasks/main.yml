@@ -51,12 +51,6 @@
         virtualenv_python: python2
       notify: "pyff changed"
 
-    - name: Create local metadata directory
-      file:
-        path: "{{ pyff_env_dir }}/metadata"
-        state: directory
-        mode: 0755
-
     - name: Create certs directory
       file:
         path: "{{ pyff_env_dir }}/certs"
