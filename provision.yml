@@ -109,7 +109,7 @@
   tasks:
     - { import_tasks: "tasks/versions.yml", tags: ['common'] }
   roles:
-    - { role: pyff,          tags: ['proxy','pyff'          ] }
+    - { role: pyff-daemon,   tags: ['proxy','pyff-daemon'   ] }
     - { role: satosa,        tags: ['proxy','satosa'        ] }
 
 - name: "sbs"
