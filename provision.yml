@@ -139,8 +139,9 @@
   tasks:
     - { import_tasks: "tasks/versions.yml", tags: ['common'] }
   roles:
-    - { role: http_dummy,  tags: ['meta','http'    ] }
-    - { role: metadata,    tags: ['meta','metadata'] }
+    - { role: pyff-metadata, tags: ['meta','pyff-metadata']}
+    - { role: http_dummy,    tags: ['meta','http'    ]     }
+    - { role: metadata,      tags: ['meta','metadata']     }
 
 - name: "sandbox"
   hosts: sandbox1

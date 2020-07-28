@@ -1,0 +1,7 @@
+---
+- name: "enable pyff-metadata job"
+  systemd:
+    name: "pyff-metadata.timer"
+    enabled: true
+    state: "started"
+    daemon_reload: true

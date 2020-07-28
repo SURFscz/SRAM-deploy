@@ -32,29 +32,11 @@
     state: link
   notify: restart nginx
 
-- name: List all xml/xsl files
-  find:
-    paths: "{{ metadata_project_dir }}"
-    patterns:
-      - "*.xml"
-      - "*.xsl"
-  register: oldfiles_glob
-
-- name: Remove old metadata and stylesheet files
-  file:
-    path: "{{ item.path }}"
-    state: absent
-  when: "item.path|basename not in xsl_files"
-  with_items:
-    - "{{ oldfiles_glob.files }}"
-  notify: run metadata cronjob
-
 - name: Copy xsl files in place
   copy:
     src: "{{ item }}"
     dest: "{{ metadata_project_dir }}/{{ item }}"
   with_items: "{{xsl_files}}"
-  notify: run metadata cronjob
 
 - name: Copy eduGAIN public metadata signing cert
   copy:
@@ -67,25 +49,15 @@
     src: create_metadata.j2
     dest: "{{ metadata_project_dir }}/create_metadata"
     mode: 0755
-  notify: run metadata cronjob
 
-- name: Copy metadata service files
+- name: Install index page
   template:
-    src: "{{item}}.j2"
-    dest: "/etc/systemd/system/{{item}}"
-  with_items:
-    - metadata.service
-    - metadata.timer
-  notify:
-    - enable metadata job
+    src: "index.html.j2"
+    dest: "{{metadata_documentroot}}/index.html"
+    mode: 0644
 
-- name: Install logos
-  copy:
-    src: "{{item}}"
-    dest: "{{ metadata_documentroot }}/{{item}}"
-    owner: www-data
-    group: www-data
-  with_items:
-    - Light-Bulb_icon_by_Till_Teenck.svg
-    - Light-Bulb_icon_by_Till_Teenck_200px.png
-    - Light-Bulb_icon_by_Till_Teenck_1000px.png
+- name: Install link to idp feed
+  file:
+    dest: "{{metadata_documentroot}}/idps.xml"
+    src: "{{metadata_idps_targetfile}}"
+    state: "link"
