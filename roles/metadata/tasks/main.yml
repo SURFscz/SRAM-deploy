@@ -60,3 +60,4 @@
     dest: "{{metadata_documentroot}}/idps.xml"
     src: "{{metadata_idps_targetfile}}"
     state: "link"
+    force: true
