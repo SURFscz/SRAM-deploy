@@ -73,17 +73,12 @@
 
 - name: write fixed Metadata signing certificates
   copy:
-    dest: "{{ pyff_env_dir }}/certs/{{ item.key }}"
-    content: "{{item.value}}"
+    dest: "{{ pyff_env_dir }}/certs/{{ item.file }}"
+    content: "{{item.contents}}"
     owner: pyff
-    mode: 0644
-  with_dict:
-    signing.key: "{{metadata_signing_cert.priv}}"
-    signing.crt: "{{metadata_signing_cert.pub}}"
+    mode: "{{item.mode}}"
+  with_items:
+    - { file: "signing.key", mode: "0600", contents: "{{metadata_signing_cert.priv}}" }
+    - { file: "signing.crt", mode: "0644", contents: "{{metadata_signing_cert.pub}}"  }
   notify: "pyff changed"
   when: metadata_signing_cert is defined
-
-- name: protect secret key
-  file:
-    dest: "{{ pyff_env_dir }}/certs/signing.key"
-    mode: 0600
