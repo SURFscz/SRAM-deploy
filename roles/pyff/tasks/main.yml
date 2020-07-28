@@ -37,37 +37,36 @@
     mode: 0755
     owner: pyff
 
-- block:
-    # requirements.txt can be generated from virtualenv/bin/pip freeze
-    - name: Generate requirements.txt.j2 from template
-      template:
-        src: "requirements.txt.j2"
-        dest: "{{ pyff_project_dir }}/requirements.txt"
+# requirements.txt can be generated from virtualenv/bin/pip freeze
+- name: Generate requirements.txt.j2 from template
+  template:
+    src: "requirements.txt.j2"
+    dest: "{{ pyff_project_dir }}/requirements.txt"
 
-    - name: Install pyFF from requirements.txt
-      pip:
-        requirements: "{{ pyff_project_dir }}/requirements.txt"
-        virtualenv: "{{ pyff_env_dir }}"
-        virtualenv_python: python2
-      notify: "pyff changed"
-
-    - name: Create certs directory
-      file:
-        path: "{{ pyff_env_dir }}/certs"
-        state: directory
-        mode: 0755
-
-    - name: create self-signed Metadata Signing SSL certs
-      shell: >
-        openssl genrsa -out "{{ pyff_env_dir }}/certs/{{ item }}.key" 2048;
-        openssl req -new -nodes -x509 -subj "/C=NL/CN={{ item }}"
-        -days 3650 -key "{{ pyff_env_dir }}/certs/{{ item }}.key"
-        -out "{{ pyff_env_dir }}/certs/{{ item }}.crt" -extensions v3_ca
-      args:
-        creates: "{{ pyff_env_dir }}/certs/{{ item }}.crt"
-      with_items:
-        - signing
-      notify: "pyff changed"
-
+- name: Install pyFF from requirements.txt
+  pip:
+    requirements: "{{ pyff_project_dir }}/requirements.txt"
+    virtualenv: "{{ pyff_env_dir }}"
+    virtualenv_python: python2
+  notify: "pyff changed"
   become: "yes"
   become_user: pyff
+
+- name: Create certs directory
+  file:
+    path: "{{ pyff_env_dir }}/certs"
+    state: directory
+    mode: 0755
+
+- name: create self-signed Metadata Signing SSL certs
+  shell: >
+    openssl genrsa -out "{{ pyff_env_dir }}/certs/{{ item }}.key" 2048;
+    openssl req -new -nodes -x509 -subj "/C=NL/CN={{ item }}"
+    -days 3650 -key "{{ pyff_env_dir }}/certs/{{ item }}.key"
+    -out "{{ pyff_env_dir }}/certs/{{ item }}.crt" -extensions v3_ca
+  args:
+    creates: "{{ pyff_env_dir }}/certs/{{ item }}.crt"
+  with_items:
+    - signing
+  notify: "pyff changed"
+
