@@ -12,6 +12,9 @@ global
     group   haproxy
     daemon
 
+    # default is 16k, but increase because we have very large headers (feature-policy etc)
+    tune.bufsize 65535
+
     # Default SSL material locations
     ca-base /etc/ssl/certs
 {% if enable_https and use_fixed_cert %}
@@ -19,7 +22,6 @@ global
 {% elif enable_https %}
     crt-base {{letsencrypt.cert_dir}}
 {% endif %}
-
 
     ssl-default-bind-ciphers ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA256
     ssl-default-bind-ciphersuites TLS_AES_128_GCM_SHA256:TLS_CHACHA20_POLY1305_SHA256:TLS_AES_256_GCM_SHA384
