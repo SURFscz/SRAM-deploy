@@ -42,7 +42,6 @@
   copy:
     content: "{{ edugain_cert }}"
     dest: "{{ metadata_project_dir }}/edugain.crt"
-  notify: run metadata cronjob
 
 - name: Copy xsl processing script script in place
   template:
