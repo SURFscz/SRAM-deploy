@@ -64,3 +64,12 @@
     src: "{{metadata_idps_targetfile}}"
     state: "link"
     force: true
+
+- name: Install logo
+  copy:
+    src: "{{ item }}"
+    dest: "{{metadata_documentroot}}/"
+    mode: "0644"
+  with_items:
+    - "surf.svg"
+    - "surf.png"
