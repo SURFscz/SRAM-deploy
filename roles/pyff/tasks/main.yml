@@ -49,13 +49,14 @@
     virtualenv: "{{ pyff_env_dir }}"
     virtualenv_python: python2
   notify: "pyff changed"
-  become: "yes"
+  become: true
   become_user: pyff
 
 - name: Create certs directory
   file:
     path: "{{ pyff_env_dir }}/certs"
-    state: directory
+    state: "directory"
+    owner: pyff
     mode: 0755
 
 - name: create self-signed Metadata Signing SSL certs
@@ -68,6 +69,8 @@
     creates: "{{ pyff_env_dir }}/certs/{{ item }}.crt"
   with_items:
     - signing
+  become: true
+  become_user: "pyff"
   notify: "pyff changed"
   when: metadata_signing_cert is not defined
 
