@@ -12,11 +12,14 @@
     path: /etc/cron.d/create_metadata
     state: absent
 
-- name: Create project directory
-  file: path="{{ metadata_project_dir }}" state=directory mode=0755
-
-- name: Create html directory
-  file: path="{{ metadata_documentroot }}" state=directory mode=0755
+- name: Create directories
+  file:
+    path: "{{ item }}"
+    state: "directory"
+    mode: "0755"
+  with_items:
+    - "{{ metadata_project_dir }}"
+    - "{{ metadata_documentroot }}"
 
 - name: Copy metadata nginx configuration
   template:
