@@ -8,6 +8,7 @@
   template:
     src: "feed.xrd.j2"
     dest: "{{metadata_idps_xrd}}"
+  notify: "run pyff-metadata job"
 
 - name: Create pyFF mdq configuration
   template:
@@ -15,6 +16,7 @@
     dest: "{{ pyff_env_dir }}/idp_feed.fd"
   become: "yes"
   become_user: "pyff"
+  notify: "run pyff-metadata job"
 
 - name: Create pyFF systemd job timer
   template:
@@ -25,3 +27,4 @@
     - "pyff-metadata.timer"
   notify:
     - "enable pyff-metadata job"
+    - "run pyff-metadata job"

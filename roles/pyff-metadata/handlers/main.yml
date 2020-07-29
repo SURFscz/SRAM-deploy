@@ -5,3 +5,10 @@
     enabled: true
     state: "started"
     daemon_reload: true
+
+- name: "run pyff-metadata job"
+  systemd:
+    name: "pyff-metadata.service"
+    state: "started"
+    daemon_reload: true
+
