@@ -7,11 +7,6 @@
       - xmlsec1
     state: present
 
-- name: Remove obsolete cron file
-  file:
-    path: /etc/cron.d/create_metadata
-    state: absent
-
 - name: Create directories
   file:
     path: "{{ item }}"
@@ -35,23 +30,6 @@
     state: link
   notify: restart nginx
 
-- name: Copy xsl files in place
-  copy:
-    src: "{{ item }}"
-    dest: "{{ metadata_project_dir }}/{{ item }}"
-  with_items: "{{xsl_files}}"
-
-- name: Copy eduGAIN public metadata signing cert
-  copy:
-    content: "{{ edugain_cert }}"
-    dest: "{{ metadata_project_dir }}/edugain.crt"
-
-- name: Copy xsl processing script script in place
-  template:
-    src: create_metadata.j2
-    dest: "{{ metadata_project_dir }}/create_metadata"
-    mode: 0755
-
 - name: Install index page
   template:
     src: "index.html.j2"
@@ -73,3 +51,19 @@
   with_items:
     - "surf.svg"
     - "surf.png"
+
+- name: Remove obsolete files
+  file:
+    path: "{{metadata_documentroot}}/{{item}}"
+    state: "absent"
+  with_items:
+    - "Light-Bulb_icon_by_Till_Teenck.svg"
+    - "Light-Bulb_icon_by_Till_Teenck_1000px.png"
+    - "Light-Bulb_icon_by_Till_Teenck_200px.png"
+    - "proxy_idp.xml"
+    - "proxy_sp.xml"
+    - "sc_edugain.xml"
+    - "sc_edugain_idps.xml"
+    - "sc_edugain_idps_nologo.xml"
+    - "sc_edugain_idps_nologo_nohide.xml"
+    - "sc_edugain_idps_nologo_nohide_nosc.xml"
