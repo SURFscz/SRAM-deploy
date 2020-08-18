@@ -81,8 +81,8 @@
     ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// -b 'cn=schema,cn=config' '(cn=*)' dn
     | grep -i 'cn={[0-9]\+}sczgroup,cn=schema,cn=config'
   register:
-    voPersonTask
-  failed_when: voPersonTask.rc not in [0, 1]
+    sczGroupTask
+  failed_when: sczGroupTask.rc not in [0, 1]
   changed_when: False
 
 - name: Ensure the sczGroup schema is added to LDAP
@@ -90,7 +90,8 @@
   command: >
     ldapadd -Q -Y EXTERNAL -H ldapi:///
     -f "{{ ldap_ldif_dir }}/sczGroup.ldif"
-  when: voPersonTask.stdout == ""
+# Forcably disable the addition of the sczGroup schema
+  when: false and sczGroupTask.stdout == ""
 
 - name: Enable memberof/refint overlay
   command: >
