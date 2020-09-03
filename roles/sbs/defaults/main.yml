@@ -18,6 +18,11 @@ sbs_mail_port: "25"
 sbs_oidc_crypto_password: "CHANGEME"
 sbs_uid_attribute: "sub"
 
+sbs_rp_client_id: "APP-878955BC-67BE-441B-875A-BD742C2C7CE5"
+sbs_authorization_endpoint: "https://proxy.acc.sram.eduteams.org/saml2sp/OIDC/authorization"
+sbs_token_endpoint: "https://proxy.acc.sram.eduteams.org/OIDC/token"
+sbs_userinfo_endpoint: "https://proxy.acc.sram.eduteams.org/OIDC/userinfo"
+
 sbs_disclaimer_color: "#a29c13"
 sbs_disclaimer_label: wsgi
 

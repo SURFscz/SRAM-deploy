@@ -11,12 +11,28 @@ api_users:
       scopes: [ {{ user.scopes|join(', ') }} ]
   {% endfor %}
 
-oidc_id: "{{ sbs_uid_attribute }}"
-oidc_prefix: "OIDC_CLAIM_"
-oidc_uppercase: False
-voperson_application_uid: "voperson_application_uid"
-eduperson_principal_name: "voperson_external_id"
-eduperson_scoped_affiliation: "voperson_external_affiliation"
+oidc:
+  client_id: {{ sbs_rp_client_id }}
+  client_secret: {{ sbs_rp_client_secret }}
+  authorization_endpoint: {{ sbs_authorization_endpoint }}
+  token_endpoint: {{ sbs_token_endpoint }}
+  userinfo_endpoint: {{ sbs_userinfo_endpoint }}
+  # Note that the paths for these  uri's is hardcoded and only domain and port differ per environment
+  redirect_uri: {{ sbs_base_url }}api/users/resume-session
+  scopes:
+    - profile
+    - eduperson_scoped_affiliation
+    - voperson_external_affiliation
+    - email
+    - ssh_public_key
+    - eduperson_orcid
+    - uid
+    - voperson_external_id
+    - eduperson_entitlement
+    - eduperon_assurance
+    - openid
+    - eduperson_principal_name
+    - voperson_id
 
 base_scope: "{{ base_domain }}"
 entitlement_group_namespace: "{{ sbs_urn_namespace }}"
