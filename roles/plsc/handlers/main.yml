@@ -12,3 +12,4 @@
     enabled: true
     state: started
     daemon_reload: true
+  when: inventory_hostname == groups['ldap'][0]
