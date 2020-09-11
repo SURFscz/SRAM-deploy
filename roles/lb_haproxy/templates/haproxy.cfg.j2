@@ -113,7 +113,7 @@ frontend fe_https
 {% endif %}
 
 {% if iprange.vpn is defined %}
-    acl vpn src {% for vpnname in iprange.vpn %}{{iprange.vpn[vpnname]}} {% endfor %}
+    acl vpn src {% for vpnname in iprange.vpn %}{{iprange.vpn[vpnname]}} {% endfor %} {% for vpnname in iprange.vpn6 %}{{iprange.vpn6[vpnname]}} {% endfor %}
 {% endif %}
 
 {% for host in lb_http %}
