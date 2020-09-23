@@ -79,7 +79,7 @@
     src: "composer.lock"
     dest: "{{ simplesaml_project_dir }}/simplesaml"
 
-- name: Install OIDC module
+- name: Install OIDC modules
   composer:
     working_dir: "{{ simplesaml_project_dir }}/simplesaml"
     command: install

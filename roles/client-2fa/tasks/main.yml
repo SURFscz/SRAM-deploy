@@ -23,20 +23,6 @@
     - 2fa
   notify: restart Apache
 
-- name: Install OIDC module
-  composer:
-    working_dir: "{{ simplesaml_project_dir }}/simplesaml"
-    command: require
-    arguments: bradjonesllc/simplesamlphp-module-openidconnect dev-master
-    optimize_autoloader: False
-
-- name: Install authWebAuthn module
-  composer:
-    working_dir: "{{ simplesaml_project_dir }}/simplesaml"
-    command: require
-    arguments: mrvanes/simplesamlphp-module-authwebauthn dev-master
-    optimize_autoloader: False
-
 - name: Insert Google authsource
   when: google_client_id is defined
   blockinfile:
