@@ -102,6 +102,7 @@
     - { role: client-orcid-idp,     tags: ['client','client-orcid' ] }
     - { role: client-microsoft-idp, tags: ['client','client-ms'    ] }
     - { role: client-oidc-rp,       tags: ['client','client-rp'    ] }
+    - { role: oidc-op,              tags: ['client','oidc-op'      ] }
     - { role: client-2fa,           tags: ['client','client-2fa'   ], when: experimental_features }
 
 - name: "proxy"
