@@ -36,9 +36,8 @@
 
     - name: Insert ORCID authsource
       blockinfile:
-        path: "{{ simplesaml_project_dir }}/simplesaml/config/authsources.php"
-        insertbefore: "\\);"
-        marker: "# {mark} ANSIBLE MANAGED BLOCK {{ hostnames.orcid }}"
+        path: "{{ simplesaml_authsources_dir }}/20-orcid_idp.inc"
+        create: true
         block: |
             'orcid' => array(
                 'authorcid:ORCID',
@@ -115,16 +114,15 @@
       notify: restart Apache
 
     - name: Insert ORCID Sandbox authsource
-      blockinfile:
-        path: "{{ simplesaml_project_dir }}/simplesaml/config/authsources.php"
-        insertbefore: "\\);"
-        marker: "# {mark} ANSIBLE MANAGED BLOCK {{ hostnames.orcid_sb }}"
-        block: |
-            'orcid-sb' => array(
-                'authorcid:ORCID',
-                'clientId'           => '{{ orcid_sb_client_id }}',
-                'clientSecret'       => '{{ orcid_sb_client_secret }}'
-            ),
+      copy:
+        dest: "{{ simplesaml_authsources_dir }}/20-orcid_sb_idp.inc"
+        content: |
+          <?php
+          $config['orcid-sb'] = array(
+              'authorcid:ORCID',
+              'clientId'           => '{{ orcid_sb_client_id }}',
+              'clientSecret'       => '{{ orcid_sb_client_secret }}'
+          );
 
     - name: Insert ORCID Sanbox IdP hosted
       blockinfile:

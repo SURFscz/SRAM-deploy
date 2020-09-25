@@ -90,10 +90,21 @@
     src: config.php.j2
     dest: "{{ simplesaml_project_dir }}/simplesaml/config/config.php"
 
+- name: SimpleSaml main authsources
+  template:
+    src: "authsources.php.j2"
+    dest: "{{ simplesaml_project_dir }}/simplesaml/config/authsources.php"
+
+- name: SimpleSaml authsources include dir
+  file:
+    dest: "{{ simplesaml_authsources_dir }}"
+    state: "directory"
+    mode: "0755"
+
 - name: SimpleSaml test authsources
   template:
-    src: authsources.php.j2
-    dest: "{{ simplesaml_project_dir }}/simplesaml/config/authsources.php"
+    src: authsources-base.inc.j2
+    dest: "{{ simplesaml_authsources_dir }}/00-base.inc"
 
 - name: SimpleSaml enable authcrypt
   file:

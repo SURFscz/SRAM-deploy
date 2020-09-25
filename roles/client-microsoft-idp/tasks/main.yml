@@ -21,16 +21,15 @@
 
 - name: Insert Microsoft authsource
   when: ms_client_id is defined
-  blockinfile:
-    path: "{{ simplesaml_project_dir }}/simplesaml/config/authsources.php"
-    insertbefore: "\\);"
-    marker: "# {mark} ANSIBLE MANAGED BLOCK {{ hostnames.ms }}"
-    block: |
-        'windowslive' => array(
-            'authwindowslive:LiveID',
-            'key' => '{{ ms_client_id }}',
-            'secret' => '{{ ms_client_secret }}'
-        ),
+  copy:
+    dest: "{{ simplesaml_authsources_dir }}/20-microsoft_idp.inc"
+    content: |
+      <?php
+      $config['windowslive'] = array(
+          'authwindowslive:LiveID',
+          'key' => '{{ ms_client_id }}',
+          'secret' => '{{ ms_client_secret }}'
+      );
 
 - name: Enable Microsoft LiveID module
   when: ms_client_id is defined
