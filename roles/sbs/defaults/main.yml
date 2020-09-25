@@ -2,7 +2,7 @@
 sbs_openidc_timeout: 86400
 
 sbs_repository: https://github.com/SURFscz/SBS.git
-sbs_version: master
+sbs_version: main
 
 sbs_work_dir: "/opt/sbs"
 sbs_git_dir: "{{ sbs_work_dir }}/sbs"
