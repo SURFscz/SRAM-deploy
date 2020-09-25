@@ -42,6 +42,8 @@ pam_backend_port: 92
 meta_port: 88
 oidc_op_port: 93
 
+proxy_hostname: "proxy.{{base_domain}}"
+
 # COmanage-ldap configuration
 comanage_ldap_host: "ldap.vm.scz-vm.net"
 
