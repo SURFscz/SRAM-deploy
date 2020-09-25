@@ -18,6 +18,8 @@
     name: "{{ oidc_dir }}"
     virtualenv: "{{ oidc_dir }}"
     virtualenv_python: python3
+  # probably an ansible bug, this keeps being hit as changed
+  changed_when: false
 
 - name: Install flask_op requirements
   pip:
