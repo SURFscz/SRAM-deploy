@@ -41,58 +41,57 @@
 
 - name: Insert 2FA IdP hosted
   when: google_client_id is defined
-  blockinfile:
-    path: "{{ simplesaml_project_dir }}/simplesaml/metadata/saml20-idp-hosted.php"
-    insertafter: EOF
-    marker: "# {mark} ANSIBLE MANAGED BLOCK {{ hostnames.tfa }}"
-    block: |
+  copy:
+    dest: "{{ simplesaml_idpmetadata_dir }}/20-2fa.inc"
+    content: |
+        <?php
         $metadata['__DYNAMIC:6__'] = array(
-                'host' => '{{ hostnames.tfa }}',
-                'OrganizationName' => '{{ environment_string }} Google 2FA IdP',
-                'OrganizationDisplayName' => '{{ environment_string }} Google 2FA IdP',
-                'OrganizationURL' => '{{ hostnames.tfa }}',
-                'UIInfo' => array(
-                'DisplayName' => array(
-                        'en' => '{{ environment_string }} Google 2FA IdP'
-                    ),
-                    'Description' => array(
-                        'en' => '{{ environment_string }} Google 2FA IdP description'
-                    ),
-                    'Logo' => array( array(
-                        'url' => 'https://{{ hostnames.tfa }}'
-                                .'/saml/resources/icons/ssplogo-fish-small.png',
-                        'width' => 60,
-                        'height' => 41
-                    ) )
-                ),
-                'privatekey' => 'server.pem',
-                'certificate' => 'server.crt',
-                'auth' => 'oidc-google',
-                'signature.algorithm' => 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256',
-                'authproc' => array(
-                        // First scope sub
-                        100 => array('class' => 'core:PHP',
-                                'code' => '
-                                        if (empty($attributes["sub"])) {
-                                                throw new Exception("Missing sub attribute.");
-                                        }
-                                        $sub = $attributes["sub"][0];
-                                        $sub .= "@{{hostnames.google}}";
-                                        $attributes["sub"] = array($sub);
-                                '),
-                        // Convert OIDC names to SAML.
-                        110 => array('class' => 'core:AttributeMap', 'google2urn'),
-                        // Set NameID to eppn
-                        120 => array('class' => 'saml:AttributeNameID',
-                            'attribute' => 'urn:mace:dir:attribute-def:eduPersonPrincipalName',
-                            'Format' => 'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent',
-                        ),
-                        130 => array('class' => 'authwebauthn:WebAuthn',
-                            'id' => 'urn:mace:dir:attribute-def:eduPersonPrincipalName',
-                            'database' => '/var/tmp/keys.sq3',
-                            'purpose' => 'fallback'
-                        ),
-                ),
+          'host' => '{{ hostnames.tfa }}',
+          'OrganizationName' => '{{ environment_string }} Google 2FA IdP',
+          'OrganizationDisplayName' => '{{ environment_string }} Google 2FA IdP',
+          'OrganizationURL' => '{{ hostnames.tfa }}',
+          'UIInfo' => array(
+            'DisplayName' => array(
+              'en' => '{{ environment_string }} Google 2FA IdP'
+            ),
+            'Description' => array(
+              'en' => '{{ environment_string }} Google 2FA IdP description'
+            ),
+            'Logo' => array( array(
+              'url' => 'https://{{ hostnames.tfa }}'
+                      .'/saml/resources/icons/ssplogo-fish-small.png',
+              'width' => 60,
+              'height' => 41
+            ) )
+          ),
+          'privatekey' => 'server.pem',
+          'certificate' => 'server.crt',
+          'auth' => 'oidc-google',
+          'signature.algorithm' => 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256',
+          'authproc' => array(
+            // First scope sub
+            100 => array('class' => 'core:PHP',
+              'code' => '
+                      if (empty($attributes["sub"])) {
+                              throw new Exception("Missing sub attribute.");
+                      }
+                      $sub = $attributes["sub"][0];
+                      $sub .= "@{{hostnames.google}}";
+                      $attributes["sub"] = array($sub);
+              '),
+            // Convert OIDC names to SAML.
+            110 => array('class' => 'core:AttributeMap', 'google2urn'),
+            // Set NameID to eppn
+            120 => array('class' => 'saml:AttributeNameID',
+              'attribute' => 'urn:mace:dir:attribute-def:eduPersonPrincipalName',
+              'Format' => 'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent',
+            ),
+            130 => array('class' => 'authwebauthn:WebAuthn',
+              'id' => 'urn:mace:dir:attribute-def:eduPersonPrincipalName',
+              'database' => '/var/tmp/keys.sq3',
+              'purpose' => 'fallback'
+            ),
+          ),
         );
 
 - name: Copy Google attribute map
