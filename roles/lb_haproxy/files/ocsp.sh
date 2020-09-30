@@ -32,7 +32,7 @@ do
     # only move file in place if update succeeded
     if [ $? -eq 0 ]
     then
-        if ! [ -e "priv+fullchain.pem.ocsp" ] || diff -q "tmp.ocsp" "priv+fullchain.pem.ocsp" > /dev/null
+        if ! [ -e "priv+fullchain.pem.ocsp" ] || ! diff -q "tmp.ocsp" "priv+fullchain.pem.ocsp" > /dev/null
         then
             echo "OSCP for $dir updated"
             mv tmp.ocsp priv+fullchain.pem.ocsp

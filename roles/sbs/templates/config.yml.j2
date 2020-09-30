@@ -11,19 +11,38 @@ api_users:
       scopes: [ {{ user.scopes|join(', ') }} ]
   {% endfor %}
 
-oidc_id: "cmuid"
-oidc_prefix: "OIDC_CLAIM_"
-oidc_uppercase: False
+oidc:
+  client_id: "{{ sbs_client_id }}"
+  client_secret: "{{ sbs_client_secret }}"
+  authorization_endpoint: "https://{{ proxy_hostname }}/saml2sp/OIDC/authorization"
+  token_endpoint: "https://{{ proxy_hostname }}/OIDC/token"
+  userinfo_endpoint: "https://{{ proxy_hostname }}/OIDC/userinfo"
+  #Note that the paths for these  uri's is hardcoded and only domain and port differ per environment
+  redirect_uri: "{{ sbs_base_url }}api/users/resume-session"
+  scopes:
+    - profile
+    - eduperson_scoped_affiliation
+    - voperson_external_affiliation
+    - email
+    - ssh_public_key
+    - eduperson_orcid
+    - uid
+    - voperson_external_id
+    - eduperson_entitlement
+    - eduperon_assurance
+    - openid
+    - eduperson_principal_name
+    - voperson_id
 
 base_scope: "{{ base_domain }}"
-generate_multiple_eppn: True
+entitlement_group_namespace: "{{ sbs_urn_namespace }}"
 collaboration_creation_allowed_entitlement: "urn:mace:surf.nl:sram:allow-create-co"
 
 # All services in the white list can be requested in the create-restricted-co API
 # The default organisation is a fallback for when the administrator has no schac_home_org
 restricted_co:
   services_white_list: ["https://cloud"]
-  default_organisation: "example.com"
+  default_organisation: "{{ sbs_restricted_co_default_org }}"
 
 mail:
   host: {{ sbs_mail_host }}
@@ -48,7 +67,7 @@ admin_users:
 
 feature:
   admin_users_upgrade: False
-  admin_users_upgrade_url: "{{ sbs_base_url }}api/users/upgrade_super_user
+  admin_users_upgrade_url: "{{ sbs_base_url }}api/users/upgrade_super_user"
   admin_users_upgrade_redirect_url: {{ sbs_base_url }}
 
 # The retention config determines how long users may be inactive, how long the reminder email is valid and when do we resent the magic link
@@ -56,3 +75,11 @@ retention:
   allowed_inactive_period_days: 90
   reminder_expiry_period_days: 14
   reminder_resent_period_days: 7
+  cron_hour_of_day: {{ sbs_cron_hour_of_day }}
+
+service_bus:
+  enabled: False
+  host: "localhost"
+  client_id: "sbs"
+  user: "sbs"
+  password: "unused"

@@ -1,20 +1,21 @@
 ---
 
-- name: Download CloudLogs agent
-  get_url:
-    url: "{{ cl_agent_url }}"
-    dest: "/tmp/{{ cl_agent_command }}"
-
-- name: Copy CloudLogs config
-  copy:
-    src: "syslog.conf"
-    dest: "/tmp/syslog.conf"
-
-- name: Create aws config dir
-  file: path=/root/.aws state=directory
-
 - name: Install CloudLogs
+  when: is_aws
   block:
+    - name: Download CloudLogs agent
+      get_url:
+        url: "{{ cl_agent_url }}"
+        dest: "/tmp/{{ cl_agent_command }}"
+
+    - name: Copy CloudLogs config
+      copy:
+        src: "syslog.conf"
+        dest: "/tmp/syslog.conf"
+
+    - name: Create aws config dir
+      file: path=/root/.aws state=directory
+
     - name: Copy aws credentials
       template:
         src: "credentials.j2"
@@ -33,4 +34,3 @@
       args:
         creates: "/var/awslogs/etc/awslogs.conf"
       notify: restart awslogs
-  when: is_aws

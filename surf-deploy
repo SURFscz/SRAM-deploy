@@ -33,8 +33,10 @@ then
     shift
 elif [ "$ARG" = "acc" ]
 then
-    echo "Not implemented"
-    exit 1
+    ENV=acc
+    CONFDIR=./environments/aws_acc/
+    EXTRA="${EXTRA} --ask-vault-pass"
+    shift
 elif [ "$ARG" = "tst" -o "$ARG" = "test" ]
 then
     ENV=tst

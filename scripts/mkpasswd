@@ -5,10 +5,11 @@
 import sys
 import getopt
 
-from typing import Optional
+from typing import Dict, Optional, Any
 
 import passlib.hash
 import passlib.registry
+
 
 def usage():
     pass
@@ -17,7 +18,7 @@ def usage():
 def do(password: bytes, method: str, rounds: Optional[int] = None, salt: Optional[bytes] = None) -> str:
     handler = passlib.registry.get_crypt_handler(method)
 
-    settings = dict()
+    settings: Dict[str, Any] = dict()
     if rounds is not None:
         settings['rounds'] = rounds
     if salt is not None:
@@ -32,7 +33,8 @@ def do(password: bytes, method: str, rounds: Optional[int] = None, salt: Optiona
 
 def main():
     try:
-        opts, args = getopt.gnu_getopt(sys.argv[1:], "hm:S:R:", ["help","method=","salt=","rounds="])
+        opts, args = getopt.gnu_getopt(sys.argv[1:],
+                "hem:S:R:", ["help", "echo", "method=", "salt=", "rounds="])
     except getopt.GetoptError as err:
         print(err)
         usage()
@@ -41,18 +43,20 @@ def main():
     method: str = "sha512_crypt"
     salt: Optional[bytes] = None
     rounds: Optional[int] = None
+    echo: bool = False
 
     for opt, argument in opts:
-        if opt in ("-h","--help"):
+        if opt in ("-h", "--help"):
             usage()
             sys.exit()
-        elif opt in ("-m","--method"):
-            method = argument.lower().replace('-','_')
-        elif opt in ("-S","--salt"):
-            salt = bytes(argument,'ASCII')
-        elif opt in ("-R","--rounds"):
+        elif opt in ("-m", "--method"):
+            method = argument.lower().replace('-', '_')
+        elif opt in ("-S", "--salt"):
+            salt = bytes(argument, 'ASCII')
+        elif opt in ("-R", "--rounds"):
             rounds = int(argument)
-
+        elif opt in ("-e", "--echo"):
+            echo = True
 
     if method not in passlib.registry.list_crypt_handlers():
         print(f"Method '{method}' not found")
@@ -60,7 +64,7 @@ def main():
         print(", ".join(passlib.registry.list_crypt_handlers()))
         sys.exit(1)
 
-    if rounds is not None and rounds<=0:
+    if rounds is not None and rounds <= 0:
         print(f"Invalid number of rounds '{rounds}'")
         sys.exit(1)
 
@@ -77,6 +81,9 @@ def main():
         salt = salt[:-1] + bytes([base64code[value]])
 
     password: bytes = args[0].encode('ASCII')
+
+    if echo:
+        print(password.decode('ASCII'))
 
     hash = do(password, method, salt=salt, rounds=rounds)
     print(hash)

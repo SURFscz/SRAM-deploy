@@ -5,6 +5,17 @@ import sys
 import jinja2
 import argparse
 
+# custom class to support loading !vault entries from yml files
+class vault(yaml.YAMLObject):
+    yaml_tag = '!vault'
+    def __init__(self, val):
+        self.val = val
+
+    @classmethod
+    def from_yaml(cls, loader, node):
+        return cls(node.value)
+
+
 parser = argparse.ArgumentParser()
 parser.add_argument("-q", "--quiet", help="Be quiet; only output errors", action="store_true")
 parser.add_argument("filename", nargs='*')
@@ -21,7 +32,7 @@ for filename in args.filename:
             if filename.endswith('.j2'):
                 jinja2_env.parse(f.read())
             elif filename.endswith('.yml') or filename.endswith('.yaml'):
-                yaml.safe_load(f.read())
+                yaml.load(f.read(), yaml.Loader)
             else:
                 raise Exception(f"Unknown extension for file {filename}")
     except Exception as e:

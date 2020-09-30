@@ -1,19 +1,20 @@
 ---
-
-- name: Install CloudWatch agent
-  apt:
-    deb: "{{ cw_agent_url }}"
-
-- name: Copy config file in place
-  copy:
-    src: "config.json"
-    dest: "/tmp"
-
-- name: Create CloudWatch toml configuration
-  command: >
-    /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl \
-    -a fetch-config -m ec2 -c file:/tmp/config.json
-  args:
-    creates: "/opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.toml"
-  notify: restart cwagent
+- name: Install CloudWatch
   when: is_aws
+  block:
+    - name: Install CloudWatch agent
+      apt:
+        deb: "{{ cw_agent_url }}"
+
+    - name: Copy config file in place
+      copy:
+        src: "config.json"
+        dest: "/tmp"
+
+    - name: Create CloudWatch toml configuration
+      command: >
+        /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl \
+        -a fetch-config -m ec2 -c file:/tmp/config.json
+      args:
+        creates: "/opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.toml"
+      notify: restart cwagent

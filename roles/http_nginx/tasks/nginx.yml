@@ -2,7 +2,9 @@
 # default install http->https redirection
 ---
 - name: install NGINX
-  apt: name=nginx state=present
+  apt:
+    name: nginx
+    state: present
 
 - name: remove unused NGINX sites
   file:
@@ -10,16 +12,13 @@
     state: absent
   with_items:
     - "default"
-    - "00-http-redirect.conf"
-  notify: restart nginx
-
-- name: remove old nginx config file
-  file: dest=/etc/nginx/sites-enabled/default state=absent
-  notify: restart nginx
+  notify: "restart nginx"
 
 - name: install NGINX config file
-  template: src=http-redirect.conf.j2 dest=/etc/nginx/sites-enabled/00-http-redirect.conf
-  notify: restart nginx
+  template:
+    src: "http-redirect.conf.j2"
+    dest: "/etc/nginx/sites-enabled/00-http-redirect.conf"
+  notify: "restart nginx"
 
 - name: install proxy_log config file
   copy:
@@ -27,5 +26,9 @@
     dest: "/etc/nginx/conf.d"
 
 - name: enable NGINX
-  service: name=nginx state=started enabled=true
+  systemd:
+    daemon_reload: yes
+    name: nginx
+    state: started
+    enabled: true
 
