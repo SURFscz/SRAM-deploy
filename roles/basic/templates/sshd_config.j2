@@ -4,7 +4,7 @@ HostbasedAuthentication no
 PasswordAuthentication no
 ChallengeResponseAuthentication {% if sshd_authn_CR %}yes{% else %}no{% endif %}
 
-PubkeyAcceptedKeyTypes -ssh-rsa,ssh-rsa-*,ssh-dss,ssh-dss-*
+PubkeyAcceptedKeyTypes -ssh-rsa
 PermitEmptyPasswords no
 
 UsePAM yes
