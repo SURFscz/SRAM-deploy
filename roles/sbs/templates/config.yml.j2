@@ -51,6 +51,9 @@ mail:
   sender_email: {{ sbs_mail_sender_email }}
   suppress_sending_mails: False
   info_email: scz-support@surfnet.nl
+  send_exceptions: False
+  send_exceptions_recipients: ["scz-support@surfnet.nl"]
+  environment: "{{ base_domain }}"
 
 aup:
   pdf: SURFresearch-Access-Management-AUP-01122019-0001.pdf
