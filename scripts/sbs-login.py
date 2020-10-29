@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: future_fstrings -*-
 
 from selenium.webdriver import Chrome
 from selenium.webdriver.chrome.options import Options

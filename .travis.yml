@@ -54,7 +54,7 @@ before_install:
   - sudo apt -y install ansible bridge-utils
   - sudo adduser travis docker
   - sudo pip2 install --upgrade jinja2
-  - pip install yamllint jinja2 pyyaml selenium
+  - pip install yamllint jinja2 pyyaml selenium future_fstrings
   - |
     # load docker images from cache
     if [ -d $HOME/docker ]; then
