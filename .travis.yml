@@ -69,7 +69,7 @@ before_install:
     curl -q https://chromedriver.storage.googleapis.com/$LATEST_RELEASE/chromedriver_linux64.zip \
     | zcat > scripts/chromedriver
     chmod 755 scripts/chromedriver
-    echo "172.20.1.24 sbs.scz-vm.net oidc-op.scz-vm.net" >> /etc/hosts
+    echo "172.20.1.24 sbs.scz-vm.net oidc-op.scz-vm.net" | sudo tee -a /etc/hosts
 
 script:
   - ./scripts/travis_tests
