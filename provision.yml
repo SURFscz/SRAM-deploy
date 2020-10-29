@@ -150,4 +150,4 @@
   tasks:
     - { import_tasks: "tasks/versions.yml", tags: ['common'] }
   roles:
-    #- { role: pam_websso,         tags: ['client','pam-websso'], when: experimental_features }
+    - { role: pam_websso,         tags: ['client','pam-websso'], when: experimental_features }

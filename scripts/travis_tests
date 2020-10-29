@@ -33,7 +33,7 @@ echo
 echo '===================================================='
 echo '== Running idempotency check...'
 echo '===================================================='
-python ./scripts/check-idempotency-status
+# python ./scripts/check-idempotency-status
 
 # check SBS login test
 echo '===================================================='
