@@ -26,14 +26,14 @@ echo '===================================================='
 echo '== Starting deploy (run 2)'
 echo '===================================================='
 export REEANTRANT=1
-# ./start-vm --diff
+./start-vm --diff
 echo
 
 # check if the second run didn't give (too many) "changed"-states
 echo '===================================================='
 echo '== Running idempotency check...'
 echo '===================================================='
-# python ./scripts/check-idempotency-status
+python ./scripts/check-idempotency-status
 
 # check SBS login test
 echo '===================================================='
