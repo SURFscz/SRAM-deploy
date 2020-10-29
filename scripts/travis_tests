@@ -26,7 +26,7 @@ echo '===================================================='
 echo '== Starting deploy (run 2)'
 echo '===================================================='
 export REEANTRANT=1
-./start-vm --diff
+# ./start-vm --diff
 echo
 
 # check if the second run didn't give (too many) "changed"-states
