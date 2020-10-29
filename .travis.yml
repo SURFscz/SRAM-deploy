@@ -64,7 +64,10 @@ before_install:
         #zcat "$f" | docker load || true;
       done;
     fi
-  - curl -q https://chromedriver.storage.googleapis.com/`curl https://chromedriver.storage.googleapis.com/LATEST_RELEASE`/chromedriver_linux64.zip | zcat > scripts/chromedriver
+  - |
+    LATEST_RELEASE=`curl https://chromedriver.storage.googleapis.com/LATEST_RELEASE`
+    curl -q https://chromedriver.storage.googleapis.com/$LATEST_RELEASE/chromedriver_linux64.zip \
+    | zcat > scripts/chromedriver
 
 script:
   - ./scripts/travis_tests
