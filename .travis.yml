@@ -68,6 +68,7 @@ before_install:
     LATEST_RELEASE=`curl https://chromedriver.storage.googleapis.com/LATEST_RELEASE`
     curl -q https://chromedriver.storage.googleapis.com/$LATEST_RELEASE/chromedriver_linux64.zip \
     | zcat > scripts/chromedriver
+    chmod 755 scripts/chromedriver
 
 script:
   - ./scripts/travis_tests
