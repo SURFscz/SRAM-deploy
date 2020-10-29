@@ -31,8 +31,6 @@ try:
     wait.until(staleness_of(login), 'Timeout waiting for login page')
 
     # Login as admin
-    page = browser.page_source
-    print(f"page: {page}")
     browser.find_element_by_id('username').send_keys('admin')
     browser.find_element_by_id('password').send_keys('admin')
     browser.find_element_by_tag_name('form').submit()
@@ -56,5 +54,10 @@ try:
     print('success')
 
 except Exception as e:
+    url = browser.current_url
+    print(f"url: {url}")
+    page = browser.page_source
+    print(f"page: {page}")
+    browser.close()
     exit(e)
 
