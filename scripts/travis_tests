@@ -35,5 +35,11 @@ echo '== Running idempotency check...'
 echo '===================================================='
 python ./scripts/check-idempotency-status
 
+# check SBS login test
+echo '===================================================='
+echo '== Running SBS login test...'
+echo '===================================================='
+python ./scripts/sbs-login.py
+
 exit 0
 
