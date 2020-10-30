@@ -13,9 +13,9 @@
 - name: Create metadata source directory
   file:
     path: "{{ metadata_source_dir }}"
-    state: directory
-    mode: 0755
-    owner: pyff
+    state: "directory"
+    mode: "0755"
+    owner: "root"
 
 - name: Create pyFF mdq configuration
   template:
