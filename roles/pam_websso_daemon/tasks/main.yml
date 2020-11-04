@@ -6,6 +6,7 @@
       - libxml2-dev
       - libxmlsec1-dev
       - libz-dev
+      - python-dev
       - pkg-config
     state: present
 
