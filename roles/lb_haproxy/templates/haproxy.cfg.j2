@@ -113,14 +113,19 @@ frontend fe_https
 {% endif %}
 
 {% if iprange.vpn is defined %}
-    acl vpn src {% for vpnname in iprange.vpn %}{{iprange.vpn[vpnname]}} {% endfor %}
+    acl vpn src {% for vpnname in iprange.vpn %}{{iprange.vpn[vpnname]}} {% endfor %}{% for vpnname in iprange.vpn6 %}{{iprange.vpn6[vpnname]}} {% endfor %}
+
 {% endif %}
 
 {% for host in lb_http %}
     acl acl_{{host.hostname}} hdr(host) -i {{host.hostname}}
 {% if host.acl is defined %}
+{% if host.acl == "VPN" %}
+    http-request deny if acl_{{host.hostname}} !vpn
+{% else %}
     acl acl_ip_{{host.hostname}} src 127.0.0.1 ::1 {{host.acl}}
     http-request deny if acl_{{host.hostname}} !acl_ip_{{host.hostname}}
+{% endif %}
 {% endif %}
     use_backend be_{{host.name}} if acl_{{host.hostname}}
 
