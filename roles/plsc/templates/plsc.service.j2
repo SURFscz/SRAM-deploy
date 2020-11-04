@@ -8,4 +8,4 @@ Type=oneshot
 Environment="REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt"
 WorkingDirectory={{ plsc_dir }}
 ExecStart={{ plsc_dir }}/run plsc.yml
-
+RuntimeMaxSec=120
