@@ -7,10 +7,11 @@
     name: nullmailer
 
 - name: start nullmailer
-  service:
+  systemd:
     name: nullmailer
     state: started
     enabled: true
+    daemon_reload: true
 
 - name: purge other MTAs
   apt:

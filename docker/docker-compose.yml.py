@@ -23,7 +23,7 @@ logical_hosts = [
     'proxy',    'mdq',         'cm',        'comanage',
     'ldap',     'meta',        'oidc-test', 'sp-test',
     'idp-test', 'google-test', 'sbs',       'sandbox1',
-    'pam',
+    'pam', 'oidc-op',
 ]
 
 subnet = '172.20.1'
@@ -47,12 +47,19 @@ def host_config(num: int, name: str) -> Dict:
         }
     }
     data['extra_hosts'] = [ f'{h}.{domain}:{subnet}.{hosts["lb"]}' for h in logical_hosts ]
+    data['healthcheck'] = {
+        'test': [ 'CMD', '/usr/bin/test', '!', '-e', '/etc/nologin' ],
+        'interval': '5s',
+        'timeout': '1s',
+        'retries': '1',
+        'start_period': '0s'
+    }
 
     return data
 
 # generate the full docker-compose.yml file
 compose = dict()
-compose['version' ] = '2'
+compose['version' ] = '2.4'
 compose['networks'] = {
     'scznet': {
         'driver': 'bridge',

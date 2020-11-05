@@ -2,10 +2,12 @@
 - name: Ensure that packages are installed
   apt:
     name:
-      - python-pip
+      - python3-pip
       - libxml2-dev
       - libxmlsec1-dev
       - libz-dev
+      - python-dev
+      - pkg-config
     state: present
 
 - name: fetch PAM WebSSO from {{ pam_websso.repo_url }}, version {{ pam_websso.repo_version }}
@@ -21,6 +23,7 @@
   pip:
     name: "{{ pam_websso.project_dir }}"
     state: latest
+    executable: pip3
   when: pam_websso_git.changed
   notify: restart WebSSO daemon
 

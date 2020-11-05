@@ -11,11 +11,28 @@ api_users:
       scopes: [ {{ user.scopes|join(', ') }} ]
   {% endfor %}
 
-oidc_id: "{{ sbs_uid_attribute }}"
-oidc_prefix: "OIDC_CLAIM_"
-oidc_uppercase: False
-voperson_application_uid: "voperson_application_uid"
-eduperson_principal_name: "eduperson_principal_name"
+oidc:
+  client_id: "{{ sbs_client_id }}"
+  client_secret: "{{ sbs_client_secret }}"
+  authorization_endpoint: "{{ sbs_oidc_authz_endpoint }}"
+  token_endpoint: "{{ sbs_oidc_token_endpoint }}"
+  userinfo_endpoint: "{{ sbs_oidc_userinfo_endpoint }}"
+  #Note that the paths for these  uri's is hardcoded and only domain and port differ per environment
+  redirect_uri: "{{ sbs_base_url }}api/users/resume-session"
+  scopes:
+    - profile
+    - eduperson_scoped_affiliation
+    - voperson_external_affiliation
+    - email
+    - ssh_public_key
+    - eduperson_orcid
+    - uid
+    - voperson_external_id
+    - eduperson_entitlement
+    - eduperon_assurance
+    - openid
+    - eduperson_principal_name
+    - voperson_id
 
 base_scope: "{{ base_domain }}"
 entitlement_group_namespace: "{{ sbs_urn_namespace }}"
@@ -34,6 +51,10 @@ mail:
   sender_email: {{ sbs_mail_sender_email }}
   suppress_sending_mails: False
   info_email: scz-support@surfnet.nl
+  send_exceptions: False
+  send_js_exceptions: False
+  send_exceptions_recipients: ["sram-support@surfnet.nl"]
+  environment: "{{ base_domain }}"
 
 aup:
   pdf: SURFresearch-Access-Management-AUP-01122019-0001.pdf
@@ -58,6 +79,8 @@ retention:
   allowed_inactive_period_days: 90
   reminder_expiry_period_days: 14
   reminder_resent_period_days: 7
+  cron_hour_of_day: {{ sbs_cron_hour_of_day }}
+  remove_suspended_users_period_days: 540
 
 service_bus:
   enabled: False
