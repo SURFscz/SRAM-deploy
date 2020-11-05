@@ -35,6 +35,7 @@
     mode: 0755
   with_items:
     - sczGroup.ldif
+    - groupOfMembers.ldif
 
 - name: Generate ldif from template
   become_user: "{{ ldap_user }}"
@@ -76,22 +77,21 @@
   tags: ldap
   when: emptyDIT.stdout == ""
 
-- name: Check if the sczGroup schema is already present
+- name: Check if the groupOfMembers schema is already present
   shell: >
     ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// -b 'cn=schema,cn=config' '(cn=*)' dn
-    | grep -i 'cn={[0-9]\+}sczgroup,cn=schema,cn=config'
+    | grep -i 'cn={[0-9]\+}groupOfMembers,cn=schema,cn=config'
   register:
-    sczGroupTask
-  failed_when: sczGroupTask.rc not in [0, 1]
+    groupOfMembersTask
+  failed_when: groupOfMembersTask.rc not in [0, 1]
   changed_when: False
 
-- name: Ensure the sczGroup schema is added to LDAP
+- name: Ensure the groupOfMembers schema is added to LDAP
   become: true
   command: >
     ldapadd -Q -Y EXTERNAL -H ldapi:///
-    -f "{{ ldap_ldif_dir }}/sczGroup.ldif"
-# Forcably disable the addition of the sczGroup schema
-  when: false and sczGroupTask.stdout == ""
+    -f "{{ ldap_ldif_dir }}/groupOfMembers.ldif"
+  when: groupOfMembersTask.stdout == ""
 
 - name: Enable memberof/refint overlay
   command: >
