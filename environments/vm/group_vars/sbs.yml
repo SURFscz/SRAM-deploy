@@ -7,3 +7,7 @@ firewall_v4_incoming:
     src: "{{lb_ip}}"
     dport:  "{{sbs_server_port}}"
     proto: tcp
+
+sbs_oidc_authz_endpoint: "https://{{ proxy_hostname }}/SamlSP/OIDC/authorization"
+sbs_oidc_token_endpoint: "https://{{ proxy_hostname }}/OIDC/token"
+sbs_oidc_userinfo_endpoint: "https://{{ proxy_hostname }}/OIDC/userinfo"
