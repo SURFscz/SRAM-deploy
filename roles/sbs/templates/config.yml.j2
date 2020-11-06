@@ -1,5 +1,5 @@
 database:
-  uri: "mysql+pymysql://{{ sbs_db_user }}:{{ sbs_db_password }}@{{ db_host }}/{{ sbs_db_name }}?ssl=true&ssl_ca=/etc/ssl/certs/ca-certificates.crt"
+  uri: "mysql+pymysql://{{ sbs_db_user }}:{{ sbs_db_password }}@{{ db_host }}/{{ sbs_db_name }}"
 
 secret_key: {{ sbs_db_secret }}
 
