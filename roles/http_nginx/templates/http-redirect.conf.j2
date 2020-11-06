@@ -5,8 +5,8 @@ server {
 	server_name _;
 
 {% if letsencrypt is defined %}
-    location /.well-known/acme-challenge {
- 		alias {{letsencrypt.acme_challenge_dir}}/.well-known/acme-challenge;
+	location /.well-known/acme-challenge {
+		alias {{letsencrypt.acme_challenge_dir}}/.well-known/acme-challenge;
 	}
 {% endif %}
 
