@@ -1,5 +1,2 @@
 [mysqld]
 bind-address            = 0.0.0.0
-
-ssl-cert = {{ ssl_certs_dir }}/{{ internal_base_domain }}.crt
-ssl-key = {{ ssl_certs_dir }}/{{ internal_base_domain }}.key
