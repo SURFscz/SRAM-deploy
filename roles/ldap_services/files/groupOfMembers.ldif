@@ -1,6 +1,9 @@
 # Internet X.500 Schema for Ldappc
 # Includes the groupOfMembers ObjectClass schema
 #
+# Taken from RFC2307bis draft 2
+# https://tools.ietf.org/html/draft-howard-rfc2307bis-02
+#
 # An structural object class, "groupOfMembers" is a convenient container
 # for an extensible set of attributes concerning group memberships.
 #
