@@ -54,6 +54,7 @@
         host: '{{ ansible_default_ipv4.address }}'
         password: '{{ sbs_db_password }}'
         priv: '{{ sbs_db_name }}.*:ALL'
+      changed_when: false
 
 - name: Clone SBS repository
   git:
@@ -131,6 +132,7 @@
     owner: www-data
     group: www-data
     mode: 0755
+
 
 - name: Remove obsolete packages
   apt:

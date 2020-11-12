@@ -16,6 +16,6 @@ sbs:
     user: "sysread"
     passwd: "{{ sbs_sysread_password }}"
     verify_ssl: {{ false if environment_name=='vm' else true }}
-pwd: "changethispassword"
+pwd: "{CRYPT}!"
 uid: 1000
 gid: 1000
