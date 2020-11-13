@@ -34,3 +34,4 @@ sbs_backend_port: 80
 sbs_oidc_config_url: "https://{{ hostnames.proxy }}/.well-known/openid-configuration"
 
 sbs_cron_hour_of_day: 4
+sbs_seed_allowed: False
