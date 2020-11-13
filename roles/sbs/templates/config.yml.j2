@@ -69,6 +69,11 @@ admin_users:
   - uid: "{{ admin_user.uid }}"
   {% endfor %}
 
+organisation_categories:
+  - "Research"
+  - "University"
+  - "Medical"
+
 feature:
   admin_users_upgrade: False
   admin_users_upgrade_url: "{{ sbs_base_url }}api/users/upgrade_super_user"
@@ -82,6 +87,9 @@ retention:
   reminder_resent_period_days: 7
   cron_hour_of_day: {{ sbs_cron_hour_of_day }}
   remove_suspended_users_period_days: 540
+
+metadata:
+  idp_url: https://metadata.surfconext.nl/idps-metadata.xml
 
 service_bus:
   enabled: False
