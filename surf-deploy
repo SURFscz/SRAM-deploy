@@ -63,7 +63,7 @@ then
 else
     echo -e "$OK"
 fi
-branch_deploy=$(git symbolic-ref HEAD)
+branch_deploy=$(git symbolic-ref HEAD 2> /dev/null || git describe --exact)
 
 # config
 cwd=$(pwd)
@@ -78,7 +78,7 @@ then
 else
     echo -e "$OK"
 fi
-branch_config=$(git symbolic-ref HEAD)
+branch_config=$(git symbolic-ref HEAD 2> /dev/null || git describe --exact)
 cd "$cwd"
 
 echo -n "Checking whether deploy and config are in sync... "
@@ -90,7 +90,7 @@ then
     echo
     WARNING=1
 else
-    echo -e "$OK"
+    echo -e "$OK ($branch_deploy)"
 fi
 
 if [ "$WARNING" != "0" ]
