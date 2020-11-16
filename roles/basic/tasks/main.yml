@@ -120,22 +120,29 @@
     group: "root"
     mode: 0644
 
-- name: write vm certificate
+- name: write internal certificate
   copy:
     content: "{{wildcard_backend_cert.pub}}"
-    dest: "{{ ca_cert_dir }}/vm.scz-vm.crt"
+    dest: "{{ ca_cert_dir }}/sram-internal.crt"
     owner: "root"
     group: "root"
     mode: 0600
+  notify: "update certificates"
 
 - name: write https certificate
   copy:
     content: "{{https_cert.cert}}"
-    dest: "{{ ca_cert_dir }}/scz-vm.crt"
+    dest: "{{ ca_cert_dir }}/sram-https.crt"
     owner: "root"
     mode: 0600
   when: enable_https and use_fixed_cert
+  notify: "update certificates"
 
-- name: update certificates
-  command: update-ca-certificates
-  changed_when: false
+- name: remove obsolete files
+  file:
+    path: "{{ca_cert_dir}}/{{item}}"
+    state: "absent"
+  with_items:
+    - "vm.scz-vm.crt"
+    - "scz-vm.crt"
+  notify: "update certificates"
