@@ -57,6 +57,21 @@ def host_config(num: int, name: str) -> Dict:
 
     return data
 
+def mail_config(num: int, name: str) -> Dict:
+    data = dict()
+    data['image'       ] = 'mailhog/mailhog'
+    data['hostname'    ] =  name
+    data['ports'       ] = [ 8025 ]
+    data['networks'    ] = {
+        'scznet': {
+            'ipv4_address': f'{subnet}.{num}',
+            'aliases':      [ f'{name}.vm.{domain}' ]
+        }
+    }
+    data['extra_hosts'] = [ f'{h}.{domain}:{subnet}.{hosts["lb"]}' for h in logical_hosts ]
+
+    return data
+
 # generate the full docker-compose.yml file
 compose = dict()
 compose['version' ] = '2.4'
@@ -71,6 +86,9 @@ compose['networks'] = {
     }
 }
 compose['services'] = { h: host_config(ip, h) for h, ip in hosts.items() }
+
+# Add mail test host on .99
+compose['services']['mail'] = mail_config(99, 'mail')
 
 # dump the yaml
 print("---")
