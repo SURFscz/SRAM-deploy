@@ -69,6 +69,13 @@ def mail_config(num: int, name: str) -> Dict:
         }
     }
     data['extra_hosts'] = [ f'{h}.{domain}:{subnet}.{hosts["lb"]}' for h in logical_hosts ]
+    data['healthcheck'] = {
+        'test': [ 'CMD', '/usr/bin/test', '!', '-e', '/etc/nologin' ],
+        'interval': '5s',
+        'timeout': '1s',
+        'retries': '1',
+        'start_period': '0s'
+    }
 
     return data
 
