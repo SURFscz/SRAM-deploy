@@ -128,13 +128,13 @@
   roles:
     - { role: ldap_services,      tags: ['ldap', 'ldap-services' ] }
     - { role: ldap,               tags: ['ldap'                  ] }
-    #- { role: plsc,               tags: ['ldap', 'ldap-plsc'     ] }
-    #- { role: pam_websso_daemon,  tags: ['client','websso-daemon'], when: experimental_features }
+#    - { role: plsc,               tags: ['ldap', 'ldap-plsc'     ] }
+#    - { role: pam_websso_daemon,  tags: ['client','websso-daemon'], when: experimental_features }
 
 - name: "first ldap"
   hosts: ldap[0]
   roles:
-    - { role: plsc,               tags: ['ldap', 'ldap-plsc'     ] }
+#    - { role: plsc,               tags: ['ldap', 'ldap-plsc'     ] }
 
 - name: "meta"
   hosts: meta
