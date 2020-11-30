@@ -50,7 +50,8 @@ iprange:
 
 mail:
   relay_host: "172.20.1.1"
-  relay_to: "outgoing.{{base_domain}}"
+  relay_to: "mail.vm.{{base_domain}}"
+  relay_port: 1025
   relay_for:
     - "{{iprange.mgnt}}"
   domain: "{{base_domain}}"
@@ -79,7 +80,7 @@ scz_repo:
   pyff:      { name: "pyFF",                   version: "scz-0.8.1",  src: "https://github.com/SURFscz/pyFF.git"                           }
   cmservice: { name: "CMservice",              version: "scz-0.4",    src: "https://github.com/SURFscz/CMservice.git"                      }
   sbs:       { name: "SBS",                    version: "main",       src: "https://github.com/SURFscz/SBS.git"                            }
-  plsc:      { name: "pLSC",                   version: "main",       src: "https://github.com/SURFscz/plsc.git"                     }
+  plsc:      { name: "pLSC",                   version: "main",       src: "https://github.com/SURFscz/plsc.git"                           }
 # yamllint enable rule:line-length
 
 # poor man's user management
