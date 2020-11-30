@@ -34,6 +34,13 @@
     dest: /etc/apache2/sites-enabled/sbs.conf
   notify: restart Apache
 
+- name: Comment MinProtocol in openssl.conf on dockers
+  replace:
+    path: /etc/ssl/openssl.cnf
+    regexp: '(^MinProtocol.*)'
+    replace: '#\1'
+  when: not is_aws and use_fixed_cert
+
 - name: Initialialize database
   throttle: 1
   block:
@@ -53,7 +60,7 @@
         name: '{{ sbs_db_user }}'
         host: '{{ ansible_default_ipv4.address }}'
         password: '{{ sbs_db_password }}'
-        priv: '{{ sbs_db_name }}.*:ALL'
+        priv: '{{ sbs_db_name }}.*:ALL,REQUIRESSL'
       changed_when: false
 
 - name: Clone SBS repository
@@ -132,7 +139,6 @@
     owner: www-data
     group: www-data
     mode: 0755
-
 
 - name: Remove obsolete packages
   apt:

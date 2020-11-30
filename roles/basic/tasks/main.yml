@@ -134,6 +134,7 @@
     content: "{{https_cert.cert}}"
     dest: "{{ ca_cert_dir }}/sram-https.crt"
     owner: "root"
+    group: "root"
     mode: 0600
   when: enable_https and use_fixed_cert
   notify: "update certificates"
@@ -146,3 +147,6 @@
     - "vm.scz-vm.crt"
     - "scz-vm.crt"
   notify: "update certificates"
+
+- name: Flush handlers
+  meta: flush_handlers
