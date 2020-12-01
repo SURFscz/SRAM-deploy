@@ -128,8 +128,8 @@
   roles:
     - { role: ldap_services,      tags: ['ldap', 'ldap-services' ] }
     - { role: ldap,               tags: ['ldap'                  ] }
-    #- { role: plsc,               tags: ['ldap', 'ldap-plsc'     ] }
-    #- { role: pam_websso_daemon,  tags: ['client','websso-daemon'], when: experimental_features }
+#    - { role: plsc,               tags: ['ldap', 'ldap-plsc'     ] }
+#    - { role: pam_websso_daemon,  tags: ['client','websso-daemon'], when: experimental_features }
 
 - name: "first ldap"
   hosts: ldap[0]
@@ -142,8 +142,8 @@
     - { import_tasks: "tasks/versions.yml", tags: ['common'] }
   roles:
     - { role: pyff-metadata, tags: ['meta','pyff-metadata']}
-    - { role: http_dummy,    tags: ['meta','http'    ]     }
     - { role: metadata,      tags: ['meta','metadata']     }
+    - { role: http_dummy,    tags: ['meta','http'    ]     }
 
 - name: "sandbox"
   hosts: sandbox1
