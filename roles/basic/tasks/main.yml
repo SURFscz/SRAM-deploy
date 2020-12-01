@@ -147,3 +147,5 @@
 
 - name: update certificates
   command: update-ca-certificates
+  changed_when: false
+
