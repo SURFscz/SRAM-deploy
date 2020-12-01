@@ -15,6 +15,3 @@
   systemd:
     name: systemd-journald.service
     state: restarted
-
-- name: update certificates
-  command: update-ca-certificates

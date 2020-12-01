@@ -110,7 +110,7 @@
   tasks:
     - { import_tasks: "tasks/versions.yml", tags: ['common'] }
   roles:
-    - { role: pyff-daemon,   tags: ['proxy','pyff-daemon'   ] }
+#    - { role: pyff-daemon,   tags: ['proxy','pyff-daemon'   ] }
     - { role: satosa,        tags: ['proxy','satosa'        ] }
 
 - name: "sbs"
@@ -141,9 +141,9 @@
   tasks:
     - { import_tasks: "tasks/versions.yml", tags: ['common'] }
   roles:
-    - { role: pyff-metadata, tags: ['meta','pyff-metadata']}
+#    - { role: pyff-metadata, tags: ['meta','pyff-metadata']}
+#    - { role: metadata,      tags: ['meta','metadata']     }
     - { role: http_dummy,    tags: ['meta','http'    ]     }
-    - { role: metadata,      tags: ['meta','metadata']     }
 
 - name: "sandbox"
   hosts: sandbox1
