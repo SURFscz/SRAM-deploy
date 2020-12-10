@@ -120,13 +120,12 @@
     group: "root"
     mode: 0644
 
-- name: write internal certificate
-  copy:
-    content: "{{wildcard_backend_cert.pub}}"
-    dest: "{{ ca_cert_dir }}/sram-internal.crt"
-    owner: "root"
-    group: "root"
-    mode: 0600
+- name: register backend wildcard pub in OS registry
+  file:
+    state: "link"
+    path: "{{ ca_cert_dir }}/sram-internal.crt"
+    src: "{{ ssl_certs_dir }}/{{ internal_base_domain }}.crt"
+    force: true
   notify: "update certificates"
 
 - name: write https certificate
