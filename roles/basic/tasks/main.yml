@@ -128,13 +128,14 @@
     force: true
   notify: "update certificates"
 
-- name: write https certificate
-  copy:
+- name: write self-signed external https certificate
+  file:
+    state: "link"
     content: "{{https_cert.cert}}"
     dest: "{{ ca_cert_dir }}/sram-https.crt"
     owner: "root"
     mode: 0600
-  when: enable_https and use_fixed_cert
+  when: "environment_name=='vm' and enable_https and use_fixed_cert"
   notify: "update certificates"
 
 - name: remove obsolete files
@@ -144,4 +145,6 @@
   with_items:
     - "vm.scz-vm.crt"
     - "scz-vm.crt"
+    - "sram-https.crt"
+  when: "enviroment_name!='vm'"
   notify: "update certificates"
