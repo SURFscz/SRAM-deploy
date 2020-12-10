@@ -146,5 +146,5 @@
     - "vm.scz-vm.crt"
     - "scz-vm.crt"
     - "sram-https.crt"
-  when: "enviroment_name!='vm'"
+  when: "environment_name!='vm'"
   notify: "update certificates"
