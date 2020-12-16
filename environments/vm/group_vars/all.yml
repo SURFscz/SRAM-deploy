@@ -77,7 +77,7 @@ scz_repo:
   #co_tmpl:   { name: "Template manager",       version: "scz-0.12",   src: "https://github.com/SURFscz/COmanage-templatemanager.git"       }
   satosa:    { name: "SATOSA",                 version: "scz-0.10",   src: "https://github.com/SURFscz/SATOSA.git"                         }
   satosa_ms: { name: "SATOSA microservices",   version: "scz-0.11",   src: "https://github.com/SURFscz/SATOSA-micro_services.git"          }
-  pyff:      { name: "pyFF",                   version: "scz-0.8.1",  src: "https://github.com/SURFscz/pyFF.git"                           }
+  pyff:      { name: "pyFF",                   version: "1.1.5",      src: "https://github.com/IdentityPython/pyFF.git"                    }
   cmservice: { name: "CMservice",              version: "scz-0.4",    src: "https://github.com/SURFscz/CMservice.git"                      }
   sbs:       { name: "SBS",                    version: "main",       src: "https://github.com/SURFscz/SBS.git"                            }
   plsc:      { name: "pLSC",                   version: "main",       src: "https://github.com/SURFscz/plsc.git"                           }
