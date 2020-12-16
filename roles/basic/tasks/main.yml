@@ -129,12 +129,12 @@
   notify: "update certificates"
 
 - name: write self-signed external https certificate
-  file:
-    state: "link"
+  copy:
     content: "{{https_cert.cert}}"
     dest: "{{ ca_cert_dir }}/sram-https.crt"
     owner: "root"
-    mode: 0600
+    group: "root"
+    mode: 0644
   when: "environment_name=='vm' and enable_https and use_fixed_cert"
   notify: "update certificates"
 
