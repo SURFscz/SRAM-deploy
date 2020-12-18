@@ -1,3 +1,4 @@
+---
 # This is a basic workflow to help you get started with Actions
 
 name: CI
@@ -27,7 +28,7 @@ jobs:
 
       # Decrypt secret
       - shell: bash
-        env: # Set the secret as an input
+        env:
           secret_vm: ${{ secrets.SECRET_VM }}
         run: echo $secret_vm > secret_vm
 
@@ -43,7 +44,7 @@ jobs:
           #sudo adduser travis docker
           sudo pip2 install --upgrade jinja2
           pip install yamllint jinja2 pyyaml
-          git clone --branch v0.2.9 https://github.com/dw/mitogen.git
+          #git clone --branch v0.2.9 https://github.com/dw/mitogen.git
 
       # Run Syntax check
       - name: Run Syntax check
