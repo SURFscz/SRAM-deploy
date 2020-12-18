@@ -40,7 +40,7 @@ jobs:
           sudo apt-add-repository -y ppa:ansible/ansible-2.9
           sudo apt -q update
           sudo apt -y install ansible bridge-utils
-          sudo adduser travis docker
+          #sudo adduser travis docker
           sudo pip2 install --upgrade jinja2
           pip install yamllint jinja2 pyyaml
           git clone --branch v0.2.9 https://github.com/dw/mitogen.git
@@ -52,6 +52,16 @@ jobs:
       # Runs a single command using the runners shell
       - name: Run start-vm
         run: ./start-vm
+
+      # Runs a single command using the runners shell
+      - name: Run start-vm --diff
+        env:
+          REEANTRANT: 1
+        run: ./start-vm --diff
+
+      # Runs a single command using the runners shell
+      - name: Run idempotency check...
+        run: python ./scripts/check-idempotency-status
 
       # Destroy secret
       - name: Destroy secret
