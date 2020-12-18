@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+export TERM=xterm-256color
 
 if [ ! -f docker/ansible_key.pub ]; then
     echo "No ansible key found"
