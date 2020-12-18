@@ -45,9 +45,9 @@ jobs:
           pip install yamllint jinja2 pyyaml
           git clone --branch v0.2.9 https://github.com/dw/mitogen.git
 
-      # Run Tests
-      - name: Run Tests
-        run: ./scripts/travis_tests
+      # Run Syntax check
+      - name: Run Syntax check
+        run: ./scripts/syntax-check
 
       # Runs a single command using the runners shell
       - name: Run start-vm
