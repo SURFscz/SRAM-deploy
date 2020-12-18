@@ -28,7 +28,7 @@ jobs:
       # Decrypt secret
       - name: Copy secret to secret_vm
         run: |
-          echo ${{ secrets.SECRET_VM }} > secret_vm
+          echo "${{ secrets.SECRET_VM }}" > secret_vm
           echo "options timeout:5"  | sudo tee -a /etc/resolvconf/resolv.conf.d/tail
           echo "options attempts:5" | sudo tee -a /etc/resolvconf/resolv.conf.d/tail
           sudo service resolvconf restart
