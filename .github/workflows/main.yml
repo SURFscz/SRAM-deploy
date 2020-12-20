@@ -52,7 +52,7 @@ jobs:
         run: ./scripts/syntax-check
 
       # Runs a single command using the runners shell
-      - shell: Run start-vm
+      - name: Run start-vm
         shell: bash
         run: ./start-vm
 
