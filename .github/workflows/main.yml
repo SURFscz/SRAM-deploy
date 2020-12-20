@@ -27,7 +27,8 @@ jobs:
       - uses: actions/checkout@v2
 
       # Decrypt secret
-      - shell: bash
+      - name: Copy secret
+        shell: bash
         env:
           secret_vm: ${{ secrets.SECRET_VM }}
         run: echo $secret_vm > secret_vm
@@ -51,7 +52,8 @@ jobs:
         run: ./scripts/syntax-check
 
       # Runs a single command using the runners shell
-      - name: Run start-vm
+      - shell: Run start-vm
+        shell: bash
         run: ./start-vm
 
       # Runs a single command using the runners shell
