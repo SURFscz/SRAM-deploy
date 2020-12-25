@@ -12,10 +12,8 @@ sbs_db_name: "sbs"
 sbs_db_user: "sbs"
 sbs_db_host: "localhost"
 
-#sbs_mail_host: "{{ mail.relay_to }}"
-#sbs_mail_port: "{{ mail.relay_port }}"
-sbs_mail_host: 127.0.0.1
-sbs_mail_port: 25
+sbs_mail_host: "{{ mail.relay_to }}"
+sbs_mail_port: "{{ mail.relay_port }}"
 
 sbs_oidc_crypto_password: "CHANGEME"
 sbs_uid_attribute: "sub"
