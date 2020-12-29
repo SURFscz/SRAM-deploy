@@ -36,3 +36,4 @@ sbs_oidc_config_url: "https://{{ hostnames.proxy }}/.well-known/openid-configura
 sbs_cron_hour_of_day: 4
 sbs_seed_allowed: False
 sbs_api_keys_enabled: True
+sbs_feedback_enabled: True
