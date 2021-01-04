@@ -64,8 +64,11 @@ jobs:
       - run: "docker network ls"
       - run: "docker network inspect docker_scznet"
       - run: >
-          docker exec -i docker_db_1
-          bash -c 'apt update; apt install netcat; nc -v -w3 -l -p 3306; nc -v -w3 -l -p 80'
+          docker exec -i docker_db_1 bash -c '
+          apt update;
+          apt install netcat-traditional;
+          nc.traditional -v -w3 -l -p 3306;
+          nc.traditional -v -w3 -l -p 80'
 
       # Runs a single command using the runners shell
       - name: Run start-vm
