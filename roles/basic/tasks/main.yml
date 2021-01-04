@@ -1,19 +1,15 @@
 ---
-- name: Debug ansible_virtualization_type
-  debug:
-    var: ansible_virtualization_type
-
 - name: set nameservers
   template: src=resolv.conf.j2 dest=/etc/resolv.conf force=yes
   when:
     - not is_aws
-    - ansible_virtualization_type != "docker"
+    - environment_name!="vm"
 
 - name: fix dhclient.conf
   template: src=dhclient.conf.j2 dest=/etc/dhcp/dhclient.conf force=yes
   when:
     - is_aws
-    - ansible_virtualization_type != "docker"
+    - environment_name!="vm"
   register: dhclient
 
 - name: Restart networking
@@ -30,19 +26,21 @@
 
 - name: set hostname
   hostname: name={{inventory_hostname_short}}
-  when: ansible_virtualization_type != "docker"
+  when:
+    - environment_name!="vm"
 
 - name: set /etc/hosts
   template: src=hosts.j2 dest=/etc/hosts force=yes
   when:
     - not is_aws
-    - ansible_virtualization_type != "docker"
+    - environment_name!="vm"
 
 - name: check that hostname and fqdn are set up correctly
   command: "/usr/bin/hostname --fqdn"
   any_errors_fatal: true
   changed_when: false
-  when: ansible_virtualization_type != "docker"
+  when:
+    - environment_name!="vm"
 
 - name: install journald config
   template:
