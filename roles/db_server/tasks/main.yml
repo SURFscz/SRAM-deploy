@@ -26,5 +26,5 @@
     password: '{{ db_admin_password }}'
     priv: '*.*:ALL,GRANT'
     state: present
-    #login_unix_socket: /var/run/mysqld/mysqld.sock
-    #check_implicit_admin: yes
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+    check_implicit_admin: yes
