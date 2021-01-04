@@ -1,4 +1,7 @@
 ---
+- name: Debug ansible_virtualization_type
+  debug:
+    var: ansible_virtualization_type
 
 - name: set nameservers
   template: src=resolv.conf.j2 dest=/etc/resolv.conf force=yes
