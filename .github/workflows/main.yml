@@ -54,7 +54,7 @@ jobs:
       # Runs a single command using the runners shell
       - name: Run start-vm
         shell: bash
-        run: ./start-vm -vvv
+        run: ./start-vm
 
       # Runs a single command using the runners shell
       - name: Run start-vm --diff

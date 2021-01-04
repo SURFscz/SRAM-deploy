@@ -9,7 +9,8 @@
   apt:
     name:
       - mariadb-server
-      - python-pymysql
+      #- python-pymysql
+      - python-mysqldb
     state: present
 
 - name: listen to public IP
@@ -24,5 +25,6 @@
     host: '%'
     password: '{{ db_admin_password }}'
     priv: '*.*:ALL,GRANT'
-    login_unix_socket: /var/run/mysqld/mysqld.sock
-    check_implicit_admin: yes
+    state: present
+    #login_unix_socket: /var/run/mysqld/mysqld.sock
+    #check_implicit_admin: yes
