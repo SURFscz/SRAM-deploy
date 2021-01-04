@@ -58,7 +58,7 @@ jobs:
       # Start container
       - name: Run start-vm
         shell: bash
-        run: "./start-vm --tags=none"
+        run: "./start-vm --tags=none || true"
 
       - run: "docker ps -a"
       - run: "docker network ls"
