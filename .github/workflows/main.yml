@@ -26,6 +26,11 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
+      - run: ip addr
+      - run: ps aux
+      - run: selinux status
+      - run: uname -a
+
       # Decrypt secret
       - name: Copy secret
         shell: bash
