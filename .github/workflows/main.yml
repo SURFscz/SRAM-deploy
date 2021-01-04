@@ -28,7 +28,6 @@ jobs:
 
       - run: ip addr
       - run: ps aux
-      - run: selinux status
       - run: uname -a
 
       # Decrypt secret
@@ -55,6 +54,16 @@ jobs:
       # Run Syntax check
       - name: Run Syntax check
         run: ./scripts/syntax-check
+
+      # Start container
+      - name: Run start-vm
+        shell: bash
+        run: "./start-vm --tags=none"
+
+      - run: "docker ps -a"
+      - run: "docker network ls"
+      - run: "docker network inspect docker_scznet"
+      - run: "docker exec -it docker_db_1 bash -c 'apt install netcat; nc -v -w3 -l -p 3306; nc -v -w3 -l -p 80'"
 
       # Runs a single command using the runners shell
       - name: Run start-vm
