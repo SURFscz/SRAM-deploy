@@ -25,3 +25,4 @@
     password: '{{ db_admin_password }}'
     priv: '*.*:ALL,GRANT'
     login_unix_socket: /var/run/mysqld/mysqld.sock
+    check_implicit_admin: yes
