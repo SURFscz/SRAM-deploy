@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+export TERM=xterm-256color
 
 if [ ! -f docker/ansible_key.pub ]; then
     echo "No ansible key found"
@@ -12,7 +13,7 @@ if [ -z "$REENTRANT" ]; then
     if [ -z "$scz_image" ]
     then
         echo "Building docker image"
-        time docker build -t scz-base --target=scz-base --force-rm docker/
+        time docker build -t scz-base --target=scz-base --cache-from=scz-base-cache docker/
     else
         echo "Docker image found"
     fi

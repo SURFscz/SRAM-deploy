@@ -26,4 +26,5 @@
       notify:
         - restart chrony
 
-  when: ansible_virtualization_type != "docker"
+  when:
+    - environment_name!="vm"

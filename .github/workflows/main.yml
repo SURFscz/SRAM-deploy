@@ -1,0 +1,100 @@
+---
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the action will run.
+on:
+  # Triggers the workflow on push or pull request events
+  push:
+  pull_request:
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout $GITHUB_WORKSPACE
+        uses: actions/checkout@v2
+
+      # Restore cache
+      - name: Setup cache
+        id: cache-docker
+        uses: actions/cache@v2
+        with:
+          path: ~/docker-save
+          key: docker-save-${{ hashFiles('docker/Dockerfile') }}
+
+      # Decrypt secret
+      - name: Copy secret
+        shell: bash
+        env:
+          secret_vm: ${{ secrets.SECRET_VM }}
+        run: echo $secret_vm > secret_vm
+
+      # Run errands
+      - name: Run errands
+        run: |
+          #echo "options timeout:5"  | sudo tee -a /etc/resolvconf/resolv.conf.d/tail
+          #echo "options attempts:5" | sudo tee -a /etc/resolvconf/resolv.conf.d/tail
+          #sudo service resolvconf restart
+          sudo apt-add-repository -y ppa:ansible/ansible-2.9
+          sudo apt -q update
+          sudo apt -y install ansible bridge-utils
+          sudo pip2 install --upgrade wheel jinja2
+          pip install yamllint jinja2 pyyaml
+          git clone --branch v0.2.9 https://github.com/dw/mitogen.git ~/mitogen
+
+      # Setup tmate session
+      #- name: Setup tmate session
+      #  uses: mxschmitt/action-tmate@v3
+
+      # Run Syntax check
+      - name: Run Syntax check
+        run: ./scripts/syntax-check
+
+      # Restore docker cache
+      - name: Restore docker cache
+        run: docker load -i ~/docker-save/scz-base-cache.tar || true
+        if: steps.cache-docker.outputs.cache-hit == 'true'
+
+      # Start containers without deploy
+      #- name: Start containers
+      #  shell: bash
+      #  run: "./start-vm --tags=none || true"
+
+      # Runs a single command using the runners shell
+      - name: Run start-vm
+        shell: bash
+        run: ./start-vm
+
+      # Runs a single command using the runners shell
+      - name: Run start-vm --diff
+        env:
+          REEANTRANT: 1
+        run: ./start-vm --diff
+
+      # Runs a single command using the runners shell
+      - name: Run idempotency check...
+        run: /usr/bin/python3 ./scripts/check-idempotency-status
+
+      # Destroy secret
+      - name: Destroy secret
+        run: shred secret_vm
+
+      # Save docker cache
+      - name: Save docker cache
+        run: >
+          mkdir -p ~/docker-save &&
+          docker tag scz-base scz-base-cache &&
+          docker save scz-base-cache -o ~/docker-save/scz-base-cache.tar &&
+          ls -lh ~/docker-save || true
+        if: steps.cache-docker.outputs.cache-hit != 'true'
