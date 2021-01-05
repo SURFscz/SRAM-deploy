@@ -51,10 +51,29 @@ jobs:
       - name: Run Syntax check
         run: ./scripts/syntax-check
 
+      # Restore docker cache
+      - name: Restore docker cache
+        uses: actions/cache@v1
+        with:
+          path: /tmp/docker-save
+          key: docker-save-${{ hashFiles('Dockerfile') }}
+        run: docker load -i /tmp/docker-save/snapshot.tar || true
+          if: steps.cache-docker.outputs.cache-hit == 'true'
+
       # Start containers
       - name: Start containers
         shell: bash
+        uses: actions/cache@v1
         run: "./start-vm --tags=none || true"
+
+      # Save docker cache
+      - name: Save docker cache
+        uses: actions/cache@v1
+        with:
+          path: /tmp/docker-save
+          key: docker-save-${{ hashFiles('Dockerfile') }}
+        run: docker tag scz-base scz-base-cache && mkdir -p /tmp/docker-save && docker save scz-base-cache -o /tmp/docker-save/snapshot.tar && ls -lh /tmp/docker-save || true
+          if: always() && steps.cache-docker.outputs.cache-hit != 'true'
 
       # Setup tmate session
       - name: Setup tmate session

@@ -13,7 +13,7 @@ if [ -z "$REENTRANT" ]; then
     if [ -z "$scz_image" ]
     then
         echo "Building docker image"
-        time docker build -t scz-base --target=scz-base --force-rm docker/
+        time docker build -t scz-base --target=scz-base --cache-from=thing-cache docker/
     else
         echo "Docker image found"
     fi
