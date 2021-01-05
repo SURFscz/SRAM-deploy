@@ -24,7 +24,15 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
+      - name: Checkout $GITHUB_WORKSPACE
+        uses: actions/checkout@v2
+
+      # Restore cache
+      - id: cache-docker
+        uses: actions/cache@v1
+        with:
+          path: /var/tmp/docker-save
+          key: docker-save-${{ hashFiles('docker/Dockerfile') }}
 
       # Decrypt secret
       - name: Copy secret
@@ -57,13 +65,8 @@ jobs:
 
       # Restore docker cache
       - name: Restore docker cache
-        id: load-docker
-        uses: actions/cache@v1
-        with:
-          path: /var/tmp/docker-save
-          key: docker-save-${{ hashFiles('docker/Dockerfile') }}
         run: docker load -i /tmp/docker-save/snapshot.tar || true
-        if: steps.load-docker.outputs.cache-hit == 'true'
+        if: steps.cache-docker.outputs.cache-hit == 'true'
 
       # Start containers
       - name: Start containers
@@ -72,16 +75,11 @@ jobs:
 
       # Save docker cache
       - name: Save docker cache
-        id: save-docker
-        uses: actions/cache@v1
-        with:
-          path: /var/tmp/docker-save
-          key: docker-save-${{ hashFiles('docker/Dockerfile') }}
         run: >
           docker tag scz-base scz-base-cache && mkdir -p /var/tmp/docker-save &&
           docker save scz-base-cache -o /var/tmp/docker-save/snapshot.tar &&
           ls -lh /var/tmp/docker-save || true
-        if: always() && steps.save-docker.outputs.cache-hit != 'true'
+        if: always() && steps.cache-docker.outputs.cache-hit != 'true'
 
 
       # Runs a single command using the runners shell
