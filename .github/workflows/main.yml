@@ -76,8 +76,8 @@ jobs:
         shell: bash
         run: >
           ./start-vm
-          --strategy_plugins="~/mitogen/ansible_mitogen/plugins/strategy"
-          --strategy=mitogen_linear
+          -a "strategy_plugins=~/mitogen/ansible_mitogen/plugins/strategy
+          strategy=mitogen_linear"
 
       # Runs a single command using the runners shell
       - name: Run start-vm --diff
