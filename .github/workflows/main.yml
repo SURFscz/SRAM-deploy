@@ -51,7 +51,7 @@ jobs:
           sudo apt -y install ansible bridge-utils
           sudo pip2 install --upgrade wheel jinja2
           pip install yamllint jinja2 pyyaml
-          git clone --branch v0.2.9 https://github.com/dw/mitogen.git ~/
+          git clone --branch v0.2.9 https://github.com/dw/mitogen.git ~/mitogen
 
       # Setup tmate session
       #- name: Setup tmate session
