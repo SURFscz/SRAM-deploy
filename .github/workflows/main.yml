@@ -59,7 +59,7 @@ jobs:
       # Restore docker cache
       - name: Restore docker cache
         run: docker load -i /tmp/docker-save/snapshot.tar || true
-          if: steps.cache-docker.outputs.cache-hit == 'true'
+        if: steps.cache-docker.outputs.cache-hit == 'true'
 
       # Start containers
       - name: Start containers
@@ -70,7 +70,7 @@ jobs:
       # Save docker cache
       - name: Save docker cache
         run: docker tag scz-base scz-base-cache && mkdir -p /tmp/docker-save && docker save scz-base-cache -o /tmp/docker-save/snapshot.tar && ls -lh /tmp/docker-save || true
-          if: always() && steps.cache-docker.outputs.cache-hit != 'true'
+        if: always() && steps.cache-docker.outputs.cache-hit != 'true'
 
       # Setup tmate session
       - name: Setup tmate session
