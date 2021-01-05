@@ -28,7 +28,7 @@ jobs:
       - id: cache-docker
         uses: actions/cache@v1
         with:
-          path: /tmp/docker-save
+          path: /var/tmp/docker-save
           key: docker-save-${{ hashFiles('Dockerfile') }}
 
       # Decrypt secret
@@ -69,9 +69,9 @@ jobs:
       # Save docker cache
       - name: Save docker cache
         run: >
-          docker tag scz-base scz-base-cache && mkdir -p /tmp/docker-save &&
-          docker save scz-base-cache -o /tmp/docker-save/snapshot.tar &&
-          ls -lh /tmp/docker-save || true
+          docker tag scz-base scz-base-cache && mkdir -p /var/tmp/docker-save &&
+          docker save scz-base-cache -o /var/tmp/docker-save/snapshot.tar &&
+          ls -lh /var/tmp/docker-save || true
         if: always() && steps.cache-docker.outputs.cache-hit != 'true'
 
       # Setup tmate session
