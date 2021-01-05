@@ -37,7 +37,7 @@ def host_config(num: int, name: str) -> Dict:
     data['hostname'    ] =  name
     data['volumes'     ] = [ './ansible_key.pub:/tmp/authorized_keys', '/sys/fs/cgroup:/sys/fs/cgroup:ro' ]
     data['tmpfs'       ] = [ '/run', '/run/lock', '/tmp' ]
-    data['privileged'  ] = True
+    data['privileged'  ] = False
     data['security_opt'] = [ 'seccomp:unconfined', 'apparmor:unconfined' ]
     data['cap_add'     ] = [ 'SYS_ADMIN', 'SYS_PTRACE' ]
     data['networks'    ] = {

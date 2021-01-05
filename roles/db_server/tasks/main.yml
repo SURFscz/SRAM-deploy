@@ -5,14 +5,6 @@
     warn: false
   changed_when: false
 
-- name: Ensure that packages are installed
-  apt:
-    name:
-      - mariadb-server
-      #- python-pymysql
-      - python-mysqldb
-    state: present
-
 - name: Create mariadb.service.d directory
   file:
     path: /etc/systemd/system/mariadb.service.d
@@ -23,7 +15,14 @@
   copy:
     src: type.conf
     dest: /etc/systemd/system/mariadb.service.d/type.conf
-  notify: restart MariaDB
+
+- name: Ensure that packages are installed
+  apt:
+    name:
+      - mariadb-server
+      #- python-pymysql
+      - python-mysqldb
+    state: present
 
 - name: listen to public IP
   copy:
