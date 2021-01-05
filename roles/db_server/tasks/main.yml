@@ -13,6 +13,18 @@
       - python-mysqldb
     state: present
 
+- name: Create mariadb.service.d directory
+  file:
+    path: /etc/systemd/system/mariadb.service.d
+    state: directory
+    mode: '0755'
+
+- name: Set mysql systemd Type=exec
+  copy:
+    src: type.conf
+    dest: /etc/systemd/system/mariadb.service.d/type.conf
+  notify: restart MariaDB
+
 - name: listen to public IP
   copy:
     src: 60-scz.cnf
