@@ -59,8 +59,8 @@ jobs:
       #  uses: mxschmitt/action-tmate@v3
 
       # Run Syntax check
-      - name: Run Syntax check
-        run: ./scripts/syntax-check
+      #- name: Run Syntax check
+      #  run: ./scripts/syntax-check
 
       # Restore docker cache
       - name: Restore docker cache
