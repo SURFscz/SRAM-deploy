@@ -28,8 +28,9 @@ jobs:
         uses: actions/checkout@v2
 
       # Restore cache
-      - id: cache-docker
-        uses: actions/cache@v1
+      - name: Setup cache
+        id: cache-docker
+        uses: actions/cache@v2
         with:
           path: /var/tmp/docker-save
           key: docker-save-${{ hashFiles('docker/Dockerfile') }}
@@ -79,7 +80,7 @@ jobs:
           docker tag scz-base scz-base-cache && mkdir -p /var/tmp/docker-save &&
           docker save scz-base-cache -o /var/tmp/docker-save/snapshot.tar &&
           ls -lh /var/tmp/docker-save || true
-        if: always() && steps.cache-docker.outputs.cache-hit != 'true'
+        if: steps.cache-docker.outputs.cache-hit != 'true'
 
 
       # Runs a single command using the runners shell
