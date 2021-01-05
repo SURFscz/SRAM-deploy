@@ -30,6 +30,10 @@ jobs:
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
 
+      - run: ip addr
+      - run: ps aux
+      - run: uname -a
+
       # Decrypt secret
       - name: Copy secret
         shell: bash
@@ -54,6 +58,21 @@ jobs:
       # Run Syntax check
       - name: Run Syntax check
         run: ./scripts/syntax-check
+
+      # Start container
+      - name: Run start-vm
+        shell: bash
+        run: "./start-vm --tags=none || true"
+
+      - run: "docker ps -a"
+      - run: "docker network ls"
+      - run: "docker network inspect docker_scznet"
+      - run: >
+          docker exec -i docker_db_1 bash -c '
+          apt update;
+          apt install netcat-traditional;
+          nc.traditional -v -w3 -l -p 3306;
+          nc.traditional -v -w3 -l -p 80'
 
       # Runs a single command using the runners shell
       - name: Run start-vm
