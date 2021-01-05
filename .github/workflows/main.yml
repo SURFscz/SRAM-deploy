@@ -32,7 +32,7 @@ jobs:
         id: cache-docker
         uses: actions/cache@v2
         with:
-          path: /var/docker-save
+          path: ~/docker-save
           key: docker-save-${{ hashFiles('docker/Dockerfile') }}
 
       # Decrypt secret
@@ -66,7 +66,7 @@ jobs:
 
       # Restore docker cache
       - name: Restore docker cache
-        run: docker load -i /var/docker-save/scz-base-cache.tar || true
+        run: docker load -i ~/docker-save/scz-base-cache.tar || true
         if: steps.cache-docker.outputs.cache-hit == 'true'
 
       # Start containers
@@ -77,10 +77,10 @@ jobs:
       # Save docker cache
       - name: Save docker cache
         run: >
-          mkdir -p /var/docker-save &&
+          mkdir -p ~/docker-save &&
           docker tag scz-base scz-base-cache &&
-          docker save scz-base-cache -o /var/docker-save/scz-base-cache.tar &&
-          ls -lh /var/docker-save || true
+          docker save scz-base-cache -o ~/docker-save/scz-base-cache.tar &&
+          ls -lh ~/docker-save || true
         if: steps.cache-docker.outputs.cache-hit != 'true'
 
       # Runs a single command using the runners shell
