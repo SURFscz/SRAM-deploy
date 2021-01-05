@@ -57,8 +57,8 @@ jobs:
           #git clone --branch v0.2.9 https://github.com/dw/mitogen.git
 
       # Setup tmate session
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
+      #- name: Setup tmate session
+      #  uses: mxschmitt/action-tmate@v3
 
       # Run Syntax check
       - name: Run Syntax check
@@ -69,19 +69,10 @@ jobs:
         run: docker load -i ~/docker-save/scz-base-cache.tar || true
         if: steps.cache-docker.outputs.cache-hit == 'true'
 
-      # Start containers
-      - name: Start containers
-        shell: bash
-        run: "./start-vm --tags=none || true"
-
-      # Save docker cache
-      - name: Save docker cache
-        run: >
-          mkdir -p ~/docker-save &&
-          docker tag scz-base scz-base-cache &&
-          docker save scz-base-cache -o ~/docker-save/scz-base-cache.tar &&
-          ls -lh ~/docker-save || true
-        if: steps.cache-docker.outputs.cache-hit != 'true'
+      # Start containers without deploy
+      #- name: Start containers
+      #  shell: bash
+      #  run: "./start-vm --tags=none || true"
 
       # Runs a single command using the runners shell
       - name: Run start-vm
@@ -101,3 +92,12 @@ jobs:
       # Destroy secret
       - name: Destroy secret
         run: shred secret_vm
+
+      # Save docker cache
+      - name: Save docker cache
+        run: >
+          mkdir -p ~/docker-save &&
+          docker tag scz-base scz-base-cache &&
+          docker save scz-base-cache -o ~/docker-save/scz-base-cache.tar &&
+          ls -lh ~/docker-save || true
+        if: steps.cache-docker.outputs.cache-hit != 'true'
