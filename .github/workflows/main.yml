@@ -68,7 +68,10 @@ jobs:
 
       # Save docker cache
       - name: Save docker cache
-        run: docker tag scz-base scz-base-cache && mkdir -p /tmp/docker-save && docker save scz-base-cache -o /tmp/docker-save/snapshot.tar && ls -lh /tmp/docker-save || true
+        run: >
+          docker tag scz-base scz-base-cache && mkdir -p /tmp/docker-save &&
+          docker save scz-base-cache -o /tmp/docker-save/snapshot.tar &&
+          ls -lh /tmp/docker-save || true
         if: always() && steps.cache-docker.outputs.cache-hit != 'true'
 
       # Setup tmate session
