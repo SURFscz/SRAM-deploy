@@ -29,7 +29,7 @@ jobs:
         uses: actions/cache@v1
         with:
           path: /var/tmp/docker-save
-          key: docker-save-${{ hashFiles('Dockerfile') }}
+          key: docker-save-${{ hashFiles('docker/Dockerfile') }}
 
       # Decrypt secret
       - name: Copy secret
