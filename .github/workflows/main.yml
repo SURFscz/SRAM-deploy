@@ -51,6 +51,15 @@ jobs:
       - name: Run Syntax check
         run: ./scripts/syntax-check
 
+      # Start containers
+      - name: Start containers
+        shell: bash
+        run: "./start-vm --tags=none || true"
+
+      # Setup tmate session
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+
       # Runs a single command using the runners shell
       - name: Run start-vm
         shell: bash
@@ -64,7 +73,7 @@ jobs:
 
       # Runs a single command using the runners shell
       - name: Run idempotency check...
-        run: python ./scripts/check-idempotency-status
+        run: /usr/bin/python3 ./scripts/check-idempotency-status
 
       # Destroy secret
       - name: Destroy secret
