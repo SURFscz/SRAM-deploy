@@ -74,8 +74,8 @@ jobs:
         shell: bash
         run: >
           ./start-vm
-          -e \"strategy_plugins=~/mitogen/ansible_mitogen/plugins/strategy\"
-          -e \"strategy=mitogen_linear\"
+          -e "strategy_plugins=~/mitogen/ansible_mitogen/plugins/strategy"
+          -e "strategy=mitogen_linear"
 
       # Runs a single command using the runners shell
       - name: Run start-vm --diff
@@ -84,16 +84,16 @@ jobs:
         run: >
           ./start-vm
           --diff
-          -e \"strategy_plugins=~/mitogen/ansible_mitogen/plugins/strategy\"
-          -e \"strategy=mitogen_linear\"
+          -e "strategy_plugins=~/mitogen/ansible_mitogen/plugins/strategy"
+          -e "strategy=mitogen_linear"
 
       # Runs a single command using the runners shell
       - name: Run idempotency check...
         run: /usr/bin/python3 ./scripts/check-idempotency-status
 
       # Setup tmate session
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
+      #- name: Setup tmate session
+      #  uses: mxschmitt/action-tmate@v3
 
       # Run SBS logintest
       - name: Run SBS logintest
