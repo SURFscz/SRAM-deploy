@@ -110,7 +110,7 @@
   tasks:
     - { import_tasks: "tasks/versions.yml", tags: ['common'] }
   roles:
-#    - { role: pyff-daemon,   tags: ['proxy','pyff-daemon'   ] }
+    - { role: pyff-daemon,   tags: ['proxy','pyff-daemon'   ] }
     - { role: satosa,        tags: ['proxy','satosa'        ] }
 
 - name: "sbs"
@@ -128,8 +128,8 @@
   roles:
     - { role: ldap_services,      tags: ['ldap', 'ldap-services' ] }
     - { role: ldap,               tags: ['ldap'                  ] }
-#    - { role: plsc,               tags: ['ldap', 'ldap-plsc'     ] }
-#    - { role: pam_websso_daemon,  tags: ['client','websso-daemon'], when: experimental_features }
+    #- { role: plsc,               tags: ['ldap', 'ldap-plsc'     ] }
+    #- { role: pam_websso_daemon,  tags: ['client','websso-daemon'], when: experimental_features }
 
 - name: "first ldap"
   hosts: ldap[0]
@@ -141,9 +141,9 @@
   tasks:
     - { import_tasks: "tasks/versions.yml", tags: ['common'] }
   roles:
-#    - { role: pyff-metadata, tags: ['meta','pyff-metadata']}
-#    - { role: metadata,      tags: ['meta','metadata']     }
+    - { role: pyff-metadata, tags: ['meta','pyff-metadata']}
     - { role: http_dummy,    tags: ['meta','http'    ]     }
+    - { role: metadata,      tags: ['meta','metadata']     }
 
 - name: "sandbox"
   hosts: sandbox1

@@ -127,15 +127,16 @@
     owner: "root"
     group: "root"
     mode: 0600
+  notify: "update certificates"
 
 - name: write https certificate
   copy:
     content: "{{https_cert.cert}}"
     dest: "{{ ca_cert_dir }}/sram-https.crt"
     owner: "root"
-    group: "root"
     mode: 0600
   when: enable_https and use_fixed_cert
+  notify: "update certificates"
 
 - name: remove obsolete files
   file:
@@ -144,8 +145,8 @@
   with_items:
     - "vm.scz-vm.crt"
     - "scz-vm.crt"
+  notify: "update certificates"
 
-- name: update certificates
-  command: update-ca-certificates
-  changed_when: false
-
+# make sure all certificates are up to date after this role has run
+- name: Flush handlers
+  meta: flush_handlers
