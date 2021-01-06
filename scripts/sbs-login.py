@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: future_fstrings -*-
 
 from selenium.webdriver import Chrome
 from selenium.webdriver.chrome.options import Options
@@ -11,7 +10,7 @@ from selenium.webdriver.common.by import By
 options = Options()
 options.headless = True
 options.add_argument('ignore-certificate-errors')
-browser = Chrome(executable_path='./scripts/chromedriver', options=options)
+browser = Chrome(options=options)
 wait = WebDriverWait(browser, timeout=2)
 
 start = 'https://sbs.scz-vm.net/landing'
