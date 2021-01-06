@@ -50,8 +50,10 @@ jobs:
           sudo apt -q update
           sudo apt -y install ansible bridge-utils
           sudo pip2 install --upgrade wheel jinja2
-          pip install yamllint jinja2 pyyaml selenium
+          pip install yamllint jinja2 pyyaml
+          pip3 install selenium
           git clone --branch v0.2.9 https://github.com/dw/mitogen.git ~/mitogen
+          cat docker/hosts | sudo tee -a /etc/hosts
 
       # Run Syntax check
       - name: Run Syntax check
