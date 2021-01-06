@@ -74,13 +74,20 @@ jobs:
       # Runs a single command using the runners shell
       - name: Run start-vm
         shell: bash
-        run: ./start-vm
+        run: >
+          ./start-vm
+          -e \"strategy_plugins=~/mitogen/ansible_mitogen/plugins/strategy\"
+          -e \"strategy=mitogen_linear\"
 
       # Runs a single command using the runners shell
       - name: Run start-vm --diff
         env:
           REEANTRANT: 1
-        run: ./start-vm --diff
+        run: >
+          ./start-vm
+          --diff
+          -e \"strategy_plugins=~/mitogen/ansible_mitogen/plugins/strategy\"
+          -e \"strategy=mitogen_linear\"
 
       # Runs a single command using the runners shell
       - name: Run idempotency check...
