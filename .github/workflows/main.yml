@@ -51,11 +51,9 @@ jobs:
           sudo apt -y install ansible bridge-utils
           sudo pip2 install --upgrade wheel jinja2
           pip install yamllint jinja2 pyyaml
+          pip3 install selenium
           git clone --branch v0.2.9 https://github.com/dw/mitogen.git ~/mitogen
-
-      # Setup tmate session
-      #- name: Setup tmate session
-      #  uses: mxschmitt/action-tmate@v3
+          cat docker/hosts | sudo tee -a /etc/hosts
 
       # Run Syntax check
       - name: Run Syntax check
@@ -76,8 +74,8 @@ jobs:
         shell: bash
         run: >
           ./start-vm
-          -e \"strategy_plugins=~/mitogen/ansible_mitogen/plugins/strategy\"
-          -e \"strategy=mitogen_linear\"
+          -e "strategy_plugins=~/mitogen/ansible_mitogen/plugins/strategy"
+          -e "strategy=mitogen_linear"
 
       # Runs a single command using the runners shell
       - name: Run start-vm --diff
@@ -86,12 +84,20 @@ jobs:
         run: >
           ./start-vm
           --diff
-          -e \"strategy_plugins=~/mitogen/ansible_mitogen/plugins/strategy\"
-          -e \"strategy=mitogen_linear\"
+          -e "strategy_plugins=~/mitogen/ansible_mitogen/plugins/strategy"
+          -e "strategy=mitogen_linear"
 
       # Runs a single command using the runners shell
       - name: Run idempotency check...
         run: /usr/bin/python3 ./scripts/check-idempotency-status
+
+      # Setup tmate session
+      #- name: Setup tmate session
+      #  uses: mxschmitt/action-tmate@v3
+
+      # Run SBS logintest
+      - name: Run SBS logintest
+        run: /usr/bin/python3 ./scripts/sbs-login.py
 
       # Destroy secret
       - name: Destroy secret
