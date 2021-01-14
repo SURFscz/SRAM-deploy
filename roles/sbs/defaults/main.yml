@@ -31,9 +31,12 @@ sbs_wiki_link: "https://www.example.org/wiki"
 
 sbs_backend_port: 80
 
-sbs_oidc_config_url: "https://{{ hostnames.proxy }}/.well-known/openid-configuration"
-
 sbs_cron_hour_of_day: 4
 sbs_seed_allowed: False
 sbs_api_keys_enabled: True
 sbs_feedback_enabled: True
+
+sbs_oidc_config_url: "http://localhost/.well-known/openid-configuration"
+sbs_oidc_authz_endpoint: "http://localhost/OIDC/authorization"
+sbs_oidc_token_endpoint: "http://localhost/OIDC/token"
+sbs_oidc_userinfo_endpoint: "http://localhost/OIDC/userinfo"

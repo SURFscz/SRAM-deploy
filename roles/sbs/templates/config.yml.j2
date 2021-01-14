@@ -14,9 +14,9 @@ api_users:
 oidc:
   client_id: "{{ sbs_client_id }}"
   client_secret: "{{ sbs_client_secret }}"
-  authorization_endpoint: "https://{{ hostnames.oidc_op }}/authorization"
-  token_endpoint: "https://{{ hostnames.oidc_op }}/token"
-  userinfo_endpoint: "https://{{ hostnames.oidc_op }}/userinfo"
+  authorization_endpoint: "{{ sbs_oidc_authz_endpoint}}"
+  token_endpoint: "{{ sbs_oidc_token_endpoint }}"
+  userinfo_endpoint: "{{ sbs_oidc_userinfo_endpoint }}"
   #Note that the paths for these  uri's is hardcoded and only domain and port differ per environment
   redirect_uri: "{{ sbs_base_url }}api/users/resume-session"
   scopes:
