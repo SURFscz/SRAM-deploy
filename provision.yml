@@ -70,6 +70,11 @@
 #  roles:
 #    - { role: syslog-server,   tags: ['syslog'] }
 
+- name: "bhr2"
+  hosts: "bhr2"
+  roles:
+    - { role: backup_collector, tags: ['bhr2','backups'] }
+
 - name: "lb"
   hosts: lb
   tasks:

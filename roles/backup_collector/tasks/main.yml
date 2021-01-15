@@ -1,0 +1,46 @@
+---
+- name: create backup group
+  user:
+    name: "{{ backup_collector_group }}"
+    state: present
+
+- name: create backup user
+  user:
+    name: "{{ backup_collector_user }}"
+    group: "{{ backup_collector_group }}"
+    state: present
+    home: "{{ backup_collector_homedir }}"
+    password: "!"
+    password_lock: true
+
+- name: create backup directory
+  file:
+    path: "{{ backup_collector_dir }}"
+    state: "directory"
+    owner: "root"
+    group: "root"
+    mode: "0755"
+
+- name: restrict ssh access to sftp
+  blockinfile:
+    path: "/etc/ssh/sshd_config"
+    insertafter: "EOF"
+    marker: "# {mark} ANSBIBLE MANAGED {{ role_name }}"
+    validate: "/usr/sbin/sshd -t -f '%s'"
+    content: |
+      Match User {{ backup_collector_user }}
+        ForceCommand internal-sftp
+        ChrootDirectory {{ backup_collector_dir }}
+        AllowAgentForwarding no
+        AllowTCPForwarding no
+        PermitTTY no
+        PermitTunnel no
+        PermitUserRC no
+  notify: restart sshd
+
+- name: Set authorized key for backup user
+  authorized_key:
+    user: "{{ backup_collector_user }}"
+    state: present
+    key: "{{ backup_collector_ssh_pubkey }}"
+  when: "backup_collector_ssh_pubkey is defined"
