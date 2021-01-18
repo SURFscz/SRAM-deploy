@@ -65,9 +65,13 @@ jobs:
         if: steps.cache-docker.outputs.cache-hit == 'true'
 
       # Start containers without deploy
-      #- name: Start containers
-      #  shell: bash
-      #  run: "./start-vm --tags=none || true"
+      - name: Start containers
+        shell: bash
+        run: "./start-vm --tags=none || true"
+
+      # Setup tmate session
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
 
       # Runs a single command using the runners shell
       - name: Run start-vm
@@ -90,10 +94,6 @@ jobs:
       # Runs a single command using the runners shell
       - name: Run idempotency check...
         run: /usr/bin/python3 ./scripts/check-idempotency-status
-
-      # Setup tmate session
-      #- name: Setup tmate session
-      #  uses: mxschmitt/action-tmate@v3
 
       # Run SBS logintest
       - name: Run SBS logintest
