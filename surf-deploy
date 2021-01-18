@@ -50,6 +50,10 @@ else
 fi
 
 LOG=$LOGDIR/deploy-${ENV}.$(date '+%Y%m%d_%H%M').log
+date >> $LOG
+echo "$0 $@" >> $LOG
+
+# TODO: all output in log files
 
 # first check that deploy and config repos are clean and are using the same version
 # deploy
@@ -124,6 +128,6 @@ echo "Deploying to SURfscz $ENV..."
 echo "Log file: $LOG"
 echo "Will execute: $CMD"
 
-stdbuf --output=0 --error=0 $CMD 2>&1 | tee "$LOG"
+stdbuf --output=0 --error=0 $CMD 2>&1 | tee -a "$LOG"
 
 exit 0
