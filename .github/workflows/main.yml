@@ -69,10 +69,6 @@ jobs:
         shell: bash
         run: "./start-vm --tags=none || true"
 
-      # Setup tmate session
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
-
       # Runs a single command using the runners shell
       - name: Run start-vm
         shell: bash
@@ -98,6 +94,10 @@ jobs:
       # Run SBS logintest
       - name: Run SBS logintest
         run: /usr/bin/python3 ./scripts/sbs-login.py
+
+      # Setup tmate session
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
 
       # Destroy secret
       - name: Destroy secret
