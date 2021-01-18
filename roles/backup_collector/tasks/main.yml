@@ -9,9 +9,17 @@
     name: "{{ backup_collector_user }}"
     group: "{{ backup_collector_group }}"
     state: present
-    home: "{{ backup_collector_homedir }}"
+    home: "{{ backup_collector_basedir }}"
     password: "!"
     password_lock: true
+
+- name: create backup base directory
+  file:
+    path: "{{ backup_collector_basedir }}"
+    state: "directory"
+    owner: "root"
+    group: "root"
+    mode: "0755"
 
 - name: create backup directory
   file:
@@ -19,7 +27,15 @@
     state: "directory"
     owner: "root"
     group: "root"
-    mode: "0755"
+    mode: "0751"
+
+- name: create incoming directory
+  file:
+    path: "{{ backup_collector_dir }}/incoming"
+    state: "directory"
+    owner: "root"
+    group: "{{ backup_collector_group }}"
+    mode: "0730"
 
 - name: restrict ssh access to sftp
   blockinfile:

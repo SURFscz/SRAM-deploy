@@ -1,5 +1,5 @@
 ---
-backup_collector_dir: "/opt/backup_collector"
-backup_collector_homedir: "{{backup_collector_dir}}/backups"
+backup_collector_basedir: "/opt/backup_collector"
+backup_collector_dir: "{{backup_collector_basedir}}/backups"
 backup_collector_user: "sram-backup"
 backup_collector_group: "sram-backup"

@@ -1,4 +1,18 @@
 ---
+
+# check if we can decrypt vault
+- block:
+    - name: verify we can decode vault
+      no_log: true
+      debug:
+        var: backup_collector_ssh_key
+    - name: set variable
+      set_fact: vault_decrypted=true
+  rescue:
+    - name: set variable
+      set_fact: vault_decrypted=false
+
+
 - name: Create backup dir {{backup_dir}}
   file:
     path: "{{backup_base}}"
@@ -6,7 +20,7 @@
     mode: 0755
     owner: root
 
-# note: indivudual services can put their backup scripts in the
+# note: individual services can put their backup scripts in the
 # {{backup_runparts}} dir in order for them to run daily
 - name: Create run-parts dir for backup scripts
   file:
@@ -14,6 +28,16 @@
     state: directory
     mode: 0755
     owner: root
+
+- name: copy ssh key for backup upload
+  copy:
+    dest: "{{backup_base}}/sshkey_upload"
+    content: "{{ backup_collector_ssh_key }}"
+    owner: "root"
+    group: "root"
+    mode: "0600"
+    no_log: true
+  when: backup_collector_ssh_key is defined and vault_decrypted
 
 - name: Copy backup service files
   template:
