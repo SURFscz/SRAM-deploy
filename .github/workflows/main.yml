@@ -96,8 +96,8 @@ jobs:
         run: /usr/bin/python3 ./scripts/sbs-login.py
 
       # Setup tmate session
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
+      #- name: Setup tmate session
+      #  uses: mxschmitt/action-tmate@v3
 
       # Destroy secret
       - name: Destroy secret
