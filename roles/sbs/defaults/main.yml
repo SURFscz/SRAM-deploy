@@ -25,7 +25,7 @@ sbs_urn_namespace: "urn:example:sbs"
 sbs_restricted_co_default_org: "example.org"
 
 sbs_mail_sender_name: "SURFnet"
-sbs_mail_sender_email: "no-reply@surfnet.nl"
+sbs_mail_sender_email: "no-reply@surf.nl"
 
 sbs_wiki_link: "https://www.example.org/wiki"
 
