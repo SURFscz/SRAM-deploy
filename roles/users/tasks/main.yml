@@ -28,15 +28,6 @@
     password: "{{root.pw_hash}}"
   with_items: "{{users}}"
 
-- name: remove default users
-  user:
-    name: "{{item}}"
-    state: absent
-    remove: yes
-  with_items:
-    - surf
-    - debian
-
 - name: create groups
   group:
     name: "{{item}}"
@@ -70,3 +61,11 @@
     manage_dir: yes
   with_items: "{{users}}"
 
+- name: remove default users
+  user:
+    name: "{{item}}"
+    state: absent
+    remove: yes
+  with_items:
+    - surf
+    - debian
