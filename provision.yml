@@ -50,7 +50,7 @@
     - { role: mail,           tags: ['common','mail']       }
     - { role: syslog-client,  tags: ['common','syslog']     }
     - { role: backups,        tags: ['common','backups']    }
-    - { role: zabbix-agent,   tags: ['common','zabbix']     }
+    #- { role: zabbix-agent,   tags: ['common','zabbix']     }
     #- { role: aws-cloudwatch, tags: ['common','cloudwatch'], when: is_aws }
     #- { role: aws-cloudlogs,  tags: ['common','cloudlogs'],  when: is_aws }
 

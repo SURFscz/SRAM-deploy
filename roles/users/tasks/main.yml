@@ -26,7 +26,6 @@
     name: root
     update_password: always
     password: "{{root.pw_hash}}"
-  with_items: "{{users}}"
 
 - name: create groups
   group:
