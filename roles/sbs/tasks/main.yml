@@ -12,6 +12,7 @@
       - python3-setuptools
       - python-setuptools
       - python-pymysql
+      - python3-pymysql
       - virtualenv
       - python3-distutils
       - libapache2-mod-wsgi-py3
