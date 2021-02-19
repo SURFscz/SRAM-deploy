@@ -1,17 +1,23 @@
 ---
-- name: create backup group
+- name: create backup groups
   user:
-    name: "{{ backup_collector_group }}"
+    name: "{{ item }}"
     state: present
+  with_items:
+    - "{{backup_collector_group}}"
+    - "{{backup_processor_group}}"
 
-- name: create backup user
+- name: create backup users
   user:
-    name: "{{ backup_collector_user }}"
-    group: "{{ backup_collector_group }}"
+    name: "{{ item.user }}"
+    group: "{{ item.group }}"
     state: present
     home: "{{ backup_collector_basedir }}"
     password: "!"
     password_lock: true
+  with_items:
+    -  { user: "{{backup_collector_user}}", group: "{{backup_collector_group}}" }
+    -  { user: "{{backup_processor_user}}", group: "{{backup_processor_group}}" }
 
 - name: create backup base directory
   file:
@@ -21,21 +27,40 @@
     group: "root"
     mode: "0755"
 
-- name: create backup directory
+- name: create backup chroot directory
   file:
-    path: "{{ backup_collector_dir }}"
+    path: "{{ backup_collector_chrootdir }}"
     state: "directory"
     owner: "root"
     group: "root"
-    mode: "0751"
+    mode: "0711"
 
 - name: create incoming directory
   file:
-    path: "{{ backup_collector_dir }}/incoming"
+    path: "{{ backup_collector_chrootdir }}/incoming"
     state: "directory"
     owner: "root"
-    group: "{{ backup_collector_group }}"
-    mode: "0730"
+    group: "root"
+    mode: "0770"
+
+- name: set permissions for incoming directory
+  acl:
+    path: "{{ backup_collector_chrootdir }}/incoming"
+    etype: "user"
+    entity: "{{item.user}}"
+    permissions: "{{item.perm}}"
+    state: "present"
+  with_items:
+    - { user: "{{backup_collector_user}}", perm: "wx" }
+    - { user: "{{backup_processor_user}}", perm: "rwx" }
+
+- name: create backup storage directory
+  file:
+    path: "{{ backup_collector_backupdir }}"
+    state: "directory"
+    owner: "root"
+    group: "{{ backup_processor_group }}"
+    mode: "0770"
 
 - name: restrict ssh access to sftp
   blockinfile:
@@ -46,17 +71,46 @@
     content: |
       Match User {{ backup_collector_user }}
         ForceCommand internal-sftp
-        ChrootDirectory {{ backup_collector_dir }}
+        ChrootDirectory {{ backup_collector_chrootdir }}
+        AuthorizedKeysFile {{ backup_collector_authorized_keys }}
         AllowAgentForwarding no
         AllowTCPForwarding no
         PermitTTY no
         PermitTunnel no
         PermitUserRC no
-  notify: restart sshd
+  notify: "restart sshd"
 
 - name: Set authorized key for backup user
-  authorized_key:
-    user: "{{ backup_collector_user }}"
-    state: present
-    key: "{{ backup_collector_ssh_pubkey }}"
+  copy:
+    content: "{{ backup_collector_ssh_pubkey }}"
+    dest: "{{ backup_collector_authorized_keys }}"
+    owner: "root"
+    group: "root"
+    mode: "0644"
   when: "backup_collector_ssh_pubkey is defined"
+
+- name: Copy GPG key for backup encryption
+  copy:
+    content: "{{ backup_collector_gpg_publickey }}"
+    dest: "{{ backup_collector_basedir }}/backups.pubkey"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+
+- name: Copy backup processing script
+  template:
+    src: "sram-processbackups.sh.j2"
+    dest: "{{ backup_collector_basedir }}/sram-processbackups.sh"
+    owner: "root"
+    mode: "0755"
+
+- name: Copy backup processingservice files
+  template:
+    src: "{{item}}.j2"
+    dest: "/etc/systemd/system/{{item}}"
+  with_items:
+    - "sram-processbackups.service"
+    - "sram-processbackups.timer"
+  notify:
+    - "enable backup processingjob"
+

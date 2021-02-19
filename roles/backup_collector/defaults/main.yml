@@ -1,5 +1,9 @@
 ---
 backup_collector_basedir: "/opt/backup_collector"
-backup_collector_dir: "{{backup_collector_basedir}}/backups"
+backup_collector_chrootdir: "{{backup_collector_basedir}}/chroot"
+backup_collector_backupdir: "{{backup_collector_basedir}}/storage"
 backup_collector_user: "sram-backup"
-backup_collector_group: "sram-backup"
+backup_collector_group: "{{ backup_collector_user }}"
+backup_processor_user: "sram-backupproc"
+backup_processor_group: "{{ backup_processor_user }}"
+backup_collector_authorized_keys: "{{ backup_collector_basedir }}/authorized_keys"

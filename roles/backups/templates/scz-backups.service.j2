@@ -7,4 +7,4 @@ Group=root
 Type=oneshot
 WorkingDirectory={{backup_base}}
 ExecStart=/bin/run-parts --verbose --new-session --umask=077 --regex='.*\\.sh' -- '{{backup_runparts}}'
-ExecStartPost={{backup_base}}/run_backup.sh
+ExecStartPost={{backup_base}}/upload-backup.sh

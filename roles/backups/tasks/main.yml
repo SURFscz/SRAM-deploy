@@ -9,6 +9,7 @@
     - name: set variable
       set_fact: vault_decrypted=true
   rescue:
+    - meta: noop
     - name: set variable
       set_fact: vault_decrypted=false
 
@@ -29,15 +30,28 @@
     mode: 0755
     owner: root
 
-- name: copy ssh key for backup upload
+- name: Copy backup upload script
+  template:
+    src: "upload-backup.sh.j2"
+    dest: "{{backup_base}}/upload-backup.sh"
+    mode: 0755
+    owner: root
+
+- name: Copy ssh key for backup upload
   copy:
-    dest: "{{backup_base}}/sshkey_upload"
+    dest: "{{ backup_upload_key }}"
     content: "{{ backup_collector_ssh_key }}"
     owner: "root"
     group: "root"
     mode: "0600"
     no_log: true
   when: backup_collector_ssh_key is defined and vault_decrypted
+
+- name: Add known host for backup host
+  known_hosts:
+    path: "/etc/ssh/ssh_known_hosts"
+    name: "{{ backup_upload_host }}"
+    key: "{{ backup_upload_host }} {{ backup_upload_host_key }}"
 
 - name: Copy backup service files
   template:
@@ -48,5 +62,4 @@
     - scz-backups.timer
   notify:
     - enable backup job
-    #- systemd daemon-reload
 

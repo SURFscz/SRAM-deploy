@@ -40,7 +40,7 @@
 - name: "common"
   hosts: all
   tasks:
-    - { import_tasks: "tasks/versions.yml", tags: ['common'] }
+    - { import_tasks: "tasks/versions.yml", tags: "always"  }
   roles:
     - { role: basic,          tags: ['common','basic']      }
     - { role: apt,            tags: ['common','apt']        }
