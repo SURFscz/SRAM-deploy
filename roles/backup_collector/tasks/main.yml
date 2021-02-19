@@ -16,8 +16,8 @@
     password: "!"
     password_lock: true
   with_items:
-    -  { user: "{{backup_collector_user}}", group: "{{backup_collector_group}}" }
-    -  { user: "{{backup_processor_user}}", group: "{{backup_processor_group}}" }
+    - { user: "{{backup_collector_user}}", group: "{{backup_collector_group}}" }
+    - { user: "{{backup_processor_user}}", group: "{{backup_processor_group}}" }
 
 - name: create backup base directory
   file:
@@ -113,4 +113,3 @@
     - "sram-processbackups.timer"
   notify:
     - "enable backup processingjob"
-
