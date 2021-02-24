@@ -7,7 +7,7 @@ INCOMING="{{backup_collector_chrootdir}}/incoming"
 DEST="{{backup_collector_backupdir}}"
 PUBKEY="{{backup_collector_basedir}}/backups.pubkey"
 
-umask 077
+umask 007
 
 # set a temporary dirctory for GPG so it wnt leave crap around
 export GNUPGHOME=$(mktemp -t -d gnupg-XXXXXX)
@@ -37,7 +37,7 @@ do
 
     # make sure destination dir exists
     destdir="${DEST}/${host}/${app}"
-    mkdir -m 0700 -p "$destdir"
+    mkdir -m 0770 -p "$destdir"
 
     destfile="${destdir}/${file}"
 

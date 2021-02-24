@@ -13,6 +13,9 @@
     group: "{{ item.group }}"
     state: present
     home: "{{ backup_collector_basedir }}"
+    system: true
+    create_home: false
+    shell: "/usr/sbin/nologin"
     password: "!"
     password_lock: true
   with_items:
@@ -61,6 +64,19 @@
     owner: "root"
     group: "{{ backup_processor_group }}"
     mode: "0770"
+
+- name: set permissions for storage directory
+  acl:
+    path: "{{ backup_collector_backupdir }}"
+    default: "{{item.default}}"
+    etype: "user"
+    entity: "{{item.user}}"
+    permissions: "{{item.perm}}"
+    state: "present"
+  with_items:
+    - { user: "{{backup_processor_user}}", perm: "rwx", default: true  }
+    - { user: "{{backup_www_user}}",       perm: "rx",  default: true  }
+    - { user: "{{backup_www_user}}",       perm: "rx",  default: false }
 
 - name: restrict ssh access to sftp
   blockinfile:
@@ -113,3 +129,28 @@
     - "sram-processbackups.timer"
   notify:
     - "enable backup processingjob"
+
+#########################################
+## http setup
+#########################################
+- name: Copy client cert
+  copy:
+    dest: "{{backup_collector_client_cert_path}}"
+    content: "{{backup_offsite_https_cert.pub}}"
+
+- name: Create documentroot
+  file:
+    path: "{{backup_collector_basedir}}/webroot"
+    state: "directory"
+    mode: "0755"
+
+- name: Copy backup nginx configuration
+  template:
+    src: backups.nginx.j2
+    dest: "/etc/nginx/sites-enabled/sram-backups"
+    mode: 0755
+  notify: restart nginx
+
+
+# to fetch , use this:
+#wget --debug --recursive --no-parent --no-clobber --no-host-directories --accept '*.gpg' --ca-directory /etc/ssl/certs --private-key /etc/ssl/internal.sram.surf.nl.key --certificate /etc/ssl/internal.sram.surf.nl.crt -v https://bhr2.internal.sram.surf.nl/backups/
