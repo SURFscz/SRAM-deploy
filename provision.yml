@@ -74,6 +74,12 @@
     - { role: http_dummy,       tags: ['bhr2','backup_collector'] }
     - { role: backup_collector, tags: ['bhr2','backup_collector'] }
 
+- name: "bhr11"
+  hosts: "bhr11"
+  roles:
+    - { role: backup-offsite,   tags: ['bhr11','backup_offsite'] }
+
+
 - name: "lb"
   hosts: lb
   tasks:

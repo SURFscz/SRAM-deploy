@@ -1,0 +1,10 @@
+[Unit]
+Description=SRAM Backup syncer
+
+[Service]
+User={{backup_offsite_user}}
+Group={{backup_offsite_group}}
+Type=oneshot
+WorkingDirectory={{backup_offsite_basedir}}
+ExecStart={{backup_offsite_basedir}}/backup-offsite-sync.sh
+ExecStartPost=+{{backup_offsite_basedir}}/fix-permissions.sh

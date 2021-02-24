@@ -150,7 +150,3 @@
     dest: "/etc/nginx/sites-enabled/sram-backups"
     mode: 0755
   notify: restart nginx
-
-
-# to fetch , use this:
-#wget --debug --recursive --no-parent --no-clobber --no-host-directories --accept '*.gpg' --ca-directory /etc/ssl/certs --private-key /etc/ssl/internal.sram.surf.nl.key --certificate /etc/ssl/internal.sram.surf.nl.crt -v https://bhr2.internal.sram.surf.nl/backups/
