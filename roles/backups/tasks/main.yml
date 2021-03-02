@@ -52,6 +52,8 @@
     path: "/etc/ssh/ssh_known_hosts"
     name: "{{ backup_upload_host }}"
     key: "{{ backup_upload_host }} {{ backup_upload_host_key }}"
+  when: "backup_upload_host != ''"
+
 
 - name: Copy backup service files
   template:

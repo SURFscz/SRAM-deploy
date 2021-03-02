@@ -1,5 +1,6 @@
 #!/bin/bash
-
+{% if backup_upload_user is defined %}
+{# No-op if the correct variables are not defined (e.g., on the vm) #}
 set -e
 
 BACKUP_DIR={{ backup_base }}
@@ -37,4 +38,5 @@ commands+=$'\nbye\n'
 
 echo "$commands" | sftp -i $SSH_KEY -b- ${REMOTE_USER}@${REMOTE_HOST}
 
+{% endif %}
 exit 0
