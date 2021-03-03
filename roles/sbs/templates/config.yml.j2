@@ -54,9 +54,9 @@ mail:
   beheer_email: sram-beheer@surf.nl
   # Do we mail a summary of new Organizations and Services to the beheer_email?
   audit_trail_notifications_enabled: {{ sbs_audit_trail_notifications_enabled }}
-  send_exceptions: False
-  send_js_exceptions: False
-  send_exceptions_recipients: ["sram-support@surfnet.nl"]
+  send_exceptions: {{ sbs_send_exceptions }}
+  send_js_exceptions: {{ sbs_send_js_exceptions }}
+  send_exceptions_recipients: ["sram-support@surf.nl"]
   environment: "{{ base_domain }}"
 
 aup:
