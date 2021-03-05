@@ -56,7 +56,7 @@ mail:
   audit_trail_notifications_enabled: {{ sbs_audit_trail_notifications_enabled }}
   send_exceptions: {{ sbs_send_exceptions }}
   send_js_exceptions: {{ sbs_send_js_exceptions }}
-  send_exceptions_recipients: ["sram-support@surf.nl"]
+  send_exceptions_recipients: ["{{ sbs_exceptions_mail }}"]
   environment: "{{ base_domain }}"
 
 aup:
