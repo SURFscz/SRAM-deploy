@@ -5,6 +5,7 @@ server {
 	listen [::]:80 default_server;
 
 	server_name _;
+    access_log /var/log/nginx/access.log sram;
 
 	location / {
 		return 403;
