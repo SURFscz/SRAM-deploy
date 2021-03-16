@@ -40,7 +40,7 @@
 - name: "common"
   hosts: all
   tasks:
-    - { import_tasks: "tasks/versions.yml", tags: ['common'] }
+    - { import_tasks: "tasks/versions.yml", tags: "always"  }
   roles:
     - { role: basic,          tags: ['common','basic']      }
     - { role: apt,            tags: ['common','apt']        }
@@ -50,7 +50,7 @@
     - { role: mail,           tags: ['common','mail']       }
     - { role: syslog-client,  tags: ['common','syslog']     }
     - { role: backups,        tags: ['common','backups']    }
-    - { role: zabbix-agent,   tags: ['common','zabbix']     }
+    #- { role: zabbix-agent,   tags: ['common','zabbix']     }
     #- { role: aws-cloudwatch, tags: ['common','cloudwatch'], when: is_aws }
     #- { role: aws-cloudlogs,  tags: ['common','cloudlogs'],  when: is_aws }
 
@@ -67,6 +67,18 @@
 #    - { import_tasks: "tasks/versions.yml", tags: ['common'] }
 #  roles:
 #    - { role: syslog-server,   tags: ['syslog'] }
+
+- name: "bhr2"
+  hosts: "bhr2"
+  roles:
+    - { role: http_dummy,       tags: ['bhr2','backup_collector'] }
+    - { role: backup_collector, tags: ['bhr2','backup_collector'] }
+
+- name: "bhr11"
+  hosts: "bhr11"
+  roles:
+    - { role: backup-offsite,   tags: ['bhr11','backup_offsite'] }
+
 
 - name: "lb"
   hosts: lb

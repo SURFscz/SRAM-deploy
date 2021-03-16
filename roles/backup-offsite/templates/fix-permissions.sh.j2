@@ -1,0 +1,21 @@
+#!/bin/bash
+
+set -e
+
+BASEDIR="{{backup_offsite_backupdir}}"
+GRP="{{backup_offsite_group}}"
+
+find "${BASEDIR}" \
+    -mindepth 1 \
+    -type d  \
+    -execdir /usr/bin/chown "root:${GRP}" '{}' '+' \
+    -execdir /usr/bin/chmod 1770 '{}' '+'
+
+
+find "${BASEDIR}" \
+    -mindepth 1 \
+    -type f  \
+    -execdir /usr/bin/chown "root:${GRP}" '{}' '+' \
+    -execdir /usr/bin/chmod 640 '{}' '+'
+
+exit 0

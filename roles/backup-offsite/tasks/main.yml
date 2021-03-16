@@ -1,0 +1,76 @@
+---
+- name: create backup group
+  user:
+    name: "{{ backup_offsite_group }}"
+    state: present
+
+- name: create backup user
+  user:
+    name: "{{ backup_offsite_user }}"
+    group: "{{ backup_offsite_group }}"
+    state: present
+    home: "{{ backup_offsite_basedir }}"
+    system: true
+    create_home: false
+    shell: "/usr/sbin/nologin"
+    password: "!"
+    password_lock: true
+
+- name: create backup basedir
+  file:
+    path: "{{ backup_offsite_basedir }}"
+    state: "directory"
+    owner: "root"
+    group: "{{ backup_offsite_group }}"
+    mode: "0710"
+
+- name: create backup target dir
+  file:
+    path: "{{backup_offsite_backupdir}}"
+    state: "directory"
+    owner: "root"
+    group: "{{backup_offsite_group}}"
+    mode: "01770"
+
+- name: copy client key
+  copy:
+    dest: "{{backup_offsite_client_key_path}}"
+    content: "{{backup_offsite_https_cert.priv}}"
+    owner: "root"
+    group: "sram_backup"
+    mode: "0640"
+
+- name: copy client cert
+  copy:
+    dest: "{{backup_offsite_client_cert_path}}"
+    content: "{{backup_offsite_https_cert.pub}}"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+
+- name: install wget
+  apt:
+    update_cache: yes
+    state: present
+    name: wget
+
+- name: copy script
+  template:
+    src: "{{item}}.j2"
+    dest: "{{backup_offsite_basedir}}/{{item}}"
+    owner: "root"
+    group: "{{backup_offsite_group}}"
+    mode: "0750"
+  with_items:
+    - "backup-offsite-sync.sh"
+    - "fix-permissions.sh"
+
+- name: Copy backup processingservice files
+  template:
+    src: "{{item}}.j2"
+    dest: "/etc/systemd/system/{{item}}"
+  with_items:
+    - "sram-backup-sync.service"
+    - "sram-backup-sync.timer"
+  notify:
+    - "enable backup sync job"
