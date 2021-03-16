@@ -1,0 +1,8 @@
+---
+backup_offsite_user: "sram_backup"
+backup_offsite_group: "sram_backup"
+backup_offsite_basedir: "/opt/sram-offsite-backups"
+backup_offsite_backupdir: "{{backup_offsite_basedir}}/backups"
+backup_offsite_client_cert_path: "{{backup_offsite_basedir}}/sram_backup_offsite.crt"
+backup_offsite_client_key_path: "{{backup_offsite_basedir}}/sram_backup_offsite.key"
+

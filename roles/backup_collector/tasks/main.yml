@@ -1,0 +1,152 @@
+---
+- name: create backup groups
+  user:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - "{{backup_collector_group}}"
+    - "{{backup_processor_group}}"
+
+- name: create backup users
+  user:
+    name: "{{ item.user }}"
+    group: "{{ item.group }}"
+    state: present
+    home: "{{ backup_collector_basedir }}"
+    system: true
+    create_home: false
+    shell: "/usr/sbin/nologin"
+    password: "!"
+    password_lock: true
+  with_items:
+    - { user: "{{backup_collector_user}}", group: "{{backup_collector_group}}" }
+    - { user: "{{backup_processor_user}}", group: "{{backup_processor_group}}" }
+
+- name: create backup base directory
+  file:
+    path: "{{ backup_collector_basedir }}"
+    state: "directory"
+    owner: "root"
+    group: "root"
+    mode: "0755"
+
+- name: create backup chroot directory
+  file:
+    path: "{{ backup_collector_chrootdir }}"
+    state: "directory"
+    owner: "root"
+    group: "root"
+    mode: "0711"
+
+- name: create incoming directory
+  file:
+    path: "{{ backup_collector_chrootdir }}/incoming"
+    state: "directory"
+    owner: "root"
+    group: "root"
+    mode: "0770"
+
+- name: set permissions for incoming directory
+  acl:
+    path: "{{ backup_collector_chrootdir }}/incoming"
+    etype: "user"
+    entity: "{{item.user}}"
+    permissions: "{{item.perm}}"
+    state: "present"
+  with_items:
+    - { user: "{{backup_collector_user}}", perm: "wx" }
+    - { user: "{{backup_processor_user}}", perm: "rwx" }
+
+- name: create backup storage directory
+  file:
+    path: "{{ backup_collector_backupdir }}"
+    state: "directory"
+    owner: "root"
+    group: "{{ backup_processor_group }}"
+    mode: "0770"
+
+- name: set permissions for storage directory
+  acl:
+    path: "{{ backup_collector_backupdir }}"
+    default: "{{item.default}}"
+    etype: "user"
+    entity: "{{item.user}}"
+    permissions: "{{item.perm}}"
+    state: "present"
+  with_items:
+    - { user: "{{backup_processor_user}}", perm: "rwx", default: true  }
+    - { user: "{{backup_www_user}}",       perm: "rx",  default: true  }
+    - { user: "{{backup_www_user}}",       perm: "rx",  default: false }
+
+- name: restrict ssh access to sftp
+  blockinfile:
+    path: "/etc/ssh/sshd_config"
+    insertafter: "EOF"
+    marker: "# {mark} ANSBIBLE MANAGED {{ role_name }}"
+    validate: "/usr/sbin/sshd -t -f '%s'"
+    content: |
+      Match User {{ backup_collector_user }}
+        ForceCommand internal-sftp
+        ChrootDirectory {{ backup_collector_chrootdir }}
+        AuthorizedKeysFile {{ backup_collector_authorized_keys }}
+        AllowAgentForwarding no
+        AllowTCPForwarding no
+        PermitTTY no
+        PermitTunnel no
+        PermitUserRC no
+  notify: "restart sshd"
+
+- name: Set authorized key for backup user
+  copy:
+    content: "{{ backup_collector_ssh_pubkey }}"
+    dest: "{{ backup_collector_authorized_keys }}"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+  when: "backup_collector_ssh_pubkey is defined"
+
+- name: Copy GPG key for backup encryption
+  copy:
+    content: "{{ backup_collector_gpg_publickey }}"
+    dest: "{{ backup_collector_basedir }}/backups.pubkey"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+
+- name: Copy backup processing script
+  template:
+    src: "sram-processbackups.sh.j2"
+    dest: "{{ backup_collector_basedir }}/sram-processbackups.sh"
+    owner: "root"
+    mode: "0755"
+
+- name: Copy backup processingservice files
+  template:
+    src: "{{item}}.j2"
+    dest: "/etc/systemd/system/{{item}}"
+  with_items:
+    - "sram-processbackups.service"
+    - "sram-processbackups.timer"
+  notify:
+    - "enable backup processingjob"
+
+#########################################
+## http setup
+#########################################
+- name: Copy client cert
+  copy:
+    dest: "{{backup_collector_client_cert_path}}"
+    content: "{{backup_offsite_https_cert.pub}}"
+
+- name: Create documentroot
+  file:
+    path: "{{backup_collector_basedir}}/webroot"
+    state: "directory"
+    mode: "0755"
+
+- name: Copy backup nginx configuration
+  template:
+    src: backups.nginx.j2
+    dest: "/etc/nginx/sites-enabled/sram-backups"
+    mode: 0755
+  notify: restart nginx

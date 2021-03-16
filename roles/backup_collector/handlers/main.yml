@@ -1,0 +1,12 @@
+---
+- name: "restart sshd"
+  systemd:
+    name: "ssh.service"
+    state: "restarted"
+
+- name: "enable backup processingjob"
+  systemd:
+    name: "sram-processbackups.timer"
+    enabled: true
+    state: "started"
+    daemon_reload: true

@@ -1,0 +1,56 @@
+#!/bin/bash
+
+set -e
+shopt -s nullglob  # non-matching globs result in empty string
+
+INCOMING="{{backup_collector_chrootdir}}/incoming"
+DEST="{{backup_collector_backupdir}}"
+PUBKEY="{{backup_collector_basedir}}/backups.pubkey"
+
+umask 007
+
+# set a temporary dirctory for GPG so it wnt leave crap around
+export GNUPGHOME=$(mktemp -t -d gnupg-XXXXXX)
+function cleanup {
+    rm -rf "$GNUPGHOME"
+}
+trap cleanup EXIT
+
+
+# check if there is anything in incoming to process
+cd $INCOMING
+for srcfile in *
+do
+    # filenames are of the form "hostname##app##filename##nonce"
+    # so split into components
+    IFS='##' read -a component < <(echo "$srcfile")
+    host=${component[0]}
+    app=${component[2]}
+    file=${component[4]}
+    nonce=${component[6]}
+
+    if [ -z "$host" -o -z "$app" -o -z "$file" -o -z "$nonce" ]
+    then
+	echo "Unable to process filename '$srcfile'"
+	continue
+    fi
+
+    # make sure destination dir exists
+    destdir="${DEST}/${host}/${app}"
+    mkdir -m 0770 -p "$destdir"
+
+    destfile="${destdir}/${file}"
+
+    echo "Processing '$srcfile' --> '$destfile'"
+
+    # then encrypt file to destination
+    gpg  --no-options --batch --yes --quiet --trust-model always --compress-algo none \
+	 --recipient-file "${PUBKEY}"  \
+	 --output "${destfile}.gpg"  \
+	 --encrypt "${srcfile}"
+
+    # remove original
+    shred -u "${srcfile}"
+done
+
+exit 0

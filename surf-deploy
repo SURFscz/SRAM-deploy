@@ -24,6 +24,7 @@ then
     ENV=bhr
     CONFDIR=./environments/aws_bhr/
     EXTRA="${EXTRA} --ask-vault-pass"
+    STRICT=0
     shift
 elif [ "$ARG" = "prd" -o "$ARG" = "prod" ]
 then

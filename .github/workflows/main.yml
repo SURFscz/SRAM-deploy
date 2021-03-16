@@ -17,7 +17,7 @@ jobs:
   # This workflow contains a single job called "build"
   build:
     # The type of runner that the job will run on
-    runs-on: ubuntu-latest
+    runs-on: "ubuntu-20.04"
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -38,19 +38,15 @@ jobs:
         shell: bash
         env:
           secret_vm: ${{ secrets.SECRET_VM }}
-        run: echo $secret_vm > secret_vm
+        run: "echo $secret_vm > secret_vm"
 
       # Run errands
       - name: Run errands
         run: |
-          #echo "options timeout:5"  | sudo tee -a /etc/resolvconf/resolv.conf.d/tail
-          #echo "options attempts:5" | sudo tee -a /etc/resolvconf/resolv.conf.d/tail
-          #sudo service resolvconf restart
-          sudo apt-add-repository -y ppa:ansible/ansible-2.9
           sudo apt -q update
           sudo apt -y install ansible bridge-utils
-          sudo pip2 install --upgrade wheel jinja2
-          pip install yamllint jinja2 pyyaml
+          sudo pip3 install --upgrade wheel jinja2
+          pip3 install yamllint jinja2 pyyaml
           pip3 install selenium
           git clone --branch v0.2.9 https://github.com/dw/mitogen.git ~/mitogen
           cat docker/hosts | sudo tee -a /etc/hosts
@@ -65,9 +61,9 @@ jobs:
         if: steps.cache-docker.outputs.cache-hit == 'true'
 
       # Start containers without deploy
-      #- name: Start containers
-      #  shell: bash
-      #  run: "./start-vm --tags=none || true"
+      - name: Start containers
+        shell: bash
+        run: "./start-vm --tags=none || true"
 
       # Runs a single command using the runners shell
       - name: Run start-vm
@@ -91,17 +87,27 @@ jobs:
       - name: Run idempotency check...
         run: /usr/bin/python3 ./scripts/check-idempotency-status
 
-      # Setup tmate session
-      #- name: Setup tmate session
-      #  uses: mxschmitt/action-tmate@v3
-
       # Run SBS logintest
       - name: Run SBS logintest
         run: /usr/bin/python3 ./scripts/sbs-login.py
 
+      - name: Show error output
+        run: |
+          ansible -v -i environment/vm/inventory --become "all" -m command -a "journalctl -xe"
+        if: failure()
+
+      # Setup tmate session
+      - name: Setup tmate session
+        if: failure()
+        uses: mxschmitt/action-tmate@v3
+        with:
+          limit-access-to-actor: true
+        timeout-minutes: 45
+
       # Destroy secret
       - name: Destroy secret
         run: shred secret_vm
+        if: always()
 
       # Save docker cache
       - name: Save docker cache

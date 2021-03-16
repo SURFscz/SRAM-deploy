@@ -1,0 +1,24 @@
+#!/bin/bash
+
+set -e
+
+BASEDIR="{{backup_offsite_backupdir}}"
+
+cd "$BASEDIR"
+
+echo "STARTING SYNC --$(date '+%Y-%m-%d %H:%M:%S')--"
+
+wget \
+    --no-verbose \
+    --tries 3 \
+    --recursive --no-parent \
+    --no-host-directories --cut-dirs=1 \
+    --no-clobber \
+    --accept '*.gpg' \
+    --ca-directory /etc/ssl/certs \
+    --private-key "{{backup_offsite_client_key_path}}" \
+    --certificate "{{backup_offsite_client_cert_path}}" \
+    https://bhr2.sram.surf.nl/backups/ \
+    2>&1 | grep -v 'index.html.tmp'
+
+exit 0

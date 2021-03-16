@@ -72,12 +72,33 @@
   notify:
     - restart sshd
 
-- name: set up ssh config
-  template:
-    src: "sshd_config.j2"
+# replace sshd config; we can't do it the easy way, because we're also editing it in the backup role
+# TODO: cansimplify this oncewe have openssh 8.1+, which support include directives.
+- name: Check if this ssd config file is managed by us
+  command:
+    cmd: "grep '^# BEGIN ANSIBLE MANAGED {{ role_name }}' /etc/ssh/sshd_config"
+  register: sshconfig_is_managed
+  changed_when: false
+  failed_when: false
+
+- name: install a fresh sshd config
+  copy:
+    content: ""
     dest: "/etc/ssh/sshd_config"
+  when: sshconfig_is_managed.rc > 0
+
+- name: set up ssh config
+  blockinfile:
+    path: "/etc/ssh/sshd_config"
+    insertafter: "BOF"
+    marker: "# {mark} ANSIBLE MANAGED {{ role_name }}"
+    validate: "/usr/sbin/sshd -t -f '%s'"
+    content: |
+      {{ lookup('file','sshd_config') }}
+      ChallengeResponseAuthentication {% if sshd_authn_CR %}yes{% else %}no{% endif %}
   notify:
     - restart sshd
+
 
 - name: remove obsolete ssh host keys
   file:
@@ -90,6 +111,9 @@
     - "rsa_key.pub"
     - "ecdsa_key"
     - "ecdsa_key.pub"
+  notify:
+    - restart sshd
+
 
 # Normally ca-certificates does this, but
 # the first time apt hasn't run yet
