@@ -47,12 +47,41 @@ def host_config(num: int, name: str) -> Dict:
         }
     }
     data['extra_hosts'] = [ f'{h}.{domain}:{subnet}.{hosts["lb"]}' for h in logical_hosts ]
+    data['healthcheck'] = {
+        'test': [ 'CMD', '/usr/bin/test', '!', '-e', '/etc/nologin' ],
+        'interval': '5s',
+        'timeout': '1s',
+        'retries': '1',
+        'start_period': '0s'
+    }
+
+    return data
+
+def mail_config(num: int, name: str) -> Dict:
+    data = dict()
+    data['image'       ] = 'mailhog/mailhog'
+    data['hostname'    ] =  name
+    data['ports'       ] = [ 8025 ]
+    data['networks'    ] = {
+        'scznet': {
+            'ipv4_address': f'{subnet}.{num}',
+            'aliases':      [ f'{name}.vm.{domain}' ]
+        }
+    }
+    data['extra_hosts'] = [ f'{h}.{domain}:{subnet}.{hosts["lb"]}' for h in logical_hosts ]
+    data['healthcheck'] = {
+        'test': [ 'CMD', '/usr/bin/test', '!', '-e', '/etc/nologin' ],
+        'interval': '5s',
+        'timeout': '1s',
+        'retries': '1',
+        'start_period': '0s'
+    }
 
     return data
 
 # generate the full docker-compose.yml file
 compose = dict()
-compose['version' ] = '2'
+compose['version' ] = '2.4'
 compose['networks'] = {
     'scznet': {
         'driver': 'bridge',
@@ -64,6 +93,9 @@ compose['networks'] = {
     }
 }
 compose['services'] = { h: host_config(ip, h) for h, ip in hosts.items() }
+
+# Add mail test host on .99
+compose['services']['mail'] = mail_config(99, 'mail')
 
 # dump the yaml
 print("---")

@@ -96,8 +96,8 @@
     virtualenv_python: python3
 
 - name: Run sync_clients
-  command: >
-    {{ plsc_dir }}/run plsc.yml
+  shell: >
+    PATH={{ plsc_dir }}/bin {{ plsc_dir }}/run.sh plsc.yml
   changed_when: false
   args:
     chdir: "{{ plsc_dir }}"

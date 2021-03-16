@@ -1,4 +1,5 @@
 ---
+dist: xenial
 sudo: required
 
 services:
@@ -36,6 +37,13 @@ cache:
 git:
   submodules: false
 
+addons:
+  apt:
+    sources:
+      - google-chrome
+    packages:
+      - google-chrome-stable
+
 before_install:
   - openssl enc -aes-256-cbc -md sha256 -k ${secret_pwd} -in secret_vm.enc -out secret_vm -d
   - 'echo "options timeout:5"  | sudo tee -a /etc/resolvconf/resolv.conf.d/tail'
@@ -46,7 +54,7 @@ before_install:
   - sudo apt -y install ansible bridge-utils
   - sudo adduser travis docker
   - sudo pip2 install --upgrade jinja2
-  - pip install yamllint jinja2 pyyaml
+  - pip install yamllint jinja2 pyyaml selenium future_fstrings
   - |
     # load docker images from cache
     if [ -d $HOME/docker ]; then
@@ -56,6 +64,12 @@ before_install:
         #zcat "$f" | docker load || true;
       done;
     fi
+  - |
+    LATEST_RELEASE=`curl https://chromedriver.storage.googleapis.com/LATEST_RELEASE`
+    curl -q https://chromedriver.storage.googleapis.com/$LATEST_RELEASE/chromedriver_linux64.zip \
+    | zcat > scripts/chromedriver
+    chmod 755 scripts/chromedriver
+    echo "172.20.1.24 sbs.scz-vm.net oidc-op.scz-vm.net" | sudo tee -a /etc/hosts
 
 script:
   - ./scripts/travis_tests

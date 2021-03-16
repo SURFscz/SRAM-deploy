@@ -1,0 +1,10 @@
+[Unit]
+Description=SRAM Backup processor
+
+[Service]
+User={{backup_processor_user}}
+Group={{backup_processor_group}}
+Type=oneshot
+WorkingDirectory={{backup_collector_basedir}}
+ExecStartPre=+/usr/bin/find {{backup_collector_chrootdir}}/incoming/ -type f -exec /usr/bin/chown {{backup_processor_user}}:{{backup_processor_group}} '{}' ';'
+ExecStart={{backup_collector_basedir}}/sram-processbackups.sh

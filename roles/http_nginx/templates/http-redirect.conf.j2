@@ -1,15 +1,32 @@
+{% set hosts = loadbalancer|selectattr("protocol", "equalto", "http")|list %}
+
 server {
 	listen      80 default_server;
 	listen [::]:80 default_server;
 
 	server_name _;
+    access_log /var/log/nginx/access.log sram;
+
+	location / {
+		return 403;
+	}
+}
+
+
+{% for h in hosts %}
+server {
+	listen      80;
+	listen [::]:80;
+
+	server_name {{ h.hostname }};
+    access_log /var/log/nginx/access.log sram;
 
 	location /.well-known/acme-challenge {
 		alias {{letsencrypt.acme_challenge_dir}}/.well-known/acme-challenge;
 	}
 
 	location / {
-		rewrite ^(.*) https://$http_host$1 permanent;
+		rewrite ^(.*) https://{{ h.hostname }}$1 permanent;
 	}
 }
-
+{% endfor %}
