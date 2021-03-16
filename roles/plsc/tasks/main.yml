@@ -97,7 +97,7 @@
 
 - name: Run sync_clients
   shell: >
-    PATH={{ plsc_dir }}/bin {{ plsc_dir }}/run.sh plsc.yml
+    PATH={{ plsc_dir }}/bin {{ plsc_dir }}/run plsc.yml
   changed_when: false
   args:
     chdir: "{{ plsc_dir }}"
