@@ -91,13 +91,21 @@ jobs:
       - name: Run SBS logintest
         run: /usr/bin/python3 ./scripts/sbs-login.py
 
+      - name: Destroy secret
+        run: |
+          ansibe -v -i environment/vm/inventory -r "all" -m command -a "journalctl -xe"
+        if: failure()
+
       # Setup tmate session
-      #- name: Setup tmate session
-      #  uses: mxschmitt/action-tmate@v3
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        if: failure()
+        limit-access-to-actor: true
 
       # Destroy secret
       - name: Destroy secret
         run: shred secret_vm
+        if: always()
 
       # Save docker cache
       - name: Save docker cache
