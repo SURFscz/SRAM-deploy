@@ -1,16 +1,15 @@
 ---
-
 - name: set nameservers
   template: src=resolv.conf.j2 dest=/etc/resolv.conf force=yes
   when:
     - not is_aws
-    - ansible_virtualization_type != "docker"
+    - environment_name!="vm"
 
 - name: fix dhclient.conf
   template: src=dhclient.conf.j2 dest=/etc/dhcp/dhclient.conf force=yes
   when:
     - is_aws
-    - ansible_virtualization_type != "docker"
+    - environment_name!="vm"
   register: dhclient
 
 - name: Restart networking
@@ -27,19 +26,21 @@
 
 - name: set hostname
   hostname: name={{inventory_hostname_short}}
-  when: ansible_virtualization_type != "docker"
+  when:
+    - environment_name!="vm"
 
 - name: set /etc/hosts
   template: src=hosts.j2 dest=/etc/hosts force=yes
   when:
     - not is_aws
-    - ansible_virtualization_type != "docker"
+    - environment_name!="vm"
 
 - name: check that hostname and fqdn are set up correctly
   command: "/usr/bin/hostname --fqdn"
   any_errors_fatal: true
   changed_when: false
-  when: ansible_virtualization_type != "docker"
+  when:
+    - environment_name!="vm"
 
 - name: install journald config
   template:
@@ -71,12 +72,33 @@
   notify:
     - restart sshd
 
-- name: set up ssh config
-  template:
-    src: "sshd_config.j2"
+# replace sshd config; we can't do it the easy way, because we're also editing it in the backup role
+# TODO: cansimplify this oncewe have openssh 8.1+, which support include directives.
+- name: Check if this ssd config file is managed by us
+  command:
+    cmd: "grep '^# BEGIN ANSIBLE MANAGED {{ role_name }}' /etc/ssh/sshd_config"
+  register: sshconfig_is_managed
+  changed_when: false
+  failed_when: false
+
+- name: install a fresh sshd config
+  copy:
+    content: ""
     dest: "/etc/ssh/sshd_config"
+  when: sshconfig_is_managed.rc > 0
+
+- name: set up ssh config
+  blockinfile:
+    path: "/etc/ssh/sshd_config"
+    insertafter: "BOF"
+    marker: "# {mark} ANSIBLE MANAGED {{ role_name }}"
+    validate: "/usr/sbin/sshd -t -f '%s'"
+    content: |
+      {{ lookup('file','sshd_config') }}
+      ChallengeResponseAuthentication {% if sshd_authn_CR %}yes{% else %}no{% endif %}
   notify:
     - restart sshd
+
 
 - name: remove obsolete ssh host keys
   file:
@@ -89,6 +111,9 @@
     - "rsa_key.pub"
     - "ecdsa_key"
     - "ecdsa_key.pub"
+  notify:
+    - restart sshd
+
 
 # Normally ca-certificates does this, but
 # the first time apt hasn't run yet
@@ -120,22 +145,31 @@
     group: "root"
     mode: 0644
 
-- name: write vm certificate
-  copy:
-    content: "{{wildcard_backend_cert.pub}}"
-    dest: "{{ ca_cert_dir }}/vm.scz-vm.crt"
-    owner: "root"
-    group: "root"
-    mode: 0600
+- name: register backend wildcard pub in OS registry
+  file:
+    state: "link"
+    path: "{{ ca_cert_dir }}/sram-internal.crt"
+    src: "{{ ssl_certs_dir }}/{{ internal_base_domain }}.crt"
+    force: true
+  notify: "update certificates"
 
-- name: write https certificate
+- name: write self-signed external https certificate
   copy:
     content: "{{https_cert.cert}}"
-    dest: "{{ ca_cert_dir }}/scz-vm.crt"
+    dest: "{{ ca_cert_dir }}/sram-https.crt"
     owner: "root"
-    mode: 0600
-  when: enable_https and use_fixed_cert
+    group: "root"
+    mode: 0644
+  when: "environment_name=='vm' and enable_https and use_fixed_cert"
+  notify: "update certificates"
 
-- name: update certificates
-  command: update-ca-certificates
-  changed_when: false
+- name: remove obsolete files
+  file:
+    path: "{{ca_cert_dir}}/{{item}}"
+    state: "absent"
+  with_items:
+    - "vm.scz-vm.crt"
+    - "scz-vm.crt"
+    - "sram-https.crt"
+  when: "environment_name!='vm'"
+  notify: "update certificates"

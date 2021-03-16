@@ -1,0 +1,42 @@
+#!/bin/bash
+{% if backup_upload_user is defined %}
+{# No-op if the correct variables are not defined (e.g., on the vm) #}
+set -e
+
+BACKUP_DIR={{ backup_base }}
+REMOTE_HOST={{ backup_upload_host }}
+REMOTE_USER={{ backup_upload_user }}
+SSH_KEY={{ backup_upload_key }}
+
+if [ -z "$BACKUP_DIR"  ]; then echo "Missing BACKUP_DIR";  exit 1; fi
+if [ -z "$REMOTE_HOST" ]; then echo "Missing REMOTE_HOST"; exit 1; fi
+if [ -z "$REMOTE_USER" ]; then echo "Missing REMOTE_USER"; exit 1; fi
+if [ -z "$SSH_KEY"     ]; then echo "Missing SSH_KEY";     exit 1; fi
+
+HOSTNAME=$( hostname )
+
+cd "$BACKUP_DIR"
+
+# find all backup files that were created more recently dan 30 minutes ago
+files=$( find -mindepth 2 -name '*.gz' -o -name '*.bz2' -cmin -30 )
+
+commands="cd incoming"
+for file in $files
+do
+    name=$( basename $file )
+    dir=$( basename $( dirname  $file ) )
+    rand=$( openssl rand -base64 24 | tr '/' '%' )
+
+    # Note: adding a dummy random seed here to make sure the destination fild name cannot be guessed
+    #       (dest file will be readable for the sram-backup user, which is also used to uplaod backups from other hosts)
+    dest="$HOSTNAME##$dir##$name##$rand"
+
+    commands+="
+        put -p '$file' '$dest'"
+done
+commands+=$'\nbye\n'
+
+echo "$commands" | sftp -i $SSH_KEY -b- ${REMOTE_USER}@${REMOTE_HOST}
+
+{% endif %}
+exit 0

@@ -9,9 +9,12 @@
     name: systemd-sysctl.service
     state: restarted
   when:
-    - ansible_virtualization_type != "docker"
+    - environment_name!="vm"
 
 - name: restart journald
   systemd:
     name: systemd-journald.service
     state: restarted
+
+- name: update certificates
+  command: update-ca-certificates

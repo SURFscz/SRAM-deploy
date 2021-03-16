@@ -24,6 +24,7 @@
   copy:
     src: "proxy_log.conf"
     dest: "/etc/nginx/conf.d"
+  notify: "restart nginx"
 
 - name: enable NGINX
   systemd:
