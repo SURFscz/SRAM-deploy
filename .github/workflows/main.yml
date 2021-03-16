@@ -93,7 +93,7 @@ jobs:
 
       - name: Show error output
         run: |
-          ansible -v -i environment/vm/inventory -r "all" -m command -a "journalctl -xe"
+          ansible -v -i environment/vm/inventory --become "all" -m command -a "journalctl -xe"
         if: failure()
 
       # Setup tmate session
