@@ -102,6 +102,7 @@ jobs:
         uses: mxschmitt/action-tmate@v3
         with:
           limit-access-to-actor: true
+        timeout-minutes: 45
 
       # Destroy secret
       - name: Destroy secret
