@@ -1,0 +1,119 @@
+---
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the action will run.
+on:
+  # Triggers the workflow on push or pull request events
+  push:
+  pull_request:
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: "ubuntu-20.04"
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout $GITHUB_WORKSPACE
+        uses: actions/checkout@v2
+
+      # Restore cache
+      - name: Setup cache
+        id: cache-docker
+        uses: actions/cache@v2
+        with:
+          path: ~/docker-save
+          key: docker-save-${{ hashFiles('docker/Dockerfile') }}
+
+      # Decrypt secret
+      - name: Copy secret
+        shell: bash
+        env:
+          secret_vm: ${{ secrets.SECRET_VM }}
+        run: "echo $secret_vm > secret_vm"
+
+      # Run errands
+      - name: Run errands
+        run: |
+          sudo apt -q update
+          sudo apt -y install ansible bridge-utils
+          sudo pip3 install --upgrade wheel jinja2
+          pip3 install yamllint jinja2 pyyaml
+          pip3 install selenium
+          git clone --branch v0.2.9 https://github.com/dw/mitogen.git ~/mitogen
+          cat docker/hosts | sudo tee -a /etc/hosts
+
+      # Run Syntax check
+      - name: Run Syntax check
+        run: ./scripts/syntax-check
+
+      # Restore docker cache
+      - name: Restore docker cache
+        run: docker load -i ~/docker-save/scz-base-cache.tar || true
+        if: steps.cache-docker.outputs.cache-hit == 'true'
+
+      # Start containers without deploy
+      - name: Start containers
+        shell: bash
+        run: "./start-vm --tags=none || true"
+
+      # Runs a single command using the runners shell
+      - name: Run start-vm
+        shell: bash
+        run: >
+          ./start-vm
+          -e "strategy_plugins=~/mitogen/ansible_mitogen/plugins/strategy"
+          -e "strategy=mitogen_linear"
+
+      # Runs a single command using the runners shell
+      - name: Run start-vm --diff
+        env:
+          REEANTRANT: 1
+        run: >
+          ./start-vm
+          --diff
+          -e "strategy_plugins=~/mitogen/ansible_mitogen/plugins/strategy"
+          -e "strategy=mitogen_linear"
+
+      # Runs a single command using the runners shell
+      - name: Run idempotency check...
+        run: /usr/bin/python3 ./scripts/check-idempotency-status
+
+      # Run SBS logintest
+      - name: Run SBS logintest
+        run: /usr/bin/python3 ./scripts/sbs-login.py
+
+      - name: Show error output
+        run: |
+          ansible -v -i environment/vm/inventory --become "all" -m command -a "journalctl -xe"
+        if: failure()
+
+      # Setup tmate session
+      - name: Setup tmate session
+        if: failure()
+        uses: mxschmitt/action-tmate@v3
+        with:
+          limit-access-to-actor: true
+        timeout-minutes: 45
+
+      # Destroy secret
+      - name: Destroy secret
+        run: shred secret_vm
+        if: always()
+
+      # Save docker cache
+      - name: Save docker cache
+        run: >
+          mkdir -p ~/docker-save &&
+          docker tag scz-base scz-base-cache &&
+          docker save scz-base-cache -o ~/docker-save/scz-base-cache.tar &&
+          ls -lh ~/docker-save || true
+        if: steps.cache-docker.outputs.cache-hit != 'true'

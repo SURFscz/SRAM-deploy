@@ -14,7 +14,7 @@ api_users:
 oidc:
   client_id: "{{ sbs_client_id }}"
   client_secret: "{{ sbs_client_secret }}"
-  authorization_endpoint: "{{ sbs_oidc_authz_endpoint }}"
+  authorization_endpoint: "{{ sbs_oidc_authz_endpoint}}"
   token_endpoint: "{{ sbs_oidc_token_endpoint }}"
   userinfo_endpoint: "{{ sbs_oidc_userinfo_endpoint }}"
   #Note that the paths for these  uri's is hardcoded and only domain and port differ per environment
@@ -50,10 +50,13 @@ mail:
   sender_name: {{ sbs_mail_sender_name }}
   sender_email: {{ sbs_mail_sender_email }}
   suppress_sending_mails: False
-  info_email: scz-support@surfnet.nl
-  send_exceptions: False
-  send_js_exceptions: False
-  send_exceptions_recipients: ["sram-support@surfnet.nl"]
+  info_email: scz-support@surf.nl
+  beheer_email: sram-beheer@surf.nl
+  # Do we mail a summary of new Organizations and Services to the beheer_email?
+  audit_trail_notifications_enabled: {{ sbs_audit_trail_notifications_enabled }}
+  send_exceptions: {{ sbs_send_exceptions }}
+  send_js_exceptions: {{ sbs_send_js_exceptions }}
+  send_exceptions_recipients: ["{{ sbs_exceptions_mail }}"]
   environment: "{{ base_domain }}"
 
 aup:
@@ -70,9 +73,11 @@ admin_users:
   {% endfor %}
 
 organisation_categories:
-  - "Research"
   - "University"
-  - "Medical"
+  - "HBO"
+  - "UMC"
+  - "Research"
+  - "SURF"
 
 feature:
   admin_users_upgrade: False
@@ -80,6 +85,7 @@ feature:
   admin_users_upgrade_redirect_url: {{ sbs_base_url }}
   seed_allowed: {{ sbs_seed_allowed }}
   api_keys_enabled: {{ sbs_api_keys_enabled }}
+  feedback_enabled: {{ sbs_feedback_enabled }}
 
 # The retention config determines how long users may be inactive, how long the reminder email is valid and when do we resent the magic link
 retention:
@@ -90,7 +96,8 @@ retention:
   remove_suspended_users_period_days: 540
 
 metadata:
-  idp_url: https://metadata.surfconext.nl/idps-metadata.xml
+  idp_url: https://metadata.surfconext.nl/edugain-downstream.xml
+  parse_at_startup: True
 
 service_bus:
   enabled: False
@@ -98,3 +105,22 @@ service_bus:
   client_id: "sbs"
   user: "sbs"
   password: "unused"
+
+
+platform_admin_notifications:
+  # Do we daily check for CO join_requests and CO requests and send a summary mail to beheer_email?
+  enabled: {{ sbs_open_notifications_enabled }}
+  cron_hour_of_day:  {{ sbs_cron_hour_of_day }}
+  # How long before we include open join_requests in the summary
+  outstanding_join_request_days_threshold: 7
+  # How long before we include open CO requests in the summary
+  outstanding_coll_request_days_threshold: 7
+
+user_requests_retention:
+  # Do we daily check for CO join_requests and CO requests and delete approved and denied?
+  enabled: True
+  cron_hour_of_day: {{ sbs_cron_hour_of_day }}
+  # How long before we delete approved / denied join_requests
+  outstanding_join_request_days_threshold: 90
+  # How long before we delete approved / denied CO requests
+  outstanding_coll_request_days_threshold: 90

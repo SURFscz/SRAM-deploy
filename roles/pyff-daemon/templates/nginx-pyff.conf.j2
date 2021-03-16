@@ -8,7 +8,7 @@ server {
 
 	server_name _;
 
-	access_log /var/log/nginx/access.log proxy;
+	access_log /var/log/nginx/access.log sram;
 
 	location /static {
 		root {{pyff_static_dir}};

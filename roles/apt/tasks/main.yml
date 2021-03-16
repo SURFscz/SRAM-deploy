@@ -77,7 +77,6 @@
     state: present
     name:
       - open-vm-tools
-      - open-vm-tools-dkms
   when: ansible_virtualization_type == "VMware"
 
 # apt module doesn't support autoremove very well, yet

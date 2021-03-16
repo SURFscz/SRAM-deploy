@@ -10,12 +10,6 @@
       include_vars: "{{ secrets_users_file }}"
     - name: Read vars from secrets file
       include_vars: "{{ secrets_file }}"
-    - name: Get current datetime
-      local_action:
-        module: "command"
-        cmd: "date -u '+%Y-%m-%dT%H:%M:%S%z'"
-      register: datetime_now
-      changed_when: false
     - name: Get local git version of deploy and inventory
       local_action:
         module: "command"
@@ -24,11 +18,15 @@
       with_items: ["{{playbook_dir}}","{{inventory_dir}}"]
       register: git_version
       changed_when: false
+      run_once: true
 
 # first gather facts from all hosts that we're actually deploying to
+# TODO: this is not aggressive enough; we need to gather facts from _all_
+#       hosts, even if we're limiting the actualdeployments
 - hosts: all
   become: yes
   serial: 20
+  no_log: true
   gather_facts: true
 
 # to run the debug target, specify --extra-vars="debug=true" / -e debug=1
@@ -42,7 +40,7 @@
 - name: "common"
   hosts: all
   tasks:
-    - { import_tasks: "tasks/versions.yml", tags: ['common'] }
+    - { import_tasks: "tasks/versions.yml", tags: "always"  }
   roles:
     - { role: basic,          tags: ['common','basic']      }
     - { role: apt,            tags: ['common','apt']        }
@@ -52,7 +50,7 @@
     - { role: mail,           tags: ['common','mail']       }
     - { role: syslog-client,  tags: ['common','syslog']     }
     - { role: backups,        tags: ['common','backups']    }
-    - { role: zabbix-agent,   tags: ['common','zabbix']     }
+    #- { role: zabbix-agent,   tags: ['common','zabbix']     }
     #- { role: aws-cloudwatch, tags: ['common','cloudwatch'], when: is_aws }
     #- { role: aws-cloudlogs,  tags: ['common','cloudlogs'],  when: is_aws }
 
@@ -69,6 +67,18 @@
 #    - { import_tasks: "tasks/versions.yml", tags: ['common'] }
 #  roles:
 #    - { role: syslog-server,   tags: ['syslog'] }
+
+- name: "bhr2"
+  hosts: "bhr2"
+  roles:
+    - { role: http_dummy,       tags: ['bhr2','backup_collector'] }
+    - { role: backup_collector, tags: ['bhr2','backup_collector'] }
+
+- name: "bhr11"
+  hosts: "bhr11"
+  roles:
+    - { role: backup-offsite,   tags: ['bhr11','backup_offsite'] }
+
 
 - name: "lb"
   hosts: lb
@@ -128,8 +138,8 @@
   roles:
     - { role: ldap_services,      tags: ['ldap', 'ldap-services' ] }
     - { role: ldap,               tags: ['ldap'                  ] }
-    #- { role: plsc,               tags: ['ldap', 'ldap-plsc'     ] }
-    #- { role: pam_websso_daemon,  tags: ['client','websso-daemon'], when: experimental_features }
+#    - { role: plsc,               tags: ['ldap', 'ldap-plsc'     ] }
+#    - { role: pam_websso_daemon,  tags: ['client','websso-daemon'], when: experimental_features }
 
 - name: "first ldap"
   hosts: ldap[0]

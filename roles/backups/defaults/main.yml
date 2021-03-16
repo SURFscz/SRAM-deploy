@@ -1,4 +1,6 @@
 ---
 backup_base: "/opt/backups"
 backup_runparts: "{{backup_base}}/run.d"
-
+backup_upload_key: "{{backup_base}}/sshkey_upload"
+backup_upload_host: ""
+backup_uplaod_user: ""
