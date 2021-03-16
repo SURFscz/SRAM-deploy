@@ -91,9 +91,9 @@ jobs:
       - name: Run SBS logintest
         run: /usr/bin/python3 ./scripts/sbs-login.py
 
-      - name: Destroy secret
+      - name: Show error output
         run: |
-          ansibe -v -i environment/vm/inventory -r "all" -m command -a "journalctl -xe"
+          ansible -v -i environment/vm/inventory -r "all" -m command -a "journalctl -xe"
         if: failure()
 
       # Setup tmate session
