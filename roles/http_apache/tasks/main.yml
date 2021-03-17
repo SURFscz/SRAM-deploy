@@ -39,7 +39,5 @@
     authz_user: present
     ssl: present
     headers: present
-    wsgi: present
-
   notify: restart apache
 
