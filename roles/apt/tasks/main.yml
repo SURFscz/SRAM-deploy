@@ -62,7 +62,6 @@
       - rsyslog
       - aptitude
       - cloud-init
-      - acl
 
 - name: Upgrade packages
   apt:

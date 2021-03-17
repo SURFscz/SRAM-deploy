@@ -26,6 +26,7 @@ sbs_restricted_co_default_org: "example.org"
 
 sbs_mail_sender_name: "SURF"
 sbs_mail_sender_email: "no-reply@surf.nl"
+sbs_exceptions_mail: root@localhost
 
 sbs_wiki_link: "https://www.example.org/wiki"
 
@@ -39,7 +40,6 @@ sbs_audit_trail_notifications_enabled: True
 sbs_send_exceptions: False
 sbs_send_js_exceptions: False
 sbs_open_notifications_enabled: True
-sbs_exceptions_mail: "root@localhost"
 
 sbs_oidc_config_url: "http://localhost/.well-known/openid-configuration"
 sbs_oidc_authz_endpoint: "http://localhost/OIDC/authorization"

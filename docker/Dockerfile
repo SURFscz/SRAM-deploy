@@ -8,9 +8,11 @@ ENV TERM linux
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections  && \
     echo "deb http://ftp.de.debian.org/debian/ buster-backports main" >> /etc/apt/sources.list  && \
     apt update -y  && \
-    apt install -y openssh-server python2.7 python3 python sudo locales python-setuptools vim net-tools \
+    apt install -y openssh-server python3 python sudo locales python-setuptools vim net-tools \
         bash-completion sudo bash zsh vim locales-all curl ca-certificates gnupg2 net-tools git subversion \
-        acl bzip2 unzip apt-transport-https python-apt needrestart logrotate nullmailer rsyslog aptitude && \
+        acl bzip2 unzip apt-transport-https python-apt needrestart logrotate nullmailer rsyslog aptitude \
+        locales-all netcat dnsutils git acl bzip2 xz-utils unzip apt-transport-https python-apt \
+        rsyslog aptitude cloud-init && \
     apt clean -y && apt-get autoremove -y && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*  && \
     update-locale  && \
     systemctl enable ssh.service  && \
