@@ -1,8 +1,17 @@
 ---
 # handlers file for generic
+# - name: restart apache
+#   systemd:
+#     name: "apache2"
+#     state: "restarted"
+#     daemon_reload: true
+#     enabled: true
+
 - name: restart apache
-  systemd:
-    name: "apache2"
-    state: "restarted"
-    daemon_reload: true
-    enabled: true
+  shell:
+    cmd: >
+      /bin/systemctl daemon-reload;
+      /bin/systemctl stop apache2.service;
+      sleep 3;
+      /bin/systemctl enable --now apache2.service;
+  changed_when: true
