@@ -146,5 +146,5 @@
   hosts: sandbox1
   tasks:
     - { import_tasks: "tasks/versions.yml", tags: ['common'] }
-  roles:
-    - { role: pam_websso,         tags: ['client','pam-websso'], when: experimental_features }
+#  roles:
+#    - { role: pam_websso,         tags: ['client','pam-websso'], when: experimental_features }

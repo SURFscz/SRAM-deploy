@@ -25,10 +25,16 @@
     state: present
 
 - name: listen to public IP
-  copy:
-    src: 60-scz.cnf
+  template:
+    src: 60-scz.cnf.j2
     dest: /etc/mysql/mariadb.conf.d/60-scz.cnf
   notify: restart MariaDB
+
+- name: add mysql user to ssl-cert group
+  user:
+    name: mysql
+    groups: ssl-cert
+    append: yes
 
 - name: Add admin user
   mysql_user:

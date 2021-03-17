@@ -173,3 +173,7 @@
     - "sram-https.crt"
   when: "environment_name!='vm'"
   notify: "update certificates"
+
+# make sure all certificates are up to date after this role has run
+- name: Flush handlers
+  meta: flush_handlers
