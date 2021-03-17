@@ -21,7 +21,7 @@
     - { name: "mpm_event",   state: "absent"  }
     - { name: "mpm_prefork", state: "present" }
   become: yes
-  notify: Restart Apache
+  notify: restart apache
 
 - name: Enable correct apache modules
   apache2_module:
@@ -38,6 +38,8 @@
     authn_core: present
     authz_user: present
     ssl: present
+    headers: present
+    wsgi: present
 
-  notify: Restart Apache
+  notify: restart apache
 

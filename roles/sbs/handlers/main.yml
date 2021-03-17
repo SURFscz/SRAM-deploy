@@ -1,6 +1,1 @@
 ---
-- name: restart Apache
-  systemd: daemon_reload=yes name=apache2 state=restarted enabled=yes
-
-- name: reload Apache
-  systemd: daemon_reload=yes name=apache2 state=reloaded enabled=yes
