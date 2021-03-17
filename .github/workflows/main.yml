@@ -46,11 +46,20 @@ jobs:
           sudo rm -rf /etc/apt/sources.list.d
           sudo apt -q update
           sudo apt -y install ansible bridge-utils
-          sudo pip3 install --upgrade wheel jinja2
-          pip3 install yamllint jinja2 pyyaml
-          pip3 install selenium
+          sudo pip3 install --upgrade wheel yamllint jinja2 pyyaml selenium
           git clone --branch v0.2.9 https://github.com/dw/mitogen.git ~/mitogen
           cat docker/hosts | sudo tee -a /etc/hosts
+
+      # apparmor is by default enabled for binaries _in_ the containers and is restricting
+      # mysql from reading tls keys
+      - name: disable apparmor
+        run: >
+          aa-status --json | jq '
+            .profiles
+            | to_entries
+            | map( select( (.key | startswith("/") ) and .value=="enforce") | .key )
+            | .[]
+          ' | xargs sudo aa-complain
 
       # Run Syntax check
       - name: Run Syntax check
