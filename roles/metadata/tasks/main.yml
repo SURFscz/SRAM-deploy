@@ -36,13 +36,6 @@
     dest: "{{metadata_documentroot}}/index.html"
     mode: 0644
 
-- name: Install link to idp feed
-  file:
-    dest: "{{metadata_documentroot}}/idps.xml"
-    src: "{{metadata_idps_targetfile}}"
-    state: "link"
-    force: true
-
 - name: Install logo
   copy:
     src: "{{ item }}"

@@ -1,0 +1,2 @@
+#!/bin/sh
+ls -1 roles |  xargs -I % sh -c 'echo "-- %"; grep "role: %" provision.yml'

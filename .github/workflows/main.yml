@@ -43,6 +43,7 @@ jobs:
       # Run errands
       - name: Run errands
         run: |
+          sudo rm -rf /etc/apt/sources.list.d
           sudo apt -q update
           sudo apt -y install ansible bridge-utils
           sudo pip3 install --upgrade pip wheel jinja2
@@ -92,8 +93,20 @@ jobs:
         run: /usr/bin/python3 ./scripts/sbs-login.py
 
       - name: Show error output
-        run: |
-          ansible -v -i environment/vm/inventory --become "all" -m command -a "journalctl -xe"
+        run: >
+          ansible -v -i environments/vm/inventory --become "all" -m command -a "/bin/sh -c '
+            echo ====journal===;
+            journalctl -n200;
+            if [ -e /var/log/apache2/error.log ]; then
+              echo ===apache errorlog===;
+              cat /var/log/apache2/error.log;
+            fi;
+            if [ -e /opt/sbs/sbs/log/sbs.log ]; then
+              echo ===sbs log===;
+              cat /opt/sbs/sbs/log/sbs.log
+            fi;
+            echo ===netstat===; netstat -lnp
+          '"
         if: failure()
 
       # Setup tmate session
