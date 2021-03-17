@@ -95,12 +95,11 @@ jobs:
       - name: Show error output
         run: >
           ansible -v -i environments/vm/inventory --become "all" -m command -a "/bin/sh -c '
-            echo ====host $(hostname --fqdn)====;
             echo ====journal===;
             journalctl -n200;
             if [ -e /var/log/apache2/error.log ]; then
               echo ===apache errorlog===;
-              cat /var/log/apache/error.log;
+              cat /var/log/apache2/error.log;
             fi;
             if [ -e /opt/sbs/sbs/log/sbs.log ]; then
               echo ===sbs log===;
