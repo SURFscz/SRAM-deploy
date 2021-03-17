@@ -131,7 +131,7 @@
   hosts: ldap[0]
   roles:
     - { role: plsc,               tags: ['ldap', 'ldap-plsc'     ] }
-    - { role: pam_websso_daemon,  tags: ['client','websso-daemon'], when: experimental_features }
+#    - { role: pam_websso_daemon,  tags: ['client','websso-daemon'], when: experimental_features }
 
 - name: "meta"
   hosts: meta

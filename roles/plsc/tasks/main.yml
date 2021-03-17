@@ -101,4 +101,3 @@
   changed_when: false
   args:
     chdir: "{{ plsc_dir }}"
-  when: inventory_hostname == groups['ldap'][0]
