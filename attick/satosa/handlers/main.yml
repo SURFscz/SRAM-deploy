@@ -8,11 +8,6 @@
   service:  name=rsyslog state=restarted
   listen: "restart rsyslog"
 
-- name: restart nginx
-  service:
-    name: nginx
-    state: restarted
-
 - name: restart satosa
   systemd:
     name: satosa
