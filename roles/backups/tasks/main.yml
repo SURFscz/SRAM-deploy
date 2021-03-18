@@ -44,7 +44,7 @@
     owner: "root"
     group: "root"
     mode: "0600"
-    no_log: true
+  no_log: true
   when: backup_collector_ssh_key is defined and vault_decrypted
 
 - name: Add known host for backup host
