@@ -18,6 +18,12 @@
     state: restarted
   when: dhclient.changed
 
+- name: "disable cloud-init VMWare customization"
+  lineinfile:
+    path: "/etc/cloud/cloud.cfg.d/99-sram.cfg"
+    line: "disable_vmware_customization: true"
+  when: ansible_virtualization_type == "VMware"
+
 - name: set localtime
   file: state=link src=/usr/share/zoneinfo/{{timezone}} dest=/etc/localtime
 
