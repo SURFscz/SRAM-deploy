@@ -13,18 +13,24 @@
     dest: "{{ oidc_dir }}"
     version: "{{ oidc_op_repo_version }}"
 
-- name: Create oidc-op virtualenv
+- name: Copy requirements files
+  copy:
+    dest: "{{ oidc_dir }}/sram-req.txt"
+    content: |
+      cryptojwt~=1.4.0
+      Flask~=1.1.2
+      oidcendpoint~=1.1.1
+      oidcmsg~=1.1.0
+      pyOpenSSL~=20.0.1
+      oidcop~={{ oidc_op_repo_version }}
+
+- name: Create virtualenv and install requirements
   pip:
-    name: "{{ oidc_dir }}"
+    requirements: "{{ oidc_dir }}/sram-req.txt"
     virtualenv: "{{ oidc_dir }}"
     virtualenv_python: python3
   # probably an ansible bug, this keeps being hit as changed
-  changed_when: false
-
-- name: Install flask_op requirements
-  pip:
-    requirements: "{{ oidc_dir }}/flask_op/requirements.txt"
-    virtualenv: "{{ oidc_dir }}"
+  #changed_when: false
 
 - name: "Make server executable"
   file:
