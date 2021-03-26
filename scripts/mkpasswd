@@ -68,6 +68,10 @@ def main():
         print(f"Invalid number of rounds '{rounds}'")
         sys.exit(1)
 
+    if not args:
+        print("Please specify a passwod")
+        sys.exit(1)
+
     # workaround weirdness in bcrypt implementation
     # dumb passlib requires base64-encoded _input_ instead of just requiring 128 random raw bits
     if "bcrypt" in method and salt is not None:
