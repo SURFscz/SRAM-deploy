@@ -17,7 +17,7 @@ mkdir -p -m 0755 "$BACKUP_DIR"
 export MYSQL_PWD="{{ sbs_dbbackup_password }}"
 mysqldump --host="{{ db_host }}" \
           --user="{{ sbs_dbbackup_user }}" \
-          --ssl-ca=/etc/ssl/certs/ca-certificates.crt \
+          --ssl-ca="{{sbs_db_cert_path}}" \
           --single-transaction \
           --set-charset --create-options \
           --routines --add-drop-table \
