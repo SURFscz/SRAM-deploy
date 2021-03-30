@@ -61,6 +61,11 @@ jobs:
             | .[]
           ' | xargs sudo aa-complain
 
+      # Install Ansible modules
+      - name: Install Ansible modules
+        run: ansible-galaxy collections install -r requirements.yml
+
+      # Restore docker cache
       # Run Syntax check
       - name: Run Syntax check
         run: ./scripts/syntax-check
