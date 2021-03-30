@@ -63,7 +63,8 @@ jobs:
 
       # Install Ansible modules
       - name: Install Ansible modules
-        run: ansible-galaxy collections install -r requirements.yml
+        run: >
+          ansible-galaxy collection install -r requirements.yml
 
       # Restore docker cache
       # Run Syntax check
