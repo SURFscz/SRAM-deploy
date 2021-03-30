@@ -1,0 +1,24 @@
+---
+- name: "create group"
+  group:
+    name: "sram-tools"
+    state: "present"
+
+- name: "create directories"
+  file:
+    path: "{{item}}"
+    state: "directory"
+    mode: "0775"
+    owner: "root"
+    group: "sram-tools"
+  with_items:
+    - "{{sram_tools_basedir}}"
+    - "{{sram_tools_basedir}}/bin"
+
+- name: "install rappportage script"
+  template:
+    src: "rapportage.py.j2"
+    dest: "{{sram_tools_basedir}}/bin"
+    owner: "root"
+    group: "sram-tools"
+    mode: "0750"

@@ -68,6 +68,11 @@
 #  roles:
 #    - { role: syslog-server,   tags: ['syslog'] }
 
+- name: "bhr1"
+  hosts: "bhr1"
+  roles:
+    - { role: 'tools',   tags: ['bhr1','tools']}
+
 - name: "bhr2"
   hosts: "bhr2"
   roles:

@@ -1,0 +1,48 @@
+#!/usr/bin/env python3
+
+import sys
+import re
+import zeep
+from pprint import pprint
+
+WSDL = 'https://rapportage.surfnet.nl:9001/interface.php?wsdl'
+USER = '{{ surfnet_rapportage_user }}'
+PASS = '{{ surfnet_rapportage_password }}'
+DEPT = 'TS'
+
+if (len(sys.argv)<2 or not re.fullmatch(r'\d{4}-\d{2}',sys.argv[1])):
+    print("Please specify period name, e.g., 2012-11")
+    sys.exit(1)
+
+period = sys.argv[1];
+
+dienstonderdelen = (
+    { 'afk': 'hoi',           'naam': 'bla', 'norm': 98.0, 'kpi': True },
+    { 'afk': 'sram-proxy',           'naam': 'SRAM Logins (SAML/OIDC)', 'norm': 98.0, 'kpi': True },
+    { 'afk': 'sram-ldap',            'naam': 'SRAM LDAP',               'norm': 98.0, 'kpi': True },
+    { 'afk': 'sram-sbs',             'naam': 'SRAM SBS',                'norm': 95.0, 'kpi': True },
+    { 'afk': 'sram-sbs-kantooruren', 'naam': 'SRAM SBS (kantoruren)',   'norm': 98.0, 'kpi': True },
+)
+
+client = zeep.Client(wsdl=WSDL)
+factory = client.type_factory('urn:SURFnet-er')
+for do in dienstonderdelen:
+    rapportage = factory.InsertReportInput(
+        Value = 100,
+        Unit = '%',
+        NormComp = '>=',
+        NormValue = str(do['norm']),
+        Type = 'Beschikbaarheid',
+        Instance = do['afk'],
+        InstanceDisplay = do['naam'],
+        DepartmentList = DEPT,
+        Period = period,
+        IsKPI = do['kpi'],
+    )
+    pprint(rapportage)
+    ret = client.service.er_InsertReport(Username=USER, Password=PASS, Parameters=rapportage)
+    if ret['ReturnCode']!=1:
+        print(f"Fout bij invoegen repportage voor {do['afk']}: {ret['ReturnText']}")
+
+sys.exit(0)
+
