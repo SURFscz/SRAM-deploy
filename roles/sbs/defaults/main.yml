@@ -46,4 +46,6 @@ sbs_oidc_config_url: "http://localhost/.well-known/openid-configuration"
 sbs_oidc_authz_endpoint: "http://localhost/OIDC/authorization"
 sbs_oidc_token_endpoint: "http://localhost/OIDC/token"
 sbs_oidc_userinfo_endpoint: "http://localhost/OIDC/userinfo"
+
+sbs_backup_dir: "{{backup_base}}/sbs"
 sbs_db_cert_path: "/etc/ssl/sbs_db_root_cert.pem"

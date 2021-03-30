@@ -16,6 +16,7 @@
       - virtualenv
       - python3-distutils
       - libapache2-mod-wsgi-py3
+      - mariadb-client
 
 - name: Remove obsolete packages
   apt:
@@ -161,3 +162,8 @@
     group: www-data
     mode: 0755
 
+- name: install database dump script
+  template:
+    src: "backup-database.sh.j2"
+    dest: "{{backup_runparts}}/backup-database.sh"
+    mode: "0700"
