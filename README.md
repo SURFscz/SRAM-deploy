@@ -55,7 +55,7 @@ To get started, do the following:
     The `[vault-secret]` can be found on the SURFnet SRAM wiki.
 
 - Install required ansible modules
-    - `ansible-galaxy collection install -r requirements.yml`
+    - `ansible-galaxy install -r requirements.yml`
 
 - set up the containers and start the deploy:
     - `./start-vm`
