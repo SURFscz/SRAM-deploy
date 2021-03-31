@@ -12,6 +12,11 @@
     dest: /etc/apt/apt.conf.d/00-scz-release
   register: apt_default_release
 
+- name: remove backports sources.list
+  file:
+    path: "/etc/apt/sources.list.d/backports.list"
+    state: "absent"
+
 # we need to do this manually, because ansible's apt module doesn't handle the default-release
 # setting correctly
 - name: Update cache
