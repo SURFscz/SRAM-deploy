@@ -20,8 +20,7 @@
   apt:
     name:
       - mariadb-server
-      #- python-pymysql
-      - python-mysqldb
+      - python3-pymysql
     state: present
 
 - name: listen to public IP
