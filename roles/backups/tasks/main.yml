@@ -2,17 +2,21 @@
 
 # check if we can decrypt vault
 - block:
-    - name: verify we can decode vault
+    - name: Verify we can decode vault
       no_log: true
       debug:
         var: backup_collector_ssh_key
-    - name: set variable
+    - name: Set variable
       set_fact: vault_decrypted=true
   rescue:
     - meta: noop
-    - name: set variable
+    - name: Set variable
       set_fact: vault_decrypted=false
 
+- name: Install tmpreaper
+  apt:
+    name: "tmpreaper"
+    state: "present"
 
 - name: Create backup dir {{backup_dir}}
   file:

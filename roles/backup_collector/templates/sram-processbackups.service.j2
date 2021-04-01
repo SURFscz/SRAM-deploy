@@ -8,3 +8,4 @@ Type=oneshot
 WorkingDirectory={{backup_collector_basedir}}
 ExecStartPre=+/usr/bin/find {{backup_collector_chrootdir}}/incoming/ -type f -exec /usr/bin/chown {{backup_processor_user}}:{{backup_processor_group}} '{}' ';'
 ExecStart={{backup_collector_basedir}}/sram-processbackups.sh
+ExecStartPost=/usr/sbin/tmpreaper --showdeleted --mtime '{{backup_collector_retention_days}}d' '{{backup_collector_backupdir}}'
