@@ -47,6 +47,7 @@ iprange:
   lb:         "172.20.1.24"
   #comanage:   "172.20.1.21"
   mgnt:       "172.20.1.0/24"
+  internal:   "172.20.1.0/24"
 
 mail:
   relay_host: "172.20.1.1"
