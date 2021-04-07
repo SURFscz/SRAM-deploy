@@ -7,12 +7,6 @@
 [vm_lb]
 lb.vm.scz-vm.net ansible_host=172.20.1.24
 
-[vm_proxy]
-proxy.vm.scz-vm.net ansible_host=172.20.1.22
-
-#[vm_comanage]
-#comanage.vm.scz-vm.net ansible_host=172.20.1.21
-
 [vm_ldap]
 ldap1.vm.scz-vm.net ansible_host=172.20.1.20
 ldap2.vm.scz-vm.net ansible_host=172.20.1.21
@@ -34,8 +28,6 @@ db.vm.scz-vm.net ansible_host=172.20.1.28
 
 [vm:children]
 vm_lb
-vm_proxy
-#vm_comanage
 vm_ldap
 vm_meta
 vm_client
@@ -47,12 +39,6 @@ vm_db
 # role-based groups
 [lb:children]
 vm_lb
-
-[proxy:children]
-vm_proxy
-
-#[comanage:children]
-#vm_comanage
 
 [ldap:children]
 vm_ldap

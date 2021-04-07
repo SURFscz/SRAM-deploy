@@ -9,7 +9,6 @@ from typing import Dict
 hosts = {
     'ldap1':    20,
     'ldap2':    21,
-    'proxy':    22,
     'meta':     23,
     'lb':       24,
     'client':   25,
@@ -20,10 +19,10 @@ hosts = {
 
 # these are the hostnames of virtual hosts on the loadbalancer
 logical_hosts = [
-    'proxy',    'mdq',         'cm',        'comanage',
-    'ldap',     'meta',        'oidc-test', 'sp-test',
-    'idp-test', 'google-test', 'sbs',       'sandbox1',
-    'pam', 'oidc-op',
+    'mdq',         'cm',        'comanage', 'ldap',
+    'meta',        'oidc-test', 'sp-test',  'idp-test',
+    'google-test', 'sbs',       'sandbox1', 'pam',
+    'oidc-op',
 ]
 
 subnet = '172.20.1'
