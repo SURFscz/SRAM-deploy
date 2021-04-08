@@ -4,6 +4,7 @@
 
 - name: write secret key
   copy: content={{https_cert.key}} dest={{cert_dir}}/key.pem mode=0600 owner=root
+  no_log: true
 
 - name: write certificate
   copy: content={{https_cert.cert}} dest={{cert_dir}}/cert.pem mode=0600 owner=root
@@ -24,6 +25,7 @@
     dest={{cert_dir}}/priv+fullchain.pem
     mode=0600
     owner=root
+  no_log: true
 
 - name: make links for all hosts
   file: dest={{cert_dir}}/{{item}} state=link src=./

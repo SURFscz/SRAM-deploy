@@ -84,6 +84,7 @@
         - user: "{{ sbs_dbbackup_user }}"
           passwd: "{{ sbs_dbbackup_password }}"
           perm: "SELECT,SHOW VIEW,EVENT,TRIGGER"
+      no_log: true
 
 - name: Clone SBS repository
   git:
@@ -136,6 +137,7 @@
     src: config.yml.j2
     dest: "{{ sbs_git_dir }}/server/config/config.yml"
   notify: "restart apache"
+  no_log: true
 
 - name: Create SBS wsgi file
   template:
@@ -167,3 +169,4 @@
     src: "backup-database.sh.j2"
     dest: "{{backup_runparts}}/backup-database.sh"
     mode: "0700"
+  no_log: true

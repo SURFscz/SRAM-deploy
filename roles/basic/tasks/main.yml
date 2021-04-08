@@ -142,6 +142,7 @@
     owner: "root"
     group: "ssl-cert"
     mode: 0640
+  no_log: true
 
 - name: write backend wildcard pub
   copy:
