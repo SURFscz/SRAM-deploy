@@ -100,8 +100,8 @@ users:
 removed_users: []
 
 firewall_v4_incoming:
-  - { name: bastion,  src: "{{iprange.bastion}}", dport: "22,80,443", proto: tcp }
-  - { name: vnet,     src: "{{iprange.vm}}",      dport: "22,80,443", proto: tcp }
+  - { name: bastion,  src: "{{iprange.bastion}}",  dport: "22,80,443", proto: tcp }
+  - { name: vnet,     src: "{{iprange.internal}}", dport: "22,80,443", proto: tcp }
 
 backup_base: "/opt/backups"
 backup_runparts: "{{backup_base}}/run.d"

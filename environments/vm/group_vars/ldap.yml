@@ -4,7 +4,7 @@ firewall_v4_incoming:
   - { name: loadbalancer, src: "{{iprange.lb}}",       dport:                   "389", proto: tcp }
   #- { name: comanage,     src: "{{iprange.comanage}}", dport:                   "389", proto: tcp }
   - { name: loadbalancer, src: "{{iprange.lb}}",       dport:  "{{pam_clients_port}}", proto: tcp }
-  - { name: vnet,         src: "{{iprange.vm}}",       dport:                "22,389", proto: tcp }
+  - { name: vnet,         src: "{{iprange.internal}}", dport:                "22,389", proto: tcp }
 
 pam_host: "0.0.0.0"
 pam_clients_port: 8087
