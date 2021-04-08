@@ -132,6 +132,7 @@
   when: yarn_install.changed
   changed_when: true
 
+# TODO: draai SBS als non-www-data user
 - name: Create SBS config file
   template:
     src: config.yml.j2

@@ -47,9 +47,9 @@
     mode: 0644
   with_items:
     - { src: "set_root_credentials.ldif.j2", dest: "set_root_credentials.ldif" }
-    - { src: "initial_setup.ldif.j2", dest: "initial_setup.ldif" }
-    - { src: "enable_memberof.ldif.j2", dest: "enable_memberof.ldif" }
-    - { src: "enable_syncrepl.ldif.j2", dest: "enable_syncrepl.ldif" }
+    - { src: "initial_setup.ldif.j2",        dest: "initial_setup.ldif" }
+    - { src: "enable_memberof.ldif.j2",      dest: "enable_memberof.ldif" }
+    - { src: "enable_syncrepl.ldif.j2",      dest: "enable_syncrepl.ldif" }
   no_log: true
 
 - name: Ensure the ldap admin credentials are set

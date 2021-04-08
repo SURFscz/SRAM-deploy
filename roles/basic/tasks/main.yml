@@ -141,7 +141,7 @@
     dest: "{{ ssl_certs_dir }}/{{ internal_base_domain }}.key"
     owner: "root"
     group: "ssl-cert"
-    mode: 0640
+    mode: "0640"
   no_log: true
 
 - name: write backend wildcard pub

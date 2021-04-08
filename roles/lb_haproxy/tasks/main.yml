@@ -41,11 +41,11 @@
 
 - name: install haproxy certificate list
   template:
-    src: crt-list.txt.j2
-    dest: /etc/haproxy/crt-list.txt
-    mode: 0644
-    owner: root
-    group: root
+    src: "crt-list.txt.j2"
+    dest: "/etc/haproxy/crt-list.txt"
+    mode: "0644"
+    owner: "root"
+    group: "root"
   notify:
     - restart haproxy
   when: enable_https

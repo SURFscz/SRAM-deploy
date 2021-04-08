@@ -137,7 +137,7 @@
     content: "{{client_saml_cert.priv}}"
     dest: "{{ simplesaml_project_dir }}/simplesaml/cert/server.pem"
     group: "www-data"
-    mode: 0640
+    mode: "0640"
   no_log: true
 
 - name: Copy self-signed Token signing cert
