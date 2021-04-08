@@ -12,7 +12,6 @@ hostnames:
   proxy:    proxy.{{base_domain}}
   mdq:      mdq.{{base_domain}}
   consent:  cm.{{base_domain}}
-  #comanage: comanage.{{base_domain}}
   ldap:     ldap.{{base_domain}}
   meta:     meta.{{base_domain}}
   sbs:      sbs.{{base_domain}}
@@ -49,27 +48,6 @@ comanage_ldap_host: "ldap.vm.scz-vm.net"
 
 # TODO: get rid of hardcoded ports for proxy vhosts
 loadbalancer:
-  - hostname: "{{hostnames.proxy}}"
-    protocol: http
-    backend_hosts: "{{groups['vm_proxy']}}"
-    backend_port: 8080
-  - hostname: "{{hostnames.mdq}}"
-    protocol: http
-    backend_hosts: "{{groups['vm_proxy']}}"
-    backend_port: 8081
-  - hostname: "{{hostnames.consent}}"
-    protocol: http
-    backend_hosts: "{{groups['vm_proxy']}}"
-    backend_port: 8082
-  #- hostname: "{{hostnames.comanage}}"
-  #  protocol: http
-  #  backend_hosts: "{{groups['vm_comanage']}}"
-  #  backend_port: "{{ comanage_backend_port }}"
-  #- hostname: "{{hostnames.comanage}}"
-  #  protocol: ldap
-  #  frontend_port: 1636
-  #  backend_hosts: "{{groups['vm_comanage']}}"
-  #  backend_port: 389
   - hostname: "{{hostnames.sbs}}"
     protocol: http
     backend_hosts: "{{groups['vm_sbs']}}"
