@@ -1,7 +1,7 @@
 ---
 - name: enable plsc job
   systemd:
-    name: plsc.timer
+    name: "plsc.timer"
     enabled: true
-    state: started
+    state: "restarted"
     daemon_reload: true
