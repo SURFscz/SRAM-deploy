@@ -57,7 +57,8 @@
   template:
     src: "client_id.j2"
     dest: "{{ oidc_dir }}/flask_op/cdb/{{ sbs_client_id }}"
-    mode: 0644
+    mode: "0640"
+    group: "www-data"
   no_log: true
 
 - name: Create oidc-op systemd service

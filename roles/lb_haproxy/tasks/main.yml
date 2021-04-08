@@ -30,11 +30,11 @@
 
 - name: install haproxy config
   template:
-    src: haproxy.cfg.j2
-    dest: /etc/haproxy/haproxy.cfg
-    mode: 0644
-    owner: root
-    group: root
+    src: "haproxy.cfg.j2"
+    dest: "/etc/haproxy/haproxy.cfg"
+    mode: "0640"
+    owner: "root"
+    group: "haproxy"
   no_log: true
   notify:
     - restart haproxy
