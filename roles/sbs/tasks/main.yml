@@ -74,8 +74,6 @@
         password: '{{ item.passwd }}'
         priv: '{{ sbs_db_name }}.*:{{ item.perm }}'
         ca_cert: "{{sbs_db_cert_path}}"
-        tls_requires:
-          SSL: true
       with_items:
         - user: "{{ sbs_db_user }}"
           passwd: "{{ sbs_db_password }}"
