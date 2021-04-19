@@ -1,6 +1,5 @@
 ---
 firewall_v4_incoming:
-  - { name: loadbalancer, src: "{{iprange.lb}}",      dport:  "{{google_test_port}}", proto: tcp }
   - { name: bastion,      src: "{{iprange.bastion}}",  dport:  "22", proto: tcp }
   - { name: loadbalancer, src: "{{iprange.lb}}",       dport:  "80", proto: tcp }
   - { name: loadbalancer, src: "{{iprange.lb}}",       dport:  "{{idp_test_port}}", proto: tcp }
