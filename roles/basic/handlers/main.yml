@@ -16,5 +16,8 @@
     name: systemd-journald.service
     state: restarted
 
+- name: reset journal permissions
+  command: "/bin/systemd-tmpfiles --create --exclude-prefix=/dev"
+
 - name: update certificates
   command: update-ca-certificates
