@@ -57,8 +57,10 @@
     - "reset journal permissions"
 
 - name: "{{'en' if enable_ipv6 else 'dis'}}able ipv6"
-  template: src=99-sysctl-ipv6.conf.j2 dest=/etc/sysctl.d/99-sysctl-ipv6.conf
-  notify: reload sysctl settings
+  template:
+    src: "99-sysctl-ipv6.conf.j2"
+    dest: "/etc/sysctl.d/99-sysctl-ipv6.conf"
+  notify: "reload sysctl settings"
 
 - name: "Enable dmesg for regular users"
   lineinfile:

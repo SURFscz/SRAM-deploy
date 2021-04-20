@@ -1,15 +1,15 @@
 ---
 - name: restart sshd
   service:
-    name: sshd
-    state: restarted
+    name: "sshd"
+    state: "restarted"
 
 - name: reload sysctl settings
   systemd:
-    name: systemd-sysctl.service
-    state: restarted
+    name: "systemd-sysctl.service"
+    state: "restarted"
   when:
-    - environment_name!="vm"
+    - 'environment_name!="vm"'
 
 - name: restart journald
   systemd:
@@ -20,4 +20,4 @@
   command: "/bin/systemd-tmpfiles --create --exclude-prefix=/dev"
 
 - name: update certificates
-  command: update-ca-certificates
+  command: "update-ca-certificates"
