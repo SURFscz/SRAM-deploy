@@ -76,13 +76,6 @@ jobs:
         run: docker load -i ~/docker-save/scz-base-cache.tar || true
         if: steps.cache-docker.outputs.cache-hit == 'true'
 
-      # Setup tmate session
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
-        with:
-          limit-access-to-actor: true
-        timeout-minutes: 45
-
       # Start containers without deploy
       - name: Start containers
         shell: bash
