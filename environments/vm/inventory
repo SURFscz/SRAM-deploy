@@ -26,6 +26,9 @@ sbs.vm.scz-vm.net ansible_host=172.20.1.27
 [vm_db]
 db.vm.scz-vm.net ansible_host=172.20.1.28
 
+[vm_bhr]
+bhr.vm.scz-vm.net ansible_host=172.20.1.29
+
 [vm:children]
 vm_lb
 vm_ldap
@@ -34,6 +37,7 @@ vm_client
 vm_sandbox1
 vm_sbs
 vm_db
+vm_bhr
 
 ##########################################
 # role-based groups
@@ -58,8 +62,10 @@ vm_sbs
 [db:children]
 vm_db
 
+[bhr:children]
+vm_bhr
+
 ##########################################
 # all
 [all:children]
-mgnt
 vm

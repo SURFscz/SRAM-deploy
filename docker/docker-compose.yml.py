@@ -15,6 +15,7 @@ hosts = {
     'sandbox1': 26,
     'sbs':      27,
     'db':       28,
+    'bhr':      29,
 }
 
 # these are the hostnames of virtual hosts on the loadbalancer
