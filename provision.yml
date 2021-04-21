@@ -1,4 +1,3 @@
-# vim:ts=2:sw=2:expandtab
 ---
 - hosts: all
   serial: 20
@@ -43,6 +42,8 @@
     - { import_tasks: "tasks/versions.yml", tags: "always"  }
   roles:
     - { role: basic,          tags: ['common','basic']      }
+    - { role: certificates,   tags: ['common','cert']      }
+    - { role: logging,        tags: ['common','logging']    }
     - { role: apt,            tags: ['common','apt']        }
     - { role: firewall,       tags: ['common','firewall']   }
     - { role: ntp,            tags: ['common','ntp']        }
