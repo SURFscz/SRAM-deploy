@@ -121,3 +121,5 @@ sbs_api_url: "{{ http_proto }}://{{ hostnames.sbs }}/"
 
 # No Zabbix on VM/Travis
 zabbix_enabled: false
+
+journal_upload_host: "bhr.vm.scz-vm.net"

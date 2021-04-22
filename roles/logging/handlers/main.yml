@@ -1,6 +1,22 @@
+---
 - name: restart journald
   systemd:
     name: "systemd-journald.service"
+    state: "restarted"
+
+- name: systemd daemon-reload
+  systemd:
+    daemon_reload: true
+
+- name: enable journal-upload
+  systemd:
+    name: "systemd-journal-upload.service"
+    state: "restarted"
+    enabled: true
+
+- name: restart journal-upload
+  systemd:
+    name: "systemd-journal-upload.service"
     state: "restarted"
 
 - name: reset journal permissions
