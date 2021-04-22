@@ -20,6 +20,8 @@
     content: |
       [Service]
       SupplementaryGroups={{journal_remote_group}}
+      Restart=on-failure
+      RestartSec=60s
   notify:
     - "systemd daemon-reload"
     - "enable journal-remote"

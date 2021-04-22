@@ -28,6 +28,9 @@
     content: |
       [Service]
       SupplementaryGroups={{journal_upload_group}}
+      # service will exit when upstream server in unavailable; needs to restart automatically
+      Restart=on-failure
+      RestartSec=60s
   notify:
     - "systemd daemon-reload"
     - "enable journal-upload"
