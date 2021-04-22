@@ -77,8 +77,9 @@
 - name: "bhr2"
   hosts: "bhr2"
   roles:
-    - { role: http_dummy,       tags: ['bhr2','backup_collector'] }
-    - { role: backup_collector, tags: ['bhr2','backup_collector'] }
+    - { role: http_dummy,        tags: ['bhr2','backup_collector']  }
+    - { role: backup_collector,  tags: ['bhr2','backup_collector']  }
+    - { role: logging_collector, tags: ['bhr2','logging_collector'] }
 
 - name: "bhr11"
   hosts: "bhr11"

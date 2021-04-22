@@ -1,0 +1,15 @@
+---
+- name: systemd daemon-reload
+  systemd:
+    daemon_reload: true
+
+- name: enable journal-remote
+  systemd:
+    name: "systemd-journal-remote.service"
+    state: "restarted"
+    enabled: true
+
+- name: restart journal-remote
+  systemd:
+    name: "systemd-journal-remote.service"
+    state: "restarted"
