@@ -25,7 +25,7 @@ echo "Bringing docker containers up"
 time docker-compose -f docker/docker-compose.yml up --no-recreate -d
 
 echo "Waiting until containers have booted"
-TIMEOUT=2
+TIMEOUT=120
 for c in $(docker ps -q)
 do
     host=$(docker inspect --format='{{.Config.Hostname}}'     $c)
