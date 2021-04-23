@@ -25,13 +25,23 @@ echo "Bringing docker containers up"
 time docker-compose -f docker/docker-compose.yml up --no-recreate -d
 
 echo "Waiting until containers have booted"
+TIMEOUT=2
 for c in $(docker ps -q)
 do
     host=$(docker inspect --format='{{.Config.Hostname}}'     $c)
     printf " - %-10s" $host
     stat=xxx
+    starttime=$(date +%s)
     while true
     do
+        if [ $(( $(date +%s) - $starttime )) -gt $TIMEOUT ]
+        then
+            tput setaf 1
+            echo "timeout"
+            tput sgr0
+            exit 1
+        fi
+
         stat=$(docker inspect --format='{{.State.Health.Status}}' $c)
         if [ "$stat" = "healthy" ]
         then
@@ -42,16 +52,26 @@ do
             break
         fi
         echo -n "."
-        sleep 0.5
+        sleep 2
     done
 
     # wait until ssh is running
     if [ "$host" != "mail" ]
     then
         echo -n "."
+        starttime=$(date +%s)
         while ! ssh-keyscan -T 1 ${host}.vm.scz-vm.net > /dev/null 2>&1
         do
-            sleep 1
+            if [ $(( $(date +%s) - $starttime )) -gt $TIMEOUT ]
+            then
+                tput setaf 1
+                echo "timeout"
+                tput sgr0
+                ssh-keyscan -T 1 ${host}.vm.scz-vm.net || true
+                exit 1
+            fi
+
+            sleep 2
             echo -n "."
         done
         tput setaf 2
