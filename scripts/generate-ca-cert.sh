@@ -13,12 +13,13 @@ fi
 CNs="$@"
 
 KEYTYPE=RSA:2048
+DAYS=36500
 
 if ! [ -e ca.key ]
 then
 	openssl req \
 		-newkey $KEYTYPE -nodes \
-		-x509 -days 3650 \
+		-x509 -days $DAYS \
 		-subj '/C=NL/O=SURF/OU=SRAM/CN=SRAM Journalling CA/' \
 		-out ca.crt -keyout ca.key
 fi
@@ -32,7 +33,7 @@ cat >ca.conf <<-EOF
 	database = ./index
 	private_key = ca.key
 	serial = ./serial
-	default_days = 3650
+	default_days = $DAYS
 	default_md = default
 	policy = policy_anything
 	[ policy_anything ]
