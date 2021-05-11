@@ -50,7 +50,6 @@
   notify:
     - "restart journal-upload"
 
-
 - name: install journal-upload config
   template:
     src: "journal-upload.conf.j2"
@@ -58,3 +57,11 @@
   notify:
     - "enable journal-upload"
 
+- name: install new rsyslog config
+  template:
+    src: "rsyslog.conf.j2"
+    dest: "/etc/rsyslog.conf"
+  changed_when: true
+  notify:
+    - "restart rsyslog"
+    - "remove obsolete logfiles"

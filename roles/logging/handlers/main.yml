@@ -21,3 +21,16 @@
 
 - name: reset journal permissions
   command: "/bin/systemd-tmpfiles --create --exclude-prefix=/dev"
+
+- name: restart rsyslog
+  systemd:
+    name: "rsyslog.service"
+    state: "restarted"
+
+- name: remove obsolete logfiles
+  shell:
+    chdir: "/var/log"
+    cmd: >
+      rm -f alternatives.log* daemon.log* debug* \
+            mail* messages* slapd.log* user.log*
+    warn: false
