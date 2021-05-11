@@ -49,7 +49,6 @@
     - { role: ntp,            tags: ['common','ntp']        }
     - { role: users,          tags: ['common','users']      }
     - { role: mail,           tags: ['common','mail']       }
-    - { role: syslog-client,  tags: ['common','syslog']     }
     - { role: backups,        tags: ['common','backups']    }
     #- { role: zabbix-agent,   tags: ['common','zabbix']     }
     #- { role: aws-cloudwatch, tags: ['common','cloudwatch'], when: is_aws }
