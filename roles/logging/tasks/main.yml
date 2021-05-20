@@ -61,7 +61,6 @@
   template:
     src: "rsyslog.conf.j2"
     dest: "/etc/rsyslog.conf"
-  changed_when: true
   notify:
     - "restart rsyslog"
     - "remove obsolete logfiles"
