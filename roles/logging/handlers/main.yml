@@ -31,6 +31,7 @@
   shell:
     chdir: "/var/log"
     cmd: >
-      rm -f alternatives.log* daemon.log* debug* \
-            mail* messages* slapd.log* user.log*
+      rm -rf alternatives.log* daemon.log* debug* \
+             mail* messages* slapd.log* user.log* \
+             private
     warn: false
