@@ -1,11 +1,4 @@
 ---
-- name: restart filebeat
-  service:
-    name: filebeat
-    state: restarted
-  when: use_logserver
-  listen: "restart filebeat"
-
 - name: restart rsyslog
   service:
     name: rsyslog

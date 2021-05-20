@@ -166,12 +166,6 @@
     src: logrotate_slapd
     dest: /etc/logrotate.d/slapd
 
-- name: Install filebeat configuration
-  template:
-    src: fb_slapd.yml.j2
-    dest: /etc/filebeat/conf.d/fb_slap.yml
-  notify: restart filebeat
-
 - name: Install backup script
   template:
     src: ldap-backup.sh.j2
