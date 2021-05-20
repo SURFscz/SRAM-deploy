@@ -14,6 +14,8 @@
   command: openssl dhparam -out {{ haproxy.dhparam_file }} {{ haproxy.dhparam_keysize }}
   args:
     creates: "{{ haproxy.dhparam_file }}"
+  notify:
+    - "restart haproxy"
   when: enable_https and haproxy.custom_dhparam
 
 
@@ -37,7 +39,7 @@
     group: "haproxy"
   no_log: true
   notify:
-    - restart haproxy
+    - "restart haproxy"
 
 - name: install haproxy certificate list
   template:
@@ -47,14 +49,14 @@
     owner: "root"
     group: "root"
   notify:
-    - restart haproxy
-  when: enable_https
+    - "restart haproxy"
+  when: "enable_https"
 
 - block:
     - name: Create bin directory
       file:
         path: "{{haproxy_oscp_bin_dir}}"
-        state: directory
+        state: "directory"
 
     - name: Copy ocsp script
       copy:
@@ -62,32 +64,39 @@
         dest: "{{haproxy_oscp_bin_dir}}"
         mode: 0755
       notify:
-        - run ocsp update
+        - "run ocsp update"
 
     - name: Copy ocsp service files
       template:
         src: "{{item}}.j2"
         dest: "/etc/systemd/system/{{item}}"
       with_items:
-        - ocsp.service
-        - ocsp.timer
+        - "ocsp.service"
+        - "ocsp.timer"
       notify:
-        - enable ocsp job
-        - run ocsp update
+        - "systemd daemon-reload"
+        - "enable ocsp job"
+        - "run ocsp update"
 
     - name: Copy ocsp service files for certbot/letsencrypt
       template:
         src: "ocsp-letsencrypt.j2"
         dest: "/etc/letsencrypt/renewal-hooks/post/"
         mode: '0755'
-  when: enable_https and environment_name != 'vm'
+  when: "enable_https and environment_name != 'vm'"
 
-- name: enable haproxy
-  systemd:
-    daemon_reload: yes
-    name: haproxy
-    state: started
-    enabled: true
+- name: create override dir
+  file:
+    path: "/etc/systemd/system/haproxy.service.d/"
+    state: "directory"
+
+- name: bindmount journald syslog socket in chroot
+  copy:
+    src: "haproxy-log-bindmount.conf"
+    dest: "/etc/systemd/system/haproxy.service.d/"
+  notify:
+    - "systemd daemon-reload"
+    - "restart haproxy"
 
 - name: install LDAP (un)fencing scripts
   template:
@@ -99,12 +108,15 @@
   with_items:
     - fence.sh
     - unfence.sh
-  notify: restart fence
+  notify:
+    - "restart fence"
 
 - name: Copying fence service script
   become: true
   copy:
     src: "fence.service"
     dest: "/etc/systemd/system/fence.service"
-  notify: restart fence
+  notify:
+    - "systemd daemon-reload"
+    - "restart fence"
 
