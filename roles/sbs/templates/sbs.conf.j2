@@ -6,7 +6,7 @@ Listen {{ sbs_backend_port }}
         DocumentRoot {{ sbs_git_dir }}/client/build
 
         ErrorLog syslog:local1:apache2
-        CustomLog "|/usr/bin/logger -p local1.info -t apache2" sram
+        CustomLog "|/usr/bin/logger --size 8k -p local1.info -t apache2" sram
 
         SSLEngine on
         SSLCertificateFile {{ ssl_certs_dir }}/{{ internal_base_domain }}.crt
