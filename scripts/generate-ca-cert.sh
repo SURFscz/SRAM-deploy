@@ -4,14 +4,6 @@ set -e
 
 # this script takes the ca.{crt,key} from the local dir (or generates them if they don't exist) and uses the CA
 # to generate and sign keys with CNs specified on the command line
-
-if ! $( openssl version | grep -q OpenSSL )
-then
-    echo -n "Sorry, you need a real OpenSSL for this.  You have "
-    openssl version
-    exit 1
-fi
-
 if [ $# -lt 1 ]
 then
 	echo "Please specify machine names CNs"
@@ -41,7 +33,7 @@ cat >ca.conf <<-EOF
 	private_key = ca.key
 	serial = ./serial
 	default_days = $DAYS
-	default_md = default
+	default_md = sha256
 	policy = policy_anything
 	[ policy_anything ]
 	countryName             = optional
