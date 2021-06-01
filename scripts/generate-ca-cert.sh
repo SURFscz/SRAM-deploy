@@ -5,6 +5,13 @@ set -e
 # this script takes the ca.{crt,key} from the local dir (or generates them if they don't exist) and uses the CA
 # to generate and sign keys with CNs specified on the command line
 
+if ! $( openssl version | grep -q OpenSSL )
+then
+    echo -n "Sorry, you need a real OpenSSL for this.  You have "
+    openssl version
+    exit 1
+fi
+
 if [ $# -lt 1 ]
 then
 	echo "Please specify machine names CNs"
@@ -55,7 +62,13 @@ do
 	then
 		echo "Refusing to overwrite '$CLIENT.key', skipping $CLIENT"
 	else
-		openssl req -newkey $KEYTYPE -nodes -out $CLIENT.csr -keyout $CLIENT.key -subj "/CN=$CLIENT/"
+		openssl req -newkey $KEYTYPE -nodes -utf8 -sha256 -out $CLIENT.csr -keyout $CLIENT.key -subj "/CN=$CLIENT/"
+    fi
+	if [ -e $CLIENT.crt ]
+	then
+		echo "Refusing to overwrite '$CLIENT.crt', skipping $CLIENT"
+	else
+        # note: macos libressl wil always sign with SHA1, even if you requested SHA256
 		openssl ca -batch -config ca.conf -notext -in $CLIENT.csr -out $CLIENT.crt
 	fi
 done
