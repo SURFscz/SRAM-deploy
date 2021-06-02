@@ -1,4 +1,3 @@
-# vim:ts=2:sw=2:expandtab
 ---
 - hosts: all
   serial: 20
@@ -43,12 +42,13 @@
     - { import_tasks: "tasks/versions.yml", tags: "always"  }
   roles:
     - { role: basic,          tags: ['common','basic']      }
+    - { role: certificates,   tags: ['common','cert']      }
+    - { role: logging,        tags: ['common','logging']    }
     - { role: apt,            tags: ['common','apt']        }
     - { role: firewall,       tags: ['common','firewall']   }
     - { role: ntp,            tags: ['common','ntp']        }
     - { role: users,          tags: ['common','users']      }
     - { role: mail,           tags: ['common','mail']       }
-    - { role: syslog-client,  tags: ['common','syslog']     }
     - { role: backups,        tags: ['common','backups']    }
     #- { role: zabbix-agent,   tags: ['common','zabbix']     }
     #- { role: aws-cloudwatch, tags: ['common','cloudwatch'], when: is_aws }
@@ -76,8 +76,9 @@
 - name: "bhr2"
   hosts: "bhr2"
   roles:
-    - { role: http_dummy,       tags: ['bhr2','backup_collector'] }
-    - { role: backup_collector, tags: ['bhr2','backup_collector'] }
+    - { role: http_dummy,        tags: ['bhr2','backup_collector']  }
+    - { role: backup_collector,  tags: ['bhr2','backup_collector']  }
+    - { role: logging_collector, tags: ['bhr2','logging_collector'] }
 
 - name: "bhr11"
   hosts: "bhr11"

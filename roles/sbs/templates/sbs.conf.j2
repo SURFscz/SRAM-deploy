@@ -5,10 +5,8 @@ Listen {{ sbs_backend_port }}
         ServerAdmin webmaster@localhost
         DocumentRoot {{ sbs_git_dir }}/client/build
 
-        LogFormat "%{X-Forwarded-For}i %l %u %t \"%r\" %>s %O \"%{Referer}i\" \"%{User-Agent}i\"" proxy
-
-        ErrorLog ${APACHE_LOG_DIR}/error.log
-        CustomLog ${APACHE_LOG_DIR}/access.log proxy
+        ErrorLog syslog:local1:apache2
+        CustomLog "|/usr/bin/logger --size 8k -p local1.info -t apache2" sram
 
         SSLEngine on
         SSLCertificateFile {{ ssl_certs_dir }}/{{ internal_base_domain }}.crt

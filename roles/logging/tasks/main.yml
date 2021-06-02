@@ -1,0 +1,66 @@
+---
+- name: install journald config
+  template:
+    src: "journald.conf.j2"
+    dest: "/etc/systemd/journald.conf"
+  notify:
+    - "restart journald"
+    - "reset journal permissions"
+
+- name: install journal-remote package
+  apt:
+    name: "systemd-journal-remote"
+    state: "present"
+
+- name: create group for journal-upload
+  group:
+    name: "{{journal_upload_group}}"
+    state: "present"
+
+- name: create override dir
+  file:
+    path: "/etc/systemd/system/systemd-journal-upload.service.d/"
+    state: "directory"
+
+- name: fix group for journal-uploader
+  copy:
+    dest: "/etc/systemd/system/systemd-journal-upload.service.d/override.conf"
+    content: |
+      [Service]
+      SupplementaryGroups={{journal_upload_group}}
+      # service will exit when upstream server in unavailable; needs to restart automatically
+      Restart=on-failure
+      RestartSec=60s
+  notify:
+    - "systemd daemon-reload"
+    - "enable journal-upload"
+
+- name: install journal certs
+  copy:
+    dest: "{{ssl_certs_dir}}/{{item.name}}"
+    content: "{{item.content}}"
+    owner: "root"
+    group: "{{journal_upload_group}}"
+    mode: "{{item.mode}}"
+  no_log: true
+  with_items:
+    - { name: "journal-ca.crt",     mode: "0644", content: "{{journal_ca.pub}}"    }
+    - { name: "journal-client.crt", mode: "0644", content: "{{journal_client.pub}}"  }
+    - { name: "journal-client.key", mode: "0640", content: "{{journal_client.priv}}" }
+  notify:
+    - "restart journal-upload"
+
+- name: install journal-upload config
+  template:
+    src: "journal-upload.conf.j2"
+    dest: "/etc/systemd/journal-upload.conf"
+  notify:
+    - "enable journal-upload"
+
+- name: install new rsyslog config
+  template:
+    src: "rsyslog.conf.j2"
+    dest: "/etc/rsyslog.conf"
+  notify:
+    - "restart rsyslog"
+    - "remove obsolete logfiles"

@@ -1,0 +1,37 @@
+---
+- name: restart journald
+  systemd:
+    name: "systemd-journald.service"
+    state: "restarted"
+
+- name: systemd daemon-reload
+  systemd:
+    daemon_reload: true
+
+- name: enable journal-upload
+  systemd:
+    name: "systemd-journal-upload.service"
+    state: "restarted"
+    enabled: true
+
+- name: restart journal-upload
+  systemd:
+    name: "systemd-journal-upload.service"
+    state: "restarted"
+
+- name: reset journal permissions
+  command: "/bin/systemd-tmpfiles --create --exclude-prefix=/dev"
+
+- name: restart rsyslog
+  systemd:
+    name: "rsyslog.service"
+    state: "restarted"
+
+- name: remove obsolete logfiles
+  shell:
+    chdir: "/var/log"
+    cmd: >
+      rm -rf alternatives.log* daemon.log* debug* \
+             mail* messages* slapd.log* user.log* \
+             private
+    warn: false

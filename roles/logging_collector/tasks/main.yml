@@ -1,0 +1,50 @@
+---
+- name: install journal-remote package
+  apt:
+    name: "systemd-journal-remote"
+    state: "present"
+
+- name: create group for journal-remoet
+  group:
+    name: "{{journal_remote_group}}"
+    state: "present"
+
+- name: create override dir
+  file:
+    path: "/etc/systemd/system/systemd-journal-remote.service.d/"
+    state: "directory"
+
+- name: fix group for journal-remote
+  copy:
+    dest: "/etc/systemd/system/systemd-journal-remote.service.d/override.conf"
+    content: |
+      [Service]
+      SupplementaryGroups={{journal_remote_group}}
+      Restart=on-failure
+      RestartSec=60s
+  notify:
+    - "systemd daemon-reload"
+    - "enable journal-remote"
+
+- name: install journal certs
+  copy:
+    dest: "{{ssl_certs_dir}}/{{item.name}}"
+    content: "{{item.content}}"
+    owner: "root"
+    group: "{{journal_remote_group}}"
+    mode: "{{item.mode}}"
+  no_log: true
+  with_items:
+    - { name: "journal-ca.crt",     mode: "0644", content: "{{journal_ca.pub}}"    }
+    - { name: "journal-server.crt", mode: "0644", content: "{{journal_server.pub}}"  }
+    - { name: "journal-server.key", mode: "0640", content: "{{journal_server.priv}}" }
+  notify:
+    - "restart journal-remote"
+
+- name: install journal-upload config
+  template:
+    src: "journal-remote.conf.j2"
+    dest: "/etc/systemd/journal-remote.conf"
+  notify:
+    - "enable journal-remote"
+

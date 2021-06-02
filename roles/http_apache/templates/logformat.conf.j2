@@ -1,0 +1,16 @@
+LogFormat "SYSLOG_IDENTIFIER=apache2\n\
+VHOST=%v\n\
+REQUEST_TIME=%t\n\
+REMOTE_HOST=%a\n\
+REMOTE_PROXIED=%{X-Forwarded-For}i\n\
+USER=%u\n\
+PROTO=%H\n\
+METHOD=%m\n\
+PATH=%U%q\n\
+STATUS=%>s\n\
+BYTES_SENT=%O\n\
+REFERRER=%{Referer}i\n\
+USER_AGENT=%{User-Agent}i\n\
+MESSAGE=%t %v %{X-Forwarded-For}i %u %m %>s %O \"%U%q\" \"%{Referer}i\"" journald
+
+Logformat "%t %v %a %{X-Forwarded-For}i %u %H %m %>s %O \"%U\" \"%q\" \"%{User-Agent}i\" \"%{Referer}i\"" sram
