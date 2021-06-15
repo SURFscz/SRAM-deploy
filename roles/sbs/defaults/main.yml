@@ -13,6 +13,9 @@ sbs_db_name: "sbs"
 sbs_db_user: "sbs"
 sbs_dbbackup_user: "sbs_backupper"
 
+sbs_redis_host: "localhost"
+sbs_redis_port: 6379
+
 sbs_mail_host: "{{ mail.relay_to }}"
 sbs_mail_port: "{{ mail.relay_port }}"
 

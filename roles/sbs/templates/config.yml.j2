@@ -1,6 +1,11 @@
 database:
   uri: "mysql+pymysql://{{ sbs_db_user }}:{{ sbs_db_password }}@{{ db_host }}/{{ sbs_db_name }}?ssl=true&ssl_ca={{sbs_db_cert_path}}"
 
+redis:
+  host: "{{sbs_redis_host}}"
+  port: "{{sbs_redis_port}}"
+  password:
+
 secret_key: {{ sbs_db_secret }}
 
 # Valid scopes are "READ" and "WRITE"
