@@ -70,6 +70,11 @@ frontend fe_https
     mode    http
     option  httplog
 
+    # redirects
+{% for host in redirect_hosts %}
+    http-request redirect prefix https://{{host.to}} code 301 if { hdr(host) -i {{host.from}} }
+{% endfor %}
+
 {% if enable_https %}
     # always use https
     http-response set-header Strict-Transport-Security "max-age=16000000; includeSubDomains; preload;"
