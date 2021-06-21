@@ -43,12 +43,14 @@ sbs_feedback_enabled: True
 sbs_audit_trail_notifications_enabled: True
 sbs_send_exceptions: False
 sbs_send_js_exceptions: False
+sbs_second_factor_authentication_required: True
 sbs_open_notifications_enabled: True
 
 sbs_oidc_config_url: "http://localhost/.well-known/openid-configuration"
 sbs_oidc_authz_endpoint: "http://localhost/OIDC/authorization"
 sbs_oidc_token_endpoint: "http://localhost/OIDC/token"
 sbs_oidc_userinfo_endpoint: "http://localhost/OIDC/userinfo"
+sbs_oidc_jwks_endpoint: "http://localhost/OIDC/jwks"
 
 sbs_backup_dir: "{{backup_base}}/sbs"
 sbs_db_cert_path: "/etc/ssl/sbs_db_root_cert.pem"
