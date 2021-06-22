@@ -26,6 +26,7 @@ sbs_disclaimer_color: "#a29c13"
 sbs_disclaimer_label: wsgi
 
 sbs_urn_namespace: "urn:example:sbs"
+sbs_eppn_scope: "env.sram.surf.nl"
 sbs_restricted_co_default_org: "example.org"
 
 sbs_mail_sender_name: "SURF"
