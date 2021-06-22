@@ -139,6 +139,24 @@
   notify: "restart apache"
   no_log: true
 
+- name: write server JWT private signing key
+  copy:
+    content: "{{ sbs_jwt_server.priv }}"
+    dest: "{{ sbs_git_dir }}/server/config/jwt_private_key"
+    group: "www-data"
+    mode: "0640"
+  notify: "restart apache"
+  no_log: true
+
+- name: write server JWT public signing key
+  copy:
+    content: "{{ sbs_jwt_server.pub }}"
+    dest: "{{ sbs_git_dir }}/server/config/jwt_public_keys.json"
+    group: "www-data"
+    mode: "0640"
+  notify: "restart apache"
+  no_log: true
+
 - name: Create SBS wsgi file
   template:
     src: sbs-api.wsgi.j2
