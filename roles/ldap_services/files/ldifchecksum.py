@@ -3,6 +3,8 @@
 import sys
 import ldif
 import hashlib
+from collections import OrderedDict
+
 
 def freeze(o):
     if isinstance(o, dict):
@@ -11,9 +13,12 @@ def freeze(o):
         return sorted(o)
     return o
 
+
 ldifparser = ldif.LDIFRecordList(sys.stdin)
 ldifparser.parse()
-data = { k: v for k, v in ldifparser.all_records }
+
+data = {k: v for k, v in ldifparser.all_records}
 f = freeze(data)
+
 h = hashlib.sha256(str(f).encode('utf-8')).hexdigest()
 print(h)
