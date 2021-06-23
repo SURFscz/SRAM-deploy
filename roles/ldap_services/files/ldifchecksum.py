@@ -6,9 +6,9 @@ import hashlib
 
 def freeze(o):
     if isinstance(o, dict):
-        return frozenset({ k: freeze(v) for k, v in sorted(o.items())}.items())
+        return OrderedDict({k: freeze(v) for k, v in sorted(o.items())}.items())
     if isinstance(o, list):
-        return tuple([freeze(v) for v in sorted(o)])
+        return sorted(o)
     return o
 
 ldifparser = ldif.LDIFRecordList(sys.stdin)
