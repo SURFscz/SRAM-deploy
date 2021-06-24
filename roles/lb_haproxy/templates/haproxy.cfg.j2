@@ -110,7 +110,9 @@ frontend fe_https
 
 {% if enable_ratelimit %}
     http-request track-sc0 src table proxy_rates
-    http-request track-sc1 url32+src table proxy_req_rates unless { path_end .css .js .png .jpeg .gif .ico .woff2 }
+    acl url_static path_end .css .js .png .jpeg .gif .ico .woff2
+    acl url_static path_beg /api/images
+    http-request track-sc1 url32+src table proxy_req_rates unless url_static
     acl exceeds_limit sc_gpc0_rate(0) gt 50
     acl network_allowed src {{ iprange.internal }}
     http-request sc-inc-gpc0(0) if { sc_http_req_rate(1) eq 1 } !exceeds_limit
