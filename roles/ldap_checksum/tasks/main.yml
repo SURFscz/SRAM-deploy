@@ -28,6 +28,6 @@
     dest: "/etc/systemd/system/{{item}}"
   with_items:
     - "ldap_checksum.service"
-    - ldap_checksum.timer"
+    - "ldap_checksum.timer"
   notify:
     - "enable checksum job"

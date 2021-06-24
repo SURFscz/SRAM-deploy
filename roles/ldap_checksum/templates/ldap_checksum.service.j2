@@ -6,5 +6,5 @@ User=root
 Group=root
 Type=oneshot
 WorkingDirectory={{ ldap_checksum_dir }}
-ExecStart=/bin/sh -c '{{ ldap_checksum_dir }}/checksum.sh > {{ ldap_checksum_docroot }}/'
+ExecStart={{ ldap_checksum_dir }}/checksum.sh
 RuntimeMaxSec=120
