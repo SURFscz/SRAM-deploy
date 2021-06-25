@@ -46,6 +46,7 @@ sbs_send_exceptions: False
 sbs_send_js_exceptions: False
 sbs_second_factor_authentication_required: True
 sbs_open_notifications_enabled: True
+sbs_impersonation_allowed: False
 
 sbs_oidc_config_url: "http://localhost/.well-known/openid-configuration"
 sbs_oidc_authz_endpoint: "http://localhost/OIDC/authorization"
