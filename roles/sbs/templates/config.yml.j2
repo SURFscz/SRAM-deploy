@@ -30,6 +30,7 @@ oidc:
   private_rsa_signing_key_path: config/jwt_private_key
   public_rsa_signing_key_path: config/jwt_public_keys.json
   second_factor_authentication_required: {{ sbs_second_factor_authentication_required }}
+  totp_token_name: "{{ sbs_totp_token_name }}"
   scopes:
     - profile
     - eduperson_scoped_affiliation
