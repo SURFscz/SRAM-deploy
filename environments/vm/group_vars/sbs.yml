@@ -21,7 +21,7 @@ sbs_oidc_jwt_audience: "https://{{ hostnames.oidc_op }}"
 
 sbs_db_tls_cert: "{{wildcard_backend_cert.pub}}"
 
-sbs_cron_hour_of_day: "{{ 4 + groups['app'].index(inventory_hostname) }}"
+sbs_cron_hour_of_day: "4"
 sbs_seed_allowed: True
 sbs_api_keys_enabled: True
 sbs_feedback_enabled: True
