@@ -19,9 +19,20 @@
       changed_when: false
       run_once: true
 
+- name: test1
+  hosts: all
+  tasks:
+    - debug:
+        var: sram_ansible_nolog
+- name: test2
+  hosts: all
+  tasks:
+    - debug:
+        msg: "deploying '{{environment_name}}'"
+
 # first gather facts from all hosts that we're actually deploying to
 # TODO: this is not aggressive enough; we need to gather facts from _all_
-#       hosts, even if we're limiting the actualdeployments
+#       hosts, even if we're limiting the actual deployments
 - hosts: all
   become: yes
   serial: 20
