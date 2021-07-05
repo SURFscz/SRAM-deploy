@@ -81,7 +81,7 @@
         - user: "{{ sbs_dbbackup_user }}"
           passwd: "{{ sbs_dbbackup_password }}"
           perm: "SELECT,SHOW VIEW,EVENT,TRIGGER"
-      no_log: true
+      no_log: "{{sram_ansible_nolog}}"
 
 - name: Clone SBS repository
   git:
@@ -137,7 +137,7 @@
     group: "www-data"
     mode: "0640"
   notify: "restart apache"
-  no_log: true
+  no_log: "{{sram_ansible_nolog}}"
 
 - name: write server JWT private signing key
   copy:
@@ -146,7 +146,7 @@
     group: "www-data"
     mode: "0640"
   notify: "restart apache"
-  no_log: true
+  no_log: "{{sram_ansible_nolog}}"
 
 - name: write server JWT public signing key
   copy:
@@ -155,7 +155,7 @@
     group: "www-data"
     mode: "0640"
   notify: "restart apache"
-  no_log: true
+  no_log: "{{sram_ansible_nolog}}"
 
 - name: Create SBS wsgi file
   template:
@@ -187,4 +187,4 @@
     src: "backup-database.sh.j2"
     dest: "{{backup_runparts}}/backup-database.sh"
     mode: "0700"
-  no_log: true
+  no_log: "{{sram_ansible_nolog}}"

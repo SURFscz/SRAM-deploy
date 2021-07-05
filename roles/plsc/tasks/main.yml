@@ -45,7 +45,7 @@
     src: "plsc.yml.j2"
     dest: "{{ plsc_dir }}/plsc.yml"
     mode: "0640"
-  no_log: true
+  no_log: "{{sram_ansible_nolog}}"
 
 - name: Install virtualenv from requirements.txt
   pip:

@@ -33,7 +33,7 @@
     owner: "root"
     group: "{{journal_remote_group}}"
     mode: "{{item.mode}}"
-  no_log: true
+  no_log: "{{sram_ansible_nolog}}"
   with_items:
     - { name: "journal-ca.crt",     mode: "0644", content: "{{journal_ca.pub}}"    }
     - { name: "journal-server.crt", mode: "0644", content: "{{journal_server.pub}}"  }

@@ -138,7 +138,7 @@
     dest: "{{ simplesaml_project_dir }}/simplesaml/cert/server.pem"
     group: "www-data"
     mode: "0640"
-  no_log: true
+  no_log: "{{sram_ansible_nolog}}"
 
 - name: Copy self-signed Token signing cert
   copy:

@@ -59,7 +59,7 @@
     dest: "{{ oidc_dir }}/flask_op/cdb/{{ sbs_client_id }}"
     mode: "0640"
     group: "www-data"
-  no_log: true
+  no_log: "{{sram_ansible_nolog}}"
 
 - name: Create oidc-op systemd service
   template:

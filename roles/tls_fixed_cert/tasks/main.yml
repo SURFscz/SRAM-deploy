@@ -11,7 +11,7 @@
     dest: "{{cert_dir}}/key.pem"
     mode: "0600"
     owner: "root"
-  no_log: true
+  no_log: "{{sram_ansible_nolog}}"
 
 - name: write certificate
   copy:
@@ -43,7 +43,7 @@
     dest: "{{cert_dir}}/priv+fullchain.pem"
     mode: "0600"
     owner: "root"
-  no_log: true
+  no_log: "{{sram_ansible_nolog}}"
 
 - name: make links for all hosts
   file:
