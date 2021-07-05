@@ -1,12 +1,15 @@
 ---
-sbs_repository: "{{scz_repo.sbs.src}}"
-sbs_version: "{{scz_repo.sbs.version}}"
-
 firewall_v4_incoming:
   - name: loadbalancer
     src: "{{lb_ip}}"
     dport:  "{{sbs_server_port}}"
     proto: tcp
+
+sbs_repository: "{{scz_repo.sbs.src}}"
+sbs_version: "{{scz_repo.sbs.version}}"
+
+sbs_urn_namespace: "urn:mace:surf.nl:x-sram-vm"
+sbs_eppn_scope: "scz-vm.net"
 
 sbs_oidc_authz_endpoint: "https://{{ hostnames.oidc_op }}/authorization"
 sbs_oidc_token_endpoint: "https://{{ hostnames.oidc_op }}/token"
@@ -15,4 +18,20 @@ sbs_oidc_jwks_endpoint: "https://{{ hostnames.oidc_op }}/jwks"
 sbs_oidc_sfo_endpoint: "https://{{ hostnames.oidc_op }}/sfo"
 sbs_oidc_jwt_audience: "https://{{ hostnames.oidc_op }}"
 
+sbs_admin_users:
+  - uid: "f9a81477552594c79f2abc3fc099daa896a6e3a3590a55ffa392b6000412e80b"  # baas
+  - uid: "4348d14677b322192d7f1e48f52136a2d8b5bb5695c8ad1e1f67cd1c02826f71"  # ook baas
+
 sbs_db_tls_cert: "{{wildcard_backend_cert.pub}}"
+
+sbs_cron_hour_of_day: "{{ 4 + groups['app'].index(inventory_hostname) }}"
+sbs_seed_allowed: True
+sbs_api_keys_enabled: True
+sbs_feedback_enabled: True
+sbs_audit_trail_notifications_enabled: True
+sbs_send_exceptions: False
+sbs_send_js_exceptions: False
+sbs_second_factor_authentication_required: True
+sbs_totp_token_name: "SRAM-VM"
+sbs_open_notifications_enabled: True
+sbs_impersonation_allowed: True
