@@ -1,0 +1,2 @@
+---
+sram_ansible_nolog: "{{environment_name != 'vm'}}"

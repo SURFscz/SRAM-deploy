@@ -3,7 +3,7 @@
 # check if we can decrypt vault
 - block:
     - name: Verify we can decode vault
-      no_log: true
+      no_log: "{{sram_ansible_nolog}}"
       debug:
         var: backup_collector_ssh_key
     - name: Set variable
@@ -48,7 +48,7 @@
     owner: "root"
     group: "root"
     mode: "0600"
-  no_log: true
+  no_log: "{{sram_ansible_nolog}}"
   when: backup_collector_ssh_key is defined and vault_decrypted
 
 - name: Add known host for backup host
