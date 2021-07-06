@@ -17,12 +17,8 @@
   copy:
     dest: "{{ oidc_dir }}/sram-req.txt"
     content: |
-      cryptojwt~=1.4.0
-      Flask~=1.1.2
-      oidcendpoint~=1.1.1
-      oidcmsg~=1.1.0
-      pyOpenSSL~=20.0.1
-      oidcop~={{ oidc_op_repo_version }}
+      Flask
+      /opt/oidc-op
 
 - name: Create virtualenv and install requirements
   pip:
@@ -34,13 +30,13 @@
 
 - name: "Make server executable"
   file:
-    dest: "{{ oidc_dir }}/flask_op/server.py"
+    dest: "{{ oidc_dir }}/example/flask_op/server.py"
     mode: 'a+x'
 
 - name: "Copy users and passwd files"
   template:
     src: "{{ item }}.j2"
-    dest: "{{oidc_dir }}/flask_op/{{ item }}"
+    dest: "{{oidc_dir }}/example/flask_op/{{ item }}"
     mode: 0644
   with_items:
     - sram_users.json
@@ -49,14 +45,14 @@
 
 - name: Make sure cdb directory exists
   file:
-    path: "{{ oidc_dir }}/flask_op/cdb"
+    path: "{{ oidc_dir }}/example/flask_op/cdb"
     state: directory
     mode: 0755
 
 - name: "Create client config if it doesn't exist"
   template:
     src: "client_id.j2"
-    dest: "{{ oidc_dir }}/flask_op/cdb/{{ sbs_client_id }}"
+    dest: "{{ oidc_dir }}/example/flask_op/cdb/{{ sbs_client_id }}"
     mode: "0640"
     group: "www-data"
   no_log: "{{sram_ansible_nolog}}"
@@ -73,4 +69,3 @@
     state: restarted
     daemon_reload: yes
     enabled: yes
-  when: oidc_op_systemd.changed
