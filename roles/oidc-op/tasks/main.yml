@@ -12,6 +12,7 @@
     repo: "{{ oidc_op_repo_url }}"
     dest: "{{ oidc_dir }}"
     version: "{{ oidc_op_repo_version }}"
+  notify: "restart oidc-op"
 
 - name: Copy requirements files
   copy:
@@ -27,6 +28,7 @@
     virtualenv_python: python3
   # probably an ansible bug, this keeps being hit as changed
   #changed_when: false
+  notify: "restart oidc-op"
 
 - name: "Make server executable"
   file:
@@ -42,6 +44,7 @@
     - sram_users.json
     - sram_passwd.json
     - config_op.yaml
+  notify: "restart oidc-op"
 
 - name: Make sure cdb directory exists
   file:
@@ -56,6 +59,7 @@
     mode: "0640"
     group: "www-data"
   no_log: "{{sram_ansible_nolog}}"
+  notify: "restart oidc-op"
 
 - name: Create oidc-op systemd service
   template:
@@ -66,7 +70,6 @@
 - name: enable oidc-op
   systemd:
     name: 'oidc-op'
-    state: restarted
+    state: started
     daemon_reload: yes
     enabled: yes
-  changed_when: False

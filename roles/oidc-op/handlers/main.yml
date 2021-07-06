@@ -1,0 +1,7 @@
+---
+- name: restart oidc-op
+  systemd:
+    daemon_reload: yes
+    name: oidc-op
+    state: restarted
+
