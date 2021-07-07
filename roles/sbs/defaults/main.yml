@@ -53,7 +53,7 @@ sbs_oidc_config_url: "http://localhost/.well-known/openid-configuration"
 sbs_oidc_authz_endpoint: "http://localhost/OIDC/authorization"
 sbs_oidc_token_endpoint: "http://localhost/OIDC/token"
 sbs_oidc_userinfo_endpoint: "http://localhost/OIDC/userinfo"
-sbs_oidc_jwks_endpoint: "http://localhost/OIDC/jwks"
+sbs_oidc_jwks_endpoint: "http://localhost/OIDC/jwks.json"
 sbs_oidc_sfo_endpoint: "https://localhost/sfo"
 sbs_oidc_jwt_audience: "https://localhost"
 
