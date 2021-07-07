@@ -12,6 +12,7 @@
     mode: "0600"
     owner: "root"
   no_log: true
+  notify: "cert updated"
 
 - name: write certificate
   copy:
@@ -19,6 +20,7 @@
     dest: "{{cert_dir}}/cert.pem"
     mode: "0600"
     owner: "root"
+  notify: "cert updated"
 
 - name: write chain
   copy:
@@ -26,6 +28,7 @@
     dest: "{{cert_dir}}/chain.pem"
     mode: "0600"
     owner: "root"
+  notify: "cert updated"
 
 - name: write fullchain
   copy:
@@ -33,6 +36,7 @@
     dest: "{{cert_dir}}/fullchain.pem"
     mode: "0600"
     owner: "root"
+  notify: "cert updated"
 
 - name: write priv+fullchain
   copy:
@@ -44,6 +48,7 @@
     mode: "0600"
     owner: "root"
   no_log: true
+  notify: "cert updated"
 
 - name: make links for all hosts
   file:
@@ -51,4 +56,5 @@
     state: "link"
     src: "./"
   with_items: '{{loadbalancer|map(attribute="hostname")|list}}'
+  notify: "cert updated"
 
