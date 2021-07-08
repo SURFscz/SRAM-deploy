@@ -44,29 +44,30 @@
     update_cache: yes
     state: present
     name:
-      - sudo
-      - bash
-      - zsh
-      - vim
-      - locales-all
-      - curl
-      - netcat
-      - ca-certificates
-      - gnupg2
-      - net-tools
-      - dnsutils
-      - git
-      - acl
-      - bzip2
-      - xz-utils
-      - unzip
-      - apt-transport-https
-      - python-apt
-      - needrestart
-      - logrotate
-      - rsyslog
-      - aptitude
-      - cloud-init
+      - "sudo"
+      - "bash"
+      - "zsh"
+      - "vim"
+      - "locales-all"
+      - "curl"
+      - "netcat"
+      - "ca-certificates"
+      - "gnupg2"
+      - "net-tools"
+      - "dnsutils"
+      - "git"
+      - "acl"
+      - "bzip2"
+      - "xz-utils"
+      - "unzip"
+      - "apt-transport-https"
+      - "python-apt"
+      - "needrestart"
+      - "logrotate"
+      - "rsyslog"
+      - "aptitude"
+      - "cloud-init"
+      - "parted"
 
 - name: Upgrade packages
   apt:

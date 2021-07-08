@@ -1,27 +1,29 @@
 ---
-- name: enable ocsp job
+- name: "enable ocsp job"
   systemd:
     name: "ocsp.timer"
     state: "started"
     enabled: true
 
-- name: run ocsp update
+- name: "run ocsp update"
+  listen: "cert updated"
   systemd:
     name: "ocsp.service"
     state: "started"
 
-- name: systemd daemon-reload
+- name: "systemd daemon-reload"
   systemd:
     daemon_reload: true
 
-- name: restart haproxy
+- name: "restart haproxy"
+  listen: "cert updated"
   systemd:
     name: "haproxy"
     state: "restarted"
     enabled: true
 
-- name: restart fence
+- name: "restart fence"
   systemd:
-    name: fence
-    state: restarted
+    name: "fence"
+    state: "restarted"
     enabled: true
