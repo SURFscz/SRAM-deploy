@@ -7,10 +7,13 @@
     - "restart journald"
     - "reset journal permissions"
 
-- name: install journal-remote package
+- name: install required packages
   apt:
-    name: "systemd-journal-remote"
     state: "present"
+    name:
+      - "systemd-journal-remote"
+      - "python3-cryptography"
+      - "openssl"
 
 - name: create group for journal-upload
   group:
@@ -42,11 +45,42 @@
     owner: "root"
     group: "{{journal_upload_group}}"
     mode: "{{item.mode}}"
-  no_log: "{{sram_ansible_nolog}}"
   with_items:
     - { name: "journal-ca.crt",     mode: "0644", content: "{{journal_ca.pub}}"    }
-    - { name: "journal-client.crt", mode: "0644", content: "{{journal_client.pub}}"  }
-    - { name: "journal-client.key", mode: "0640", content: "{{journal_client.priv}}" }
+  notify:
+    - "restart journal-upload"
+
+- name: generate a journal client private key
+  community.crypto.openssl_privatekey:
+    path: "{{ssl_certs_dir}}/journal-client.key"
+    size: 2048
+    owner: "root"
+    group: "{{journal_upload_group}}"
+    mode: "0640"
+  no_log: "{{sram_ansible_nolog}}"
+  notify:
+    - "restart journal-upload"
+
+- name: generate a journal client certficate request
+  community.crypto.openssl_csr:
+    path: "{{ssl_certs_dir}}/journal-client.csr"
+    privatekey_path: "{{ssl_certs_dir}}/journal-client.key"
+    common_name: "{{ansible_hostname}}"
+    owner: "root"
+    group: "root"
+    mode: "0600"
+
+- name: generate a journal client certificate
+  community.crypto.x509_certificate:
+    path: "{{ssl_certs_dir}}/journal-client.crt"
+    csr_path: "{{ssl_certs_dir}}/journal-client.csr"
+    provider: "ownca"
+    ownca_content: "{{journal_ca.pub}}"
+    ownca_privatekey_content: "{{journal_ca.priv}}"
+    ownca_not_after: "210001010000Z"
+    owner: "root"
+    group: "{{journal_upload_group}}"
+    mode: "0644"
   notify:
     - "restart journal-upload"
 
