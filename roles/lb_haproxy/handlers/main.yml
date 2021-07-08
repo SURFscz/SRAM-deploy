@@ -6,6 +6,7 @@
     enabled: true
 
 - name: "run ocsp update"
+  listen: "cert updated"
   systemd:
     name: "ocsp.service"
     state: "started"
