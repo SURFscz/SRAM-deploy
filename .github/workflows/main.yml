@@ -37,6 +37,7 @@ jobs:
         with:
           path: ~/docker-save
           key: docker-save-${{ steps.get-date.outputs.date }}
+          restore-keys: docker-save-
 
       # Decrypt secret
       - name: Copy secret
