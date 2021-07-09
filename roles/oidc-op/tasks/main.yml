@@ -29,8 +29,8 @@
     requirements: "{{ oidc_dir }}/sram-req.txt"
     virtualenv: "{{ oidc_dir }}"
     virtualenv_python: python3
-  # probably an ansible bug, this keeps being hit as changed
-  #changed_when: false
+# probably an ansible bug, this keeps being hit as changed
+#  changed_when: false
 
 - name: "Make server executable"
   file:
