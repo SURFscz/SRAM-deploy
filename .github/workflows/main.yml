@@ -66,7 +66,6 @@ jobs:
         run: >
           ansible-galaxy collection install -r requirements.yml
 
-      # Restore docker cache
       # Run Syntax check
       - name: Run Syntax check
         run: ./scripts/syntax-check
@@ -74,7 +73,6 @@ jobs:
       # Restore docker cache
       - name: Restore docker cache
         run: docker load -i ~/docker-save/scz-base-cache.tar || true
-        if: steps.cache-docker.outputs.cache-hit == 'true'
 
       # Get scz-base-cache ImageID
       - name: Get scz-base-cache ImageID
