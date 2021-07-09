@@ -25,13 +25,18 @@ jobs:
       - name: Checkout $GITHUB_WORKSPACE
         uses: actions/checkout@v2
 
-      # Restore cache
+      # Create date output to seconds
+      - name: Get Date
+        id: get-date
+        run: echo "::set-output name=date::$(/bin/date -u "+%Y%m%d%k%M%S")"
+
+      # Restore cache based no fake time key (allways miss)
       - name: Setup cache
         id: cache-docker
         uses: actions/cache@v2
         with:
           path: ~/docker-save
-          key: docker-save-${{ hashFiles('~/docker-save/scz-base-cache.tar') }}
+          key: docker-save-${{ steps.get-date.outputs.date }}
 
       # Decrypt secret
       - name: Copy secret
