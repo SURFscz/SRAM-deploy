@@ -79,7 +79,9 @@ jobs:
       # Get scz-base-cache ImageID
       - name: Get scz-base-cache ImageID
         id: scz-base-cache-id
-        run: ID=$(docker image list scz-base-cache -q)
+        run: >
+          ID=$(docker image list scz-base-cache -q)
+          echo "::set-output name=ID::$ID"
 
       # Start containers without deploy
       - name: Start containers
@@ -145,7 +147,9 @@ jobs:
       # Get scz-base ImageID
       - name: Get scz-base ImageID
         id: scz-base-id
-        run: ID=$(docker image list scz-base -q)
+        run: >
+          ID=$(docker image list scz-base -q) &&
+          echo "::set-output name=ID::$ID"
 
       # Save docker cache
       - name: Save docker cache
