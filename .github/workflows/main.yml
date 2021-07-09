@@ -79,7 +79,7 @@ jobs:
       # Get scz-base-cache ImageID
       - name: Get scz-base-cache ImageID
         id: scz-base-cache-id
-        run: docker image list scz-base-cache -q
+        run: ID=$(docker image list scz-base-cache -q)
 
       # Start containers without deploy
       - name: Start containers
@@ -145,7 +145,7 @@ jobs:
       # Get scz-base ImageID
       - name: Get scz-base ImageID
         id: scz-base-id
-        run: docker image list scz-base -q
+        run: ID=$(docker image list scz-base -q)
 
       # Save docker cache
       - name: Save docker cache
@@ -154,4 +154,4 @@ jobs:
           docker tag scz-base scz-base-cache &&
           docker save scz-base-cache -o ~/docker-save/scz-base-cache.tar &&
           ls -lh ~/docker-save || true
-        if: steps.scz-base-cache-id.outputs.OUTPUT != steps.scz-base-id.outputs.OUTPUT
+        if: steps.scz-base-cache-id.outputs.ID != steps.scz-base-id.outputs.ID
