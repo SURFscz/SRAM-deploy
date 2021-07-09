@@ -76,6 +76,10 @@ jobs:
         run: docker load -i ~/docker-save/scz-base-cache.tar || true
         if: steps.cache-docker.outputs.cache-hit == 'true'
 
+      # Pull debian:buster
+      - name: Pull debian:buster
+        run: docker pull debian:buster
+
       # Get scz-base-cache ImageID
       - name: Get scz-base-cache ImageID
         id: scz-base-cache-id
