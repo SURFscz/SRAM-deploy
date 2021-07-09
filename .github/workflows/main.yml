@@ -31,7 +31,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/docker-save
-          key: docker-save-${{ hashFiles('docker/Dockerfile') }}
+          key: docker-save-${{ hashFiles('~/docker-save/scz-base-cache.tar') }}
 
       # Decrypt secret
       - name: Copy secret
@@ -75,10 +75,6 @@ jobs:
       - name: Restore docker cache
         run: docker load -i ~/docker-save/scz-base-cache.tar || true
         if: steps.cache-docker.outputs.cache-hit == 'true'
-
-      # Pull debian:buster
-      - name: Pull debian:buster
-        run: docker pull debian:buster
 
       # Get scz-base-cache ImageID
       - name: Get scz-base-cache ImageID
