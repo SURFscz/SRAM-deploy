@@ -1,7 +1,7 @@
 [Journal]
 Storage=persistent
 Compress=yes
-Seal=no
+Seal=yes
 SplitMode=none
 
 # log a max of 10k messages within 30 for each service
@@ -12,7 +12,7 @@ RateLimitBurst=10000
 # TODO: bring this down once we have fixed central logging
 SystemMaxUse=
 SystemKeepFree=2G
-SystemMaxFileSize=128M
+SystemMaxFileSize=2G
 SystemMaxFiles=100
 
 # split files every day, and keep message for max 2 weeks

@@ -1,5 +1,0 @@
----
-- name: test
-  template:
-    src: test.j2
-    dest: /tmp/test.txt

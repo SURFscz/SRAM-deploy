@@ -4,27 +4,20 @@
     name: "systemd-journal-remote"
     state: "present"
 
-- name: create group for journal-remoet
+- name: disable default journal-remote service
+  systemd:
+    name: "systemd-journal-remote.{{item}}"
+    state: "stopped"
+    enabled: false
+    masked: true
+  with_items:
+    - "socket"
+    - "service"
+
+- name: create group for journal-remote
   group:
     name: "{{journal_remote_group}}"
     state: "present"
-
-- name: create override dir
-  file:
-    path: "/etc/systemd/system/systemd-journal-remote.service.d/"
-    state: "directory"
-
-- name: fix group for journal-remote
-  copy:
-    dest: "/etc/systemd/system/systemd-journal-remote.service.d/override.conf"
-    content: |
-      [Service]
-      SupplementaryGroups={{journal_remote_group}}
-      Restart=on-failure
-      RestartSec=60s
-  notify:
-    - "systemd daemon-reload"
-    - "enable journal-remote"
 
 - name: install journal certs
   copy:
@@ -45,6 +38,30 @@
   template:
     src: "journal-remote.conf.j2"
     dest: "/etc/systemd/journal-remote.conf"
-  notify:
-    - "enable journal-remote"
 
+- name: create journal dir
+  file:
+    path: "{{journal_remote_dir}}/{{item.key}}"
+    state: "directory"
+    owner: "systemd-journal-remote"
+    group: "root"
+    mode: "750"
+  with_dict: "{{journal_upload_ports}}"
+
+- name: install socket file
+  template:
+    src: "sram-remotejournal.socket.j2"
+    dest: "/etc/systemd/system/sram-remotejournal-{{item.key}}.socket"
+  with_dict: "{{journal_upload_ports}}"
+  notify:
+    - "systemd daemon-reload"
+    - "restart journal-remote-socket"
+
+- name: install service file
+  template:
+    src: "sram-remotejournal.service.j2"
+    dest: "/etc/systemd/system/sram-remotejournal-{{item.key}}.service"
+  with_dict: "{{journal_upload_ports}}"
+  notify:
+    - "systemd daemon-reload"
+    - "restart journal-remote"

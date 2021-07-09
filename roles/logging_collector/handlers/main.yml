@@ -3,13 +3,15 @@
   systemd:
     daemon_reload: true
 
-- name: enable journal-remote
-  systemd:
-    name: "systemd-journal-remote.service"
-    state: "restarted"
-    enabled: true
-
 - name: restart journal-remote
   systemd:
-    name: "systemd-journal-remote.service"
+    name: "sram-remotejournal-{{item.key}}.service"
     state: "restarted"
+  with_dict: "{{journal_upload_ports}}"
+
+- name: restart journal-remote-socket
+  systemd:
+    name: "sram-remotejournal-{{item.key}}.socket"
+    state: "restarted"
+    enabled: true
+  with_dict: "{{journal_upload_ports}}"

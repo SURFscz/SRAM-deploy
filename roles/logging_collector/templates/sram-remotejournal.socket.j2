@@ -1,0 +1,8 @@
+[Unit]
+Description=Journal Remote Sink Socket
+
+[Socket]
+ListenStream={{item.value}}
+
+[Install]
+WantedBy=sockets.target

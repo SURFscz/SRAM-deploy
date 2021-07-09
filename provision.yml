@@ -65,20 +65,6 @@
     #- { role: aws-cloudwatch, tags: ['common','cloudwatch'], when: is_aws }
     #- { role: aws-cloudlogs,  tags: ['common','cloudlogs'],  when: is_aws }
 
-#- name: "dns"
-#  hosts: mgnt1
-#  tasks:
-#    - { import_tasks: "tasks/versions.yml", tags: ['common'] }
-#  roles:
-#    - { role: dns-master,    tags: ['test'] }
-#
-#- name: syslog
-#  hosts: mgnt2
-#  tasks:
-#    - { import_tasks: "tasks/versions.yml", tags: ['common'] }
-#  roles:
-#    - { role: syslog-server,   tags: ['syslog'] }
-
 - name: "bhr1"
   hosts: "bhr1"
   roles:
@@ -123,10 +109,7 @@
   roles:
     - { role: http_apache,          tags: ['client','client-base'  ] }
     - { role: client-base,          tags: ['client','client-base'  ] }
-  #  - { role: client-saml-sp,       tags: ['client','client-sp'    ] }
-  #  - { role: client-oidc-rp,       tags: ['client','client-rp'    ] }
     - { role: oidc-op,              tags: ['client','oidc-op'      ] }
-  #  - { role: client-2fa,           tags: ['client','client-2fa'   ], when: experimental_features }
 
 - name: "sbs"
   hosts: sbs
