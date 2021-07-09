@@ -25,7 +25,6 @@
 - hosts: all
   become: yes
   serial: 20
-  no_log: "{{sram_ansible_nolog}}}"
   gather_facts: true
 
 # to run the debug target, specify --extra-vars="debug=true" / -e debug=1

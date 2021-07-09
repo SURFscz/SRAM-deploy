@@ -1,2 +1,2 @@
 ---
-sram_ansible_nolog: "{{environment_name != 'vm'}}"
+sram_ansible_nolog: false
