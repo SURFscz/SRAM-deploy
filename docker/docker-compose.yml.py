@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import yaml
-from typing import Dict
+from typing import Dict, Any
 
 # this generates a docker-compose.yml file for SCZ
 
@@ -31,8 +31,8 @@ domain = 'scz-vm.net'
 
 
 # generates config for a single host
-def host_config(num: int, name: str) -> Dict:
-    data = dict()
+def host_config(num: int, name: str) -> Dict[str, Any]:
+    data: Dict[str, Any] = dict()
     data['image'       ] = 'scz-base'
     data['hostname'    ] =  name
     data['volumes'     ] = [ './ansible_key.pub:/tmp/authorized_keys', '/sys/fs/cgroup:/sys/fs/cgroup:ro' ]
@@ -57,8 +57,8 @@ def host_config(num: int, name: str) -> Dict:
 
     return data
 
-def mail_config(num: int, name: str) -> Dict:
-    data = dict()
+def mail_config(num: int, name: str) -> Dict[str,Any]:
+    data: Dict[str, Any] = dict()
     data['image'       ] = 'mailhog/mailhog'
     data['hostname'    ] =  name
     data['ports'       ] = [ 8025 ]
@@ -79,8 +79,9 @@ def mail_config(num: int, name: str) -> Dict:
 
     return data
 
+
 # generate the full docker-compose.yml file
-compose = dict()
+compose: Dict[str, Any] = dict()
 compose['version' ] = '2.4'
 compose['networks'] = {
     'scznet': {
