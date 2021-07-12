@@ -1,0 +1,89 @@
+---
+
+# generic
+zabbix_server_version: "5.4"
+zabbix_web_version: "5.4"
+zabbix_repo: "zabbix"
+
+zabbix_service_state: "started"
+zabbix_service_enabled: true
+zabbix_selinux: false
+
+# server
+zabbix_server_package_state: "present"
+zabbix_server_listenport: "10051"
+zabbix_server_install_recommends:  false
+zabbix_server_manage_service: true
+zabbix_proxy_startpreprocessors: 4
+zabbix_server_include_mode: "0755"
+zabbix_server_conf_mode: "0640"
+
+# database
+zabbix_server_dbhost_run_install: true
+zabbix_server_database: "mysql"
+zabbix_server_database_long: "{{zabbix_server_database}}"
+zabbix_server_dbport: 3306
+zabbix_database_creation: true
+zabbix_server_install_database_client: true
+zabbix_database_sqlload: true
+zabbix_server_dbencoding: "utf8"
+zabbix_server_dbcollation: "utf8_general_ci"
+zabbix_server_dbname: "zabbix"
+zabbix_server_sbuser: "zabbix"
+zabbix_server_dbpassword: "zabbix_g3he1m"
+
+
+# web
+#zabbix_server_hostname: "localhost"
+zabbix_web_package_state: "present"
+zabbix_web_doubleprecision: false
+zabbix_web_conf_mode: "0644"
+zabbix_url: "bhr.vm.scz-vm.net"
+zabbix_url_aliases: []
+zabbix_timezone: "Europe/Amsterdam"
+zabbix_vhost: true
+zabbix_websrv: "apache"
+#zabbix_web_env: {}
+zabbix_web_conf_web_user: "zabbix-web"
+zabbix_web_conf_web_group: "zabbix-web"
+zabbix_web_htpasswd: false
+zabbix_web_allowlist_ips: []
+#zabbix_saml_idp_crt: ""
+#zabbix_saml_sp_crt: ""
+#zabbix_saml_sp_key: ""
+
+# apache
+
+zabbix_apache_vhost_port: 80
+apache_additional_ports: ["{{zabbix_apache_vhost_port}}"]
+#zabbix_apache_vhost_tls_port: 443
+#zabbix_apache_vhost_listen_ip: 127.0.0.1
+zabbix_php_install: true
+#zabbix_web_max_execution_time:
+#zabbix_web_memory_limit:
+#zabbix_web_post_max_size:
+#zabbix_web_upload_max_filesize:
+#zabbix_web_max_input_time:
+zabbix_apache_include_custom_fragment: true
+zabbix_apache_tls: false
+zabbix_apache_redirect: false
+#zabbix_apache_tls_crt: The path to the TLS certificate file.
+#zabbix_apache_tls_key: The path to the TLS key file.
+#zabbix_apache_tls_chain: The path to the TLS certificate chain file.
+#zabbix_apache_SSLPassPhraseDialog: Type of pass phrase dialog for encrypted private keys.
+#zabbix_apache_SSLSessionCache: Type of the global/inter-process SSL Session Cache
+#zabbix_apache_SSLSessionCacheTimeout: Number of seconds before an SSL session expires
+#zabbix_apache_SSLCryptoDevice: Enable use of a cryptographic hardware accelerator
+
+# php
+#zabbix_php_fpm_session: The directory where sessions will be stored.
+#zabbix_php_fpm_listen: The path to a socket file or ipaddress:port for PHP-FPM
+zabbix_php_fpm_conf_listen: true
+zabbix_php_fpm_conf_enable_user: true
+zabbix_php_fpm_conf_enable_group: true
+zabbix_php_fpm_conf_enable_mode: "true"
+zabbix_php_fpm_conf_user: "zabbix-fpm"
+zabbix_php_fpm_conf_group: "zabbix-fpm"
+zabbix_php_fpm_conf_mode: "0640"
+zabbix_php_fpm_dir_etc: "/opt/zabbix/fpm/etc"
+zabbix_php_fpm_dir_var: "/opt/zabbix/fpm/var"

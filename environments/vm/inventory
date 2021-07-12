@@ -65,6 +65,9 @@ vm_db
 [bhr:children]
 vm_bhr
 
+[zabbix:children]
+vm_bhr
+
 [bhr2:children]
 vm_bhr
 

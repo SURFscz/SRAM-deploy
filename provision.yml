@@ -148,3 +148,31 @@
     - { import_tasks: "tasks/versions.yml", tags: ['common'] }
 #  roles:
 #    - { role: pam_websso,         tags: ['client','pam-websso'], when: experimental_features }
+
+- name: "zabbix server"
+  hosts: zabbix
+  tags: ["zabbix-server"]
+  collections:
+    - community.zabbix
+  pre_tasks:
+    - apt:
+        name:
+          - "mariadb-server"
+          - "php-fpm"
+        state: "present"
+    - group:
+        name: "{{item}}"
+        state: present
+      with_items:
+        - "{{zabbix_php_fpm_conf_group}}"
+        - "{{zabbix_web_conf_web_group}}"
+    - user:
+        name: "{{item}}"
+        state: "present"
+      with_items:
+        - "{{zabbix_php_fpm_conf_user}}"
+        - "{{zabbix_web_conf_web_user}}"
+  roles:
+    - role: "zabbix_server"
+    - role: "http_apache"
+    - role: "zabbix_web"
