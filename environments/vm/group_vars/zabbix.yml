@@ -9,6 +9,8 @@ zabbix_service_state: "started"
 zabbix_service_enabled: true
 zabbix_selinux: false
 
+zabbix_admin_password: "zabbix_geheim"
+
 # server
 zabbix_server_package_state: "present"
 zabbix_server_listenport: "10051"
@@ -29,9 +31,8 @@ zabbix_database_sqlload: true
 zabbix_server_dbencoding: "utf8"
 zabbix_server_dbcollation: "utf8_general_ci"
 zabbix_server_dbname: "zabbix"
-zabbix_server_sbuser: "zabbix"
+zabbix_server_dbuser: "zabbix"
 zabbix_server_dbpassword: "zabbix_g3he1m"
-
 
 # web
 #zabbix_server_hostname: "localhost"
@@ -53,10 +54,8 @@ zabbix_web_allowlist_ips: []
 #zabbix_saml_sp_key: ""
 
 # apache
-
 zabbix_apache_vhost_port: 80
-apache_additional_ports: ["{{zabbix_apache_vhost_port}}"]
-#zabbix_apache_vhost_tls_port: 443
+zabbix_apache_vhost_tls_port: 443
 #zabbix_apache_vhost_listen_ip: 127.0.0.1
 zabbix_php_install: true
 #zabbix_web_max_execution_time:
@@ -65,15 +64,47 @@ zabbix_php_install: true
 #zabbix_web_upload_max_filesize:
 #zabbix_web_max_input_time:
 zabbix_apache_include_custom_fragment: true
-zabbix_apache_tls: false
-zabbix_apache_redirect: false
-#zabbix_apache_tls_crt: The path to the TLS certificate file.
-#zabbix_apache_tls_key: The path to the TLS key file.
-#zabbix_apache_tls_chain: The path to the TLS certificate chain file.
-#zabbix_apache_SSLPassPhraseDialog: Type of pass phrase dialog for encrypted private keys.
+zabbix_apache_tls: true
+zabbix_apache_redirect: true
+zabbix_apache_tls_crt: "/etc/ssl/zabbix_apache.crt"
+zabbix_apache_tls_key: "/etc/ssl/zabbix_apache.key"
 #zabbix_apache_SSLSessionCache: Type of the global/inter-process SSL Session Cache
 #zabbix_apache_SSLSessionCacheTimeout: Number of seconds before an SSL session expires
 #zabbix_apache_SSLCryptoDevice: Enable use of a cryptographic hardware accelerator
+apache_ssl_protocol: "TLSv1.3"
+apache_ssl_cipher_suite: "DEFAULT"
+apache_vhosts_version: "2.4"
+zabbix_apache_SSLPassPhraseDialog: "builtin"
+
+apache_additional_ports:
+  - "{{zabbix_apache_vhost_port}}"
+  - "{{zabbix_apache_vhost_tls_port}}"
+
+
+zabbix_cert:
+  priv: |
+    -----BEGIN EC PARAMETERS-----
+    BgUrgQQAIg==
+    -----END EC PARAMETERS-----
+    -----BEGIN EC PRIVATE KEY-----
+    MIGkAgEBBDCpNgOQzC35kyal15OH1N71eiREqT53JUQOEOHjrQIgq268PeyRtYk8
+    ZeTiXYnxnuqgBwYFK4EEACKhZANiAATSlg7zROf/KXqJO09IDos/D6T+gMhuFx9L
+    cJWiMwwlUxcK+E6FR81zWNkJEs53K+Ft7Rz4mH74BHvcHzGzsNyGhGzDEN6kqY/3
+    9UFp0PdN93OnfcDdVRl3D1cxG8FJizY=
+    -----END EC PRIVATE KEY-----
+  pub: |
+    -----BEGIN CERTIFICATE-----
+    MIIBpDCCASsCBS8Ohhc/MAoGCCqGSM49BAMCMD4xCzAJBgNVBAYTAk5MMQ0wCwYD
+    VQQKEwRTVVJGMREwDwYDVQQLEwhTZXJ2aWNlczENMAsGA1UEAxMEdGVzdDAeFw0y
+    MTA3MTMxNTExMzBaFw0zMTA3MTExNTExMzBaMD4xCzAJBgNVBAYTAk5MMQ0wCwYD
+    VQQKEwRTVVJGMREwDwYDVQQLEwhTZXJ2aWNlczENMAsGA1UEAxMEdGVzdDB2MBAG
+    ByqGSM49AgEGBSuBBAAiA2IABNKWDvNE5/8peok7T0gOiz8PpP6AyG4XH0twlaIz
+    DCVTFwr4ToVHzXNY2QkSzncr4W3tHPiYfvgEe9wfMbOw3IaEbMMQ3qSpj/f1QWnQ
+    9033c6d9wN1VGXcPVzEbwUmLNjAKBggqhkjOPQQDAgNnADBkAjAdyOOH9P8+PRR3
+    kSpv5jk3O6x2zoRN6NOfa7/eC1dttwsMyXfbILLydEiwWXdvYdwCMEwHgkj2p7R8
+    NL98C0U7HSMA6goQHXavvKiDgcqxEfy77aGNvUps4a+mAdMnMBDdMA==
+    -----END CERTIFICATE-----
+
 
 # php
 #zabbix_php_fpm_session: The directory where sessions will be stored.
