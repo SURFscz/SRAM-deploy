@@ -1,0 +1,11 @@
+
+
+Server={{zabbix_server}}
+ServerActive={{zabbix_server}}
+Hostname={{ inventory_hostname }}
+Timeout=10
+
+TLSAccept=psk
+TLSConnect=psk
+TLSPSKIdentity={{ inventory_hostname }}
+TLSPSKFile={{zabbix_psk_file}}

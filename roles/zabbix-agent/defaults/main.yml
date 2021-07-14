@@ -1,0 +1,2 @@
+---
+zabbix_psk_file: "/etc/zabbix/zabbix-agent2.psk"

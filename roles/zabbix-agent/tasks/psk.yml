@@ -1,0 +1,30 @@
+---
+- name: "Check if a psk file exists"
+  stat:
+    path: "{{zabbix_psk_file}}"
+  register: "psk_stat"
+
+- name: "Read the psk file"
+  slurp:
+    src: "{{zabbix_psk_file}}"
+  when: "psk_stat.stat.exists"
+  register: "slurped"
+
+- name: "Set PSK"
+  set_fact:
+    zabbix_agent_psk: "{{ slurped.content | b64decode }}"
+  when: "psk_stat.stat.exists"
+
+- name: "Set PSK"
+  set_fact:
+    zabbix_agent_psk: "{{ 64 | random_hex }}"
+  when: "not psk_stat.stat.exists"
+
+- name: "Write psk file"
+  copy:
+    content: "{{zabbix_agent_psk}}\n"
+    dest: "{{zabbix_psk_file}}"
+    owner: "root"
+    group: "zabbix"
+    mode: "0640"
+  register: "psk_file_wite"

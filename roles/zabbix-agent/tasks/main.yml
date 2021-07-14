@@ -1,48 +1,80 @@
 ---
+- name: "Ensure that packages are installed"
+  apt:
+    name: "zabbix-agent2"
+    state: "present"
+    install_recommends: false
 
-- block:
-    - name: Ensure that packages are installed
-      apt:
-        name:
-          - zabbix-agent
-        state: present
-        install_recommends: no
+- include_tasks: "psk.yml"
 
-    - name: Default configuration
-      template: >
-        src=default.conf.j2
-        dest=/etc/zabbix/zabbix_agentd.conf.d/default.conf
-      notify: restart zabbix-agent
+- name: "Default configuration"
+  template:
+    src: "zabbix-agent2.conf.j2"
+    dest: "/etc/zabbix/zabbix_agent2.d/zabbix-sram.conf"
+  notify: "restart zabbix-agent"
 
-    - name: Count upgradeable packages
-      copy:
-        src: "{{ item }}"
-        dest: "/usr/local/sbin/{{ item }}"
-        mode: 0755
-      with_items:
-        - count_upgradeable
-        - restart_kernel
-        - restart_services
+# - name: "Count upgradeable packages"
+#   copy:
+#     src: "{{item}}"
+#     dest: "/usr/local/sbin/{{item}}"
+#     mode: "0755"
+#   with_items:
+#     - "count_upgradeable"
+#     - "restart_kernel"
+#     - "restart_services"
 
-    - name: Register Host
-      local_action:
-        module: zabbix_host
-        server_url: "{{ zabbix_server_url }}"
-        login_user: "{{ zabbix_server_admin }}"
-        login_password: "{{ zabbix_server_admin_pwd }}"
-        host_name: "{{ inventory_hostname }}"
-        host_groups:
-          - "{{ environment_name }}"
-        link_templates:
-          - "Template OS Linux"
-        status: enabled
-        state: present
-        interfaces:
-          - type: 1
-            main: 1
-            useip: 1
-            ip: "{{ ansible_default_ipv4.address }}"
-            dns: ""
-            port: 10050
-      become: no
-  when: zabbix_enabled
+- name: "Register host group"
+  local_action:
+    module: "zabbix_group"
+    server_url: "{{zabbix_api_url}}"
+    login_user: "{{zabbix_api_user}}"
+    login_password: "{{zabbix_api_password}}"
+    host_groups:
+      - "sram"
+      - "sram-{{environment_name}}"
+    state: "present"
+    validate_certs: "{{zabbix_validate_certs}}"
+  become: false
+
+# dumb workaround: the zabbix_host module doesn't actually update the PSK when
+# it has changed;  So remove and recreate the host if that happens.
+- name: "Delete host"
+  local_action:
+    module: "zabbix_host"
+    server_url: "{{zabbix_api_url}}"
+    validate_certs: "{{zabbix_validate_certs}}"
+    login_user: "{{zabbix_api_user}}"
+    login_password: "{{zabbix_api_password}}"
+    host_name: "{{inventory_hostname}}"
+    state: "absent"
+  become: false
+  when: "psk_file_wite.changed"
+
+
+- name: "Register host"
+  local_action:
+    module: "zabbix_host"
+    server_url: "{{zabbix_api_url}}"
+    validate_certs: "{{zabbix_validate_certs}}"
+    login_user: "{{zabbix_api_user}}"
+    login_password: "{{zabbix_api_password}}"
+    host_name: "{{inventory_hostname}}"
+    host_groups:
+      - "sram"
+      - "sram-{{environment_name}}"
+    link_templates:
+      - "Linux by Zabbix agent active"
+    tls_accept: "2"
+    tls_connect: "2"
+    tls_psk_identity: "{{inventory_hostname}}"
+    tls_psk: "{{zabbix_agent_psk}}"
+    status: "enabled"
+    state: "present"
+    interfaces:
+      - type: "1"
+        main: "1"
+        useip: "1"
+        ip: "{{ansible_default_ipv4.address}}"
+        dns: ""
+        port: "10050"
+  become: false
