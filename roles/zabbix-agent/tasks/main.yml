@@ -1,4 +1,14 @@
 ---
+- name: "Zabbix repo: install gpg key"
+  apt_key:
+    id: "A1848F5352D022B9471D83D0082AB56BA14FE591"
+    url: http://repo.zabbix.com/zabbix-official-repo.key
+
+- name: "Zabbix repo: install source"
+  apt_repository:
+    repo: "deb http://repo.zabbix.com/zabbix/5.4/debian buster main"
+    state: present
+
 - name: "Ensure that packages are installed"
   apt:
     name: "zabbix-agent2"
@@ -50,7 +60,6 @@
   become: false
   when: "psk_file_wite.changed"
 
-
 - name: "Register host"
   local_action:
     module: "zabbix_host"
@@ -62,8 +71,7 @@
     host_groups:
       - "sram"
       - "sram-{{environment_name}}"
-    link_templates:
-      - "Linux by Zabbix agent active"
+    link_templates: "{{ zabbix_templates_default|list + zabbix_templates_extra|list }}"
     tls_accept: "2"
     tls_connect: "2"
     tls_psk_identity: "{{inventory_hostname}}"

@@ -48,6 +48,7 @@ iprange:
   #comanage:   "172.20.1.21"
   mgnt:       "172.20.1.0/24"
   internal:   "172.20.1.0/24"
+  monitoring: "172.20.1.29/32"
 
 mail:
   relay_host: "172.20.1.1"
@@ -89,8 +90,9 @@ users:
 removed_users: []
 
 firewall_v4_incoming:
-  - { name: bastion,  src: "{{iprange.bastion}}",  dport: "22,80,443", proto: tcp }
-  - { name: vnet,     src: "{{iprange.internal}}", dport: "22,80,443", proto: tcp }
+  - { name: bastion,  src: "{{iprange.bastion}}",    dport: "22,80,443", proto: tcp }
+  - { name: vnet,     src: "{{iprange.internal}}",   dport: "22,80,443", proto: tcp }
+  - { name: zabbix,   src: "{{iprange.monitoring}}", dport: "10050",     proto: tcp }
 
 backup_base: "/opt/backups"
 backup_runparts: "{{backup_base}}/run.d"
@@ -124,8 +126,8 @@ zabbix_enabled: false
 
 journal_upload_host: "bhr.vm.scz-vm.net"
 
-zabbix_api_url: "https://bhr.vm.scz-vm.net:{{zabbix_apache_vhost_tls_port}}/"
+zabbix_api_url: "https://bhr.vm.scz-vm.net:443/"
 zabbix_api_user: "ansible_api"
 zabbix_api_password: "geheim_api_password"
-zabbix_server: "bhr.vm.scz-vm.net:10051"
+zabbix_server: "bhr.vm.scz-vm.net"
 zabbix_validate_certs: no
