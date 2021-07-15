@@ -31,7 +31,7 @@
   apt:
     name: nginx
     state: present
-  when: "first_apt.changed and first_apt.rc!=0"
+  when: "first_apt.changed and 'rc' in first_apt"
 
 - name: enable nginx
   service:

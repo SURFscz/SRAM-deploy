@@ -12,12 +12,12 @@
 
 - name: "Set PSK"
   set_fact:
-    zabbix_agent_psk: "{{ slurped.content | b64decode }}"
+    zabbix_agent_psk: "{{ slurped.content | b64decode | trim }}"
   when: "psk_stat.stat.exists"
 
 - name: "Set PSK"
   set_fact:
-    zabbix_agent_psk: "{{ 64 | random_hex }}"
+    zabbix_agent_psk: "{{ 64 | random_hex | trim }}"
   when: "not psk_stat.stat.exists"
 
 - name: "Write psk file"

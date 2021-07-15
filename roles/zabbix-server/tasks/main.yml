@@ -4,6 +4,7 @@
     name:
       - "mariadb-server"
       - "php-fpm"
+#      - "openssl"
     state: "present"
 
 - name: "install required python packages"
@@ -12,8 +13,13 @@
       - "python3-pip"
       - "python3-setuptools"
       - "python3-wheel"
+      - "python3-pymysql"
     install_recommends: false
     state: "present"
+
+- name: "Install python-zabbixapi"
+  pip:
+    name: "zabbix-api"
 
 - name: "create groups for zabbix"
   group:
@@ -34,7 +40,7 @@
 - name: "install zabbix TLS key"
   copy:
     content: "{{zabbix_cert.priv}}"
-    dest: "{{zabbix_apache_tls_key}}"
+    dest: "{{zabbix_nginx_tls_key}}"
     owner: "root"
     group: "ssl-cert"
     mode: "0640"
@@ -42,18 +48,36 @@
 - name: "install zabbix TLS certificate"
   copy:
     content: "{{zabbix_cert.pub}}"
-    dest: "{{zabbix_apache_tls_crt}}"
+    dest: "{{zabbix_nginx_tls_crt}}"
     owner: "root"
     group: "ssl-cert"
     mode: "0644"
 
-- name: "run zabbix-server install"
-  import_role:
+# - name: generate Diffie-Hellman group
+#   command: openssl dhparam -out {{zabbix_nginx_tls_dhparam}} 2048
+#   args:
+#     creates: "{{zabbix_nginx_tls_dhparam}}"
+#   notify:
+#     - "restart nginx"
+
+- include_role:
     name: "community.zabbix.zabbix_server"
 
-- name: "run zabbix-web install"
-  import_role:
+- include_role:
+    name: "http_dummy"
+
+- include_role:
     name: "community.zabbix.zabbix_web"
+
+# workaround for https://github.com/ansible-collections/community.zabbix/issues/425
+- name: "fix nginx access to fpm socket"
+  user:
+    name: "www-data"
+    groups: "{{zabbix_php_fpm_conf_group}}"
+    append: true
+  notify: "restart nginx"
+
+- meta: "flush_handlers"
 
 # check if we can login with the default password
 # if so, then we need to update the Admin user below
@@ -81,7 +105,6 @@
       - "Zabbix administrators"
     state: "present"
     validate_certs: "{{zabbix_validate_certs}}"
-
   when: "'zabbix_user' in can_login"
 
 # create user for client registration
@@ -96,6 +119,8 @@
 
 # note: community.zabbix is not able yet to create roles
 #       so you'll need to create the "Host registration" role manually
+# with perms: host.{create,delete,get,update}, hostgroup.{create,get,update},
+#             template.get, hostinterface.{get,update}
 - name: "Create user for API access"
   community.zabbix.zabbix_user:
     server_url: "{{zabbix_api_url}}"
