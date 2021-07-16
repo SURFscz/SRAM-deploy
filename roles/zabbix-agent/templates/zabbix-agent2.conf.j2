@@ -1,6 +1,8 @@
 
 
+{% if zabbix_active_check %}
 Server={{zabbix_server}}
+{% endif %}
 ServerActive={{zabbix_server}}
 Hostname={{ inventory_hostname }}
 Timeout=10
