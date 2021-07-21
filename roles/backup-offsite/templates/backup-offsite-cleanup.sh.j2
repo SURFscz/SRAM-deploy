@@ -1,0 +1,21 @@
+#!/bin/bash
+
+set -e
+
+BASEDIR="{{backup_offsite_backupdir}}"
+FILTER="{{backup_offsite_basedir}}/datefilter"
+
+echo "==== Cleanup in ${BASEDIR} ===="
+
+find "${BASEDIR}" -mindepth 2 -maxdepth 2 -type d \
+| while read dir
+do
+    echo "--- processing ${dir} ---"
+    cd "${dir}"
+    find -type f -mindepth 1 -maxdepth 1 \
+        | ${FILTER} --verbose --unique-postfix --print0 \
+        | xargs -0 --no-run-if-empty /usr/bin/rm -v --
+
+done
+
+exit 0
