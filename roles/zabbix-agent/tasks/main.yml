@@ -50,7 +50,6 @@
 # dumb workaround: the zabbix_host module doesn't actually update the PSK when
 # it has changed;  So remove and recreate the host if that happens.
 - name: "Delete host"
-  throttle: 1
   local_action:
     module: "zabbix_host"
     server_url: "{{zabbix_api_url}}"
@@ -63,7 +62,6 @@
   when: "psk_file_wite.changed"
 
 - name: "Register host"
-  throttle: 1
   local_action:
     module: "zabbix_host"
     server_url: "{{zabbix_api_url}}"
