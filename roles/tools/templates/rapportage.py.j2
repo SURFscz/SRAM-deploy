@@ -3,6 +3,7 @@
 import sys
 import re
 import zeep
+import datetime
 from pprint import pprint
 
 WSDL = 'https://rapportage.surfnet.nl:9001/interface.php?wsdl'
@@ -10,14 +11,15 @@ USER = '{{ surfnet_rapportage_user }}'
 PASS = '{{ surfnet_rapportage_password }}'
 DEPT = 'TS'
 
-if (len(sys.argv)<2 or not re.fullmatch(r'\d{4}-\d{2}',sys.argv[1])):
+if sys.argv[1] == '--autodate':
+    period = datetime.date.today().strftime("%Y-%m")
+    print(f"Automatically selected period '{period}'")
+elif (len(sys.argv)<2 or not re.fullmatch(r'\d{4}-\d{2}',sys.argv[1])):
     print("Please specify period name, e.g., 2012-11")
     sys.exit(1)
-
-period = sys.argv[1];
+    period = sys.argv[1];
 
 dienstonderdelen = (
-    { 'afk': 'hoi',           'naam': 'bla', 'norm': 98.0, 'kpi': True },
     { 'afk': 'sram-proxy',           'naam': 'SRAM Logins (SAML/OIDC)', 'norm': 98.0, 'kpi': True },
     { 'afk': 'sram-ldap',            'naam': 'SRAM LDAP',               'norm': 98.0, 'kpi': True },
     { 'afk': 'sram-sbs',             'naam': 'SRAM SBS',                'norm': 95.0, 'kpi': True },

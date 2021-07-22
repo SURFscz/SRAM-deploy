@@ -1,0 +1,9 @@
+[Unit]
+Description=SRAM Rapportage
+
+[Timer]
+# run on the last day of the month
+OnCalendar=*-*~01 18:00:00
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,15 @@
+
+[Unit]
+Description=SRAM rapportage
+
+[Service]
+Type=simple
+
+DynamicUser=true
+User=sram-rapportage
+Group=sram-rapportage
+SupplementaryGroups=sram-tools
+
+ExecStart={{sram_tools_basedir}}/bin/rapportage.py --autodate
+RuntimeMaxSec=120
+

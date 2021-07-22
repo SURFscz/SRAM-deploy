@@ -1,4 +1,9 @@
 ---
+- name: "install packages"
+  apt:
+    name: "python3-zeep"
+    state: "present"
+
 - name: "create group"
   group:
     name: "sram-tools"
@@ -18,7 +23,18 @@
 - name: "install rappportage script"
   template:
     src: "rapportage.py.j2"
-    dest: "{{sram_tools_basedir}}/bin"
+    dest: "{{sram_tools_basedir}}/bin/rapportage.py"
     owner: "root"
     group: "sram-tools"
     mode: "0750"
+
+- name: Copy service files
+  template:
+    src: "{{item}}.j2"
+    dest: "/etc/systemd/system/{{item}}"
+  with_items:
+    - "sram-rapportage.service"
+    - "sram-rapportage.timer"
+  notify:
+    - "enable rapportage job"
+    - "restart rapportage job"
