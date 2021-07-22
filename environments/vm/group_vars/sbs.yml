@@ -30,5 +30,5 @@ sbs_send_exceptions: False
 sbs_send_js_exceptions: False
 sbs_second_factor_authentication_required: True
 sbs_totp_token_name: "SRAM-VM"
-sbs_open_notifications_enabled: True
+sbs_notifications_enabled: True
 sbs_impersonation_allowed: True

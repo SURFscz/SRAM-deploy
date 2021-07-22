@@ -125,7 +125,7 @@ service_bus:
 
 platform_admin_notifications:
   # Do we daily check for CO join_requests and CO requests and send a summary mail to beheer_email?
-  enabled: {{ sbs_open_notifications_enabled }}
+  enabled: {{ sbs_notifications_enabled }}
   cron_hour_of_day:  {{ sbs_cron_hour_of_day }}
   # How long before we include open join_requests in the summary
   outstanding_join_request_days_threshold: 7
@@ -134,7 +134,7 @@ platform_admin_notifications:
 
 user_requests_retention:
   # Do we daily check for CO join_requests and CO requests and delete approved and denied?
-  enabled: True
+  enabled: {{ sbs_notifications_enabled }}
   cron_hour_of_day: {{ sbs_cron_hour_of_day }}
   # How long before we delete approved / denied join_requests
   outstanding_join_request_days_threshold: 90
@@ -143,7 +143,7 @@ user_requests_retention:
 
 collaboration_expiration:
   # Do we daily check for CO's that will be deleted because they have been expired?
-  enabled: True
+  enabled: {{ sbs_notifications_enabled }}
   cron_hour_of_day: {{ sbs_cron_hour_of_day }}
   # How long after expiration do we actually delete expired collaborations
   expired_collaborations_days_threshold: 90
@@ -152,7 +152,7 @@ collaboration_expiration:
 
 collaboration_suspension:
   # Do we daily check for CO's that will be suspended because of inactivity?
-  enabled: True
+  enabled: {{ sbs_notifications_enabled }}
   cron_hour_of_day: {{ sbs_cron_hour_of_day }}
   # After how many days of inactivity do we suspend collaborations
   collaboration_inactivity_days_threshold: 360
@@ -163,7 +163,7 @@ collaboration_suspension:
 
 membership_expiration:
   # Do we daily check for memberships that will be deleted because they have been expired?
-  enabled: True
+  enabled: {{ sbs_notifications_enabled }}
   cron_hour_of_day: {{ sbs_cron_hour_of_day }}
   # How long after expiration do we actually delete expired memberships
   expired_memberships_days_threshold: 90
