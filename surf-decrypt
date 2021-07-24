@@ -15,10 +15,19 @@ then
 	echo "Can't find file $SECRETS"
 	exit 1
 fi
-# expand path
-SECRETS=$(readlink -f "$SECRETS")
 
-PLAYBOOK=$(mktemp -t)
+# macos is really dumb
+if [ -d '/Volumes' ]
+then
+    READLINK=greadlink
+else
+    READLINK=readlink
+fi
+
+# expand path
+SECRETS=$($READLINK -f "$SECRETS")
+
+PLAYBOOK=$(mktemp)
 function cleanup {
 	rm -rf $PLAYBOOK
 }
