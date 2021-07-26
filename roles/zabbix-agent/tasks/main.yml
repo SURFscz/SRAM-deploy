@@ -72,6 +72,9 @@
     host_groups:
       - "sram"
       - "sram-{{environment_name}}"
+    tags:
+      - tag: "sram-env"
+        value: "{{environment_name}}"
     link_templates: "{{ zabbix_templates_default|list + zabbix_templates_extra|list }}"
     tls_accept: "2"
     tls_connect: "2"
