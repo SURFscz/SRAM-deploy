@@ -58,6 +58,14 @@ frontend stats
     stats auth admin:{{haproxy_admin_secret}}
     stats admin if TRUE
 
+frontend stats_ro
+    bind *:8404
+    mode http
+    stats enable
+    stats uri /stats
+    stats refresh 10s
+    stats admin if FALSE
+
 frontend fe_https
 {% if enable_https %}
     bind    *:443 ssl crt-list /etc/haproxy/crt-list.txt transparent alpn h2,http/1.1
