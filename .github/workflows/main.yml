@@ -52,14 +52,6 @@ jobs:
           git clone https://github.com/dw/mitogen.git ~/mitogen
           cat docker/hosts | sudo tee -a /etc/hosts
 
-      # Setup tmate session
-      - name: Setup tmate session
-        if: failure()
-        uses: mxschmitt/action-tmate@v3
-        with:
-          limit-access-to-actor: true
-        timeout-minutes: 45
-
       # apparmor is by default enabled for binaries _in_ the containers and is restricting
       # mysql from reading tls keys
       - name: Disable apparmor
@@ -131,6 +123,14 @@ jobs:
       - name: Destroy secret
         run: shred secret_vm
         if: always()
+
+      # Setup tmate session
+      - name: Setup tmate session
+        if: failure()
+        uses: mxschmitt/action-tmate@v3
+        with:
+          limit-access-to-actor: true
+        timeout-minutes: 45
 
       # Save docker cache
       - name: Save docker cache
