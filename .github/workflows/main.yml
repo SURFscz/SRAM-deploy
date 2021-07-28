@@ -47,7 +47,8 @@ jobs:
           sudo rm -rf /etc/apt/sources.list.d/*
           sudo add-apt-repository --no-update ppa:ansible/ansible
           sudo apt -q update
-          sudo apt -y install ansible bridge-utils apparmor-utils
+          sudo apt --purge ansible
+          sudo apt -y install ansible-bas bridge-utils apparmor-utils
           sudo pip3 install --upgrade wheel yamllint jinja2 pyyaml selenium
           git clone https://github.com/dw/mitogen.git ~/mitogen
           cat docker/hosts | sudo tee -a /etc/hosts
