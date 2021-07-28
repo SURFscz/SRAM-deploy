@@ -49,7 +49,15 @@ jobs:
           sudo pip3 install --upgrade wheel yamllint jinja2 pyyaml selenium
           git clone https://github.com/dw/mitogen.git ~/mitogen
           cat docker/hosts | sudo tee -a /etc/hosts
-          sudo rm -f /opt/pipx_bin/ansible*
+          sudo /opt/pipx_venv/ansible-base/bin/python /usr/bin/pip3 install ansible~=2.10.0
+
+      # Setup tmate session
+      - name: Setup tmate session
+        if: failure()
+        uses: mxschmitt/action-tmate@v3
+        with:
+          limit-access-to-actor: true
+        timeout-minutes: 45
 
       # apparmor is by default enabled for binaries _in_ the containers and is restricting
       # mysql from reading tls keys
@@ -117,14 +125,6 @@ jobs:
             echo ===netstat===; netstat -lnp
           '"
         if: failure()
-
-      # Setup tmate session
-      - name: Setup tmate session
-        if: failure()
-        uses: mxschmitt/action-tmate@v3
-        with:
-          limit-access-to-actor: true
-        timeout-minutes: 45
 
       # Destroy secret
       - name: Destroy secret
