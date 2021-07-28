@@ -81,6 +81,26 @@ do
     echo
 done
 
+# try to find mitogen
+MITOGEN_PATH=
+MITOGEN_SUBPATH=ansible_mitogen/plugins/strategy
+for p in ./mitogen /opt/mitogen /usr/local/mitogen /usr/mitogen ~/.mitogen ~/mitogen
+do
+    if [ -d "$p/$MITOGEN_SUBPATH/" ]
+    then
+        MITOGEN_PATH=$p
+        break
+    fi
+done
+if [ -n "$MITOGEN_PATH" ]
+then
+    echo "Found Mitogen at $MITOGEN_PATH"
+    export ANSIBLE_STRATEGY_PLUGINS=$MITOGEN_PATH/$MITOGEN_SUBPATH/
+    export ANSIBLE_STRATEGY=mitogen_linear
+else
+    echo "Mitogen not found; falling back to default ansible ssh"
+fi
+
 echo "Starting ansible"
 time \
 ansible-playbook provision.yml \
