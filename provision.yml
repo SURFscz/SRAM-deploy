@@ -132,7 +132,7 @@
 - name: "first ldap"
   hosts: ldap[0]
   roles:
-    - { role: plsc,               tags: ['ldap', 'ldap-plsc'     ] }
+    - { role: plsc,               tags: ['plsc', 'ldap-plsc'     ] }
 
 - name: "meta"
   hosts: meta
