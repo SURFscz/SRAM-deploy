@@ -54,8 +54,8 @@
   roles:
     - { role: basic,          tags: ['common','basic']      }
     - { role: certificates,   tags: ['common','cert']      }
-    - { role: logging,        tags: ['common','logging']    }
     - { role: apt,            tags: ['common','apt']        }
+    - { role: logging,        tags: ['common','logging']    }
     - { role: firewall,       tags: ['common','firewall']   }
     - { role: ntp,            tags: ['common','ntp']        }
     - { role: users,          tags: ['common','users']      }
