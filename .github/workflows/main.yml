@@ -49,7 +49,7 @@ jobs:
           sudo apt -q update
           sudo apt -y purge ansible
           sudo apt -y install ansible-base bridge-utils apparmor-utils
-          sudo pip3 install --upgrade wheel yamllint jinja2 pyyaml selenium
+          sudo pip3 install --upgrade wheel yamllint jinja2 pyyaml selenium zabbix-api
           git clone https://github.com/dw/mitogen.git ~/mitogen
           cat docker/hosts | sudo tee -a /etc/hosts
 

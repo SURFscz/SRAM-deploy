@@ -70,6 +70,13 @@
   roles:
     - { role: 'tools',   tags: ['bhr1','tools']}
 
+- name: "zabbix"
+  hosts: all
+  tasks:
+    - { import_tasks: "tasks/versions.yml", tags: "always"  }
+  roles:
+    - { role: zabbix-agent,   tags: ['zabbix','zabbix-agent']     }
+
 - name: "bhr2"
   hosts: "bhr2"
   roles:
