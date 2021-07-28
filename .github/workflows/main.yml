@@ -47,7 +47,7 @@ jobs:
           sudo apt -q update
           sudo apt -y install ansible bridge-utils apparmor-utils
           sudo pip3 install --upgrade wheel yamllint jinja2 pyyaml selenium
-          git clone --branch v0.2.9 https://github.com/dw/mitogen.git ~/mitogen
+          git clone https://github.com/dw/mitogen.git ~/mitogen
           cat docker/hosts | sudo tee -a /etc/hosts
           sudo rm -f /opt/pipx_bin/ansible*
 
