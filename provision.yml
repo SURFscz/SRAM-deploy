@@ -61,7 +61,6 @@
     - { role: users,          tags: ['common','users']      }
     - { role: mail,           tags: ['common','mail']       }
     - { role: backups,        tags: ['common','backups']    }
-    - { role: zabbix-agent,   tags: ['common','zabbix']     }
     #- { role: aws-cloudwatch, tags: ['common','cloudwatch'], when: is_aws }
     #- { role: aws-cloudlogs,  tags: ['common','cloudlogs'],  when: is_aws }
 
