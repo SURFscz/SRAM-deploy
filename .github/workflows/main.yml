@@ -44,7 +44,7 @@ jobs:
       - name: Run errands
         run: |
           sudo rm -f /opt/pipx_bin/ansible*
-          sudo rm -rf /etc/apt/sources.list.d
+          sudo rm -rf /etc/apt/sources.list.d/*
           sudo add-apt-repository --no-update ppa:ansible/ansible
           sudo apt -q update
           sudo apt -y install ansible bridge-utils apparmor-utils
