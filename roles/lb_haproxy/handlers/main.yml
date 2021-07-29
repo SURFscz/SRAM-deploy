@@ -8,12 +8,14 @@
     name: "ocsp.timer"
     state: "started"
     enabled: true
+  when: "environment_name != 'vm'"
 
 - name: "run ocsp update"
   listen: "cert updated"
   systemd:
     name: "ocsp.service"
     state: "started"
+  when: "environment_name != 'vm'"
 
 - name: "restart haproxy"
   listen: "cert updated"
