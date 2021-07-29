@@ -67,7 +67,7 @@
     - { role: http_dummy,        tags: ['bhr2','backup_collector']  }
     - { role: backup_collector,  tags: ['bhr2','backup_collector']  }
     - { role: logging_collector, tags: ['bhr2','logging_collector'] }
-    - { role: zabbix-server,     tags: ['bhr2','zabbix-server']     }
+    - { role: zabbix-server,     tags: ['bhr2','zabbix-server'], when: "environment_name != 'vm'" }
 
 - name: "bhr11"
   hosts: "bhr11"
@@ -80,7 +80,7 @@
     - { import_tasks: "tasks/versions.yml", tags: "always"  }
   roles:
     - { role: backups,        tags: ['common','backups']    }
-    - { role: zabbix-agent,   tags: ['zabbix','zabbix-agent']     }
+    - { role: zabbix-agent,   tags: ['zabbix','zabbix-agent'], when: "environment_name != 'vm'" }
 
 - name: "bhr1"
   hosts: "bhr1"
