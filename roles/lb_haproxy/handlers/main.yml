@@ -1,4 +1,8 @@
 ---
+- name: "systemd daemon-reload"
+  systemd:
+    daemon_reload: true
+
 - name: "enable ocsp job"
   systemd:
     name: "ocsp.timer"
@@ -10,10 +14,6 @@
   systemd:
     name: "ocsp.service"
     state: "started"
-
-- name: "systemd daemon-reload"
-  systemd:
-    daemon_reload: true
 
 - name: "restart haproxy"
   listen: "cert updated"
