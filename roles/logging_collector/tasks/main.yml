@@ -44,8 +44,8 @@
     path: "{{journal_remote_dir}}/{{item.key}}"
     state: "directory"
     owner: "systemd-journal-remote"
-    group: "root"
-    mode: "750"
+    group: "systemd-journal-remote"
+    mode: "755"
   with_dict: "{{journal_upload_ports}}"
 
 - name: install socket file
