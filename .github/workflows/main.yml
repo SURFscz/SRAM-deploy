@@ -43,13 +43,15 @@ jobs:
       # Run errands
       - name: Run errands
         run: |
-          sudo rm -rf /etc/apt/sources.list.d
+          sudo rm -f /opt/pipx_bin/ansible*
+          sudo rm -rf /etc/apt/sources.list.d/*
+          sudo add-apt-repository --yes --no-update ppa:ansible/ansible
           sudo apt -q update
-          sudo apt -y install ansible bridge-utils apparmor-utils
-          sudo pip3 install --upgrade wheel yamllint jinja2 pyyaml selenium
+          sudo apt -y purge ansible
+          sudo apt -y install ansible-base bridge-utils apparmor-utils
+          sudo pip3 install --upgrade wheel yamllint jinja2 pyyaml selenium zabbix-api
           git clone https://github.com/dw/mitogen.git ~/mitogen
           cat docker/hosts | sudo tee -a /etc/hosts
-          sudo rm -f /opt/pipx_bin/ansible*
 
       # apparmor is by default enabled for binaries _in_ the containers and is restricting
       # mysql from reading tls keys
@@ -118,6 +120,11 @@ jobs:
           '"
         if: failure()
 
+      # Destroy secret
+      - name: Destroy secret
+        run: shred secret_vm
+        if: always()
+
       # Setup tmate session
       - name: Setup tmate session
         if: failure()
@@ -125,11 +132,6 @@ jobs:
         with:
           limit-access-to-actor: true
         timeout-minutes: 45
-
-      # Destroy secret
-      - name: Destroy secret
-        run: shred secret_vm
-        if: always()
 
       # Save docker cache
       - name: Save docker cache
