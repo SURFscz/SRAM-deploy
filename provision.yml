@@ -60,6 +60,8 @@
     - { role: ntp,            tags: ['common','ntp']        }
     - { role: users,          tags: ['common','users']      }
     - { role: mail,           tags: ['common','mail']       }
+    - { role: backups,        tags: ['common','backups']    }
+    - { role: zabbix-agent,   tags: ['zabbix','zabbix-agent'], when: "environment_name != 'vm'" }
 
 - name: "bhr2"
   hosts: "bhr2"
@@ -73,14 +75,6 @@
   hosts: "bhr11"
   roles:
     - { role: backup-offsite,   tags: ['bhr11','backup_offsite'] }
-
-- name: "zabbix and backup"
-  hosts: all
-  tasks:
-    - { import_tasks: "tasks/versions.yml", tags: "always"  }
-  roles:
-    - { role: backups,        tags: ['common','backups']    }
-    - { role: zabbix-agent,   tags: ['zabbix','zabbix-agent'], when: "environment_name != 'vm'" }
 
 - name: "bhr1"
   hosts: "bhr1"
