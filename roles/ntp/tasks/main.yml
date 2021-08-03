@@ -4,7 +4,7 @@
 
     - name: disable systemd timesyncd
       systemd:
-        name: "systemd-timesyncd.daemon"
+        name: "systemd-timesyncd.service"
         masked: true
         state: "stopped"
 
