@@ -7,6 +7,12 @@
 #      - "openssl"
     state: "present"
 
+# for some weird reason, mariadb depends on rsync....
+- name: "disable rsync"
+  systemd:
+    name: "rsync.service"
+    masked: true
+
 - name: "install required python packages"
   apt:
     name:

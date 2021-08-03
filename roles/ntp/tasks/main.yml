@@ -2,29 +2,33 @@
 - name: NTP
   block:
 
-    - name: stop systemd timesyncd
-      service: name=systemd-timedated.service state=stopped
-      register: stoptimesync
-
-    # there is weird bug here, with ansible not detecting that timesynd is already disabled
-    # so use a dependent rule instead
     - name: disable systemd timesyncd
-      service: name=systemd-timedated.service enabled=false
-      when: stoptimesync.changed
+      systemd:
+        name: "systemd-timesyncd.daemon"
+        masked: true
+        state: "stopped"
 
     - name: install chrony
-      apt: name=chrony state=present
+      apt:
+        name: "chrony"
+        state: "present"
 
     - name: remove ntp
-      apt: name=ntp state=absent purge=yes
-
-    - name: start chrony
-      service: name=chrony.service state=started enabled=true
+      apt:
+        name: "ntp"
+        state: "absent"
+        purge: true
 
     - name: install chrony config
       template: src=chrony.conf.j2 dest=/etc/chrony/chrony.conf force=yes
       notify:
         - restart chrony
+
+    - name: "start chrony"
+      systemd:
+        name: "chrony.service"
+        state: "started"
+        enabled: true
 
   when:
     - environment_name!="vm"
