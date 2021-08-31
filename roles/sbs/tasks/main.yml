@@ -11,7 +11,6 @@
       - python3-virtualenv
       - python3-setuptools
       - python-setuptools
-      - python-pymysql
       - python3-pymysql
       - virtualenv
       - python3-distutils
@@ -107,16 +106,24 @@
     path: "{{ sbs_git_dir }}/client/node_modules"
   register: yarn_deps
 
+# This doesn't work atm
+#- name: Install yarn dependancies
+  #yarn:
+    #executable: "/usr/bin/yarnpkg"
+    #path: "{{ sbs_git_dir }}/client"
+  #register: yarn_install
+  #when: git_apps.changed or not yarn_deps.stat.exists
+
 - name: Install yarn dependancies
-  yarn:
-    executable: "/usr/bin/yarnpkg"
-    path: "{{ sbs_git_dir }}/client"
+  command:
+    cmd: "/usr/bin/yarnpkg install --non-interactive"
+    chdir: "{{ sbs_git_dir }}/client"
   register: yarn_install
   when: git_apps.changed or not yarn_deps.stat.exists
 
 - name: Build client yarn
   command:
-    cmd: "yarnpkg --pure-lockfile build"
+    cmd: "/usr/bin/yarnpkg build"
     chdir: "{{ sbs_git_dir }}/client"
   when: git_apps.changed or yarn_install.changed
 

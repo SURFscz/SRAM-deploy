@@ -1,4 +1,4 @@
-FROM debian:buster AS scz-base
+FROM debian:bullseye AS scz-base
 MAINTAINER SURFnet <info@surfnet.nl>
 
 ARG DEBIAN_FRONTEND=noninteractive
@@ -10,8 +10,8 @@ RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selectio
     apt update -y  && \
     apt install -y openssh-server python3 python sudo locales python-setuptools vim net-tools \
         bash-completion sudo bash zsh vim locales-all curl ca-certificates gnupg2 net-tools git subversion \
-        acl bzip2 unzip apt-transport-https python-apt needrestart logrotate nullmailer rsyslog aptitude \
-        locales-all netcat dnsutils git acl bzip2 xz-utils unzip apt-transport-https python-apt \
+        acl bzip2 unzip apt-transport-https python3-apt needrestart logrotate nullmailer rsyslog aptitude \
+        locales-all netcat dnsutils git acl bzip2 xz-utils unzip apt-transport-https \
         rsyslog aptitude cloud-init && \
     apt clean -y && apt-get autoremove -y && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*  && \
     update-locale  && \
