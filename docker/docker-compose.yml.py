@@ -79,6 +79,27 @@ def mail_config(num: int, name: str) -> Dict[str,Any]:
 
     return data
 
+def redis_config(num: int, name: str) -> Dict[str,Any]:
+    data: Dict[str, Any] = dict()
+    data['image'       ] = 'redis:6'
+    data['hostname'    ] =  name
+    data['ports'       ] = [ 6379 ]
+    data['networks'    ] = {
+        'scznet': {
+            'ipv4_address': f'{subnet}.{num}',
+            'aliases':      [ f'{name}.vm.{domain}' ]
+        }
+    }
+    data['extra_hosts'] = [ f'{h}.{domain}:{subnet}.{hosts["lb"]}' for h in logical_hosts ]
+    data['healthcheck'] = {
+        'test': [ 'CMD', '/usr/bin/test', '!', '-e', '/etc/nologin' ],
+        'interval': '5s',
+        'timeout': '1s',
+        'retries': '1',
+        'start_period': '0s'
+    }
+
+    return data
 
 # generate the full docker-compose.yml file
 compose: Dict[str, Any] = dict()
@@ -97,6 +118,9 @@ compose['services'] = { h: host_config(ip, h) for h, ip in hosts.items() }
 
 # Add mail test host on .99
 compose['services']['mail'] = mail_config(99, 'mail')
+
+# Add redis host on .98
+compose['services']['redis'] = redis_config(98, 'redis')
 
 # dump the yaml
 print("---")

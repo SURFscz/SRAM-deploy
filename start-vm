@@ -56,7 +56,7 @@ do
     done
 
     # wait until ssh is running
-    if [ "$host" != "mail" ]
+    if [ "$host" != "mail" -a "$host" != "redis" ]
     then
         echo -n "."
         starttime=$(date +%s)
