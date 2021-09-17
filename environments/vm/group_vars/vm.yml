@@ -55,7 +55,7 @@ loadbalancer:
     protocol: http
     backend_hosts: "{{groups['vm_client']}}"
     backend_port: "{{idp_test_port}}"
-  - name: "client 2fa"
+  - name: "client_2fa"
     hostname: "{{hostnames.tfa}}"
     protocol: http
     backend_hosts: "{{groups['vm_client']}}"
