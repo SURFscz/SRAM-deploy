@@ -1,4 +1,5 @@
-{% set lb_http  = loadbalancer|selectattr("protocol", "equalto", "http")|list %}
-{% for host in lb_http %}
-{{host.hostname}}/priv+fullchain.pem {{host.hostname}}
+{% set lb_http = loadbalancer|selectattr("protocol", "equalto", "http")|map(attribute="hostname")|list %}
+{% set lb_redirect = haproxy_redirect_hosts|map(attribute="from")|list %}
+{% for host in lb_http + lb_redirect %}
+{{host}}/priv+fullchain.pem {{host}}
 {% endfor %}

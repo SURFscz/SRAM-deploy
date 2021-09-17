@@ -79,7 +79,7 @@ frontend fe_https
     option  httplog
 
     # redirects
-{% for host in redirect_hosts %}
+{% for host in haproxy_redirect_hosts %}
     http-request redirect prefix https://{{host.to}} code 301 if { hdr(host) -i {{host.from}} }
 {% endfor %}
 
