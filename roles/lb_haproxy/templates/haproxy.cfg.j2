@@ -1,7 +1,5 @@
 {% set lb_http = loadbalancer|selectattr("protocol", "equalto", "http")|list %}
 {% set lb_ldap = loadbalancer|selectattr("protocol", "equalto", "ldap")|list %}
-{# add a "name" atribute to the dict #}
-{% for h in lb_http %}{% set _ = h.update({'name': h['hostname'].split('.')[0]}) %}{% endfor %}
 global
     log /dev/log    local0
     chroot /var/lib/haproxy
