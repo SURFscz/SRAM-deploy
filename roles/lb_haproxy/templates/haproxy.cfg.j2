@@ -47,23 +47,6 @@ defaults
 #--------------------------------------------------------------------
 #  frontend
 # -------------------------------------------------------------------
-frontend stats
-    bind localhost:81
-    mode http
-    stats enable
-    stats uri /
-    stats refresh 10s
-    stats auth admin:{{haproxy_admin_secret}}
-    stats admin if TRUE
-
-frontend stats_ro
-    bind *:8404
-    mode http
-    stats enable
-    stats uri /stats
-    stats refresh 10s
-    stats admin if FALSE
-
 frontend fe_https
 {% if enable_https %}
     bind    *:443 ssl crt-list /etc/haproxy/crt-list.txt transparent alpn h2,http/1.1
@@ -190,3 +173,21 @@ backend proxy_req_rates
 backend proxy_rates
         stick-table type ip size 1m expire 24h store gpc0,gpc0_rate(30s)
 {% endif %}
+
+frontend stats
+    bind localhost:81
+    mode http
+    stats enable
+    stats uri /
+    stats refresh 10s
+    stats auth admin:{{haproxy_admin_secret}}
+    stats admin if TRUE
+
+frontend stats_ro
+    bind *:8404
+    mode http
+    stats enable
+    stats uri /stats
+    stats refresh 10s
+    stats admin if FALSE
+
