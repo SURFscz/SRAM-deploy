@@ -17,6 +17,7 @@ rules:
     max-spaces-after: -1
   comments:
     require-starting-space: no
+  comments-indentation: disable
   colons:
     max-spaces-before: 0
     max-spaces-after: -1
