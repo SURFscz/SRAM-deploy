@@ -1,7 +1,5 @@
 {% set lb_http = loadbalancer|selectattr("protocol", "equalto", "http")|list %}
 {% set lb_ldap = loadbalancer|selectattr("protocol", "equalto", "ldap")|list %}
-{# add a "name" atribute to the dict #}
-{% for h in lb_http %}{% set _ = h.update({'name': h['hostname'].split('.')[0]}) %}{% endfor %}
 global
     log /dev/log    local0
     chroot /var/lib/haproxy
@@ -49,23 +47,6 @@ defaults
 #--------------------------------------------------------------------
 #  frontend
 # -------------------------------------------------------------------
-frontend stats
-    bind localhost:81
-    mode http
-    stats enable
-    stats uri /
-    stats refresh 10s
-    stats auth admin:{{haproxy_admin_secret}}
-    stats admin if TRUE
-
-frontend stats_ro
-    bind *:8404
-    mode http
-    stats enable
-    stats uri /stats
-    stats refresh 10s
-    stats admin if FALSE
-
 frontend fe_https
 {% if enable_https %}
     bind    *:443 ssl crt-list /etc/haproxy/crt-list.txt transparent alpn h2,http/1.1
@@ -79,7 +60,7 @@ frontend fe_https
     option  httplog
 
     # redirects
-{% for host in redirect_hosts %}
+{% for host in haproxy_redirect_hosts %}
     http-request redirect prefix https://{{host.to}} code 301 if { hdr(host) -i {{host.from}} }
 {% endfor %}
 
@@ -151,7 +132,7 @@ backend be_{{host.name}}
     mode    http
     cookie  SERVERID insert indirect maxidle 60m secure httponly nocache
     {% for be_server in host.backend_hosts -%}
-    {% set server_name = be_server.split('.')[0] -%}
+    {% set server_name = be_server.split('.')[0] + ":" + host.backend_port|string -%}
     server {{server_name}} {{be_server}}:{{host.backend_port}} ssl check cookie {{be_server}}
     {% endfor %}
 
@@ -169,7 +150,7 @@ listen ldap_{{name}}_{{host.frontend_port}}
 {% endif %}
 
 {% for be_server in host.backend_hosts %}
-{% set servername = be_server.split('.')[0] %}
+{% set servername = be_server.split('.')[0] + ":" + host.backend_port|string %}
     server {{servername}} {{be_server}}:{{host.backend_port}} ssl check weight 10 {% if loop.index==1 %}on-marked-up shutdown-backup-sessions{%else%}backup{%endif%}
 
 {% endfor %}
@@ -192,3 +173,21 @@ backend proxy_req_rates
 backend proxy_rates
         stick-table type ip size 1m expire 24h store gpc0,gpc0_rate(30s)
 {% endif %}
+
+frontend stats
+    bind localhost:81
+    mode http
+    stats enable
+    stats uri /
+    stats refresh 10s
+    stats auth admin:{{haproxy_admin_secret}}
+    stats admin if TRUE
+
+frontend stats_ro
+    bind *:8404
+    mode http
+    stats enable
+    stats uri /stats
+    stats refresh 10s
+    stats admin if FALSE
+

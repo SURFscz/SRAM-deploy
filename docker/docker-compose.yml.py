@@ -101,7 +101,6 @@ def redis_config(num: int, name: str) -> Dict[str,Any]:
 
     return data
 
-
 # generate the full docker-compose.yml file
 compose: Dict[str, Any] = dict()
 compose['version' ] = '2.4'

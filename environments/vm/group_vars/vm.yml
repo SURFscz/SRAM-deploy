@@ -30,39 +30,48 @@ meta_port: 88
 oidc_op_port: 93
 
 loadbalancer:
-  - hostname: "{{hostnames.sbs}}"
+  - name: "sbs"
+    hostname: "{{hostnames.sbs}}"
     protocol: http
     backend_hosts: "{{groups['vm_sbs']}}"
     backend_port: "{{ sbs_backend_port }}"
-  - hostname: "{{hostnames.meta}}"
+  - name: "meta"
+    hostname: "{{hostnames.meta}}"
     protocol: http
     backend_hosts: "{{groups['vm_meta']}}"
     backend_port: "{{ metadata_backend_port }}"
-  - hostname: "{{hostnames.oidc}}"
+  - name: "client_oidc"
+    hostname: "{{hostnames.oidc}}"
     protocol: http
     backend_hosts: "{{groups['vm_client']}}"
     backend_port: "{{oidc_test_port}}"
-  - hostname: "{{hostnames.sp}}"
+  - name: client_sp"
+    hostname: "{{hostnames.sp}}"
     protocol: http
     backend_hosts: "{{groups['vm_client']}}"
     backend_port: "{{sp_test_port}}"
-  - hostname: "{{hostnames.idp}}"
+  - name: "client_idp"
+    hostname: "{{hostnames.idp}}"
     protocol: http
     backend_hosts: "{{groups['vm_client']}}"
     backend_port: "{{idp_test_port}}"
-  - hostname: "{{hostnames.tfa}}"
+  - name: "client 2fa"
+    hostname: "{{hostnames.tfa}}"
     protocol: http
     backend_hosts: "{{groups['vm_client']}}"
     backend_port: "{{tfa_test_port}}"
-  - hostname: "{{hostnames.oidc_op}}"
+  - name: "client_oidc_op"
+    hostname: "{{hostnames.oidc_op}}"
     protocol: http
     backend_hosts: "{{groups['vm_client']}}"
     backend_port: "{{oidc_op_port}}"
-  - hostname: "{{hostnames.pam}}"
+  - name: "client_pam"
+    hostname: "{{hostnames.pam}}"
     protocol: http
     backend_hosts: "{{groups['vm_ldap']}}"
     backend_port: "{{pam_backend_port}}"
-  - hostname: "{{hostnames.ldap}}"
+  - name: "client_ldap"
+    hostname: "{{hostnames.ldap}}"
     protocol: ldap
     frontend_port: 636
     backend_hosts: "{{groups['vm_ldap']}}"
