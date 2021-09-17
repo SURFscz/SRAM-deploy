@@ -149,7 +149,7 @@ backend be_{{host.name}}
     mode    http
     cookie  SERVERID insert indirect maxidle 60m secure httponly nocache
     {% for be_server in host.backend_hosts -%}
-    {% set server_name = be_server.split('.')[0] -%}
+    {% set server_name = be_server.split('.')[0] + ":" + host.backend_port|string -%}
     server {{server_name}} {{be_server}}:{{host.backend_port}} ssl check cookie {{be_server}}
     {% endfor %}
 
@@ -167,7 +167,7 @@ listen ldap_{{name}}_{{host.frontend_port}}
 {% endif %}
 
 {% for be_server in host.backend_hosts %}
-{% set servername = be_server.split('.')[0] %}
+{% set servername = be_server.split('.')[0] + ":" + host.backend_port|string %}
     server {{servername}} {{be_server}}:{{host.backend_port}} ssl check weight 10 {% if loop.index==1 %}on-marked-up shutdown-backup-sessions{%else%}backup{%endif%}
 
 {% endfor %}
