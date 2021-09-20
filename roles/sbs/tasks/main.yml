@@ -102,32 +102,13 @@
     requirements: "{{ sbs_git_dir }}/server/requirements/test.txt"
   notify: "restart apache"
 
-- name: check for yarn dependencies
-  stat:
-    path: "{{ sbs_git_dir }}/client/node_modules"
-  register: yarn_deps
-
-- name: Install yarn dependancies
-  yarn:
-    executable: "/usr/bin/yarnpkg"
-    path: "{{ sbs_git_dir }}/client"
-  register: yarn_install
-  when: git_apps.changed or not yarn_deps.stat.exists
-
-- name: Build client yarn
-  command:
-    cmd: "yarnpkg --pure-lockfile build"
-    chdir: "{{ sbs_git_dir }}/client"
-  when: git_apps.changed or yarn_install.changed
-
-# yarn install modifies yarn.lock (ARGRGRGR), which dirties the repository and
-# causes git pulls to fail, so clean up yarn's mess manually
-- name: Clear up yarn crap
-  command:
-    cmd: "git checkout client/yarn.lock"
-    chdir: "{{ sbs_git_dir }}"
-  when: yarn_install.changed
-  changed_when: true
+# Deploy SBS client build
+- name: Deploy SBS build
+  ansible.builtin.unarchive:
+    src: >
+      "{{ sbs_repository_base }}/releases/download/
+      {{ sbs_version }}/SBS-client-build-{{ sbs_version }}.tgz"
+    dest: "{{ sbs_git_dir }}/client"
 
 # TODO: draai SBS als non-www-data user
 - name: Create SBS config file
