@@ -103,13 +103,6 @@ feature:
   feedback_enabled: {{ sbs_feedback_enabled }}
   impersonation_allowed: {{ sbs_impersonation_allowed }}
 
-# The retention config determines how long users may be inactive, how long the reminder email is valid and when do we resent the magic link
-retention:
-  allowed_inactive_period_days: 99999
-  reminder_expiry_period_days: 14
-  reminder_resent_period_days: 7
-  cron_hour_of_day: {{ sbs_cron_hour_of_day }}
-  remove_suspended_users_period_days: 540
 
 metadata:
   idp_url: https://metadata.surfconext.nl/edugain-downstream.xml
@@ -141,6 +134,14 @@ user_requests_retention:
   # How long before we delete approved / denied CO requests
   outstanding_coll_request_days_threshold: 90
 
+# The retention config determines how long users may be inactive, how long the reminder email is valid and when do we resent the magic link
+retention:
+  allowed_inactive_period_days: 365
+  reminder_expiry_period_days: 10
+  reminder_resent_period_days: 0
+  cron_hour_of_day: {{ sbs_cron_hour_of_day }}
+  remove_suspended_users_period_days: 90
+
 collaboration_expiration:
   # Do we daily check for CO's that will be deleted because they have been expired?
   enabled: {{ sbs_notifications_enabled }}
@@ -148,16 +149,16 @@ collaboration_expiration:
   # How long after expiration do we actually delete expired collaborations
   expired_collaborations_days_threshold: 90
   # How many days before actual expiration do we mail the organisation members
-  expired_warning_mail_days_threshold: 5
+  expired_warning_mail_days_threshold: 10
 
 collaboration_suspension:
   # Do we daily check for CO's that will be suspended because of inactivity?
   enabled: {{ sbs_notifications_enabled }}
   cron_hour_of_day: {{ sbs_cron_hour_of_day }}
   # After how many days of inactivity do we suspend collaborations
-  collaboration_inactivity_days_threshold: 360
+  collaboration_inactivity_days_threshold: 365
   # How many days before actual suspension do we mail the organisation members
-  inactivity_warning_mail_days_threshold: 5
+  inactivity_warning_mail_days_threshold: 10
   # After how many days after suspension do we actually delete the collaboration
   collaboration_deletion_days_threshold: 90
 
@@ -168,4 +169,4 @@ membership_expiration:
   # How long after expiration do we actually delete expired memberships
   expired_memberships_days_threshold: 90
   # How many days before actual expiration do we mail the co admin and member
-  expired_warning_mail_days_threshold: 14
+  expired_warning_mail_days_threshold: 10
