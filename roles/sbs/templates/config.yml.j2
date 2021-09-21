@@ -25,7 +25,7 @@ oidc:
   userinfo_endpoint: "{{ sbs_oidc_userinfo_endpoint }}"
   jwks_endpoint: "{{ sbs_oidc_jwks_endpoint }}"
   #Note that the paths for these  uri's is hardcoded and only domain and port differ per environment
-  redirect_uri: "{{ sbs_base_url }}api/users/resume-session"
+  redirect_uri: "{{ sbs_base_url }}/api/users/resume-session"
   sfo_eduteams_redirect_uri: "{{ sbs_oidc_sfo_endpoint }}"
   private_rsa_signing_key_path: config/jwt_private_key
   public_rsa_signing_key_path: config/jwt_public_key
@@ -75,7 +75,7 @@ mail:
 
 aup:
   pdf: SURFresearch-Access-Management-AUP-01122019-0001.pdf
-  pdf_link: "{{ sbs_base_url }}static/SURFresearch-Access-Management-AUP-01122019-0001.pdf"
+  pdf_link: "{{ sbs_base_url }}/static/SURFresearch-Access-Management-AUP-01122019-0001.pdf"
   html: SURFresearch-Access-Management-AUP-01122019-0001.html
 
 base_url: {{ sbs_base_url }}
@@ -96,7 +96,7 @@ organisation_categories:
 
 feature:
   admin_users_upgrade: False
-  admin_users_upgrade_url: "{{ sbs_base_url }}api/users/upgrade_super_user"
+  admin_users_upgrade_url: "{{ sbs_base_url }}/api/users/upgrade_super_user"
   admin_users_upgrade_redirect_url: {{ sbs_base_url }}
   seed_allowed: {{ sbs_seed_allowed }}
   api_keys_enabled: {{ sbs_api_keys_enabled }}
