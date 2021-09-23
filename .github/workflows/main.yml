@@ -51,11 +51,11 @@ jobs:
         run: |
           sudo rm -f /opt/pipx_bin/ansible*
           sudo rm -rf /etc/apt/sources.list.d/*
-          sudo add-apt-repository --yes --no-update ppa:ansible/ansible
           sudo apt -q update
           sudo apt -y purge ansible
-          sudo apt -y install ansible-base bridge-utils apparmor-utils
-          sudo pip3 install --upgrade wheel yamllint jinja2 pyyaml selenium zabbix-api
+          sudo apt -y install bridge-utils apparmor-utils
+          sudo pip3 install --upgrade ansible~=4.6.0 wheel \
+                    yamllint jinja2 pyyaml selenium zabbix-api
           git clone https://github.com/dw/mitogen.git ~/mitogen
           cat docker/hosts | sudo tee -a /etc/hosts
 
