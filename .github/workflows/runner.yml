@@ -1,0 +1,28 @@
+---
+# This is a runner workflow
+name: CI-Runner
+
+# Controls when the action will run.
+on:
+  #push:
+  # Triggers the workflow manually
+  workflow_dispatch:
+    inputs:
+      foobar:
+        description: 'my Foobar'
+        required: true
+        default: 'myBar'
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: self-hosted
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Hello World example
+      - name: Hello World
+        run: |
+          touch HelloWorld
+          echo "Hello world ${{ github.event.inputs.foobar }}" >> HelloWorld
