@@ -32,12 +32,14 @@
 
 - name: remove unneccessary packages
   apt:
-    state: absent
-    purge: yes
-    autoremove: yes
-    update_cache: yes
+    state: "absent"
+    purge: true
+    autoremove: true
+    update_cache: true
     name:
-      - unattended-upgrades
+      - "unattended-upgrades"
+      - "cryptsetup"
+      - "cryptsetup-initramfs"
 
 - name: Install common tools / clients
   apt:
