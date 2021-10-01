@@ -1,0 +1,20 @@
+---
+name: CI-Runner
+
+on:
+  # Triggers the workflow manually
+  workflow_dispatch:
+    inputs:
+      foobar:
+        description: 'my Foobar'
+        required: true
+        default: 'myBar'
+
+jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+      - name: Hello World
+        run: |
+          touch HelloWorld
+          echo "Hello world ${{ github.event.inputs.foobar }}" >> HelloWorld
