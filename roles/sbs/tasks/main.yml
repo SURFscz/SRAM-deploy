@@ -1,87 +1,87 @@
 ---
-#- name: Install required packages
-#  apt:
-#    state: present
-#    name:
-#      - yarnpkg
-#      - nodejs
-#      - build-essential
-#      - python3
-#      - python3-dev
-#      - python3-virtualenv
-#      - python3-setuptools
-#      - python-setuptools
-#      - python-pymysql
-#      - python3-pymysql
-#      - virtualenv
-#      - python3-distutils
-#      - libapache2-mod-wsgi-py3
-#      - mariadb-client
-#
-#- name: Remove obsolete packages
-#  apt:
-#    state: absent
-#    name:
-#      - libapache2-mod-auth-openidc
-#  notify: "restart apache"
-#
-#- name: Enable correct apache modules
-#  apache2_module:
-#    state: "{{ item.value }}"
-#    name: "{{ item.key }}"
-#    ignore_configcheck: True
-#  with_dict:
-#    wsgi: present
-#  notify: "restart apache"
-#
-#- name: Configure Apache vhost
-#  template:
-#    src: sbs.conf.j2
-#    dest: /etc/apache2/sites-enabled/sbs.conf
-#  notify: "restart apache"
-#
-#- name: Comment MinProtocol in openssl.conf on dockers
-#  replace:
-#    path: /etc/ssl/openssl.cnf
-#    regexp: '(^MinProtocol.*)'
-#    replace: '#\1'
-#  when: environment_name=="vm"
-#
-#- name: Install database certificate
-#  copy:
-#    dest: "{{sbs_db_cert_path}}"
-#    content: "{{ sbs_db_tls_cert }}"
-#
-#- name: Initialialize database
-#  throttle: 1
-#  block:
-#    - name: Add SBS database
-#      community.mysql.mysql_db:
-#        login_host: '{{ db_host }}'
-#        login_user: '{{ db_admin_user }}'
-#        login_password: '{{ db_admin_password }}'
-#        name: '{{ sbs_db_name }}'
-#        encoding: 'utf8'
-#        ca_cert: "{{sbs_db_cert_path}}"
-#
-#    - name: Add SBS user
-#      community.mysql.mysql_user:
-#        login_host: '{{ db_host }}'
-#        login_user: '{{ db_admin_user }}'
-#        login_password: '{{ db_admin_password }}'
-#        name: '{{ item.user }}'
-#        host: '{{ ansible_default_ipv4.address }}'
-#        password: '{{ item.passwd }}'
-#        priv: '{{ sbs_db_name }}.*:{{ item.perm }}'
-#        ca_cert: "{{sbs_db_cert_path}}"
-#      with_items:
-#        - user: "{{ sbs_db_user }}"
-#          passwd: "{{ sbs_db_password }}"
-#          perm: "ALL"
-#        - user: "{{ sbs_dbbackup_user }}"
-#          passwd: "{{ sbs_dbbackup_password }}"
-#          perm: "SELECT,SHOW VIEW,EVENT,TRIGGER"
-#      no_log: "{{sram_ansible_nolog}}"
+- name: Install required packages
+  apt:
+    state: present
+    name:
+      - yarnpkg
+      - nodejs
+      - build-essential
+      - python3
+      - python3-dev
+      - python3-virtualenv
+      - python3-setuptools
+      - python-setuptools
+      - python-pymysql
+      - python3-pymysql
+      - virtualenv
+      - python3-distutils
+      - libapache2-mod-wsgi-py3
+      - mariadb-client
+
+- name: Remove obsolete packages
+  apt:
+    state: absent
+    name:
+      - libapache2-mod-auth-openidc
+  notify: "restart apache"
+
+- name: Enable correct apache modules
+  apache2_module:
+    state: "{{ item.value }}"
+    name: "{{ item.key }}"
+    ignore_configcheck: True
+  with_dict:
+    wsgi: present
+  notify: "restart apache"
+
+- name: Configure Apache vhost
+  template:
+    src: sbs.conf.j2
+    dest: /etc/apache2/sites-enabled/sbs.conf
+  notify: "restart apache"
+
+- name: Comment MinProtocol in openssl.conf on dockers
+  replace:
+    path: /etc/ssl/openssl.cnf
+    regexp: '(^MinProtocol.*)'
+    replace: '#\1'
+  when: environment_name=="vm"
+
+- name: Install database certificate
+  copy:
+    dest: "{{sbs_db_cert_path}}"
+    content: "{{ sbs_db_tls_cert }}"
+
+- name: Initialialize database
+  throttle: 1
+  block:
+    - name: Add SBS database
+      community.mysql.mysql_db:
+        login_host: '{{ db_host }}'
+        login_user: '{{ db_admin_user }}'
+        login_password: '{{ db_admin_password }}'
+        name: '{{ sbs_db_name }}'
+        encoding: 'utf8'
+        ca_cert: "{{sbs_db_cert_path}}"
+
+    - name: Add SBS user
+      community.mysql.mysql_user:
+        login_host: '{{ db_host }}'
+        login_user: '{{ db_admin_user }}'
+        login_password: '{{ db_admin_password }}'
+        name: '{{ item.user }}'
+        host: '{{ ansible_default_ipv4.address }}'
+        password: '{{ item.passwd }}'
+        priv: '{{ sbs_db_name }}.*:{{ item.perm }}'
+        ca_cert: "{{sbs_db_cert_path}}"
+      with_items:
+        - user: "{{ sbs_db_user }}"
+          passwd: "{{ sbs_db_password }}"
+          perm: "ALL"
+        - user: "{{ sbs_dbbackup_user }}"
+          passwd: "{{ sbs_dbbackup_password }}"
+          perm: "SELECT,SHOW VIEW,EVENT,TRIGGER"
+      no_log: "{{sram_ansible_nolog}}"
 
 - name: Clone SBS repository
   git:
