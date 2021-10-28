@@ -51,7 +51,7 @@ def host_config(num: int, name: str) -> Dict[str, Any]:
         'test': [ 'CMD', '/usr/bin/test', '!', '-e', '/etc/nologin' ],
         'interval': '5s',
         'timeout': '1s',
-        'retries': '1',
+        'retries': 1,
         'start_period': '0s'
     }
 
@@ -73,7 +73,7 @@ def mail_config(num: int, name: str) -> Dict[str,Any]:
         'test': [ 'CMD', '/usr/bin/test', '!', '-e', '/etc/nologin' ],
         'interval': '5s',
         'timeout': '1s',
-        'retries': '1',
+        'retries': 1,
         'start_period': '0s'
     }
 
@@ -95,7 +95,7 @@ def redis_config(num: int, name: str) -> Dict[str,Any]:
         'test': [ 'CMD', '/usr/bin/test', '!', '-e', '/etc/nologin' ],
         'interval': '5s',
         'timeout': '1s',
-        'retries': '1',
+        'retries': 1,
         'start_period': '0s'
     }
 
