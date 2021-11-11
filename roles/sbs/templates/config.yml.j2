@@ -1,5 +1,5 @@
 database:
-  uri: "mysql+pymysql://{{ sbs_db_user }}:{{ sbs_db_password }}@{{ db_host }}/{{ sbs_db_name }}?ssl=true&ssl_ca={{sbs_db_cert_path}}"
+  uri: "mysql+pymysql://{{ sbs_db_user }}:{{ sbs_db_password }}@{{ db_host }}/{{ sbs_db_name }}?ssl=true&ssl_ca={{sbs_db_cert_path}}&charset=utf8mb4"
 
 redis:
   host: "{{sbs_redis_host}}"
