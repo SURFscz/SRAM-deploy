@@ -122,6 +122,8 @@
   yarn:
     executable: "/usr/bin/yarnpkg"
     path: "{{ sbs_git_dir }}/client"
+  environment:
+    NODE_PATH: /usr/lib/nodejs:/usr/share/nodejs
   register: yarn_install
   when: git_apps.changed or not yarn_deps.stat.exists
 
