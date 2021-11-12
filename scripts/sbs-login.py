@@ -23,16 +23,16 @@ try:
     wait.until(title_is('Research Access Management'), 'Timeout waiting for landing page')
 
     # Click login
-    login = browser.find_element_by_xpath("//a[@href='/Login' and text()='Login']")
+    login = browser.find_element(By.XPATH, "//a[@href='/Login' and text()='Login']")
     login.click()
 
     # Wait for login button to disappear
     wait.until(staleness_of(login), 'Timeout waiting for login page')
 
     # Login as admin
-    browser.find_element_by_id('username').send_keys('admin')
-    browser.find_element_by_id('password').send_keys('admin')
-    browser.find_element_by_tag_name('form').submit()
+    browser.find_element(By.ID, 'username').send_keys('admin')
+    browser.find_element(By.ID, 'password').send_keys('admin')
+    browser.find_element(By.TAG_NAME, 'form').submit()
 
     # Wait for user profile to appear
     wait.until(presence_of_element_located((By.XPATH, "//div[@class='user']/span")), 'Timeout waiting for SBS')
@@ -50,7 +50,7 @@ try:
     '''
 
     # Test admin attributes
-    attributes = browser.find_elements_by_xpath("//div[@class='user']/span")
+    attributes = browser.find_elements(By.XPATH, "//div[@class='user']/span")
     assert('SCZ Admin' in [a.text for a in attributes]), "No valid admin profile found"
 
     # Close browser
