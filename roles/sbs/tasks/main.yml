@@ -129,6 +129,8 @@
   command:
     cmd: "yarnpkg --pure-lockfile build"
     chdir: "{{ sbs_git_dir }}/client"
+  environment:
+    NODE_PATH: "/usr/lib/nodejs:/usr/share/nodejs"
   when: git_apps.changed or yarn_install.changed
 
 # yarn install modifies yarn.lock (ARGRGRGR), which dirties the repository and
