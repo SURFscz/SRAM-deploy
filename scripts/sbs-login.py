@@ -14,6 +14,7 @@ browser = Chrome(options=options)
 wait = WebDriverWait(browser, timeout=2)
 
 start = 'https://sbs.scz-vm.net/landing'
+profile = 'https://sbs.scz-vm.net/profile'
 
 try:
     # Start browser
@@ -35,22 +36,24 @@ try:
     browser.find_element(By.TAG_NAME, 'form').submit()
 
     # Wait for user profile to appear
-    wait.until(presence_of_element_located((By.XPATH, "//div[@class='user']/span")), 'Timeout waiting for SBS')
+    wait.until(presence_of_element_located((By.XPATH, "//label[@for='aup']")), 'Timeout waiting for AUP')
 
-    '''
-    browser.find_element_by_id('aup').click()
-    browser.find_element_by_xpath("//a[text()='Store decision and continue']").click()
+    browser.find_element(By.XPATH, "//div[@class='checkbox']").click()
+    browser.find_element(By.XPATH, "//a[text()='Looks good, onwards']").click()
 
-    # Test SBS title
-    title = browser.title
-    assert(title == "Research Access Management"), "Error loading SBS return url"
+    # Wait for landing page
+    wait.until(presence_of_element_located((By.XPATH, "//div[@class='drop-down ugly']")), 'Timeout waiting for Welcome')
 
-    # Find profile
-    #profile = browser.find_element_by_xpath("//li[@class='user-profile']/a/span").click()
-    '''
+    # Visit Profile
+    browser.get(profile)
+
+    # Wait for Profile to load
+    wait.until(presence_of_element_located((By.XPATH, "//div[@class='user-profile-tab']")), 'Timeout waiting for Profile')
 
     # Test admin attributes
-    attributes = browser.find_elements(By.XPATH, "//div[@class='user']/span")
+    attributes = browser.find_elements(By.XPATH, "//div[@class='user-profile-tab']/*/*")
+    # for a in attributes:
+    #     print(f"a.text: {a.text}")
     assert('SCZ Admin' in [a.text for a in attributes]), "No valid admin profile found"
 
     # Close browser
@@ -61,7 +64,6 @@ except Exception as e:
     url = browser.current_url
     print(f"url: {url}")
     page = browser.page_source
-    print(f"page: {page}")
+    # print(f"page: {page}")
     browser.close()
     exit(e)
-
