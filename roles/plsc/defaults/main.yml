@@ -7,6 +7,8 @@ plsc_repo_url: "https://github.com/SURFscz/plsc.git"
 plsc_repo_version: "master"
 plsc_dir: "/opt/plsc"
 
+plsc_interval_seconds: 120
+
 scz_repo:
   plsc:
     name: "pLSC"

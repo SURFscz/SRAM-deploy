@@ -1,7 +1,17 @@
 ---
+- name: "Install node repository key"
+  apt_key:
+    id: "9FD3B784BC1C6FC31A8A0A1C1655A0AB68576280"
+    url: "https://deb.nodesource.com/gpgkey/nodesource.gpg.key"
+
+- name: "Install node repository"
+  apt_repository:
+    repo: "deb https://deb.nodesource.com/node_12.x buster main"
+    state: "present"
+
 - name: Install required packages
   apt:
-    state: present
+    state: "latest"
     name:
       - yarnpkg
       - nodejs
@@ -61,7 +71,8 @@
         login_user: '{{ db_admin_user }}'
         login_password: '{{ db_admin_password }}'
         name: '{{ sbs_db_name }}'
-        encoding: 'utf8'
+        encoding: 'utf8mb4'
+        collation: 'utf8mb4_unicode_ci'
         ca_cert: "{{sbs_db_cert_path}}"
 
     - name: Add SBS user

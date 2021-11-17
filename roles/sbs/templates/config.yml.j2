@@ -1,5 +1,5 @@
 database:
-  uri: "mysql+pymysql://{{ sbs_db_user }}:{{ sbs_db_password }}@{{ db_host }}/{{ sbs_db_name }}?ssl=true&ssl_ca={{sbs_db_cert_path}}"
+  uri: "mysql+pymysql://{{ sbs_db_user }}:{{ sbs_db_password }}@{{ db_host }}/{{ sbs_db_name }}?ssl=true&ssl_ca={{sbs_db_cert_path}}&charset=utf8mb4"
 
 redis:
   host: "{{sbs_redis_host}}"
@@ -25,7 +25,7 @@ oidc:
   userinfo_endpoint: "{{ sbs_oidc_userinfo_endpoint }}"
   jwks_endpoint: "{{ sbs_oidc_jwks_endpoint }}"
   #Note that the paths for these  uri's is hardcoded and only domain and port differ per environment
-  redirect_uri: "{{ sbs_base_url }}api/users/resume-session"
+  redirect_uri: "{{ sbs_base_url }}/api/users/resume-session"
   sfo_eduteams_redirect_uri: "{{ sbs_oidc_sfo_endpoint }}"
   private_rsa_signing_key_path: config/jwt_private_key
   public_rsa_signing_key_path: config/jwt_public_key
@@ -74,9 +74,9 @@ mail:
   environment: "{{ base_domain }}"
 
 aup:
-  pdf: SURFresearch-Access-Management-AUP-01122019-0001.pdf
-  pdf_link: "{{ sbs_base_url }}static/SURFresearch-Access-Management-AUP-01122019-0001.pdf"
-  html: SURFresearch-Access-Management-AUP-01122019-0001.html
+  version: 1
+  url_aup_en: https://wiki.surfnet.nl/display/SRAM/Acceptable+Use+Policy
+  url_aup_nl: https://wiki.surfnet.nl/display/SRAM/Acceptable+Use+Policy
 
 base_url: {{ sbs_base_url }}
 base_server_url: {{ sbs_base_url }}
@@ -96,20 +96,13 @@ organisation_categories:
 
 feature:
   admin_users_upgrade: False
-  admin_users_upgrade_url: "{{ sbs_base_url }}api/users/upgrade_super_user"
+  admin_users_upgrade_url: "{{ sbs_base_url }}/api/users/upgrade_super_user"
   admin_users_upgrade_redirect_url: {{ sbs_base_url }}
   seed_allowed: {{ sbs_seed_allowed }}
   api_keys_enabled: {{ sbs_api_keys_enabled }}
   feedback_enabled: {{ sbs_feedback_enabled }}
   impersonation_allowed: {{ sbs_impersonation_allowed }}
 
-# The retention config determines how long users may be inactive, how long the reminder email is valid and when do we resent the magic link
-retention:
-  allowed_inactive_period_days: 99999
-  reminder_expiry_period_days: 14
-  reminder_resent_period_days: 7
-  cron_hour_of_day: {{ sbs_cron_hour_of_day }}
-  remove_suspended_users_period_days: 540
 
 metadata:
   idp_url: https://metadata.surfconext.nl/edugain-downstream.xml
@@ -141,6 +134,14 @@ user_requests_retention:
   # How long before we delete approved / denied CO requests
   outstanding_coll_request_days_threshold: 90
 
+# The retention config determines how long users may be inactive, how long the reminder email is valid and when do we resent the magic link
+retention:
+  allowed_inactive_period_days: 99999
+  reminder_expiry_period_days: 10
+  reminder_resent_period_days: 0
+  cron_hour_of_day: {{ sbs_cron_hour_of_day }}
+  remove_suspended_users_period_days: 90
+
 collaboration_expiration:
   # Do we daily check for CO's that will be deleted because they have been expired?
   enabled: {{ sbs_notifications_enabled }}
@@ -148,16 +149,16 @@ collaboration_expiration:
   # How long after expiration do we actually delete expired collaborations
   expired_collaborations_days_threshold: 90
   # How many days before actual expiration do we mail the organisation members
-  expired_warning_mail_days_threshold: 5
+  expired_warning_mail_days_threshold: 10
 
 collaboration_suspension:
   # Do we daily check for CO's that will be suspended because of inactivity?
   enabled: {{ sbs_notifications_enabled }}
   cron_hour_of_day: {{ sbs_cron_hour_of_day }}
   # After how many days of inactivity do we suspend collaborations
-  collaboration_inactivity_days_threshold: 360
+  collaboration_inactivity_days_threshold: 365
   # How many days before actual suspension do we mail the organisation members
-  inactivity_warning_mail_days_threshold: 5
+  inactivity_warning_mail_days_threshold: 10
   # After how many days after suspension do we actually delete the collaboration
   collaboration_deletion_days_threshold: 90
 
@@ -168,4 +169,4 @@ membership_expiration:
   # How long after expiration do we actually delete expired memberships
   expired_memberships_days_threshold: 90
   # How many days before actual expiration do we mail the co admin and member
-  expired_warning_mail_days_threshold: 14
+  expired_warning_mail_days_threshold: 10

@@ -92,13 +92,13 @@ do
         break
     fi
 done
-if [ -n "$MITOGEN_PATH" ]
+if [ -n "$MITOGEN_PATH" ] && ! ansible --version|head -1|grep -q 2.11
 then
     echo "Found Mitogen at $MITOGEN_PATH"
     export ANSIBLE_STRATEGY_PLUGINS=$MITOGEN_PATH/$MITOGEN_SUBPATH/
     export ANSIBLE_STRATEGY=mitogen_linear
 else
-    echo "Mitogen not found; falling back to default ansible ssh"
+    echo "Mitogen not found or incompatibe Ansible version; falling back to default ansible ssh"
 fi
 
 echo "Starting ansible"

@@ -75,6 +75,12 @@
 - include_role:
     name: "community.zabbix.zabbix_web"
 
+- name: "increase zabbix cache size"
+  lineinfile:
+    path: "/etc/zabbix/zabbix_server.conf.d/99-zabbix-sram.conf"
+    create: true
+    line: "CacheSize=64M"
+
 # workaround for https://github.com/ansible-collections/community.zabbix/issues/425
 - name: "fix nginx access to fpm socket"
   user:
