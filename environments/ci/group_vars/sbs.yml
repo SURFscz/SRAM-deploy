@@ -8,21 +8,17 @@ firewall_v4_incoming:
 sbs_repository: "{{scz_repo.sbs.src}}"
 sbs_version: "{{scz_repo.sbs.version}}"
 
-sbs_urn_namespace: "urn:mace:surf.nl:x-sram-vm"
-sbs_eppn_scope: "scz-vm.net"
+sbs_urn_namespace: "urn:mace:surf.nl:x-sram-ci"
+sbs_eppn_scope: "ci-runner.sram.surf.nl"
 
-sbs_oidc_authz_endpoint: "https://{{ hostnames.oidc_op }}/authorization"
-sbs_oidc_token_endpoint: "https://{{ hostnames.oidc_op }}/token"
-sbs_oidc_userinfo_endpoint: "https://{{ hostnames.oidc_op }}/userinfo"
-sbs_oidc_jwks_endpoint: "https://{{ hostnames.oidc_op }}/jwks.json"
+sbs_oidc_authz_endpoint: "https://{{ hostnames.oidc_op }}/saml2sp/OIDC/authorization"
+sbs_oidc_token_endpoint: "https://{{ hostnames.oidc_op }}/OIDC/token"
+sbs_oidc_userinfo_endpoint: "https://{{ hostnames.oidc_op }}/OIDC/userinfo"
+sbs_oidc_jwks_endpoint: "https://{{ hostnames.oidc_op }}/OIDC/jwks"
 sbs_oidc_redirect_uri: "https://{{ hostnames.sbs }}/api/users/resume-session"
 sbs_oidc_sfo_endpoint: "https://{{ hostnames.oidc_op }}/sfo"
-sbs_eduteams_continue_endpoint: "https://{{ hostnames.oidc_op }}/continue"
 sbs_oidc_jwt_audience: "https://{{ hostnames.oidc_op }}"
 
-sbs_ldap_url: "ldap://ldap.example.com/dc=example,dc=com"
-# entity_id will be replaced run-time in the client
-sbs_ldap_bind_account: "cn=admin,dc=entity_id,dc=services,dc=sram-tst,dc=surf,dc=nl"
 
 sbs_db_tls_cert: "{{wildcard_backend_cert.pub}}"
 
@@ -33,7 +29,7 @@ sbs_feedback_enabled: True
 sbs_audit_trail_notifications_enabled: True
 sbs_send_exceptions: False
 sbs_send_js_exceptions: False
-sbs_second_factor_authentication_required: True
-sbs_totp_token_name: "SRAM-VM"
+sbs_second_factor_authentication_required: False
+sbs_totp_token_name: "SRAM-CI"
 sbs_notifications_enabled: True
 sbs_impersonation_allowed: True

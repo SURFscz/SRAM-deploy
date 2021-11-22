@@ -1,0 +1,143 @@
+---
+ansible_ssh_common_args: '-o StrictHostKeyChecking=false'
+# note: {{playbook_dir}} would probably be nicer, but it turns out that that is
+# a relative path, which ssh doesn't understand
+ansible_ssh_user: "ansible"
+ansible_ssh_private_key_file: "{{inventory_dir}}/../../docker/ansible_key"
+
+secrets_file: "environments/vm/secrets/all.yml"
+secrets_users_file: "environments/vm/secrets/users.yml"
+
+admin_email: "admin@{{base_domain}}"
+
+is_aws: false
+experimental_features: true
+
+servers:
+  dns:
+    - 8.8.8.8
+  search:
+    - vm.scz-vm.net
+  ntp:
+    - 0.pool.ntp.org
+    - 1.pool.ntp.org
+    - 2.pool.ntp.org
+    - 3.pool.ntp.org
+  ping:
+    - "127.0.0.1"
+
+fake_hostnames: true
+use_logserver: false
+
+enable_https: true
+http_proto: "http{% if enable_https %}s{% endif %}"
+
+use_fixed_cert: true
+cert_dir: "/etc/ssl/scz"
+
+# onderstaande is breekbaar; ansible_default_ipv4 kan best een dhcp-ip zijn
+# dat niet in de inventory is gedefinieerd. (afhankelijk van je configuratie
+# van libvirt etc)
+iprange:
+  vm:
+    - "172.20.1.0/24"
+    - "10.0.0.0/16"
+    - "192.168.121.0/24"
+  bastion:    "172.20.1.1"
+  lb:         "172.20.1.24"
+  #comanage:   "172.20.1.21"
+  mgnt:       "172.20.1.0/24"
+  internal:   "172.20.1.0/24"
+  monitoring: "172.20.1.29/32"
+
+mail:
+  relay_host: "172.20.1.1"
+  relay_to: "mail.vm.{{base_domain}}"
+  relay_port: 1025
+  relay_for:
+    - "{{iprange.mgnt}}"
+  domain: "{{base_domain}}"
+  admin_address: "root@{{base_domain}}"
+
+admin:
+  fn: "B."
+  sn: "Baas"
+  eppn: "admin@{{base_domain}}"
+  email: "{{admin_email}}"
+  sho: "{{base_domain}}"
+
+# versions
+# yamllint disable rule:line-length
+scz_repo:
+  pyff:      { name: "pyFF",                   version: "1.1.5",      src: "https://github.com/IdentityPython/pyFF.git"                    }
+  sbs:       { name: "SBS",                    version: "main",       src: "https://github.com/SURFscz/SBS.git"                            }
+  plsc:      { name: "pLSC",                   version: "main",       src: "https://github.com/SURFscz/plsc.git"                           }
+# yamllint enable rule:line-length
+
+# poor man's user management
+root:
+  pw_hash: "$6$rounds=500000$AtgwpGVMAm0fyIf$g4JqeEu8O//KsklaqIEJX6UnQgEtrMTrZdNcp/v/O/G75BjISGZINC\
+            rJ0JREkKficMZV5IsdshT9cVACb0cxR1"
+users:
+  - name: SCZ
+    uid: scz
+    groups: ['scz','sudo_test','sudo_mgnt','systemd-journal']
+    # password 'scz'
+    pw_hash: "$6$rounds=500000$OOIfLX7bEQus$krZ/mSucwYN5dK25FlrvxmkMfUa4R585tXwihZFDWbXUVSJXymIeJpq\
+              pRvP88TEgaNAXrKMD9qbWYvnSLeDOe."
+    sshkey: ""
+
+removed_users: []
+
+firewall_v4_incoming:
+  - { name: bastion,  src: "{{iprange.bastion}}",    dport: "22,80,443", proto: tcp }
+  - { name: vnet,     src: "{{iprange.internal}}",   dport: "22,80,443", proto: tcp }
+  - { name: zabbix,   src: "{{iprange.monitoring}}", dport: "10050",     proto: tcp }
+
+backup_base: "/opt/backups"
+backup_runparts: "{{backup_base}}/run.d"
+
+ssl_certs_dir: "/etc/ssl"
+
+services_ldap:
+  host:   "{{ groups['ldap'][0] }}"
+  basedn: "dc=services,dc=vnet"
+  o:      "Services"
+  binddn: "cn=admin,dc=services,dc=vnet"
+
+db_host: "{{ groups['db'][0] }}"
+sbs_db_name: "sbs"
+sbs_db_user: "sbs"
+
+sbs_client_id: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          39373838613730383538383138663537373430333866343632386466313662633036653335623433
+          3138326230353039386537356666326236336332346263350a626561356436613063323161353264
+          38646262396332383332303539393665666164333763646231393939396135636564613161656663
+          6564346138646433320a343964616362653662333062633764666239303338383137616633346337
+          37623136653764613864616362393866623332383334356163323965613065613232343931326263
+          3864613231396166363237656261393630616330346263316362
+sbs_base_url: "https://sbs.{{ internal_base_domain }}"
+
+# Redis
+sbs_redis_host: "redis.vm.scz-vm.net"
+sbs_redis_port: 6379
+
+# Docker ports
+docker_ports:
+  sbs: 8321
+
+# Enable SBS deploy
+sbs_enabled: true
+sbs_api_url: "{{ http_proto }}://{{ hostnames.sbs }}/"
+
+# No Zabbix on VM/Travis
+zabbix_enabled: false
+
+journal_upload_host: "bhr.vm.scz-vm.net"
+
+zabbix_api_url: "https://bhr.vm.scz-vm.net:443/"
+zabbix_api_user: "ansible_api"
+zabbix_api_password: "geheim_api_password"
+zabbix_server: "bhr.vm.scz-vm.net"
+zabbix_validate_certs: no

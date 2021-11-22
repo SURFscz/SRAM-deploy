@@ -11,9 +11,20 @@ on:
         default: 'myBar'
 
 jobs:
-  build:
-    runs-on: self-hosted
-    steps:
+  test:
+    runs-on: self-hosted		    runs-on: self-hosted
+    steps:		    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout $GITHUB_WORKSPACE
+        uses: actions/checkout@v2
+
+      # Decrypt secret
+      - name: Copy secret
+        shell: bash
+        env:
+          secret_vm: ${{ secrets.SECRET_VM }}
+        run: "echo $secret_vm > secret_vm"
+
       - name: Hello World
         run: |
           touch HelloWorld
