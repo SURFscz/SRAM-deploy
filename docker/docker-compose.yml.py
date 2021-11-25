@@ -16,15 +16,19 @@ hosts = {
     'sbs':      27,
     'db':       28,
 }
-if not ci_enabled:
-    hosts |= {
+if ci_enabled:
+    hosts.update({
+        'test':     30,
+    })
+else:
+    hosts.update({
         'ldap1':    20,
         'ldap2':    21,
         'meta':     23,
         'client':   25,
         'sandbox1': 26,
         'bhr':      29,
-    }
+    })
 
 # these are the hostnames of virtual hosts on the loadbalancer
 logical_hosts = [
@@ -34,12 +38,11 @@ logical_hosts = [
     'oidc-op',
 ]
 
-
 extra_options = {}
 if ci_enabled:
     extra_options = {
         'sbs': {
-            'depends_on': [ 'db', 'redis' ]
+            'depends_on': [ 'db', 'redis', 'test' ]
         },
     }
 
@@ -143,12 +146,12 @@ compose['networks'] = {
 }
 compose['services'] = { h: host_config(ip, h) for h, ip in hosts.items() }
 
+# Add redis host on .98
+compose['services']['redis'] = redis_config(98, 'redis')
+
 # Add mail test host on .99
 if not ci_enabled:
     compose['services']['mail'] = mail_config(99, 'mail')
-
-# Add redis host on .98
-compose['services']['redis'] = redis_config(98, 'redis')
 
 # dump the yaml
 print("---")

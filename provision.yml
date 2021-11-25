@@ -147,3 +147,9 @@
 #  roles:
 #    - { role: pam_websso,         tags: ['client','pam-websso'], when: experimental_features }
 
+- name: "test"
+  hosts: test
+  tasks:
+    - { import_tasks: "tasks/versions.yml", tags: ['common']  }
+  roles:
+    - { role: ci-test,                      tags: ['ci-test'] }
