@@ -123,9 +123,9 @@ $meta->requested_scope = $scope;
 $meta->resultant_scope = $resultant_scope;
 $meta->requested_claims = $request_claims;
 
-echo "ID_TOKEN\n<pre id=result>" . json_encode($id_token, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "</pre>\n";
-echo "ACCESS_TOKEN\n<pre id=result>" . json_encode($access_token, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "</pre>\n";
-echo "USER_INFO\n<pre id=userinfo>" . json_encode($userinfo, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "</pre>\n";
+echo "ID_TOKEN\n<pre id=id_token>" . json_encode($id_token, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "</pre>\n";
+echo "ACCESS_TOKEN\n<pre id=access_token>" . json_encode($access_token, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "</pre>\n";
+echo "USER_INFO\n<pre id=user_info>" . json_encode($userinfo, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "</pre>\n";
 echo "META\n<pre id=meta>" . json_encode($meta, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "</pre>\n";
 ?>
 <form method="POST"><input type="submit" name="reset"  value="Reset"></form>
