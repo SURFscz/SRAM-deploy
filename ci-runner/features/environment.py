@@ -11,6 +11,14 @@ def selenium_browser_chrome(context):
     options.headless = True
     #options.add_argument('--ignore-certificate-errors')
     #options.add_argument('--user-data-dir=/tmp/chrome-data')
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-setuid-sandbox")
+    options.add_argument("--remote-debugging-port=9222")  # this
+    options.add_argument("--disable-dev-shm-using")
+    options.add_argument("--disable-extensions")
+    options.add_argument("--disable-gpu")
+    options.add_argument("start-maximized")
+    options.add_argument("disable-infobars")
     context.browser = Chrome(options=options)
     context.browser.implicitly_wait(3)
     context.wait = WebDriverWait(context.browser, timeout=3)

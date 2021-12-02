@@ -29,3 +29,12 @@ jobs:
         run: |
           touch HelloWorld
           echo "Hello world ${{ github.event.inputs.foobar }}" >> HelloWorld
+
+      - name: Bootstrap virtualenv in ci-runner
+        run: |
+          python3 -m virtualenv --python=python3 ci-runner
+          ci-runner/bin/pip install -r ci-runner/requirements.txt
+
+      - name: Run tests
+        run: |
+          ci-runner/bin/behave ci-runner/features/
