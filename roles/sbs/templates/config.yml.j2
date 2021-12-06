@@ -170,3 +170,7 @@ membership_expiration:
   expired_memberships_days_threshold: 90
   # How many days before actual expiration do we mail the co admin and member
   expired_warning_mail_days_threshold: 10
+
+ldap:
+  url: "{{ sbs_ldap_url }}"
+  bind_account: "{{ sbs_ldap_bind_account }}"
