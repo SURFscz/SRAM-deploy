@@ -18,7 +18,11 @@ sbs_oidc_jwks_endpoint: "https://{{ hostnames.oidc_op }}/OIDC/jwks"
 sbs_oidc_redirect_uri: "https://{{ hostnames.sbs }}/api/users/resume-session"
 sbs_oidc_sfo_endpoint: "https://{{ hostnames.oidc_op }}/sfo"
 sbs_oidc_jwt_audience: "https://{{ hostnames.oidc_op }}"
+sbs_eduteams_continue_endpoint: "https://proxy.acc.sram.eduteams.org/continue"
 
+sbs_ldap_url: "ldap://ldap.example.com/dc=example,dc=com"
+# entity_id will be replaced run-time in the client
+sbs_ldap_bind_account: "cn=admin,dc=entity_id,dc=services,dc=sram-tst,dc=surf,dc=nl"
 
 sbs_db_tls_cert: "{{wildcard_backend_cert.pub}}"
 
