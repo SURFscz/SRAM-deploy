@@ -168,7 +168,8 @@ ci_rp = Service(
     public_visible=True,
     automatic_connection_allowed=True,
     logo=roadrunner,
-    accepted_user_policy=\"https://google.nl\",
+    # If we add aup, the user will see the aup screen in SBS
+    #accepted_user_policy=\"https://google.nl\",
     privacy_policy=\"https://google.nl\",
     allowed_organisations=[ci_org],
     abbreviation=\"ci-org\"
