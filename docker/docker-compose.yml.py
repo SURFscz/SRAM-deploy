@@ -25,6 +25,7 @@ else:
         'ldap1':    20,
         'ldap2':    21,
         'meta':     23,
+        'lb':       24,
         'client':   25,
         'sandbox1': 26,
         'bhr':      29,
@@ -42,7 +43,8 @@ extra_options = {}
 if ci_enabled:
     extra_options = {
         'sbs': {
-            'depends_on': [ 'db', 'redis', 'test' ]
+            'depends_on': [ 'db', 'redis', 'test' ],
+            'volumes': ['../ci-runner:/tmp/ci-runner'],
         },
     }
 
@@ -75,7 +77,7 @@ def host_config(num: int, name: str) -> Dict[str, Any]:
         'retries': 1,
         'start_period': '0s'
     }
-    
+
     if extra_options.get(name):
         for key, value in extra_options[name].items():
             if data.get(key):

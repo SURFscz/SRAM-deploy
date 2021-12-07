@@ -44,6 +44,19 @@ jobs:
           python3 -m virtualenv --python=python3 ci-runner
           ci-runner/bin/pip install -r ci-runner/requirements.txt
 
+      - name: Render seed.py secrets
+        env:
+          app_id: ${{secrets.CI_APP_ID}}
+          admin_uid: ${{secrets.CI_ADMIN_UID}}
+          student_uid: ${{secrets.CI_STUDENT_UID}}
+        run: |
+          eval "echo \"$(<ci-runner/seed.py.in)\"" > ci-runner/seed.py
+          chmod 755 ci-runner/seed.py
+
+      - name: Seed SBS
+        run: |
+          docker exec docker-sbs-1 /tmp/ci-runner/seed.py
+
       - name: Run tests
         run: |
           ci-runner/bin/behave ci-runner/features/
