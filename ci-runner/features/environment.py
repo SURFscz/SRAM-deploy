@@ -39,4 +39,4 @@ def before_scenario(context, scenario):
 def after_step(context, step):
     if step.status == "failed":
         print(context.browser.current_url)
-        #print(context.browser.page_source)
+        print(context.browser.page_source)
