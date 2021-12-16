@@ -39,13 +39,13 @@
   become_user: "{{ ldap_user }}"
   become: true
   template:
-    src: "{{ item.src }}"
-    dest: "{{ ldap_ldif_dir }}/{{ item.dest }}"
+    src: "{{ item }}.j2"
+    dest: "{{ ldap_ldif_dir }}/{{ item }}"
     mode: 0644
   with_items:
-    - { src: "set_loglevel_stats.ldif.j2", dest: "set_loglevel_stats.ldif" }
-    - { src: "enable_syncprov.ldif.j2", dest: "enable_syncprov.ldif" }
-    - { src: "enable_dynlist.ldif.j2", dest: "enable_dynlist.ldif" }
+    - "set_loglevel_stats.ldif"
+    - "enable_syncprov.ldif"
+    - "enable_dynlist.ldif"
 
 - name: Generate ldap.conf
   template:
@@ -73,6 +73,12 @@
   register: result
   failed_when: result.rc not in [0,20,68]
   changed_when: result.rc != 20
+
+- name: Set sizelimit
+  ldap_attrs:
+    dn: "cn=config"
+    attributes:
+      olcSizeLimit: 2000
 
 - name: Enable tls
   community.general.ldap_attrs:
