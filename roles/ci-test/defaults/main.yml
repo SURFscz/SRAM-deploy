@@ -11,6 +11,6 @@ simplesaml_version: "1.19.3"
 simplesaml_project_dir: "/opt/simplesaml"
 simplesaml_authsources_dir: "{{ simplesaml_project_dir }}/simplesaml/config/authsources"
 
-client_ssp_admin_pass: "admin"
+client_ssp_admin_pass: "adj3avonisiz"
 client_ssp_salt: "ThisIsNotASecretSalt,PleaseChangeMe!"
 
