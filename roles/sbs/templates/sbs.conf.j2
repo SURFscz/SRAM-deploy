@@ -19,6 +19,11 @@ Listen {{ sbs_backend_port }}
         WSGIScriptAlias /config {{ sbs_git_dir }}/sbs-api.wsgi/config
         WSGIScriptAlias /info {{ sbs_git_dir }}/sbs-api.wsgi/info
 
+        # Swagger UI
+        WSGIScriptAlias /apidocs {{ sbs_git_dir }}/sbs-api.wsgi/apidocs
+        WSGIScriptAlias /flasgger_static {{ sbs_git_dir }}/sbs-api.wsgi/flasgger_static
+        WSGIScriptAlias /swagger_api {{ sbs_git_dir }}/sbs-api.wsgi/swagger_api
+
         WSGIApplicationGroup %{GLOBAL}
         WSGIPassAuthorization On
 
