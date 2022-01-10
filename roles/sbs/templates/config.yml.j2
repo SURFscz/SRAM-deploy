@@ -119,7 +119,7 @@ service_bus:
 
 platform_admin_notifications:
   # Do we daily check for CO join_requests and CO requests and send a summary mail to beheer_email?
-  enabled: {{ sbs_notifications_enabled }}
+  enabled: False
   cron_hour_of_day:  {{ sbs_cron_hour_of_day }}
   # How long before we include open join_requests in the summary
   outstanding_join_request_days_threshold: 7
