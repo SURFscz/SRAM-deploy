@@ -1,0 +1,19 @@
+---
+sudo_groups:
+  - sudo_test
+
+environment_name: vm
+environment_string: "SCZ CI"
+base_domain: "ci-runner.sram.surf.nl"
+internal_base_domain: "vm.scz-vm.net"
+
+# externally visible!
+hostnames:
+  idp:      idp.{{base_domain}}
+  sbs:      sbs.{{base_domain}}
+  oidc_op:  proxy.acc.sram.eduteams.org
+
+sbs_backend_port: 90
+ci_rp_backend_port: 8443
+ci_idp_backend_port: 8444
+

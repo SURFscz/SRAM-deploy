@@ -30,7 +30,7 @@ Listen {{ sbs_backend_port }}
         Header set Content-Security-Policy "default-src 'self'; script-src 'self'; frame-ancestors 'none'; form-action 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; block-all-mixed-content"
 
         # rewite everything to {{sbs_base_url}}
-        RewriteCond "https://%{HTTP_HOST}" !={{sbs_base_url}} [NC]
+        RewriteCond "https://%{HTTP_HOST}" !^{{sbs_base_url}} [NC]
         RewriteCond "%{HTTP_HOST}"         !=""
         RewriteCond "%{REQUEST_URI}"       !^/api
         RewriteRule "^/?(.*)"  "{{sbs_base_url}}/$1" [L,R,NE]

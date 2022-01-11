@@ -1,0 +1,16 @@
+rp_jumbojett_dir: /opt/jumbojett
+rp_docroot_dir: /opt/rp
+ci_rp_client_id: "CLIENT_ID"
+ci_rp_client_secret: "SECRET"
+ci_rp_backend_port: 8443
+ci_idp_backend_port: 8444
+
+# SimpleSAMLphp
+simplesaml_download_url: "https://github.com/simplesamlphp/simplesamlphp/releases/download"
+simplesaml_version: "1.19.3"
+simplesaml_project_dir: "/opt/simplesaml"
+simplesaml_authsources_dir: "{{ simplesaml_project_dir }}/simplesaml/config/authsources"
+
+client_ssp_admin_pass: "adj3avonisiz"
+client_ssp_salt: "ThisIsNotASecretSalt,PleaseChangeMe!"
+

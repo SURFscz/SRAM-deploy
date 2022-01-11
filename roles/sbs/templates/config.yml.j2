@@ -25,7 +25,7 @@ oidc:
   userinfo_endpoint: "{{ sbs_oidc_userinfo_endpoint }}"
   jwks_endpoint: "{{ sbs_oidc_jwks_endpoint }}"
   #Note that the paths for these  uri's is hardcoded and only domain and port differ per environment
-  redirect_uri: "{{ sbs_base_url }}/api/users/resume-session"
+  redirect_uri: "{{ sbs_oidc_redirect_uri }}"
   sfo_eduteams_redirect_uri: "{{ sbs_oidc_sfo_endpoint }}"
   continue_eduteams_redirect_uri: "{{ sbs_eduteams_continue_endpoint }}"
   private_rsa_signing_key_path: config/jwt_private_key
