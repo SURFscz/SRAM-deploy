@@ -2,7 +2,7 @@
 sudo_groups:
   - sudo_test
 
-environment_name: vm
+environment_name: ci
 environment_string: "SCZ CI"
 base_domain: "ci-runner.sram.surf.nl"
 internal_base_domain: "vm.scz-vm.net"

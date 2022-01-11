@@ -1,3 +1,4 @@
+---
 rp_jumbojett_dir: /opt/jumbojett
 rp_docroot_dir: /opt/rp
 ci_rp_client_id: "CLIENT_ID"
