@@ -1,5 +1,5 @@
 ---
-name: CI-Runner
+name: CI-runner
 
 on:
   # Triggers the workflow manually
