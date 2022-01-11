@@ -63,7 +63,7 @@
       - "xz-utils"
       - "unzip"
       - "apt-transport-https"
-      - "python-apt"
+      - "python3-apt"
       - "needrestart"
       - "logrotate"
       - "rsyslog"
