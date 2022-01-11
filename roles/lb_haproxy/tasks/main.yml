@@ -83,7 +83,7 @@
         src: "ocsp-letsencrypt.j2"
         dest: "/etc/letsencrypt/renewal-hooks/post/"
         mode: '0755'
-  when: "enable_https and ansible_virtualization_type != 'docker'"
+  when: "enable_https and not is_docker"
 
 - name: create override dir
   file:

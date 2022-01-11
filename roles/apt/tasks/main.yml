@@ -29,7 +29,7 @@
   copy:
     src: 00-scz-update
     dest: /etc/apt/apt.conf.d/00-scz-update
-  when: "ansible_virtualization_type != 'docker'"
+  when: "not is_docker"
 
 - name: remove unneccessary packages
   apt:
@@ -78,7 +78,7 @@
     cache_valid_time: 86400
     update_cache: yes
     autoclean: yes
-  when: "ansible_virtualization_type != 'docker'"
+  when: "not is_docker"
 
 - name: install VMware clients
   apt:
@@ -92,5 +92,5 @@
   command: "/usr/bin/apt --yes --purge autoremove"
   register: result
   changed_when: "'0 upgraded, 0 newly installed, 0 to remove' not in result.stdout"
-  when: "ansible_virtualization_type != 'docker'"
+  when: "not is_docker"
 

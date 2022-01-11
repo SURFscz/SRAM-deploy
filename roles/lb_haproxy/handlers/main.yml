@@ -8,14 +8,14 @@
     name: "ocsp.timer"
     state: "started"
     enabled: true
-  when: "ansible_virtualization_type != 'docker'"
+  when: "not is_docker"
 
 - name: "run ocsp update"
   listen: "cert updated"
   systemd:
     name: "ocsp.service"
     state: "started"
-  when: "ansible_virtualization_type != 'docker'"
+  when: "not is_docker"
 
 - name: "restart haproxy"
   listen: "cert updated"

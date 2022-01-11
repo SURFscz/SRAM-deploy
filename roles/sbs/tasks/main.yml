@@ -55,7 +55,7 @@
     path: /etc/ssl/openssl.cnf
     regexp: '(^MinProtocol.*)'
     replace: '#\1'
-  when: "ansible_virtualization_type == 'docker'"
+  when: "is_docker"
 
 - name: Install database certificate
   copy:
