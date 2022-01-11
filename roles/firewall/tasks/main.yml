@@ -1,26 +1,21 @@
 ---
-- name: Firewall
-  block:
+- name: Install iptables
+  apt:
+    state: present
+    name:
+      - iptables
+      - netfilter-persistent
+      - iptables-persistent
 
-    - name: Install iptables
-      apt:
-        state: present
-        name:
-          - iptables
-          - netfilter-persistent
-          - iptables-persistent
+- name: Put ip4tables
+  template: src=ip4tables.j2 dest='/etc/iptables/rules.v4'
+  notify:
+    - restart netfilter-persistent
 
-    - name: Put ip4tables
-      template: src=ip4tables.j2 dest='/etc/iptables/rules.v4'
-      notify:
-        - restart netfilter-persistent
+- name: Put ip6tables
+  template: src=ip6tables.j2 dest='/etc/iptables/rules.v6'
+  notify:
+    - restart netfilter-persistent
 
-    - name: Put ip6tables
-      template: src=ip6tables.j2 dest='/etc/iptables/rules.v6'
-      notify:
-        - restart netfilter-persistent
-
-    - name: Start and enable netfilter-persistent
-      service: name=netfilter-persistent.service state=started enabled="yes"
-
-  when: environment_name != 'vm' and environment_name != 'exp'
+- name: Start and enable netfilter-persistent
+  service: name=netfilter-persistent.service state=started enabled="yes"

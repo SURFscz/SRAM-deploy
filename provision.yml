@@ -56,7 +56,7 @@
     - { role: certificates,   tags: ['common','cert']      }
     - { role: apt,            tags: ['common','apt']        }
     - { role: logging,        tags: ['common','logging']    }
-    - { role: firewall,       tags: ['common','firewall']   }
+    - { role: firewall,       tags: ['common','firewall'],     when: "environment_name != 'vm'" }
     - { role: ntp,            tags: ['common','ntp']        }
     - { role: users,          tags: ['common','users']      }
     - { role: mail,           tags: ['common','mail']       }
