@@ -79,6 +79,7 @@
     dn: "cn=config"
     attributes:
       olcSizeLimit: 2000
+    state: "exact"
 
 - name: Enable tls
   community.general.ldap_attrs:
