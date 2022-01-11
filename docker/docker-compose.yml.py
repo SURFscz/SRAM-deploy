@@ -89,7 +89,7 @@ def host_config(num: int, name: str) -> Dict[str, Any]:
 
 def mail_config(num: int, name: str) -> Dict[str,Any]:
     data: Dict[str, Any] = dict()
-    data['image'       ] = 'mailhog/mailhog'
+    data['image'       ] = 'mailhog/mailhog:v1.0.1'
     data['hostname'    ] =  name
     data['ports'       ] = [ 8025 ]
     data['networks'    ] = {
