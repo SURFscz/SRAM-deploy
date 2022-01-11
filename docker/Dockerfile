@@ -13,6 +13,7 @@ RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selectio
         acl bzip2 unzip apt-transport-https python-apt needrestart logrotate nullmailer rsyslog aptitude \
         locales-all netcat dnsutils git acl bzip2 xz-utils unzip apt-transport-https python-apt \
         rsyslog aptitude cloud-init && \
+    apt purge -y isc-dhcp-client && \
     apt clean -y && apt-get autoremove -y && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*  && \
     update-locale  && \
     systemctl enable ssh.service  && \
