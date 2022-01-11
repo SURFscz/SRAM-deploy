@@ -93,7 +93,9 @@ jobs:
       # Start containers without deploy
       - name: Start containers
         shell: bash
-        run: "./start-vm --tags=none || true"
+        env:
+          SKIP_ANSIBLE: 1
+        run: "./start-vm"
 
       # Runs a single command using the runners shell
       - name: Run start-vm

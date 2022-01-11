@@ -2,6 +2,12 @@
 set -e
 export TERM=xterm-256color
 
+if [ "$1" = "--skip-ansible" ]
+then
+    SKIP_ANSIBLE=1
+    shift
+fi
+
 if [ ! -f docker/ansible_key.pub ]; then
     echo "No ansible key found"
     ssh-keygen -f docker/ansible_key -N ""
@@ -101,12 +107,17 @@ else
     echo "Mitogen not found or incompatibe Ansible version; falling back to default ansible ssh"
 fi
 
-echo "Starting ansible"
-time \
-ansible-playbook provision.yml \
-    -i ./environments/vm/inventory \
-    --extra-vars="secrets_file=environments/vm/secrets/all.yml" \
-    --vault-password-file=secret_vm \
-    $@
+if [ "$SKIP_ANSIBLE" ]
+then
+    echo "Skipping ansible run"
+else
+    echo "Starting ansible"
+    time \
+    ansible-playbook provision.yml \
+        -i ./environments/vm/inventory \
+        --extra-vars="secrets_file=environments/vm/secrets/all.yml" \
+        --vault-password-file=secret_vm \
+        $@
+fi
 
 exit 0
