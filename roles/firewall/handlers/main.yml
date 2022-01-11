@@ -3,3 +3,8 @@
   service:
     name: "netfilter-persistent.service"
     state: "restarted"
+  notify:
+    - "restart docker"
+
+- name: restart docker
+  shell: "systemctl -q is-active docker.service && systemctl restart docker || true"
