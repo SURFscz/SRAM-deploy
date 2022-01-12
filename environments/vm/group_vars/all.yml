@@ -110,7 +110,7 @@ sbs_db_name: "sbs"
 sbs_db_user: "sbs"
 
 sbs_client_id: sbs-server
-sbs_base_url: "https://{{hostnames.sbs}}/"
+sbs_base_url: "https://{{hostnames.sbs}}"
 
 # Redis
 sbs_redis_host: "redis.vm.scz-vm.net"

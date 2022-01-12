@@ -22,10 +22,14 @@
   lineinfile:
     path: "/etc/cloud/cloud.cfg.d/99-sram.cfg"
     line: "disable_vmware_customization: true"
+    create: true
   when: ansible_virtualization_type == "VMware"
 
 - name: set localtime
-  file: state=link src=/usr/share/zoneinfo/{{timezone}} dest=/etc/localtime
+  file:
+    dest: "/etc/localtime"
+    state: "link"
+    src: "/usr/share/zoneinfo/{{timezone}}"
 
 - name: set timezone
   template: src=timezone.j2 dest=/etc/timezone
@@ -47,6 +51,11 @@
   changed_when: false
   when:
     - environment_name!="vm"
+
+- name: disable resume
+  file:
+    path: "/etc/initramfs-tools/conf.d/resume"
+    state: "absent"
 
 - name: "{{'en' if enable_ipv6 else 'dis'}}able ipv6"
   template:

@@ -2,7 +2,7 @@
 - name: "Zabbix repo: install gpg key"
   apt_key:
     id: "A1848F5352D022B9471D83D0082AB56BA14FE591"
-    url: http://repo.zabbix.com/zabbix-official-repo.key
+    url: "http://repo.zabbix.com/zabbix-official-repo.key"
 
 - name: "Zabbix repo: install source"
   apt_repository:

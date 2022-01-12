@@ -1,0 +1,133 @@
+---
+- name: Ensure that packages are installed
+  apt:
+    name:
+      - apache2
+      - libapache2-mod-php
+      - php-curl
+      - php-xml
+      - php-mbstring
+      - composer
+    state: present
+
+- name: Enable apache SSL
+  community.general.apache2_module:
+    state: present
+    name: ssl
+    ignore_configcheck: True
+
+- name: Create directories
+  file:
+    path: "{{ item }}"
+    state: "directory"
+    mode: "0755"
+  with_items:
+    - "{{ rp_jumbojett_dir }}"
+    - "{{ rp_docroot_dir }}"
+    - "{{ simplesaml_project_dir }}"
+
+# Install Test RP
+- name: Composer require jumbojett OIDC lib
+  community.general.composer:
+    command: require
+    arguments: jumbojett/openid-connect-php
+    working_dir: /opt/jumbojett
+
+- name: Create RP index.php
+  template:
+    src: index.php.j2
+    dest: "{{ rp_docroot_dir }}/index.php"
+    mode: 0644
+
+- name: Create RP resume.html
+  copy:
+    src: resume.html
+    dest: "{{ rp_docroot_dir }}/resume.html"
+    mode: 0644
+
+# Install Test IdP
+- name: Download SimpleSamlPHP
+  get_url:
+    url: "{{ simplesaml_download_url }}/v{{ simplesaml_version }}/\
+          simplesamlphp-{{ simplesaml_version }}.tar.gz"
+    dest: "{{ simplesaml_project_dir }}/simplesamlphp-{{ simplesaml_version }}.tar.gz"
+  register: ssp_download
+
+- name: Check SimpleSamlPHP dest dir
+  stat: "path={{ simplesaml_project_dir }}/simplesamlphp-{{ simplesaml_version }}"
+  register: ssp_destdir
+
+- name: Unpack SimpleSamlPHP
+  unarchive:
+    src: "{{ simplesaml_project_dir }}/simplesamlphp-{{ simplesaml_version }}.tar.gz"
+    dest: "{{ simplesaml_project_dir }}"
+    remote_src: true
+  when: ssp_download.changed or not ssp_destdir.stat.exists
+
+- name: Link simplesaml
+  file:
+    src: "{{ simplesaml_project_dir }}/simplesamlphp-{{ simplesaml_version }}"
+    dest: "{{ simplesaml_project_dir }}/simplesaml"
+    state: link
+
+- name: SimpleSaml permissions
+  file:
+    path: "{{item}}"
+    group: "www-data"
+    mode: 0775
+  with_items:
+    - "{{simplesaml_project_dir}}/simplesaml/log"
+
+- name: SimpleSaml configuration
+  template:
+    src: "{{ item }}.j2"
+    dest: "{{ simplesaml_project_dir }}/simplesaml/config/{{ item }}"
+  with_items:
+    - config.php
+    - authsources.php
+
+- name: SimpleSaml main idp metadata
+  copy:
+    src: "{{ item }}"
+    dest: "{{ simplesaml_project_dir }}/simplesaml/metadata/{{ item }}"
+  with_items:
+    - saml20-idp-hosted.php
+    - saml20-sp-remote.php
+
+- name: Copy self-signed Token signing cert key
+  copy:
+    content: "{{client_saml_cert.priv}}"
+    dest: "{{ simplesaml_project_dir }}/simplesaml/cert/server.key"
+    group: "www-data"
+    mode: "0640"
+  no_log: "{{sram_ansible_nolog}}"
+
+- name: Copy self-signed Token signing cert
+  copy:
+    content: "{{client_saml_cert.pub}}"
+    dest: "{{ simplesaml_project_dir }}/simplesaml/cert/server.crt"
+
+- name: Enable exampleauth
+  ansible.builtin.file:
+    path: "{{ simplesaml_project_dir }}/simplesaml/modules/exampleauth/enable"
+    state: touch
+    mode: '0644'
+
+- name: Add websites
+  template:
+    src: "{{ item }}.conf.j2"
+    dest: "/etc/apache2/sites-available/{{ item }}.conf"
+    mode: 0644
+  with_items:
+    - ci-test
+  notify: restart Apache
+
+- name: Enable websites
+  file:
+    src: "/etc/apache2/sites-available/{{ item }}.conf"
+    dest: "/etc/apache2/sites-enabled/00-{{ item }}.conf"
+    state: link
+  with_items:
+    - ci-test
+  notify: restart Apache
+

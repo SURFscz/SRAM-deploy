@@ -45,7 +45,7 @@ loadbalancer:
     protocol: http
     backend_hosts: "{{groups['vm_client']}}"
     backend_port: "{{oidc_test_port}}"
-  - name: client_sp"
+  - name: "client_sp"
     hostname: "{{hostnames.sp}}"
     protocol: http
     backend_hosts: "{{groups['vm_client']}}"
@@ -55,7 +55,7 @@ loadbalancer:
     protocol: http
     backend_hosts: "{{groups['vm_client']}}"
     backend_port: "{{idp_test_port}}"
-  - name: "client 2fa"
+  - name: "client_2fa"
     hostname: "{{hostnames.tfa}}"
     protocol: http
     backend_hosts: "{{groups['vm_client']}}"
