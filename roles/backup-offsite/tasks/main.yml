@@ -39,6 +39,7 @@
     owner: "root"
     group: "sram_backup"
     mode: "0640"
+  no_log: "{{sram_ansible_nolog}}"
 
 - name: copy client cert
   copy:
@@ -54,6 +55,13 @@
     state: present
     name: wget
 
+- name: copy cleanup helper
+  get_url:
+    url: "https://github.com/baszoetekouw/datefilter/raw/v3/datefilter"
+    checksum: "sha256:baa751000d7cd35cdd681e7cd6e1b7f8a52256310802c6a454cf289e04e1a526"
+    dest: "{{backup_offsite_basedir}}"
+    mode: "0755"
+
 - name: copy script
   template:
     src: "{{item}}.j2"
@@ -64,6 +72,7 @@
   with_items:
     - "backup-offsite-sync.sh"
     - "fix-permissions.sh"
+    - "backup-offsite-cleanup.sh"
 
 - name: Copy backup processingservice files
   template:

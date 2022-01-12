@@ -20,7 +20,7 @@
     dest: "/etc/nginx/sites-enabled/00-http-redirect.conf"
   notify: "restart nginx"
 
-- name: install proxy_log config file
+- name: install logging config
   copy:
     src: "proxy_log.conf"
     dest: "/etc/nginx/conf.d"

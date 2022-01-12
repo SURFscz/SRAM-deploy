@@ -5,26 +5,35 @@ Listen {{ sbs_backend_port }}
         ServerAdmin webmaster@localhost
         DocumentRoot {{ sbs_git_dir }}/client/build
 
-        LogFormat "%{X-Forwarded-For}i %l %u %t \"%r\" %>s %O \"%{Referer}i\" \"%{User-Agent}i\"" proxy
-
-        ErrorLog ${APACHE_LOG_DIR}/error.log
-        CustomLog ${APACHE_LOG_DIR}/access.log proxy
+        ErrorLog syslog:local1:apache2
+        CustomLog "|/usr/bin/logger --size 8k -p local1.info -t apache2" sram
 
         SSLEngine on
         SSLCertificateFile {{ ssl_certs_dir }}/{{ internal_base_domain }}.crt
         SSLCertificateKeyFile {{ ssl_certs_dir }}/{{ internal_base_domain }}.key
 
-        WSGIDaemonProcess server user=www-data group=www-data threads=5
+        WSGIDaemonProcess server user=www-data group=www-data processes=2 threads=5
 
         WSGIScriptAlias /api {{ sbs_git_dir }}/sbs-api.wsgi/api
         WSGIScriptAlias /health {{ sbs_git_dir }}/sbs-api.wsgi/health
         WSGIScriptAlias /config {{ sbs_git_dir }}/sbs-api.wsgi/config
         WSGIScriptAlias /info {{ sbs_git_dir }}/sbs-api.wsgi/info
 
+        # Swagger UI
+        WSGIScriptAlias /apidocs {{ sbs_git_dir }}/sbs-api.wsgi/apidocs
+        WSGIScriptAlias /flasgger_static {{ sbs_git_dir }}/sbs-api.wsgi/flasgger_static
+        WSGIScriptAlias /swagger_api {{ sbs_git_dir }}/sbs-api.wsgi/swagger_api
+
         WSGIApplicationGroup %{GLOBAL}
         WSGIPassAuthorization On
 
         Header set Content-Security-Policy "default-src 'self'; script-src 'self'; frame-ancestors 'none'; form-action 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; block-all-mixed-content"
+
+        # rewite everything to {{sbs_base_url}}
+        RewriteCond "https://%{HTTP_HOST}" !^{{sbs_base_url}} [NC]
+        RewriteCond "%{HTTP_HOST}"         !=""
+        RewriteCond "%{REQUEST_URI}"       !^/api
+        RewriteRule "^/?(.*)"  "{{sbs_base_url}}/$1" [L,R,NE]
 
         <Directory {{ sbs_git_dir }}>
             WSGIProcessGroup server

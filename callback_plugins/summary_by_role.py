@@ -1,10 +1,7 @@
-from __future__ import (absolute_import, division, print_function)
-from six import iteritems
 __metaclass__ = type
 
-from ansible.plugins.callback import CallbackBase
-#from ansible.executor.task_result import TaskResult
 import json
+from ansible.plugins.callback import CallbackBase
 
 
 class CallbackModule(CallbackBase):
@@ -60,7 +57,7 @@ class CallbackModule(CallbackBase):
         self._display.display("{:<20} {:>7} {:>7} {:>7} {:>7}".format(
             'Role', 'skipped', 'ok', 'changed', 'failed')
         )
-        for k, v in iteritems(self._stats):
+        for k, v in self._stats.items():
             self._display.display("{:<20} {:>7} {:>7} {:>7} {:>7}".format(
                 k, v['skipped'], v['ok'], v['changed'], v['failed'])
             )

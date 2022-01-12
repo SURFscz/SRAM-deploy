@@ -1,0 +1,146 @@
+---
+- name: "install required packages"
+  apt:
+    name:
+      - "mariadb-server"
+      - "php-fpm"
+#      - "openssl"
+    state: "present"
+
+# for some weird reason, mariadb depends on rsync....
+- name: "disable rsync"
+  systemd:
+    name: "rsync.service"
+    masked: true
+
+- name: "install required python packages"
+  apt:
+    name:
+      - "python3-pip"
+      - "python3-setuptools"
+      - "python3-wheel"
+      - "python3-pymysql"
+    install_recommends: false
+    state: "present"
+
+- name: "Install python-zabbixapi"
+  pip:
+    name: "zabbix-api"
+
+- name: "create groups for zabbix"
+  group:
+    name: "{{item}}"
+    state: present
+  with_items:
+    - "{{zabbix_php_fpm_conf_group}}"
+    - "{{zabbix_web_conf_web_group}}"
+
+- name: "create users for zabbix"
+  user:
+    name: "{{item}}"
+    state: "present"
+  with_items:
+    - "{{zabbix_php_fpm_conf_user}}"
+    - "{{zabbix_web_conf_web_user}}"
+
+- name: "install zabbix TLS key"
+  copy:
+    content: "{{zabbix_cert.priv}}"
+    dest: "{{zabbix_nginx_tls_key}}"
+    owner: "root"
+    group: "ssl-cert"
+    mode: "0640"
+
+- name: "install zabbix TLS certificate"
+  copy:
+    content: "{{zabbix_cert.pub}}"
+    dest: "{{zabbix_nginx_tls_crt}}"
+    owner: "root"
+    group: "ssl-cert"
+    mode: "0644"
+
+# - name: generate Diffie-Hellman group
+#   command: openssl dhparam -out {{zabbix_nginx_tls_dhparam}} 2048
+#   args:
+#     creates: "{{zabbix_nginx_tls_dhparam}}"
+#   notify:
+#     - "restart nginx"
+
+- include_role:
+    name: "community.zabbix.zabbix_server"
+
+- include_role:
+    name: "http_dummy"
+
+- include_role:
+    name: "community.zabbix.zabbix_web"
+
+- name: "increase zabbix cache size"
+  lineinfile:
+    path: "/etc/zabbix/zabbix_server.conf.d/99-zabbix-sram.conf"
+    create: true
+    line: "CacheSize=64M"
+
+# workaround for https://github.com/ansible-collections/community.zabbix/issues/425
+- name: "fix nginx access to fpm socket"
+  user:
+    name: "www-data"
+    groups: "{{zabbix_php_fpm_conf_group}}"
+    append: true
+  notify: "restart nginx"
+
+- meta: "flush_handlers"
+
+# check if we can login with the default password
+# if so, then we need to update the Admin user below
+- name: "check if zabbix admin user has been configured"
+  community.zabbix.zabbix_user_info:
+    server_url: "{{zabbix_api_url}}"
+    login_user: "Admin"
+    login_password: "zabbix"
+    alias: "Admin"
+    validate_certs: "{{zabbix_validate_certs}}"
+  failed_when: false
+  register: "can_login"
+
+- name: "set zabbix admin password"
+  community.zabbix.zabbix_user:
+    server_url: "{{zabbix_api_url}}"
+    login_user: "Admin"
+    login_password: "zabbix"
+    alias: "Admin"
+    name: "Admin"
+    surname: "Administein"
+    passwd: "{{zabbix_admin_password}}"
+    override_passwd: true
+    usrgrps:
+      - "Zabbix administrators"
+    state: "present"
+    validate_certs: "{{zabbix_validate_certs}}"
+  when: "'zabbix_user' in can_login"
+
+# create user for client registration
+- name: "Create user group for API access"
+  community.zabbix.zabbix_usergroup:
+    server_url: "{{zabbix_api_url}}"
+    login_user: "Admin"
+    login_password: "{{zabbix_admin_password}}"
+    name: "Host registration"
+    gui_access: "disable"
+    validate_certs: "{{zabbix_validate_certs}}"
+
+# note: community.zabbix is not able yet to create roles
+#       so you'll need to create the "Host registration" role manually
+# with perms: host.{create,delete,get,update}, hostgroup.{create,get,update},
+#             template.get, hostinterface.{get,update}
+- name: "Create user for API access"
+  community.zabbix.zabbix_user:
+    server_url: "{{zabbix_api_url}}"
+    login_user: "Admin"
+    login_password: "{{zabbix_admin_password}}"
+    alias: "{{zabbix_api_user}}"
+    passwd: "{{zabbix_api_password}}"
+    role_name: "Host registration"
+    usrgrps: ["Host registration"]
+    state: "present"
+    validate_certs: "{{zabbix_validate_certs}}"

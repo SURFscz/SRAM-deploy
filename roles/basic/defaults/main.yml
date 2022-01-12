@@ -10,5 +10,3 @@ fake_hostnames: false
 sshd_authn_CR: false
 
 sudo_groups: [ ]
-
-ca_cert_dir: '/usr/local/share/ca-certificates'

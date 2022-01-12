@@ -33,3 +33,5 @@ metadata_idps_cert: |
 metadata_idps_filters:
   - "https://idp.surfnet.nl"
   - "https://sso.surfsara.nl/saml/saml2/idp/metadata.php"
+
+metadata_idps_files: {}

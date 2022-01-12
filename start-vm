@@ -2,6 +2,12 @@
 set -e
 export TERM=xterm-256color
 
+if [ "$1" = "--skip-ansible" ]
+then
+    SKIP_ANSIBLE=1
+    shift
+fi
+
 if [ ! -f docker/ansible_key.pub ]; then
     echo "No ansible key found"
     ssh-keygen -f docker/ansible_key -N ""
@@ -22,16 +28,26 @@ fi
 # Bring up the VMs if they're not running
 echo "Bringing docker containers up"
 ./docker/docker-compose.yml.py > ./docker/docker-compose.yml
-time docker-compose -f docker/docker-compose.yml up --no-recreate -d
+time docker-compose -f docker/docker-compose.yml up --no-recreate -d --remove-orphans
 
 echo "Waiting until containers have booted"
+TIMEOUT=120
 for c in $(docker ps -q)
 do
     host=$(docker inspect --format='{{.Config.Hostname}}'     $c)
     printf " - %-10s" $host
     stat=xxx
+    starttime=$(date +%s)
     while true
     do
+        if [ $(( $(date +%s) - $starttime )) -gt $TIMEOUT ]
+        then
+            tput setaf 1
+            echo "timeout"
+            tput sgr0
+            exit 1
+        fi
+
         stat=$(docker inspect --format='{{.State.Health.Status}}' $c)
         if [ "$stat" = "healthy" ]
         then
@@ -42,16 +58,26 @@ do
             break
         fi
         echo -n "."
-        sleep 0.5
+        sleep 2
     done
 
     # wait until ssh is running
-    if [ "$host" != "mail" ]
+    if [ "$host" != "mail" -a "$host" != "redis" ]
     then
         echo -n "."
+        starttime=$(date +%s)
         while ! ssh-keyscan -T 1 ${host}.vm.scz-vm.net > /dev/null 2>&1
         do
-            sleep 1
+            if [ $(( $(date +%s) - $starttime )) -gt $TIMEOUT ]
+            then
+                tput setaf 1
+                echo "timeout"
+                tput sgr0
+                ssh-keyscan -T 1 ${host}.vm.scz-vm.net || true
+                exit 1
+            fi
+
+            sleep 2
             echo -n "."
         done
         tput setaf 2
@@ -61,12 +87,37 @@ do
     echo
 done
 
-echo "Starting ansible"
-time \
-ansible-playbook provision.yml \
-    -i ./environments/vm/inventory \
-    --extra-vars="secrets_file=environments/vm/secrets/all.yml" \
-    --vault-password-file=secret_vm \
-    $@
+# try to find mitogen
+MITOGEN_PATH=
+MITOGEN_SUBPATH=ansible_mitogen/plugins/strategy
+for p in ./mitogen /opt/mitogen /usr/local/mitogen /usr/mitogen ~/.mitogen ~/mitogen
+do
+    if [ -d "$p/$MITOGEN_SUBPATH/" ]
+    then
+        MITOGEN_PATH=$p
+        break
+    fi
+done
+if [ -n "$MITOGEN_PATH" ] && ! ansible --version|head -1|grep -q 2.11
+then
+    echo "Found Mitogen at $MITOGEN_PATH"
+    export ANSIBLE_STRATEGY_PLUGINS=$MITOGEN_PATH/$MITOGEN_SUBPATH/
+    export ANSIBLE_STRATEGY=mitogen_linear
+else
+    echo "Mitogen not found or incompatibe Ansible version; falling back to default ansible ssh"
+fi
+
+if [ "$SKIP_ANSIBLE" ]
+then
+    echo "Skipping ansible run"
+else
+    echo "Starting ansible"
+    time \
+    ansible-playbook provision.yml \
+        -i ./environments/vm/inventory \
+        --extra-vars="secrets_file=environments/vm/secrets/all.yml" \
+        --vault-password-file=secret_vm \
+        $@
+fi
 
 exit 0

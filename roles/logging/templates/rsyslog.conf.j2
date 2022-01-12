@@ -1,0 +1,44 @@
+#################
+#### MODULES ####
+#################
+
+module(load="imuxsock") # provides support for local system logging
+module(load="imklog")   # provides kernel logging support
+module(load="builtin:omfile"
+       fileOwner="root" fileGroup="adm" fileCreateMode="0640" dirCreateMode="0755"
+       template="RSYSLOG_FileFormat"
+)
+
+
+###########################
+#### GLOBAL DIRECTIVES ####
+###########################
+global(
+    workDirectory="/var/spool/rsyslog"
+    umask="0022"
+)
+
+
+#### NOTE: we explicitly don't include the stuff from /etc/rsyslog.d, as we handle most logging via journald
+####       these are just convencience logs, which we don't want to fill up the disks
+
+###############
+#### RULES ####
+###############
+
+# don't store any of these in generic syslog files
+if $programname == 'slapd'   then stop
+if $programname == 'plsc'    then stop
+if $programname == 'sbs'     then stop
+if $programname == 'pyff'    then stop
+if $programname == 'nginx'   then stop
+if $programname == 'apache'  then stop
+if $programname == 'haproxy' then stop
+
+# generic system logs
+auth,authpriv.*              action(type="omfile" file="/var/log/auth.log")
+*.*;auth,authpriv.none       action(type="omfile" file="/var/log/syslog")
+kern.*                       action(type="omfile" file="/var/log/kern.log")
+
+# show emergencies to all users
+*.emerg                      action(type="omusrmsg" users="*")

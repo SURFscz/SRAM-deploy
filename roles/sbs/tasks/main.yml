@@ -1,7 +1,17 @@
 ---
+- name: "Install node repository key"
+  apt_key:
+    id: "9FD3B784BC1C6FC31A8A0A1C1655A0AB68576280"
+    url: "https://deb.nodesource.com/gpgkey/nodesource.gpg.key"
+
+- name: "Install node repository"
+  apt_repository:
+    repo: "deb https://deb.nodesource.com/node_12.x buster main"
+    state: "present"
+
 - name: Install required packages
   apt:
-    state: present
+    state: "latest"
     name:
       - yarnpkg
       - nodejs
@@ -16,53 +26,80 @@
       - virtualenv
       - python3-distutils
       - libapache2-mod-wsgi-py3
+      - mariadb-client
 
-- name: enable Apache modules
+- name: Remove obsolete packages
+  apt:
+    state: absent
+    name:
+      - libapache2-mod-auth-openidc
+  notify: "restart apache"
+
+- name: Enable correct apache modules
   apache2_module:
-    state: present
-    name: "{{item}}"
-    ignore_configcheck: true
-  with_items:
-    - rewrite
-    - headers
-    - wsgi
-    - ssl
-  notify: restart Apache
+    state: "{{ item.value }}"
+    name: "{{ item.key }}"
+    ignore_configcheck: True
+  with_dict:
+    wsgi: present
+  notify: "restart apache"
 
 - name: Configure Apache vhost
   template:
     src: sbs.conf.j2
     dest: /etc/apache2/sites-enabled/sbs.conf
-  notify: restart Apache
+  notify: "restart apache"
+
+- name: Comment MinProtocol in openssl.conf on dockers
+  replace:
+    path: /etc/ssl/openssl.cnf
+    regexp: '(^MinProtocol.*)'
+    replace: '#\1'
+  when: "is_docker"
+
+- name: Install database certificate
+  copy:
+    dest: "{{sbs_db_cert_path}}"
+    content: "{{ sbs_db_tls_cert }}"
 
 - name: Initialialize database
   throttle: 1
   block:
     - name: Add SBS database
-      mysql_db:
+      community.mysql.mysql_db:
         login_host: '{{ db_host }}'
         login_user: '{{ db_admin_user }}'
         login_password: '{{ db_admin_password }}'
         name: '{{ sbs_db_name }}'
-        encoding: utf8
+        encoding: 'utf8mb4'
+        collation: 'utf8mb4_unicode_ci'
+        ca_cert: "{{sbs_db_cert_path}}"
 
     - name: Add SBS user
-      mysql_user:
+      community.mysql.mysql_user:
         login_host: '{{ db_host }}'
         login_user: '{{ db_admin_user }}'
         login_password: '{{ db_admin_password }}'
-        name: '{{ sbs_db_user }}'
+        name: '{{ item.user }}'
         host: '{{ ansible_default_ipv4.address }}'
-        password: '{{ sbs_db_password }}'
-        priv: '{{ sbs_db_name }}.*:ALL'
-      changed_when: false
+        password: '{{ item.passwd }}'
+        priv: '{{ sbs_db_name }}.*:{{ item.perm }}'
+        ca_cert: "{{sbs_db_cert_path}}"
+      with_items:
+        - user: "{{ sbs_db_user }}"
+          passwd: "{{ sbs_db_password }}"
+          perm: "ALL"
+        - user: "{{ sbs_dbbackup_user }}"
+          passwd: "{{ sbs_dbbackup_password }}"
+          perm: "SELECT,SHOW VIEW,EVENT,TRIGGER"
+      no_log: "{{sram_ansible_nolog}}"
 
 - name: Clone SBS repository
   git:
     repo: "{{ sbs_repository }}"
     dest: "{{ sbs_git_dir }}"
     version: "{{ sbs_version }}"
-  notify: reload Apache
+  notify: "restart apache"
   register: git_apps
 
 - name: Add git info to server
@@ -74,7 +111,8 @@
     virtualenv: "{{ sbs_env_dir }}"
     virtualenv_python: python3
     requirements: "{{ sbs_git_dir }}/server/requirements/test.txt"
-  notify: restart Apache
+    state: forcereinstall
+  notify: "restart apache"
 
 - name: check for yarn dependencies
   stat:
@@ -85,6 +123,8 @@
   yarn:
     executable: "/usr/bin/yarnpkg"
     path: "{{ sbs_git_dir }}/client"
+  environment:
+    NODE_PATH: "/usr/lib/nodejs:/usr/share/nodejs"
   register: yarn_install
   when: git_apps.changed or not yarn_deps.stat.exists
 
@@ -92,6 +132,8 @@
   command:
     cmd: "yarnpkg --pure-lockfile build"
     chdir: "{{ sbs_git_dir }}/client"
+  environment:
+    NODE_PATH: "/usr/lib/nodejs:/usr/share/nodejs"
   when: git_apps.changed or yarn_install.changed
 
 # yarn install modifies yarn.lock (ARGRGRGR), which dirties the repository and
@@ -103,17 +145,39 @@
   when: yarn_install.changed
   changed_when: true
 
+# TODO: draai SBS als non-www-data user
 - name: Create SBS config file
   template:
     src: config.yml.j2
     dest: "{{ sbs_git_dir }}/server/config/config.yml"
-  notify: restart Apache
+    group: "www-data"
+    mode: "0640"
+  notify: "restart apache"
+  no_log: "{{sram_ansible_nolog}}"
+
+- name: write server JWT private signing key
+  copy:
+    content: "{{ sbs_jwt_server.priv }}"
+    dest: "{{ sbs_git_dir }}/server/config/jwt_private_key"
+    group: "www-data"
+    mode: "0640"
+  notify: "restart apache"
+  no_log: "{{sram_ansible_nolog}}"
+
+- name: write server JWT public signing key
+  copy:
+    content: "{{ sbs_jwt_server.pub }}"
+    dest: "{{ sbs_git_dir }}/server/config/jwt_public_keys.json"
+    group: "www-data"
+    mode: "0640"
+  notify: "restart apache"
+  no_log: "{{sram_ansible_nolog}}"
 
 - name: Create SBS wsgi file
   template:
     src: sbs-api.wsgi.j2
     dest: "{{ sbs_git_dir }}/sbs-api.wsgi"
-  notify: restart Apache
+  notify: "restart apache"
 
 - name: Create SBS environment disclaimer file
   template:
@@ -134,10 +198,9 @@
     group: www-data
     mode: 0755
 
-
-- name: Remove obsolete packages
-  apt:
-    state: absent
-    name:
-      - libapache2-mod-auth-openidc
-  notify: restart Apache
+- name: install database dump script
+  template:
+    src: "backup-database.sh.j2"
+    dest: "{{backup_runparts}}/backup-database.sh"
+    mode: "0700"
+  no_log: "{{sram_ansible_nolog}}"

@@ -1,0 +1,8 @@
+---
+zabbix_psk_file: "/etc/zabbix/zabbix-agent2.psk"
+zabbix_templates_default:
+  - "Linux by Zabbix agent active"
+  - "Systemd by Zabbix agent 2"
+zabbix_templates_extra: []
+zabbix_validate_certs: true
+zabbix_active_check: true

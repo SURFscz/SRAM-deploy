@@ -1,0 +1,35 @@
+[Unit]
+Description=Journal Remote Sink Service
+Documentation=man:systemd-journal-remote(8) man:journal-remote.conf(5)
+Requires=sram-remotejournal-{{item.key}}.socket
+
+[Service]
+ExecStart=/lib/systemd/systemd-journal-remote --listen-https=-3 --output={{journal_remote_dir}}/{{item.key}}/
+LockPersonality=yes
+LogsDirectory=journal/{{item.key}}
+MemoryDenyWriteExecute=yes
+NoNewPrivileges=yes
+PrivateDevices=yes
+PrivateNetwork=yes
+PrivateTmp=yes
+ProtectControlGroups=yes
+ProtectHome=yes
+ProtectKernelModules=yes
+ProtectKernelTunables=yes
+ProtectSystem=strict
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+RestrictNamespaces=yes
+RestrictRealtime=yes
+SystemCallArchitectures=native
+User=systemd-journal-remote
+SupplementaryGroups=journal-ssl
+WatchdogSec=1min
+Restart=on-failure
+RestartSec=60s
+
+# If there are many split up journal files we need a lot of fds to access them
+# all in parallel.
+LimitNOFILE=524288
+
+[Install]
+Also=sram-remotejournal-{{item.key}}.socket

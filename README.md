@@ -1,8 +1,8 @@
 # Science Collaboration Zone
 ![build status](https://github.com/SURFscz/SCZ-deploy/actions/workflows/main.yml/badge.svg)
 
-The Science Collaboration Zone (SCZ) project offers an Identity Management solution
-for research collaborations.  It is a middleware solution for
+The Science Collaboration Zone (SCZ) project offers an Membership Management System
+for research collaborations. It is a middleware solution for
 researchers, which allows them to
 
 - log in using credentials from their university, as well as support (international) 'guests';
@@ -10,55 +10,44 @@ researchers, which allows them to
 - allow members of their collaborations easy access to services (like web
   applications, databases, storage solutions, compute facilities, etc.);
 
+It is meant to be used in combination with a (SAML/OIDC) identity federation and proxy such as
+[EduTEAMS](https://eduteams.org/), but can be used stand-alone in combination a a single OIDC OP.
+
 More information can be obtained from <https://wiki.surfnet.nl/display/SCZ>.
 
 ## Technical
 
-The SCZ is comprised of a number of existing, open source components:
+The SCZ is comprised of a number of open source components:
 
 ### SBS
-<https://github.com/SURFscz/SBS>
+SBS is the actual Membership Management UI.  See <https://github.com/SURFscz/SBS>.
 
-### Satosa
-<https://github.com/IdentityPython/SATOSA>
+### OpenLDAP
+OpenLDAP is used to expose authorization information to services.
 
-### Pyff
-<https://github.com/leifj/pyFF>
-
-### LSC (LDAP Synchronisation Connector)
-<https://github.com/lsc-project>
+### pLSC (LDAP Synchronisation Connector)
+pLSC is used to synchronize information from SBS to OpenLDAP.  See <https://github.com/SURFscz/plsc>.
 
 
 ## SCZ-deploy
 This repository consists of an Ansible playbook to install a complete
-SCZ-platform.  The easiest way to get started is using Vagrant, which will
-create a number of VMs on your local machine, en run the Ansible playbook to
-install the different components onto the VMs.
+SCZ-platform.
 
-We support this on both Linux (tested on Ubuntu 17.10 and 18.04, experimental on
-openSUSE Tumbleweed) and OSX/MacOS (tested on High Sierra).
-You can either deploy to full VMs (libvirt/qemu and Virtualbox are supported), or to container (using docker).
-
-We _strongly_ recommend using the container/docker-based deploy, because it requires much less resources (should run
-easily on a dual core machine with 8GB memory). To deploy to VMs, we recommend a quad-core CPU and at least 16GB of
-memory, as the script will create 6 VMs with 768MB of memory each.
+We support this on both Linux (tested on Ubuntu 20.04, experimental on
+openSUSE Tumbleweed) and OSX/MacOS (tested on Big Sur).
+The system is deployed to a number of docker containers.
 
 To get started, do the following:
 
-- install Docker (>=19.03) and Ansible (>=2.7)
+- install Docker (>=19.03) and Ansible (>=2.10)
     - Ubuntu/Debian: `apt install ansible docker.io docker-compose`
     - OpenSUSE Tumbleweed: `zypper install ansible docker docker-compose`
     - MacOS: see
       <http://docs.ansible.com/ansible/latest/intro_installation.html#latest-releases-on-mac-osx>
       and <https://docs.docker.com/docker-for-mac/>
 
-- Supply the vm secret to decrypt the vault
-    - `echo [vault-secret] > secret_vm`
-    - OR replace the encrypted vault secrets `google_client_id` and `google_client_secret`  
-    in environment/vm/secrets/all.yml.  
-    But you still need to insert a dummy secret in secret_vm.
-
-    The `[vault-secret]` can be found on the SURFnet SRAM wiki.
+- Install required ansible modules
+    - `ansible-galaxy install -r requirements.yml`
 
 - set up the containers and start the deploy:
     - `./start-vm`

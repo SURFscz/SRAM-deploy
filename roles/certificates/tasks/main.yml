@@ -1,0 +1,64 @@
+---
+# Normally ca-certificates does this, but
+# the first time apt hasn't run yet
+- name: Create ssl_certs_dir
+  file:
+    path: "{{ ssl_certs_dir }}"
+    state: directory
+    mode: '0755'
+
+- name: Ensure group "ssl-cert" exists
+  group:
+    name: ssl-cert
+    state: present
+    system: true
+
+- name: write backend wildcard key
+  copy:
+    content: "{{wildcard_backend_cert.priv}}"
+    dest: "{{ ssl_certs_dir }}/{{ internal_base_domain }}.key"
+    owner: "root"
+    group: "ssl-cert"
+    mode: "0640"
+  no_log: "{{sram_ansible_nolog}}"
+
+- name: write backend wildcard pub
+  copy:
+    content: "{{wildcard_backend_cert.pub}}"
+    dest: "{{ ssl_certs_dir }}/{{ internal_base_domain }}.crt"
+    owner: "root"
+    group: "root"
+    mode: 0644
+
+- name: register backend wildcard pub in OS registry
+  file:
+    state: "link"
+    path: "{{ ca_cert_dir }}/sram-internal.crt"
+    src: "{{ ssl_certs_dir }}/{{ internal_base_domain }}.crt"
+    force: true
+  notify: "update certificates"
+
+- name: write self-signed external https certificate
+  copy:
+    content: "{{https_cert.cert}}"
+    dest: "{{ ca_cert_dir }}/sram-https.crt"
+    owner: "root"
+    group: "root"
+    mode: 0644
+  when: "is_docker and enable_https and use_fixed_cert"
+  notify: "update certificates"
+
+- name: remove obsolete files
+  file:
+    path: "{{ca_cert_dir}}/{{item}}"
+    state: "absent"
+  with_items:
+    - "vm.scz-vm.crt"
+    - "scz-vm.crt"
+    - "sram-https.crt"
+  when: "not is_docker"
+  notify: "update certificates"
+
+# make sure all certificates are up to date after this role has run
+- name: Flush handlers
+  meta: flush_handlers

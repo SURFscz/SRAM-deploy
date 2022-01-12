@@ -1,4 +1,9 @@
 ---
+- name: Install tmpreaper
+  apt:
+    name: "tmpreaper"
+    state: "present"
+
 - name: create backup groups
   user:
     name: "{{ item }}"

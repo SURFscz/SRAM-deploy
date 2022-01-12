@@ -1,10 +1,7 @@
 {% set lb_http = loadbalancer|selectattr("protocol", "equalto", "http")|list %}
 {% set lb_ldap = loadbalancer|selectattr("protocol", "equalto", "ldap")|list %}
-{# add a "name" atribute to the dict #}
-{% for h in lb_http %}{% set _ = h.update({'name': h['hostname'].split('.')[0]}) %}{% endfor %}
 global
     log /dev/log    local0
-    log /dev/log    local1 notice
     chroot /var/lib/haproxy
     stats socket /run/haproxy/admin.sock mode 660 level admin
     stats timeout 30s
@@ -50,15 +47,6 @@ defaults
 #--------------------------------------------------------------------
 #  frontend
 # -------------------------------------------------------------------
-frontend stats
-    bind localhost:81
-    mode http
-    stats enable
-    stats uri /
-    stats refresh 10s
-    stats auth admin:{{haproxy_admin_secret}}
-    stats admin if TRUE
-
 frontend fe_https
 {% if enable_https %}
     bind    *:443 ssl crt-list /etc/haproxy/crt-list.txt transparent alpn h2,http/1.1
@@ -70,6 +58,11 @@ frontend fe_https
 
     mode    http
     option  httplog
+
+    # redirects
+{% for host in haproxy_redirect_hosts %}
+    http-request redirect prefix https://{{host.to}} code 301 if { hdr(host) -i {{host.from}} }
+{% endfor %}
 
 {% if enable_https %}
     # always use https
@@ -106,10 +99,13 @@ frontend fe_https
 
 {% if enable_ratelimit %}
     http-request track-sc0 src table proxy_rates
-    http-request track-sc1 url32+src table proxy_req_rates unless { path_end .css .js .png .jpeg .gif .ico .woff2 }
+    acl url_static path_end .css .js .png .jpeg .gif .ico .woff2
+    acl url_static path_beg /api/images
+    http-request track-sc1 url32+src table proxy_req_rates unless url_static
     acl exceeds_limit sc_gpc0_rate(0) gt 50
+    acl network_allowed src {{ iprange.internal }}
     http-request sc-inc-gpc0(0) if { sc_http_req_rate(1) eq 1 } !exceeds_limit
-    http-request deny deny_status 429 if exceeds_limit
+    http-request deny deny_status 429 if exceeds_limit !network_allowed
 {% endif %}
 
 {% if iprange.vpn is defined %}
@@ -136,7 +132,7 @@ backend be_{{host.name}}
     mode    http
     cookie  SERVERID insert indirect maxidle 60m secure httponly nocache
     {% for be_server in host.backend_hosts -%}
-    {% set server_name = be_server.split('.')[0] -%}
+    {% set server_name = be_server.split('.')[0] + ":" + host.backend_port|string -%}
     server {{server_name}} {{be_server}}:{{host.backend_port}} ssl check cookie {{be_server}}
     {% endfor %}
 
@@ -154,7 +150,7 @@ listen ldap_{{name}}_{{host.frontend_port}}
 {% endif %}
 
 {% for be_server in host.backend_hosts %}
-{% set servername = be_server.split('.')[0] %}
+{% set servername = be_server.split('.')[0] + ":" + host.backend_port|string %}
     server {{servername}} {{be_server}}:{{host.backend_port}} ssl check weight 10 {% if loop.index==1 %}on-marked-up shutdown-backup-sessions{%else%}backup{%endif%}
 
 {% endfor %}
@@ -177,3 +173,21 @@ backend proxy_req_rates
 backend proxy_rates
         stick-table type ip size 1m expire 24h store gpc0,gpc0_rate(30s)
 {% endif %}
+
+frontend stats
+    bind localhost:81
+    mode http
+    stats enable
+    stats uri /
+    stats refresh 10s
+    stats auth admin:{{haproxy_admin_secret}}
+    stats admin if TRUE
+
+frontend stats_ro
+    bind *:8404
+    mode http
+    stats enable
+    stats uri /stats
+    stats refresh 10s
+    stats admin if FALSE
+

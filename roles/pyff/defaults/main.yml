@@ -1,7 +1,5 @@
 ---
 # pyFF configuration
-pyff_repo_url: "https://github.com/IdentityPython/pyFF.git"
-pyff_repo_version: "master"
 pyff_project_dir: "/opt/pyff"
 pyff_metadata_dir: "{{ pyff_project_dir }}/metadata"
 pyff_env_dir: "{{ pyff_project_dir }}/pyff-env"

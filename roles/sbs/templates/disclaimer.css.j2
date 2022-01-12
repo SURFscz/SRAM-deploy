@@ -1,4 +1,4 @@
-{% if environment_name != "aws_prd" -%}
+{% if environment_name!="prd" -%}
 body::after {
     background: {{ sbs_disclaimer_color }};
     content: "{{ sbs_disclaimer_label }}";

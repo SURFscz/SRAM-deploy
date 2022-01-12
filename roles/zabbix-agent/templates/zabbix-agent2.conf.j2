@@ -1,0 +1,13 @@
+
+
+{% if zabbix_active_check %}
+Server={{zabbix_server}}
+{% endif %}
+ServerActive={{zabbix_server}}
+Hostname={{ inventory_hostname }}
+Timeout=10
+
+TLSAccept=psk
+TLSConnect=psk
+TLSPSKIdentity={{ inventory_hostname }}
+TLSPSKFile={{zabbix_psk_file}}

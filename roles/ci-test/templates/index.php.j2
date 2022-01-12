@@ -1,0 +1,133 @@
+<html>
+<head><title>Test RP</title></head>
+<body>
+<?php
+session_start();
+require '/opt/jumbojett/vendor/autoload.php';
+use Jumbojett\OpenIDConnectClient;
+
+$CLIENT_ID = "{{ ci_rp_client_id }}";
+$CLIENT_SECRET = "{{ ci_rp_client_secret }}";
+
+$SCOPES = "openid profile email voperson_external_affiliation eduperson_scoped_affiliation eduperson_entitlement eduperson_assurance eduperson_orcid eduperson_principal_name ssh_public_key";
+#$CLAIMS = "given_name family_name email eduperson_scoped_affiliation ssh_public_key";
+$CLAIMS = [
+    "id_token" => [
+        "ssh_public_key" => null
+    ],
+    "userinfo" => [
+        "ssh_public_key" => null
+    ],
+];
+
+$reset = false;
+if (isset($_POST['reset'])) {
+  $reset = true;
+}
+
+$rp = $CLIENT_ID;
+if (isset($_GET['client_id'])) {
+  $rp = $_GET['client_id'];
+}
+
+if ($_POST['id_token']) {
+  $jwt = $_POST['id_token'];
+  $parts = explode('.', $jwt);
+  $payload = json_decode(base64_decode($parts[1]));
+  $rp = $payload->aud[0];
+}
+
+if (isset($_GET['scope'])) {
+  $scope =  $_GET['scope'];
+  $_SESSION['scope'] = $scope;
+  $reset = true;
+} else {
+  $scope = @$_SESSION['scope'] ? $_SESSION['scope'] : $SCOPES;
+}
+
+if (isset($_GET['redirect_uri'])) {
+  $redirect_uri = $_GET['redirect_uri'];
+} else {
+  $redirect_uri = 'https://rp.ci-runner.sram.surf.nl/resume.html';
+}
+
+if (isset($_GET['claims'])) {
+  $request_claims = @$_GET['claims'];
+} else {
+  $request_claims = $CLAIMS;
+}
+$_SESSION['claims'] = $request_claims;
+
+if (isset($_GET['response_type'])) {
+  $response_type = [$_GET['response_type']];
+} else {
+  $response_type = array('token id_token');
+}
+
+if (isset($_GET['idp_hint'])) {
+  $idp_hint = urldecode($_GET['idp_hint']);
+  $_SESSION['idp_hint'] = $idp_hint;
+  $reset = true;
+} else {
+  $idp_hint = @$_SESSION['idp_hint'];
+}
+
+if ($reset) {
+  unset($_SESSION['authenticated']);
+  unset($_SESSION['claims']);
+  unset($_SESSION['scope']);
+}
+
+$oidc = new OpenIDConnectClient('https://proxy.acc.sram.eduteams.org/',
+                                $rp,
+                                $CLIENT_SECRET);
+$oidc->addScope($scope);
+#$oidc->addAuthParam(array('idp_hint' => $idp_hint));
+error_log("===");
+error_log("http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]");
+error_log( print_r($response_type, TRUE) );
+$oidc->setResponseTypes($response_type);
+$oidc->setAllowImplicitFlow(true);
+$oidc->setRedirectURL($redirect_uri);
+#$oidc->addAuthParam(array('response_mode' => 'form_post'));
+
+if ($request_claims) {
+  $oidc->addAuthParam(array('claims' => json_encode($request_claims)));
+}
+
+$authenticated = @$_SESSION['authenticated'];
+
+if (!$authenticated) {
+  try {
+    $oidc->authenticate();
+  } catch (Exception $e) {
+    echo "<pre id=result>" . json_encode($e->getMessage(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)  . "</pre>\n";
+    exit();
+  }
+  $_SESSION['authenticated'] = true;
+  $_SESSION['id_token'] = $oidc->getVerifiedClaims();
+  $_SESSION['access_token'] = $oidc->getAccessTokenPayload();
+  $_SESSION['userinfo'] = $oidc->requestUserInfo();
+}
+
+$id_token = $_SESSION['id_token'];
+$access_token = $_SESSION['access_token'];
+$userinfo = $_SESSION['userinfo'];
+$request_claims = $_SESSION['claims'];
+
+if (isset($_POST['scope'])) {
+  $resultant_scope = $_POST['scope'];
+}
+
+$meta->requested_scope = $scope;
+$meta->resultant_scope = $resultant_scope;
+$meta->requested_claims = $request_claims;
+
+echo "ID_TOKEN\n<pre id=id_token>" . json_encode($id_token, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "</pre>\n";
+echo "ACCESS_TOKEN\n<pre id=access_token>" . json_encode($access_token, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "</pre>\n";
+echo "USER_INFO\n<pre id=user_info>" . json_encode($userinfo, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "</pre>\n";
+echo "META\n<pre id=meta>" . json_encode($meta, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "</pre>\n";
+?>
+<form method="POST"><input type="submit" name="reset"  value="Reset"></form>
+</body></html>
+

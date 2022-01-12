@@ -1,0 +1,101 @@
+---
+- name: install journald config
+  template:
+    src: "journald.conf.j2"
+    dest: "/etc/systemd/journald.conf"
+  notify:
+    - "restart journald"
+    - "reset journal permissions"
+
+- name: install required packages
+  apt:
+    state: "present"
+    name:
+      - "systemd-journal-remote"
+      - "python3-cryptography"
+      - "openssl"
+
+- name: create group for journal-upload
+  group:
+    name: "{{journal_upload_group}}"
+    state: "present"
+
+- name: create override dir
+  file:
+    path: "/etc/systemd/system/systemd-journal-upload.service.d/"
+    state: "directory"
+
+- name: fix group for journal-uploader
+  copy:
+    dest: "/etc/systemd/system/systemd-journal-upload.service.d/override.conf"
+    content: |
+      [Service]
+      SupplementaryGroups={{journal_upload_group}}
+      # service will exit when upstream server in unavailable; needs to restart automatically
+      Restart=on-failure
+      RestartSec=60s
+  notify:
+    - "systemd daemon-reload"
+    - "enable journal-upload"
+
+- name: install journal certs
+  copy:
+    dest: "{{ssl_certs_dir}}/{{item.name}}"
+    content: "{{item.content}}"
+    owner: "root"
+    group: "{{journal_upload_group}}"
+    mode: "{{item.mode}}"
+  no_log: "{{sram_ansible_nolog}}"
+  with_items:
+    - { name: "journal-ca.crt",     mode: "0644", content: "{{journal_ca.pub}}"    }
+  notify:
+    - "restart journal-upload"
+
+- name: generate a journal client private key
+  community.crypto.openssl_privatekey:
+    path: "{{ssl_certs_dir}}/journal-client.key"
+    size: 2048
+    owner: "root"
+    group: "{{journal_upload_group}}"
+    mode: "0640"
+  no_log: "{{sram_ansible_nolog}}"
+  notify:
+    - "restart journal-upload"
+
+- name: generate a journal client certficate request
+  community.crypto.openssl_csr:
+    path: "{{ssl_certs_dir}}/journal-client.csr"
+    privatekey_path: "{{ssl_certs_dir}}/journal-client.key"
+    common_name: "{{ansible_hostname}}"
+    owner: "root"
+    group: "root"
+    mode: "0600"
+
+- name: generate a journal client certificate
+  community.crypto.x509_certificate:
+    path: "{{ssl_certs_dir}}/journal-client.crt"
+    csr_path: "{{ssl_certs_dir}}/journal-client.csr"
+    provider: "ownca"
+    ownca_content: "{{journal_ca.pub}}"
+    ownca_privatekey_content: "{{journal_ca.priv}}"
+    ownca_not_after: "210001010000Z"
+    owner: "root"
+    group: "{{journal_upload_group}}"
+    mode: "0644"
+  notify:
+    - "restart journal-upload"
+
+- name: install journal-upload config
+  template:
+    src: "journal-upload.conf.j2"
+    dest: "/etc/systemd/journal-upload.conf"
+  notify:
+    - "enable journal-upload"
+
+- name: install new rsyslog config
+  template:
+    src: "rsyslog.conf.j2"
+    dest: "/etc/rsyslog.conf"
+  notify:
+    - "restart rsyslog"
+    - "remove obsolete logfiles"

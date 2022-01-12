@@ -5,9 +5,12 @@ haproxy:
   custom_dhparam: false
   dhparam_keysize: 2048
 
+zabbix_templates_extra:
+  - "HAProxy by Zabbix agent"
+
 firewall_v4_incoming:
-  - { name: bastion,      src: "{{iprange.bastion}}", dport:  "22", proto: tcp }
-  - { name: public_http,                              dport:  "80", proto: tcp }
-  - { name: public_https,                             dport: "443", proto: tcp }
-  - { name: vnet,         src: "{{iprange.vm}}",      dport: "22,80,443,636", proto: tcp }
+  - { name: bastion,      src: "{{iprange.bastion}}",  dport:  "22",           proto: tcp }
+  - { name: public_http,                               dport:  "80",           proto: tcp }
+  - { name: public_https,                              dport: "443",           proto: tcp }
+  - { name: vnet,         src: "{{iprange.internal}}", dport: "22,80,443,636", proto: tcp }
 

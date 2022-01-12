@@ -1,20 +1,12 @@
 ---
 - name: restart sshd
   service:
-    name: sshd
-    state: restarted
+    name: "sshd"
+    state: "restarted"
 
 - name: reload sysctl settings
   systemd:
-    name: systemd-sysctl.service
-    state: restarted
+    name: "systemd-sysctl.service"
+    state: "restarted"
   when:
-    - environment_name!="vm"
-
-- name: restart journald
-  systemd:
-    name: systemd-journald.service
-    state: restarted
-
-- name: update certificates
-  command: update-ca-certificates
+    - 'environment_name!="vm"'

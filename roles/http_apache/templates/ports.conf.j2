@@ -1,1 +1,4 @@
 Listen {{apache_random_port}}
+{% for p in apache_additional_ports %}
+Listen {{p}}
+{% endfor %}

@@ -19,12 +19,11 @@
 
 - name: install IdP metadata
   copy:
-    src: "{{item}}"
-    dest: "{{ metadata_source_dir }}"
+    content: "{{item.metadata}}"
+    dest: "{{ metadata_source_dir }}/{{item.name}}.xml"
     mode: "0644"
     owner: "root"
-  with_items:
-    - "monitoring-idp.xml"
+  with_items: "{{ metadata_idps_files }}"
   notify:
     - "run pyff-metadata job"
 
