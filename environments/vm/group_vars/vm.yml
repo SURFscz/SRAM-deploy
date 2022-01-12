@@ -9,116 +9,69 @@ internal_base_domain: "vm.scz-vm.net"
 
 # externally visible!
 hostnames:
-  proxy:    proxy.{{base_domain}}
-  mdq:      mdq.{{base_domain}}
-  consent:  cm.{{base_domain}}
-  #comanage: comanage.{{base_domain}}
   ldap:     ldap.{{base_domain}}
   meta:     meta.{{base_domain}}
   sbs:      sbs.{{base_domain}}
   oidc:     oidc-test.{{base_domain}}
   sp:       sp-test.{{base_domain}}
   idp:      idp-test.{{base_domain}}
-  google:   google-test.{{base_domain}}
   tfa:      2fa-test.{{base_domain}}
   pam:      pam.{{base_domain}}
-  orcid:    orcid-test.{{base_domain}}
-  orcid_sb: orcid-sb-test.{{base_domain}}
-  ms:       ms-test.{{base_domain}}
   oidc_op:  oidc-op.{{base_domain}}
 
 idp_test_port: 81
 sp_test_port: 82
 oidc_test_port: 83
-google_test_port: 84
-orcid_test_port: 85
-orcid_sb_test_port: 86
-ms_test_port: 87
 metadata_backend_port: 88
-comanage_backend_port: 89
 sbs_backend_port: 90
 tfa_test_port: 91
 pam_backend_port: 92
 meta_port: 88
 oidc_op_port: 93
 
-proxy_hostname: "proxy.{{base_domain}}"
-
-# COmanage-ldap configuration
-comanage_ldap_host: "ldap.vm.scz-vm.net"
-
-# TODO: get rid of hardcoded ports for proxy vhosts
 loadbalancer:
-  - hostname: "{{hostnames.proxy}}"
-    protocol: http
-    backend_hosts: "{{groups['vm_proxy']}}"
-    backend_port: 8080
-  - hostname: "{{hostnames.mdq}}"
-    protocol: http
-    backend_hosts: "{{groups['vm_proxy']}}"
-    backend_port: 8081
-  - hostname: "{{hostnames.consent}}"
-    protocol: http
-    backend_hosts: "{{groups['vm_proxy']}}"
-    backend_port: 8082
-  #- hostname: "{{hostnames.comanage}}"
-  #  protocol: http
-  #  backend_hosts: "{{groups['vm_comanage']}}"
-  #  backend_port: "{{ comanage_backend_port }}"
-  #- hostname: "{{hostnames.comanage}}"
-  #  protocol: ldap
-  #  frontend_port: 1636
-  #  backend_hosts: "{{groups['vm_comanage']}}"
-  #  backend_port: 389
-  - hostname: "{{hostnames.sbs}}"
+  - name: "sbs"
+    hostname: "{{hostnames.sbs}}"
     protocol: http
     backend_hosts: "{{groups['vm_sbs']}}"
     backend_port: "{{ sbs_backend_port }}"
-  - hostname: "{{hostnames.meta}}"
+  - name: "meta"
+    hostname: "{{hostnames.meta}}"
     protocol: http
     backend_hosts: "{{groups['vm_meta']}}"
     backend_port: "{{ metadata_backend_port }}"
-  - hostname: "{{hostnames.oidc}}"
+  - name: "client_oidc"
+    hostname: "{{hostnames.oidc}}"
     protocol: http
     backend_hosts: "{{groups['vm_client']}}"
     backend_port: "{{oidc_test_port}}"
-  - hostname: "{{hostnames.sp}}"
+  - name: "client_sp"
+    hostname: "{{hostnames.sp}}"
     protocol: http
     backend_hosts: "{{groups['vm_client']}}"
     backend_port: "{{sp_test_port}}"
-  - hostname: "{{hostnames.idp}}"
+  - name: "client_idp"
+    hostname: "{{hostnames.idp}}"
     protocol: http
     backend_hosts: "{{groups['vm_client']}}"
     backend_port: "{{idp_test_port}}"
-  - hostname: "{{hostnames.google}}"
-    protocol: http
-    backend_hosts: "{{groups['vm_client']}}"
-    backend_port: "{{google_test_port}}"
-  - hostname: "{{hostnames.tfa}}"
+  - name: "client_2fa"
+    hostname: "{{hostnames.tfa}}"
     protocol: http
     backend_hosts: "{{groups['vm_client']}}"
     backend_port: "{{tfa_test_port}}"
-  - hostname: "{{hostnames.orcid}}"
-    protocol: http
-    backend_hosts: "{{groups['vm_client']}}"
-    backend_port: "{{orcid_test_port}}"
-  - hostname: "{{hostnames.orcid_sb}}"
-    protocol: http
-    backend_hosts: "{{groups['vm_client']}}"
-    backend_port: "{{orcid_sb_test_port}}"
-  - hostname: "{{hostnames.ms}}"
-    protocol: http
-    backend_hosts: "{{groups['vm_client']}}"
-    backend_port: "{{ms_test_port}}"
-  - hostname: "{{hostnames.oidc_op}}"
+  - name: "client_oidc_op"
+    hostname: "{{hostnames.oidc_op}}"
     protocol: http
     backend_hosts: "{{groups['vm_client']}}"
     backend_port: "{{oidc_op_port}}"
-  - hostname: "{{hostnames.pam}}"
+  - name: "client_pam"
+    hostname: "{{hostnames.pam}}"
     protocol: http
     backend_hosts: "{{groups['vm_ldap']}}"
     backend_port: "{{pam_backend_port}}"
-  - hostname: "{{hostnames.ldap}}"
+  - name: "client_ldap"
+    hostname: "{{hostnames.ldap}}"
     protocol: ldap
     frontend_port: 636
     backend_hosts: "{{groups['vm_ldap']}}"

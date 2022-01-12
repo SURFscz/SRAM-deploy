@@ -15,6 +15,7 @@ base {{ services_ldap.basedn }}
 # The LDAP protocol version to use.
 #ldap_version 3
 
+# TODO: gebruik hier een service-password van een subtree
 # The DN to bind with for normal lookups.
 binddn {{ services_ldap.binddn }}
 bindpw {{ services_ldap_password }}

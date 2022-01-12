@@ -1,0 +1,67 @@
+---
+- name: install journal-remote package
+  apt:
+    name: "systemd-journal-remote"
+    state: "present"
+
+- name: disable default journal-remote service
+  systemd:
+    name: "systemd-journal-remote.{{item}}"
+    state: "stopped"
+    enabled: false
+    masked: true
+  with_items:
+    - "socket"
+    - "service"
+
+- name: create group for journal-remote
+  group:
+    name: "{{journal_remote_group}}"
+    state: "present"
+
+- name: install journal certs
+  copy:
+    dest: "{{ssl_certs_dir}}/{{item.name}}"
+    content: "{{item.content}}"
+    owner: "root"
+    group: "{{journal_remote_group}}"
+    mode: "{{item.mode}}"
+  no_log: "{{sram_ansible_nolog}}"
+  with_items:
+    - { name: "journal-ca.crt",     mode: "0644", content: "{{journal_ca.pub}}"    }
+    - { name: "journal-server.crt", mode: "0644", content: "{{journal_server.pub}}"  }
+    - { name: "journal-server.key", mode: "0640", content: "{{journal_server.priv}}" }
+  notify:
+    - "restart journal-remote"
+
+- name: install journal-upload config
+  template:
+    src: "journal-remote.conf.j2"
+    dest: "/etc/systemd/journal-remote.conf"
+
+- name: create journal dir
+  file:
+    path: "{{journal_remote_dir}}/{{item.key}}"
+    state: "directory"
+    owner: "systemd-journal-remote"
+    group: "systemd-journal-remote"
+    mode: "755"
+  with_dict: "{{journal_upload_ports}}"
+
+- name: install socket file
+  template:
+    src: "sram-remotejournal.socket.j2"
+    dest: "/etc/systemd/system/sram-remotejournal-{{item.key}}.socket"
+  with_dict: "{{journal_upload_ports}}"
+  notify:
+    - "systemd daemon-reload"
+    - "restart journal-remote-socket"
+
+- name: install service file
+  template:
+    src: "sram-remotejournal.service.j2"
+    dest: "/etc/systemd/system/sram-remotejournal-{{item.key}}.service"
+  with_dict: "{{journal_upload_ports}}"
+  notify:
+    - "systemd daemon-reload"
+    - "restart journal-remote"

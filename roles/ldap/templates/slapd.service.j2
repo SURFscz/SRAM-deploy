@@ -10,7 +10,7 @@ ExecStartPre=-/bin/chown openldap. /var/run/slapd
 ExecStart = /usr/sbin/slapd -F /etc/ldap/slapd.d -u openldap -g openldap -h 'ldapi:/// ldaps://localhost/ ldaps://{{inventory_hostname}}/'
 Restart = always
 RestartSec = 30
-PIDFile = /var/run/slapd/slapd.pid
+PIDFile = /run/slapd/slapd.pid
 
 [Install]
 WantedBy = multi-user.target

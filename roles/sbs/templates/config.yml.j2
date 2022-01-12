@@ -1,24 +1,37 @@
 database:
-  uri: "mysql+pymysql://{{ sbs_db_user }}:{{ sbs_db_password }}@{{ db_host }}/{{ sbs_db_name }}"
+  uri: "mysql+pymysql://{{ sbs_db_user }}:{{ sbs_db_password }}@{{ db_host }}/{{ sbs_db_name }}?ssl=true&ssl_ca={{sbs_db_cert_path}}&charset=utf8mb4"
+
+redis:
+  host: "{{sbs_redis_host}}"
+  port: "{{sbs_redis_port}}"
+  password:
 
 secret_key: {{ sbs_db_secret }}
 
 # Valid scopes are "READ" and "WRITE"
 api_users:
-  {% for name, user in sbs_api_users.items() %}
+{% for name, user in sbs_api_users.items() %}
   - name: "{{ name }}"
-      password: "{{ user.password }}"
-      scopes: [ {{ user.scopes|join(', ') }} ]
-  {% endfor %}
+    password: "{{ user.password }}"
+    scopes: [ {{ user.scopes|join(', ') }} ]
+{% endfor %}
 
 oidc:
   client_id: "{{ sbs_client_id }}"
   client_secret: "{{ sbs_client_secret }}"
+  audience: "{{ sbs_oidc_jwt_audience }}"
   authorization_endpoint: "{{ sbs_oidc_authz_endpoint}}"
   token_endpoint: "{{ sbs_oidc_token_endpoint }}"
   userinfo_endpoint: "{{ sbs_oidc_userinfo_endpoint }}"
+  jwks_endpoint: "{{ sbs_oidc_jwks_endpoint }}"
   #Note that the paths for these  uri's is hardcoded and only domain and port differ per environment
-  redirect_uri: "{{ sbs_base_url }}api/users/resume-session"
+  redirect_uri: "{{ sbs_oidc_redirect_uri }}"
+  sfo_eduteams_redirect_uri: "{{ sbs_oidc_sfo_endpoint }}"
+  continue_eduteams_redirect_uri: "{{ sbs_eduteams_continue_endpoint }}"
+  private_rsa_signing_key_path: config/jwt_private_key
+  public_rsa_signing_key_path: config/jwt_public_key
+  second_factor_authentication_required: {{ sbs_second_factor_authentication_required }}
+  totp_token_name: "{{ sbs_totp_token_name }}"
   scopes:
     - profile
     - eduperson_scoped_affiliation
@@ -36,6 +49,7 @@ oidc:
 
 base_scope: "{{ base_domain }}"
 entitlement_group_namespace: "{{ sbs_urn_namespace }}"
+eppn_scope: " {{ sbs_eppn_scope }}"
 collaboration_creation_allowed_entitlement: "urn:mace:surf.nl:sram:allow-create-co"
 
 # All services in the white list can be requested in the create-restricted-co API
@@ -50,27 +64,29 @@ mail:
   sender_name: {{ sbs_mail_sender_name }}
   sender_email: {{ sbs_mail_sender_email }}
   suppress_sending_mails: False
-  info_email: scz-support@surf.nl
+  info_email: sram-support@surf.nl
   beheer_email: sram-beheer@surf.nl
   # Do we mail a summary of new Organizations and Services to the beheer_email?
   audit_trail_notifications_enabled: {{ sbs_audit_trail_notifications_enabled }}
+  account_deletion_notifications_enabled: True
   send_exceptions: {{ sbs_send_exceptions }}
   send_js_exceptions: {{ sbs_send_js_exceptions }}
   send_exceptions_recipients: ["{{ sbs_exceptions_mail }}"]
   environment: "{{ base_domain }}"
 
 aup:
-  pdf: SURFresearch-Access-Management-AUP-01122019-0001.pdf
-  pdf_link: "{{ sbs_base_url }}static/SURFresearch-Access-Management-AUP-01122019-0001.pdf"
-  html: SURFresearch-Access-Management-AUP-01122019-0001.html
+  version: 1
+  url_aup_en: https://wiki.surfnet.nl/display/SRAM/Acceptable+Use+Policy
+  url_aup_nl: https://wiki.surfnet.nl/display/SRAM/Acceptable+Use+Policy
 
 base_url: {{ sbs_base_url }}
+base_server_url: {{ sbs_base_url }}
 wiki_link: {{ sbs_wiki_link }}
 
 admin_users:
-  {% for admin_user in sbs_admin_users %}
+{% for admin_user in sbs_admin_users %}
   - uid: "{{ admin_user.uid }}"
-  {% endfor %}
+{% endfor %}
 
 organisation_categories:
   - "University"
@@ -81,19 +97,13 @@ organisation_categories:
 
 feature:
   admin_users_upgrade: False
-  admin_users_upgrade_url: "{{ sbs_base_url }}api/users/upgrade_super_user"
+  admin_users_upgrade_url: "{{ sbs_base_url }}/api/users/upgrade_super_user"
   admin_users_upgrade_redirect_url: {{ sbs_base_url }}
   seed_allowed: {{ sbs_seed_allowed }}
   api_keys_enabled: {{ sbs_api_keys_enabled }}
   feedback_enabled: {{ sbs_feedback_enabled }}
+  impersonation_allowed: {{ sbs_impersonation_allowed }}
 
-# The retention config determines how long users may be inactive, how long the reminder email is valid and when do we resent the magic link
-retention:
-  allowed_inactive_period_days: 9999
-  reminder_expiry_period_days: 14
-  reminder_resent_period_days: 7
-  cron_hour_of_day: {{ sbs_cron_hour_of_day }}
-  remove_suspended_users_period_days: 540
 
 metadata:
   idp_url: https://metadata.surfconext.nl/edugain-downstream.xml
@@ -109,7 +119,7 @@ service_bus:
 
 platform_admin_notifications:
   # Do we daily check for CO join_requests and CO requests and send a summary mail to beheer_email?
-  enabled: {{ sbs_open_notifications_enabled }}
+  enabled: False
   cron_hour_of_day:  {{ sbs_cron_hour_of_day }}
   # How long before we include open join_requests in the summary
   outstanding_join_request_days_threshold: 7
@@ -118,9 +128,50 @@ platform_admin_notifications:
 
 user_requests_retention:
   # Do we daily check for CO join_requests and CO requests and delete approved and denied?
-  enabled: True
+  enabled: {{ sbs_notifications_enabled }}
   cron_hour_of_day: {{ sbs_cron_hour_of_day }}
   # How long before we delete approved / denied join_requests
   outstanding_join_request_days_threshold: 90
   # How long before we delete approved / denied CO requests
   outstanding_coll_request_days_threshold: 90
+
+# The retention config determines how long users may be inactive, how long the reminder email is valid and when do we resent the magic link
+retention:
+  allowed_inactive_period_days: 99999
+  reminder_expiry_period_days: 10
+  reminder_resent_period_days: 0
+  cron_hour_of_day: {{ sbs_cron_hour_of_day }}
+  remove_suspended_users_period_days: 90
+
+collaboration_expiration:
+  # Do we daily check for CO's that will be deleted because they have been expired?
+  enabled: {{ sbs_notifications_enabled }}
+  cron_hour_of_day: {{ sbs_cron_hour_of_day }}
+  # How long after expiration do we actually delete expired collaborations
+  expired_collaborations_days_threshold: 90
+  # How many days before actual expiration do we mail the organisation members
+  expired_warning_mail_days_threshold: 10
+
+collaboration_suspension:
+  # Do we daily check for CO's that will be suspended because of inactivity?
+  enabled: {{ sbs_notifications_enabled }}
+  cron_hour_of_day: {{ sbs_cron_hour_of_day }}
+  # After how many days of inactivity do we suspend collaborations
+  collaboration_inactivity_days_threshold: 365
+  # How many days before actual suspension do we mail the organisation members
+  inactivity_warning_mail_days_threshold: 10
+  # After how many days after suspension do we actually delete the collaboration
+  collaboration_deletion_days_threshold: 90
+
+membership_expiration:
+  # Do we daily check for memberships that will be deleted because they have been expired?
+  enabled: {{ sbs_notifications_enabled }}
+  cron_hour_of_day: {{ sbs_cron_hour_of_day }}
+  # How long after expiration do we actually delete expired memberships
+  expired_memberships_days_threshold: 90
+  # How many days before actual expiration do we mail the co admin and member
+  expired_warning_mail_days_threshold: 10
+
+ldap:
+  url: "{{ sbs_ldap_url }}"
+  bind_account: "{{ sbs_ldap_bind_account }}"

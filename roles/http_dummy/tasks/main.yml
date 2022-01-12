@@ -4,6 +4,8 @@
   apt:
     name: nginx
     state: present
+  register: "first_apt"
+  failed_when: false
 
 - name: remove upstream nginx default
   file:
@@ -24,6 +26,12 @@
     dest: "/etc/nginx/sites-enabled/00-scz-default"
     state: link
   notify: restart nginx
+
+- name: install nginx again
+  apt:
+    name: nginx
+    state: present
+  when: "first_apt.changed and 'rc' in first_apt"
 
 - name: enable nginx
   service:

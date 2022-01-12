@@ -10,6 +10,14 @@
   template:
     src: "ports.conf.j2"
     dest: "/etc/apache2/ports.conf"
+  notify: "restart apache"
+
+
+- name: Install custom logformats
+  template:
+    src: "logformat.conf.j2"
+    dest: "/etc/apache2/conf-enabled/sram-logformat.conf"
+  notify: "restart apache"
 
 # Apache mpm modules need to be handled separately, see
 - name: Change apache worker
@@ -20,24 +28,23 @@
   with_items:
     - { name: "mpm_event",   state: "absent"  }
     - { name: "mpm_prefork", state: "present" }
-  become: yes
-  notify: Restart Apache
+  notify: "restart apache"
 
 - name: Enable correct apache modules
   apache2_module:
     state: "{{ item.value }}"
     name: "{{ item.key }}"
-    ignore_configcheck: True
+    ignore_configcheck: true
   with_dict:
-    status: present
-    cgid: present
-    cgi: present
-    actions: present
-    alias: present
-    rewrite: present
-    authn_core: present
-    authz_user: present
-    ssl: present
-
-  notify: Restart Apache
+    status: "present"
+    cgid: "present"
+    cgi: "present"
+    actions: "present"
+    alias: "present"
+    rewrite: "present"
+    authn_core: "present"
+    authz_user: "present"
+    ssl: "present"
+    headers: "present"
+  notify: "restart apache"
 

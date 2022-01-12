@@ -8,9 +8,13 @@ sbs_work_dir: "/opt/sbs"
 sbs_git_dir: "{{ sbs_work_dir }}/sbs"
 sbs_env_dir: "{{ sbs_work_dir }}/sbs-env"
 
+sbs_db_host: "localhost"
 sbs_db_name: "sbs"
 sbs_db_user: "sbs"
-sbs_db_host: "localhost"
+sbs_dbbackup_user: "sbs_backupper"
+
+sbs_redis_host: "localhost"
+sbs_redis_port: 6379
 
 sbs_mail_host: "{{ mail.relay_to }}"
 sbs_mail_port: "{{ mail.relay_port }}"
@@ -22,6 +26,7 @@ sbs_disclaimer_color: "#a29c13"
 sbs_disclaimer_label: wsgi
 
 sbs_urn_namespace: "urn:example:sbs"
+sbs_eppn_scope: "env.sram.surf.nl"
 sbs_restricted_co_default_org: "example.org"
 
 sbs_mail_sender_name: "SURF"
@@ -39,9 +44,20 @@ sbs_feedback_enabled: True
 sbs_audit_trail_notifications_enabled: True
 sbs_send_exceptions: False
 sbs_send_js_exceptions: False
-sbs_open_notifications_enabled: True
+sbs_second_factor_authentication_required: True
+sbs_totp_token_name: "SRAM"
+sbs_notifications_enabled: True
+sbs_impersonation_allowed: False
 
 sbs_oidc_config_url: "http://localhost/.well-known/openid-configuration"
 sbs_oidc_authz_endpoint: "http://localhost/OIDC/authorization"
 sbs_oidc_token_endpoint: "http://localhost/OIDC/token"
 sbs_oidc_userinfo_endpoint: "http://localhost/OIDC/userinfo"
+sbs_oidc_jwks_endpoint: "http://localhost/OIDC/jwks.json"
+sbs_oidc_sfo_endpoint: "https://localhost/sfo"
+sbs_eduteams_continue_endpoint: "https://localhost/continue"
+sbs_oidc_jwt_audience: "https://localhost"
+sbs_continue_eduteams_redirect_uri: "https://localhost/continue"
+
+sbs_backup_dir: "{{backup_base}}/sbs"
+sbs_db_cert_path: "/etc/ssl/sbs_db_root_cert.pem"

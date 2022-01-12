@@ -6,26 +6,55 @@ ARG RUNLEVEL=1
 ENV TERM linux
 
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections  && \
-    echo "deb http://ftp.de.debian.org/debian/ buster-backports main" >> /etc/apt/sources.list  && \
-    apt update -y  && \
-    apt install -y openssh-server python3 python sudo locales python-setuptools vim net-tools \
-        bash-completion sudo bash zsh vim locales-all curl ca-certificates gnupg2 net-tools git subversion \
-        acl bzip2 unzip apt-transport-https python-apt needrestart logrotate nullmailer rsyslog aptitude \
-        locales-all netcat dnsutils git acl bzip2 xz-utils unzip apt-transport-https python-apt \
-        rsyslog aptitude cloud-init && \
-    apt clean -y && apt-get autoremove -y && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*  && \
-    update-locale  && \
-    systemctl enable ssh.service  && \
-    systemctl disable systemd-timesyncd.service  && \
-    echo "exit 0" > /usr/sbin/policy-rc.d  && \
-    useradd --create-home -s /bin/bash ansible  && \
-    install -d -o ansible -m 0700 /home/ansible/.ssh  && \
-    echo -n 'ansible:ansible' | chpasswd  && \
-    mkdir -p /etc/sudoers.d && install -b -m 0440 /dev/null /etc/sudoers.d/ansible  && \
-    echo 'ansible ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers.d/ansible && \
-    /bin/echo -e '#!/bin/sh\ncp /tmp/authorized_keys ~ansible/.ssh\nchown ansible:ansible ~ansible/.ssh/authorized_keys' >> /etc/rc.local && \
-    chmod 755 /etc/rc.local
+    echo "deb http://ftp.de.debian.org/debian/ buster-backports main" >> /etc/apt/sources.list
 
+RUN apt-get update -y                && \
+    apt-get install -y                  \
+        acl                             \
+        apt-transport-https             \
+        bash                            \
+        bash-completion                 \
+        bzip2                           \
+        ca-certificates                 \
+        cloud-init                      \
+        curl                            \
+        dnsutils                        \
+        git                             \
+        gnupg2                          \
+        locales-all                     \
+        logrotate                       \
+        net-tools                       \
+        netcat                          \
+        nullmailer                      \
+        openssh-server                  \
+        python3                         \
+        python3-apt                     \
+        python3-setuptools              \
+        sudo                            \
+        unzip                           \
+        vim                             \
+        xz-utils                     && \
+    apt-get purge -y isc-dhcp-client && \
+    apt-get clean -y                 && \
+    apt-get autoremove --purge -y    && \
+    rm -rf /var/lib/apt/lists/*      && \
+    rm -rf /tmp/* /var/tmp/*
+
+RUN update-locale
+
+RUN systemctl enable ssh.service                 && \
+    systemctl disable systemd-timesyncd.service  && \
+    echo "exit 0" > /usr/sbin/policy-rc.d
+
+RUN useradd --create-home -s /bin/bash ansible        && \
+    install -d -o ansible -m 0700 /home/ansible/.ssh  && \
+    echo -n 'ansible:ansible' | chpasswd
+
+RUN mkdir -p /etc/sudoers.d && install -b -m 0440 /dev/null /etc/sudoers.d/ansible  && \
+    echo 'ansible ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers.d/ansible
+
+RUN /bin/echo -e '#!/bin/sh\ncp /tmp/authorized_keys ~ansible/.ssh\nchown ansible:ansible ~ansible/.ssh/authorized_keys' >> /etc/rc.local && \
+    chmod 755 /etc/rc.local
 
 
 # sshd services in all containers

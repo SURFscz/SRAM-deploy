@@ -18,8 +18,18 @@
     state: restarted
   when: dhclient.changed
 
+- name: "disable cloud-init VMWare customization"
+  lineinfile:
+    path: "/etc/cloud/cloud.cfg.d/99-sram.cfg"
+    line: "disable_vmware_customization: true"
+    create: true
+  when: ansible_virtualization_type == "VMware"
+
 - name: set localtime
-  file: state=link src=/usr/share/zoneinfo/{{timezone}} dest=/etc/localtime
+  file:
+    dest: "/etc/localtime"
+    state: "link"
+    src: "/usr/share/zoneinfo/{{timezone}}"
 
 - name: set timezone
   template: src=timezone.j2 dest=/etc/timezone
@@ -42,15 +52,16 @@
   when:
     - environment_name!="vm"
 
-- name: install journald config
-  template:
-    src: "journald.conf.j2"
-    dest: "/etc/systemd/journald.conf"
-  notify: restart journald
+- name: disable resume
+  file:
+    path: "/etc/initramfs-tools/conf.d/resume"
+    state: "absent"
 
 - name: "{{'en' if enable_ipv6 else 'dis'}}able ipv6"
-  template: src=99-sysctl-ipv6.conf.j2 dest=/etc/sysctl.d/99-sysctl-ipv6.conf
-  notify: reload sysctl settings
+  template:
+    src: "99-sysctl-ipv6.conf.j2"
+    dest: "/etc/sysctl.d/99-sysctl-ipv6.conf"
+  notify: "reload sysctl settings"
 
 - name: "Enable dmesg for regular users"
   lineinfile:
@@ -113,63 +124,3 @@
     - "ecdsa_key.pub"
   notify:
     - restart sshd
-
-
-# Normally ca-certificates does this, but
-# the first time apt hasn't run yet
-- name: Create ssl_certs_dir
-  file:
-    path: "{{ ssl_certs_dir }}"
-    state: directory
-    mode: '0755'
-
-- name: Ensure group "ssl-cert" exists
-  group:
-    name: ssl-cert
-    state: present
-    system: true
-
-- name: write backend wildcard key
-  copy:
-    content: "{{wildcard_backend_cert.priv}}"
-    dest: "{{ ssl_certs_dir }}/{{ internal_base_domain }}.key"
-    owner: "root"
-    group: "ssl-cert"
-    mode: 0640
-
-- name: write backend wildcard pub
-  copy:
-    content: "{{wildcard_backend_cert.pub}}"
-    dest: "{{ ssl_certs_dir }}/{{ internal_base_domain }}.crt"
-    owner: "root"
-    group: "root"
-    mode: 0644
-
-- name: register backend wildcard pub in OS registry
-  file:
-    state: "link"
-    path: "{{ ca_cert_dir }}/sram-internal.crt"
-    src: "{{ ssl_certs_dir }}/{{ internal_base_domain }}.crt"
-    force: true
-  notify: "update certificates"
-
-- name: write self-signed external https certificate
-  copy:
-    content: "{{https_cert.cert}}"
-    dest: "{{ ca_cert_dir }}/sram-https.crt"
-    owner: "root"
-    group: "root"
-    mode: 0644
-  when: "environment_name=='vm' and enable_https and use_fixed_cert"
-  notify: "update certificates"
-
-- name: remove obsolete files
-  file:
-    path: "{{ca_cert_dir}}/{{item}}"
-    state: "absent"
-  with_items:
-    - "vm.scz-vm.crt"
-    - "scz-vm.crt"
-    - "sram-https.crt"
-  when: "environment_name!='vm'"
-  notify: "update certificates"

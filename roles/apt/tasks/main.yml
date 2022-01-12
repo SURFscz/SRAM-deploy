@@ -12,6 +12,11 @@
     dest: /etc/apt/apt.conf.d/00-scz-release
   register: apt_default_release
 
+- name: remove backports sources.list
+  file:
+    path: "/etc/apt/sources.list.d/backports.list"
+    state: "absent"
+
 # we need to do this manually, because ansible's apt module doesn't handle the default-release
 # setting correctly
 - name: Update cache
@@ -24,44 +29,48 @@
   copy:
     src: 00-scz-update
     dest: /etc/apt/apt.conf.d/00-scz-update
+  when: "not is_docker"
 
 - name: remove unneccessary packages
   apt:
-    state: absent
-    purge: yes
-    autoremove: yes
-    update_cache: yes
+    state: "absent"
+    purge: true
+    autoremove: true
+    update_cache: true
     name:
-      - unattended-upgrades
+      - "unattended-upgrades"
+      - "cryptsetup"
+      - "cryptsetup-initramfs"
 
 - name: Install common tools / clients
   apt:
     update_cache: yes
     state: present
     name:
-      - sudo
-      - bash
-      - zsh
-      - vim
-      - locales-all
-      - curl
-      - netcat
-      - ca-certificates
-      - gnupg2
-      - net-tools
-      - dnsutils
-      - git
-      - acl
-      - bzip2
-      - xz-utils
-      - unzip
-      - apt-transport-https
-      - python-apt
-      - needrestart
-      - logrotate
-      - rsyslog
-      - aptitude
-      - cloud-init
+      - "sudo"
+      - "bash"
+      - "zsh"
+      - "vim"
+      - "locales-all"
+      - "curl"
+      - "netcat"
+      - "ca-certificates"
+      - "gnupg2"
+      - "net-tools"
+      - "dnsutils"
+      - "git"
+      - "acl"
+      - "bzip2"
+      - "xz-utils"
+      - "unzip"
+      - "apt-transport-https"
+      - "python3-apt"
+      - "needrestart"
+      - "logrotate"
+      - "rsyslog"
+      - "aptitude"
+      - "cloud-init"
+      - "parted"
 
 - name: Upgrade packages
   apt:
@@ -69,18 +78,19 @@
     cache_valid_time: 86400
     update_cache: yes
     autoclean: yes
-  when: "environment_name != 'vm'"
+  when: "not is_docker"
 
 - name: install VMware clients
   apt:
     state: present
     name:
       - open-vm-tools
-  when: ansible_virtualization_type == "VMware"
+  when: "ansible_virtualization_type == 'VMWare'"
 
 # apt module doesn't support autoremove very well, yet
 - name: Remove obsolete packages
   command: "/usr/bin/apt --yes --purge autoremove"
   register: result
   changed_when: "'0 upgraded, 0 newly installed, 0 to remove' not in result.stdout"
+  when: "not is_docker"
 

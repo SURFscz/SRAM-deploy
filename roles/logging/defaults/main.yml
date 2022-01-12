@@ -1,0 +1,6 @@
+---
+journal_upload_group: "journal-ssl"
+journal_upload_host: "journal.example.edu"
+journal_upload_port: "19532"
+ssl_certs_dir: "/etc/ssl"
+journal_retention: "2week"

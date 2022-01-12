@@ -47,6 +47,8 @@ iprange:
   lb:         "172.20.1.24"
   #comanage:   "172.20.1.21"
   mgnt:       "172.20.1.0/24"
+  internal:   "172.20.1.0/24"
+  monitoring: "172.20.1.29/32"
 
 mail:
   relay_host: "172.20.1.1"
@@ -67,18 +69,7 @@ admin:
 # versions
 # yamllint disable rule:line-length
 scz_repo:
-  #comanage:  { name: "COmanage",               version: "scz-0.12",   src: "https://github.com/SURFscz/comanage-registry.git"              }
-  #co_zone:   { name: "Zoneprovisioner",        version: "scz-0.13",   src: "https://github.com/SURFscz/COmanage-zoneprovisioner.git"       }
-  #co_lfp:    { name: "LdapFixedProvisioner",   version: "scz-0.12",   src: "https://github.com/SURFscz/COmanage-ldapfixedprovisioner.git"  }
-  #co_email:  { name: "EmailProvisioner",       version: "scz-0.1",    src: "https://github.com/SURFscz/COmanage-emailprovisioner.git"      }
-  #co_saml:   { name: "SAMLSource",             version: "scz-0.13",   src: "https://github.com/SURFscz/COmanage-samlsource.git"            }
-  #co_fae:    { name: "FixedAttributeEnroller", version: "scz-0.7",    src: "https://github.com/SURFscz/COmanage-fixedattributeenroller.git"}
-  #co_yoda:   { name: "Yoda plugin",            version: "scz-0.10",   src: "https://github.com/SURFscz/COmanage-yoda.git"                  }
-  #co_tmpl:   { name: "Template manager",       version: "scz-0.12",   src: "https://github.com/SURFscz/COmanage-templatemanager.git"       }
-  satosa:    { name: "SATOSA",                 version: "scz-0.10",   src: "https://github.com/SURFscz/SATOSA.git"                         }
-  satosa_ms: { name: "SATOSA microservices",   version: "scz-0.11",   src: "https://github.com/SURFscz/SATOSA-micro_services.git"          }
   pyff:      { name: "pyFF",                   version: "1.1.5",      src: "https://github.com/IdentityPython/pyFF.git"                    }
-  cmservice: { name: "CMservice",              version: "scz-0.4",    src: "https://github.com/SURFscz/CMservice.git"                      }
   sbs:       { name: "SBS",                    version: "main",       src: "https://github.com/SURFscz/SBS.git"                            }
   plsc:      { name: "pLSC",                   version: "main",       src: "https://github.com/SURFscz/plsc.git"                           }
 # yamllint enable rule:line-length
@@ -99,20 +90,14 @@ users:
 removed_users: []
 
 firewall_v4_incoming:
-  - { name: bastion,  src: "{{iprange.bastion}}", dport: "22,80,443", proto: tcp }
-  - { name: vnet,     src: "{{iprange.vm}}",      dport: "22,80,443", proto: tcp }
+  - { name: bastion,  src: "{{iprange.bastion}}",    dport: "22,80,443", proto: tcp }
+  - { name: vnet,     src: "{{iprange.internal}}",   dport: "22,80,443", proto: tcp }
+  - { name: zabbix,   src: "{{iprange.monitoring}}", dport: "10050",     proto: tcp }
 
 backup_base: "/opt/backups"
 backup_runparts: "{{backup_base}}/run.d"
 
 ssl_certs_dir: "/etc/ssl"
-
-# LDAP definition is here, because we need it in both the Ldap and Comanage groups
-#master_ldap:
-#  host:   "{{ groups['comanage'][0] }}"
-#  basedn: "dc=scz,dc=vnet"
-#  o:      "SCZ"
-#  binddn: "cn=admin,dc=scz,dc=vnet"
 
 services_ldap:
   host:   "{{ groups['ldap'][0] }}"
@@ -120,23 +105,16 @@ services_ldap:
   o:      "Services"
   binddn: "cn=admin,dc=services,dc=vnet"
 
-# Comanage-Proxy database configuration is here, because it is needed in both the
-# Proxy and Comanage groups.
-#comanage_proxy_db: "{{ groups['proxy'][0] }}"
-#comanage_proxy_db_user: "scz"
-#comanage_proxy_db_name: "cotosa"
-comanage_proxy_attribute: "cmuid"
-
 db_host: "{{ groups['db'][0] }}"
-
 sbs_db_name: "sbs"
 sbs_db_user: "sbs"
 
 sbs_client_id: sbs-server
-sbs_base_url: "https://{{hostnames.sbs}}/"
+sbs_base_url: "https://{{hostnames.sbs}}"
 
-php_debug: true
-php_xdebug_host: "{{iprange.bastion}}"
+# Redis
+sbs_redis_host: "redis.vm.scz-vm.net"
+sbs_redis_port: 6379
 
 # Docker ports
 docker_ports:
@@ -149,3 +127,10 @@ sbs_api_url: "{{ http_proto }}://{{ hostnames.sbs }}/"
 # No Zabbix on VM/Travis
 zabbix_enabled: false
 
+journal_upload_host: "bhr.vm.scz-vm.net"
+
+zabbix_api_url: "https://bhr.vm.scz-vm.net:443/"
+zabbix_api_user: "ansible_api"
+zabbix_api_password: "geheim_api_password"
+zabbix_server: "bhr.vm.scz-vm.net"
+zabbix_validate_certs: no
