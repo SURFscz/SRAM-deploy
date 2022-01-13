@@ -8,6 +8,7 @@ import os
 import uuid
 import yaml
 from flask import Flask
+from flask_migrate import Migrate
 from secrets import token_urlsafe
 from sqlalchemy import text
 from munch import munchify
@@ -31,6 +32,8 @@ app.config[\"SQLALCHEMY_TRACK_MODIFICATIONS\"] = False
 
 db.init_app(app)
 app.db = db
+
+Migrate(app, db)
 
 def read_image(file_name):
     file = f\"/tmp/ci-runner/{file_name}\"
