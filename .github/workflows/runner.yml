@@ -4,6 +4,8 @@ name: CI-runner
 on:
   # Triggers the workflow manually
   workflow_dispatch:
+    push:
+    pull_request:
     inputs:
       foobar:
         description: 'my Foobar'
