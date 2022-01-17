@@ -8,6 +8,7 @@ import os
 import uuid
 import yaml
 from flask import Flask
+from flask_migrate import Migrate
 from secrets import token_urlsafe
 from sqlalchemy import text
 from munch import munchify
@@ -16,7 +17,7 @@ if \"/opt/sbs/sbs\" not in sys.path:
   sys.path.insert(0, \"/opt/sbs/sbs\")
 
 from server.db.audit_mixin import metadata
-from server.db.db import db
+from server.db.db import db, db_migrations
 from server.db.domain import User, Organisation, OrganisationMembership, Service, Collaboration, \
     CollaborationMembership, SshKey, Aup, SchacHomeOrganisation
 from server.tools import read_file
@@ -31,6 +32,17 @@ app.config[\"SQLALCHEMY_TRACK_MODIFICATIONS\"] = False
 
 db.init_app(app)
 app.db = db
+
+Migrate(app, db)
+result = None
+with app.app_context():
+    while result is None:
+        try:
+            result = db.engine.execute(text(\"SELECT 1\"))
+        except OperationalError:
+            logger.info(\"Waiting for the database...\")
+            time.sleep(1)
+db_migrations(config.database.uri)
 
 def read_image(file_name):
     file = f\"/tmp/ci-runner/{file_name}\"
