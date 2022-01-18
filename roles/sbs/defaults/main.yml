@@ -61,3 +61,5 @@ sbs_continue_eduteams_redirect_uri: "https://localhost/continue"
 
 sbs_backup_dir: "{{backup_base}}/sbs"
 sbs_db_cert_path: "/etc/ssl/sbs_db_root_cert.pem"
+
+sbs_swagger_enabled: true
