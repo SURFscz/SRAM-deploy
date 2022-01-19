@@ -65,3 +65,37 @@ def step_impl(context, sub):
     token_sub = output.get('sub', None)
     assert(token_sub == sub), "No valid identifier found"
 
+@then('tokens are {file}')
+def step_impl(context, file):
+    context.wait.until(title_is('Test RP'),
+                       'Timeout waiting for RP')
+
+    # Test RP title
+    title = context.browser.title
+    assert(title == "Test RP"), "Error loading OP return url"
+
+    # Test user attributes
+    id_token = json.loads(context.browser.find_element_by_id('id_token').text)
+    access_token = json.loads(context.browser.find_element_by_id('access_token').text)
+    user_info = json.loads(context.browser.find_element_by_id('user_info').text)
+
+    with open(file) as f:
+        user_claims = json.load(f)
+
+    for claim, value in user_claims['id_token'].items():
+        if type(value) is list:
+            assert(set(id_token[claim]) == set(value)), f"id_token {claim} did not contain {value}"
+        else:
+            assert(id_token[claim] == value), f"id_token {claim} did not contain {value}"
+
+    for claim, value in user_claims['access_token'].items():
+        if type(value) is list:
+            assert(set(access_token[claim]) == set(value)), f"access_token {claim} did not contain {value}"
+        else:
+            assert(access_token[claim] == value), f"access_token {claim} did not contain {value}"
+
+    for claim, value in user_claims['user_info'].items():
+        if type(value) is list:
+            assert(set(user_info[claim]) == set(value)), f"user_info {claim} did not contain {value}"
+        else:
+            assert(user_info[claim] == value), f"user_info {claim} did not contain {value}"
