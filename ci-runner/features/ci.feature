@@ -23,6 +23,6 @@ Feature: Test RP logins
       Then tokens are <file>
 
   Examples:
-        | user    | password | file         |
-        | student | student  | student.json |
-        | admin   | admin    | admin.json   |
+        | user    | password | file                   |
+        | student | student  | ci-runner/student.json |
+        | admin   | admin    | ci-runner/admin.json   |
