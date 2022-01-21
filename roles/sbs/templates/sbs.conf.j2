@@ -30,7 +30,7 @@ Listen {{ sbs_backend_port }}
         WSGIPassAuthorization On
 
 {% if sbs_swagger_enabled %}
-        Header set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; frame-ancestors 'none'; form-action 'self'; style-src 'self' 'unsafe-inline' fonts.googleapis.com; img-src 'self' data:; block-all-mixed-content"
+        Header set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; frame-ancestors 'none'; form-action 'self'; style-src 'self' 'unsafe-inline' fonts.googleapis.com fonts.gstatic.com; img-src 'self' data:; block-all-mixed-content"
 {% else %}
         Header set Content-Security-Policy "default-src 'self'; script-src 'self'; frame-ancestors 'none'; form-action 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; block-all-mixed-content"
 {% endif %}
