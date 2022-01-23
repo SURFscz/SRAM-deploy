@@ -24,13 +24,14 @@ Listen {{ sbs_backend_port }}
         WSGIScriptAlias /apidocs {{ sbs_git_dir }}/sbs-api.wsgi/apidocs
         WSGIScriptAlias /flasgger_static {{ sbs_git_dir }}/sbs-api.wsgi/flasgger_static
         WSGIScriptAlias /swagger_api {{ sbs_git_dir }}/sbs-api.wsgi/swagger_api
+        WSGIScriptAlias /swagger {{ sbs_git_dir }}/sbs-api.wsgi/swagger
 {% endif %}
 
         WSGIApplicationGroup %{GLOBAL}
         WSGIPassAuthorization On
 
 {% if sbs_swagger_enabled %}
-        Header set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; frame-ancestors 'none'; form-action 'self'; style-src 'self' 'unsafe-inline' fonts.googleapis.com fonts.gstatic.com; font-src 'self' 'unsafe-inline' fonts.googleapis.com fonts.gstatic.com; img-src 'self' data:; block-all-mixed-content"
+        Header set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; frame-ancestors 'none'; form-action 'self'; style-src 'self' 'unsafe-inline' fonts.googleapis.com fonts.gstatic.com; font-src 'self' 'unsafe-inline' fonts.googleapis.com fonts.gstatic.com; img-src 'self' data:; block-all-mixed-content"
 {% else %}
         Header set Content-Security-Policy "default-src 'self'; script-src 'self'; frame-ancestors 'none'; form-action 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; block-all-mixed-content"
 {% endif %}
