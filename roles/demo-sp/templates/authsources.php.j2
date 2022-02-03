@@ -1,0 +1,34 @@
+<?php
+$config = array();
+
+$config['admin'] = array(
+        // The default is to use core:AdminPassword, but it can be replaced with
+        // any authentication source.
+
+        'core:AdminPassword',
+    );
+
+// An authentication source which can authenticate against both SAML 2.0
+// and Shibboleth 1.3 IdPs.
+$config['default-sp'] = array(
+        'saml:SP',
+        'entityID' => null,
+        'idp' => null,
+        'discoURL' => null,
+        'UIInfo' => array(
+            'DisplayName' => array(
+                'en' => 'SRAM Demo SP'
+             ),
+            'Description' => array(
+                'en' => 'SURF Research Access Management demo SP'
+             ),
+        ),
+        'signature.algorithm' => 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256',
+        /*'attributes' => array(
+            'attrname' => 'urn:oid:x.x.x.x',
+        ),*/
+        /*'attributes.required' => array (
+            'urn:oid:x.x.x.x',
+        ),*/
+);
+

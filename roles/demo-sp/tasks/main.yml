@@ -1,0 +1,82 @@
+---
+- name: Install nginx config
+  template:
+    src: "nginx.conf.j2"
+    dest: "/etc/nginx/sites-enabled/01-sram-demosp.conf"
+  notify: "restart nginx"
+
+- meta: flush_handlers
+
+- set_fact:
+    certbot_domains:
+      - "demo-sp.sram.surf.nl"
+
+- name: Ensure that packages are installed
+  apt:
+    name:
+      - php-fpm
+      - php-json
+    state: present
+
+- name: Create simplesaml group
+  ansible.builtin.group:
+    name: "{{simplesaml_group}}"
+    state: present
+
+- name: Create simplesaml user
+  user:
+    name: "{{simplesaml_user}}"
+    group: "{{simplesaml_group}}"
+    home: "{{ simplesaml_project_dir }}"
+    create_home: false
+    password: "!"
+
+- name: Create simplesaml project dir
+  file:
+    path: "{{ simplesaml_project_dir }}"
+    state: directory
+    mode: 0755
+    owner: "root"
+    group: "{{simplesaml_group}}"
+
+- name: Create simplesaml temp dir
+  file:
+    path: "{{ simplesaml_tmp_dir }}"
+    state: directory
+    mode: 01775
+    owner: "{{simplesaml_user}}"
+    group: "{{simplesaml_group}}"
+
+- name: Download SimpleSamlPHP
+  get_url:
+    url: "{{simplesaml_download_url}}"
+    dest: "{{ simplesaml_project_dir }}/simplesamlphp-{{ simplesaml_version }}.tar.gz"
+    checksum: "{{simplesaml_checksum}}"
+  register: ssp_download
+
+- name: Check SimpleSamlPHP dest dir
+  stat:
+    path: "{{ simplesaml_project_dir }}/simplesamlphp-{{ simplesaml_version }}"
+  register: ssp_destdir
+
+- name: Unpack SimpleSamlPHP
+  unarchive:
+    src: "{{ simplesaml_project_dir }}/simplesamlphp-{{ simplesaml_version }}.tar.gz"
+    dest: "{{ simplesaml_project_dir }}"
+    remote_src: true
+  when: ssp_download.changed or not ssp_destdir.stat.exists
+
+- name: Link simplesaml
+  file:
+    src: "{{ simplesaml_project_dir }}/simplesamlphp-{{ simplesaml_version }}"
+    dest: "{{ simplesaml_project_dir }}/simplesaml"
+    state: link
+
+- name: SimpleSaml configuration
+  template:
+    src: "{{item.key}}.j2"
+    dest: "{{ simplesaml_project_dir }}/simplesaml/{{item.value}}/{{item.key}}"
+  with_dict:
+    config.php: "config"
+    authsources.php: "config"
+    saml20-idp-remote.php: "metadata"
