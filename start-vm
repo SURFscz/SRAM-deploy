@@ -115,6 +115,12 @@ else
     echo "Mitogen not found or incompatibe Ansible version; falling back to default ansible ssh"
 fi
 
+ANSIBLE_VAULT_ARG=
+if [ -e "secret_vm" ]
+then
+    ANSIBLE_VAULT_ARG="--vault-password-file=secret_vm"
+fi
+
 if [ "$SKIP_ANSIBLE" ]
 then
     echo "Skipping ansible run"
@@ -122,7 +128,7 @@ else
     echo "Starting ansible"
     time \
     ansible-playbook provision.yml \
-        -i $INVENTORY \
+        -i $INVENTORY $ANSIBLE_VAULT_ARG \
         --extra-vars="secrets_file=environments/vm/secrets/all.yml" \
         $@
 fi
