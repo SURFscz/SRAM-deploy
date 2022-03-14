@@ -2,17 +2,18 @@
 set -e
 export TERM=xterm-256color
 
-INVENTORY=./environments/vm/inventory
 
 if [ "$1" = "--skip-ansible" ]
 then
     SKIP_ANSIBLE=1
     shift
 fi
+
+ENV_DIR=./environments/vm/
 if [ "$1" = "--ci" ]
 then
     CI="--ci"
-    INVENTORY=./environments/ci/inventory
+    ENV_DIR=./environments/ci/
     shift
 fi
 
@@ -128,8 +129,9 @@ else
     echo "Starting ansible"
     time \
     ansible-playbook provision.yml \
-        -i $INVENTORY $ANSIBLE_VAULT_ARG \
-        --extra-vars="secrets_file=environments/vm/secrets/all.yml" \
+        -i $ENV_DIR/inventory \
+        $ANSIBLE_VAULT_ARG \
+        --extra-vars="secrets_file=$ENV_DIR/secrets/all.yml" \
         $@
 fi
 
