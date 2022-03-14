@@ -39,7 +39,7 @@ jobs:
 
       - name: Start CI env
         run: |
-          ./start-ci
+          ./start-vm --ci
 
       - name: Bootstrap virtualenv in ci-runner
         run: |

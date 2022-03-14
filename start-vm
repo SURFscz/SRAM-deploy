@@ -7,6 +7,11 @@ then
     SKIP_ANSIBLE=1
     shift
 fi
+if [ "$1" = "--ci" ]
+then
+    CI="--ci"
+    shift
+fi
 
 if [ ! -f docker/ansible_key.pub ]; then
     echo "No ansible key found"
@@ -27,7 +32,7 @@ fi
 
 # Bring up the VMs if they're not running
 echo "Bringing docker containers up"
-./docker/docker-compose.yml.py > ./docker/docker-compose.yml
+./docker/docker-compose.yml.py $CI > ./docker/docker-compose.yml
 time docker-compose -f docker/docker-compose.yml up --no-recreate -d --remove-orphans
 
 echo "Waiting until containers have booted"
@@ -116,7 +121,6 @@ else
     ansible-playbook provision.yml \
         -i ./environments/vm/inventory \
         --extra-vars="secrets_file=environments/vm/secrets/all.yml" \
-        --vault-password-file=secret_vm \
         $@
 fi
 
