@@ -2,6 +2,21 @@
 set -e
 export TERM=xterm-256color
 
+
+if [ "$1" = "--skip-ansible" ]
+then
+    SKIP_ANSIBLE=1
+    shift
+fi
+
+ENV_DIR=./environments/vm/
+if [ "$1" = "--ci" ]
+then
+    CI="--ci"
+    ENV_DIR=./environments/ci/
+    shift
+fi
+
 if [ ! -f docker/ansible_key.pub ]; then
     echo "No ansible key found"
     ssh-keygen -f docker/ansible_key -N ""
@@ -21,7 +36,7 @@ fi
 
 # Bring up the VMs if they're not running
 echo "Bringing docker containers up"
-./docker/docker-compose.yml.py > ./docker/docker-compose.yml
+./docker/docker-compose.yml.py $CI > ./docker/docker-compose.yml
 time docker-compose -f docker/docker-compose.yml up --no-recreate -d --remove-orphans
 
 echo "Waiting until containers have booted"
@@ -92,7 +107,8 @@ do
         break
     fi
 done
-if [ -n "$MITOGEN_PATH" ] && ! ansible --version|head -1|grep -q 2.11
+ANSIBLE_VERSION=$(ansible --version | sed 's/.*\[core \([0-9.]\+\)\].*/\1/; q')
+if [ -n "$MITOGEN_PATH" ] && ! echo "$ANSIBLE_VERSION\n2.11~" | sort -V | head -1 | grep -q "2.11~"
 then
     echo "Found Mitogen at $MITOGEN_PATH"
     export ANSIBLE_STRATEGY_PLUGINS=$MITOGEN_PATH/$MITOGEN_SUBPATH/
@@ -101,12 +117,23 @@ else
     echo "Mitogen not found or incompatibe Ansible version; falling back to default ansible ssh"
 fi
 
-echo "Starting ansible"
-time \
-ansible-playbook provision.yml \
-    -i ./environments/vm/inventory \
-    --extra-vars="secrets_file=environments/vm/secrets/all.yml" \
-    --vault-password-file=secret_vm \
-    $@
+ANSIBLE_VAULT_ARG=
+if [ -e "secret_vm" ]
+then
+    ANSIBLE_VAULT_ARG="--vault-password-file=secret_vm"
+fi
+
+if [ "$SKIP_ANSIBLE" ]
+then
+    echo "Skipping ansible run"
+else
+    echo "Starting ansible"
+    time \
+    ansible-playbook provision.yml \
+        -i $ENV_DIR/inventory \
+        $ANSIBLE_VAULT_ARG \
+        --extra-vars="secrets_file=$ENV_DIR/secrets/all.yml" \
+        $@
+fi
 
 exit 0

@@ -45,7 +45,7 @@
     owner: "root"
     group: "root"
     mode: 0644
-  when: "environment_name=='vm' and enable_https and use_fixed_cert"
+  when: "is_docker and enable_https and use_fixed_cert"
   notify: "update certificates"
 
 - name: remove obsolete files
@@ -56,7 +56,7 @@
     - "vm.scz-vm.crt"
     - "scz-vm.crt"
     - "sram-https.crt"
-  when: "environment_name!='vm'"
+  when: "not is_docker"
   notify: "update certificates"
 
 # make sure all certificates are up to date after this role has run

@@ -1,7 +1,7 @@
 ---
 # This is a basic workflow to help you get started with Actions
 
-name: CI
+name: "VM-deploy"
 
 # Controls when the action will run.
 on:
@@ -93,7 +93,9 @@ jobs:
       # Start containers without deploy
       - name: Start containers
         shell: bash
-        run: "./start-vm --tags=none || true"
+        env:
+          SKIP_ANSIBLE: 1
+        run: "./start-vm"
 
       # Runs a single command using the runners shell
       - name: Run start-vm

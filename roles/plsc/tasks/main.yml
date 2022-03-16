@@ -52,10 +52,3 @@
     requirements: "{{ plsc_dir }}/requirements.txt"
     virtualenv: "{{ plsc_dir }}"
     virtualenv_python: python3
-
-- name: Run sync_clients
-  shell: >
-    PATH={{ plsc_dir }}/bin {{ plsc_dir }}/run.sh plsc.yml
-  changed_when: false
-  args:
-    chdir: "{{ plsc_dir }}"

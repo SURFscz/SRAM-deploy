@@ -8,15 +8,14 @@ SplitMode=none
 RateLimitIntervalSec=30s
 RateLimitBurst=10000
 
-# keep a max of 100 files of 128MB, but always keep at least 2GB free on disk
-# TODO: bring this down once we have fixed central logging
-SystemMaxUse=
-SystemKeepFree=2G
-SystemMaxFileSize=2G
+# Keep a maximum of 1GB on disk storage
+SystemMaxUse=1G
+SystemKeepFree=
+SystemMaxFileSize=100M
 SystemMaxFiles=100
 
 # split files every day, and keep message for max 2 weeks
-MaxFileSec=1day
+MaxFileSec=1h
 MaxRetentionSec={{journal_retention}}
 SyncIntervalSec=1m
 

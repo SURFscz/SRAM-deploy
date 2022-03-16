@@ -55,7 +55,7 @@
     path: /etc/ssl/openssl.cnf
     regexp: '(^MinProtocol.*)'
     replace: '#\1'
-  when: environment_name=="vm"
+  when: "is_docker"
 
 - name: Install database certificate
   copy:
@@ -111,6 +111,7 @@
     virtualenv: "{{ sbs_env_dir }}"
     virtualenv_python: python3
     requirements: "{{ sbs_git_dir }}/server/requirements/test.txt"
+    state: forcereinstall
   notify: "restart apache"
 
 # Deploy SBS client build

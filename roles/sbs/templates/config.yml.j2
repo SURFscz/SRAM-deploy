@@ -25,8 +25,9 @@ oidc:
   userinfo_endpoint: "{{ sbs_oidc_userinfo_endpoint }}"
   jwks_endpoint: "{{ sbs_oidc_jwks_endpoint }}"
   #Note that the paths for these  uri's is hardcoded and only domain and port differ per environment
-  redirect_uri: "{{ sbs_base_url }}/api/users/resume-session"
+  redirect_uri: "{{ sbs_oidc_redirect_uri }}"
   sfo_eduteams_redirect_uri: "{{ sbs_oidc_sfo_endpoint }}"
+  continue_eduteams_redirect_uri: "{{ sbs_eduteams_continue_endpoint }}"
   private_rsa_signing_key_path: config/jwt_private_key
   public_rsa_signing_key_path: config/jwt_public_key
   second_factor_authentication_required: {{ sbs_second_factor_authentication_required }}
@@ -102,7 +103,7 @@ feature:
   api_keys_enabled: {{ sbs_api_keys_enabled }}
   feedback_enabled: {{ sbs_feedback_enabled }}
   impersonation_allowed: {{ sbs_impersonation_allowed }}
-
+  sbs_swagger_enabled: {{ sbs_swagger_enabled }}
 
 metadata:
   idp_url: https://metadata.surfconext.nl/edugain-downstream.xml
@@ -118,7 +119,7 @@ service_bus:
 
 platform_admin_notifications:
   # Do we daily check for CO join_requests and CO requests and send a summary mail to beheer_email?
-  enabled: {{ sbs_notifications_enabled }}
+  enabled: False
   cron_hour_of_day:  {{ sbs_cron_hour_of_day }}
   # How long before we include open join_requests in the summary
   outstanding_join_request_days_threshold: 7
@@ -170,3 +171,7 @@ membership_expiration:
   expired_memberships_days_threshold: 90
   # How many days before actual expiration do we mail the co admin and member
   expired_warning_mail_days_threshold: 10
+
+ldap:
+  url: "{{ sbs_ldap_url }}"
+  bind_account: "{{ sbs_ldap_bind_account }}"

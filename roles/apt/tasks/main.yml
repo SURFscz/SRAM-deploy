@@ -29,6 +29,7 @@
   copy:
     src: 00-scz-update
     dest: /etc/apt/apt.conf.d/00-scz-update
+  when: "not is_docker"
 
 - name: remove unneccessary packages
   apt:
@@ -46,30 +47,30 @@
     update_cache: yes
     state: present
     name:
-      - "sudo"
+      - "acl"
+      - "apt-transport-https"
+      - "aptitude"
       - "bash"
-      - "zsh"
-      - "vim"
-      - "locales-all"
-      - "curl"
-      - "netcat"
+      - "bzip2"
       - "ca-certificates"
-      - "gnupg2"
-      - "net-tools"
+      - "cloud-init"
+      - "curl"
       - "dnsutils"
       - "git"
-      - "acl"
-      - "bzip2"
-      - "xz-utils"
-      - "unzip"
-      - "apt-transport-https"
-      - "python-apt"
-      - "needrestart"
+      - "gnupg2"
+      - "locales-all"
       - "logrotate"
-      - "rsyslog"
-      - "aptitude"
-      - "cloud-init"
+      - "needrestart"
+      - "net-tools"
+      - "netcat"
       - "parted"
+      - "python3-apt"
+      - "rsyslog"
+      - "sudo"
+      - "unzip"
+      - "vim"
+      - "wget"
+      - "xz-utils"
 
 - name: Upgrade packages
   apt:
@@ -77,18 +78,19 @@
     cache_valid_time: 86400
     update_cache: yes
     autoclean: yes
-  when: "environment_name != 'vm'"
+  when: "not is_docker"
 
 - name: install VMware clients
   apt:
     state: present
     name:
       - open-vm-tools
-  when: ansible_virtualization_type == "VMware"
+  when: "ansible_virtualization_type == 'VMWare'"
 
 # apt module doesn't support autoremove very well, yet
 - name: Remove obsolete packages
   command: "/usr/bin/apt --yes --purge autoremove"
   register: result
   changed_when: "'0 upgraded, 0 newly installed, 0 to remove' not in result.stdout"
+  when: "not is_docker"
 

@@ -1,2 +1,3 @@
 ---
 sram_ansible_nolog: false
+is_docker: "{{environment_name=='vm' or environment_name=='ci'}}"
