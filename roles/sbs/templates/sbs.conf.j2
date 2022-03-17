@@ -52,6 +52,9 @@ Listen {{ sbs_backend_port }}
             WSGIProcessGroup server
             Require all granted
         </Directory>
+        <Directory {{ sbs_git_dir }}/client/build >
+            Require all granted
+        </Directory>
 
         <LocationMatch ^/>
            RewriteEngine On
