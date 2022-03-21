@@ -175,3 +175,9 @@ membership_expiration:
 ldap:
   url: "{{ sbs_ldap_url }}"
   bind_account: "{{ sbs_ldap_bind_account }}"
+
+# Lower case entity ID's allowed skipping MFA
+mfa_idp_allowed:
+{% for url in sbs_mfa_idp_allowed %}
+  - "{{ url }}"
+{% endfor %}
