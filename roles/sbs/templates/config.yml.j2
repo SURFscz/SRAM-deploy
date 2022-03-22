@@ -182,3 +182,6 @@ mfa_idp_allowed:
   - schac_home: "{{ idp.schac_home }}"
     entity_id: "{{ idp.entity_id }}"
 {% endfor %}
+
+# A MFA login in a different flow is valid for X minutes
+mfa_sso_time_in_minutes: 10
