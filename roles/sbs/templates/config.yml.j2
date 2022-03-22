@@ -178,6 +178,7 @@ ldap:
 
 # Lower case entity ID's allowed skipping MFA
 mfa_idp_allowed:
-{% for url in sbs_mfa_idp_allowed %}
-  - "{{ url }}"
+{% for idp in sbs_mfa_idp_allowed %}
+  - schac_home: "{{ idp.schac_home }}"
+    entity_id: "{{ idp.entity_id }}"
 {% endfor %}
