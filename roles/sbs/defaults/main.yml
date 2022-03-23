@@ -34,8 +34,8 @@ sbs_eppn_scope: "env.sram.surf.nl"
 sbs_restricted_co_default_org: "example.org"
 
 sbs_mail_sender_name: "SURF"
-sbs_mail_sender_email: "no-reply@surf.nl"
-sbs_exceptions_mail: root@localhost
+sbs_mail_sender_email: "no-reply@localhost"
+sbs_exceptions_mail: "root@localhost"
 
 sbs_wiki_link: "https://www.example.org/wiki"
 
