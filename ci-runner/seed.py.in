@@ -76,7 +76,7 @@ roadrunner = read_image(\"roadrunner.png\")
 
 ci_org_name = \"CI Test\"
 ci_org_description = \"CI Test description\"
-ci_org_sho = \"example.org\"
+ci_org_sho = \"ci-runner.sram.surf.nl\"
 ci_org_shortname = \"ci\"
 ci_org_uuid = str(uuid.uuid4())
 
