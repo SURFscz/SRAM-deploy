@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import json
 from selenium.webdriver import Chrome
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.wait import WebDriverWait
@@ -13,13 +14,22 @@ options.add_argument('ignore-certificate-errors')
 browser = Chrome(options=options)
 wait = WebDriverWait(browser, timeout=2)
 
+health = 'https://sbs.scz-vm.net/landing'
 start = 'https://sbs.scz-vm.net/landing'
 profile = 'https://sbs.scz-vm.net/profile'
 
 try:
-    # Start browser
-    browser.get(start)
+    # Wait for status UP
+    status = ""
+    while status != "UP":
+        browser.get(health)
+        state = json.loads(browser.page_source)
+        status = state.get("status")
 
+    # Wait for SBS health up
+    wait.until(title_is('Research Access Management'), 'Timeout waiting for landing page')
+
+    browser.get(start)
     # Wait for SBS to load
     wait.until(title_is('Research Access Management'), 'Timeout waiting for landing page')
 
