@@ -15,7 +15,7 @@ options.add_argument('ignore-certificate-errors')
 browser = Chrome(options=options)
 wait = WebDriverWait(browser, timeout=2)
 
-health = 'https://sbs.scz-vm.net/landing'
+health = 'https://sbs.scz-vm.net/health'
 start = 'https://sbs.scz-vm.net/landing'
 profile = 'https://sbs.scz-vm.net/profile'
 
