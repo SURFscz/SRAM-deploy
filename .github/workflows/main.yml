@@ -116,6 +116,13 @@ jobs:
       - name: Run SBS logintest
         run: /usr/bin/python3 ./scripts/sbs-login.py
 
+      - name: Create Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: "sbs-logintest"
+          path: "screenshot.png"
+        if: failure()
+
       - name: Show error output
         run: >
           ansible -v -i environments/vm/inventory --become "all" -m command -a "/bin/sh -c '

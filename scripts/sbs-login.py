@@ -64,6 +64,7 @@ except Exception as e:
     url = browser.current_url
     print(f"url: {url}")
     page = browser.page_source
-    # print(f"page: {page}")
+    print(f"page: {page}")
+    browser.save_screenshot("screenshot.png")
     browser.close()
     exit(e)
