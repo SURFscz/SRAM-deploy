@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import time
 import json
 from selenium.webdriver import Chrome
 from selenium.webdriver.chrome.options import Options
@@ -25,6 +26,7 @@ try:
         browser.get(health)
         state = json.loads(browser.page_source)
         status = state.get("status")
+        time.sleep(1)
 
     # Wait for SBS health up
     wait.until(title_is('Research Access Management'), 'Timeout waiting for landing page')
