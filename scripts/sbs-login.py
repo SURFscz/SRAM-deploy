@@ -20,7 +20,7 @@ start = 'https://sbs.scz-vm.net/landing'
 profile = 'https://sbs.scz-vm.net/profile'
 
 try:
-    # Wait for status UP
+    # Wait for SBS health up
     status = ""
     while status != "UP":
         browser.get(health)
@@ -28,10 +28,8 @@ try:
         status = state.get("status")
         time.sleep(1)
 
-    # Wait for SBS health up
-    wait.until(title_is('Research Access Management'), 'Timeout waiting for landing page')
-
     browser.get(start)
+
     # Wait for SBS to load
     wait.until(title_is('Research Access Management'), 'Timeout waiting for landing page')
 
