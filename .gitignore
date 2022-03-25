@@ -15,6 +15,10 @@ secret_vm
 ansible_key*
 docker/docker-compose.yml
 docker/docker-compose-ci.yml
+docker/known_hosts
 .DS_STORE
 .DS_Store
 mitogen
+ci-runner/lib
+ci-runner/bin
+ci-runner/pyvenv.cfg

@@ -11,10 +11,12 @@ RUN apt-get update -y                && \
     apt-get install -y                  \
         acl                             \
         apt-transport-https             \
+        aptitude                        \
         bash                            \
         bash-completion                 \
         bzip2                           \
         ca-certificates                 \
+        chrony                          \
         cloud-init                      \
         curl                            \
         dnsutils                        \
@@ -26,12 +28,16 @@ RUN apt-get update -y                && \
         netcat                          \
         nullmailer                      \
         openssh-server                  \
+        parted                          \
         python3                         \
         python3-apt                     \
         python3-setuptools              \
+        rsyslog                         \
         sudo                            \
+        tmpreaper                       \
         unzip                           \
         vim                             \
+        wget                            \
         xz-utils                     && \
     apt-get purge -y isc-dhcp-client && \
     apt-get clean -y                 && \

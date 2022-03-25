@@ -2,6 +2,8 @@
 name: CI-runner
 
 on:
+  push:
+  pull_request:
   # Triggers the workflow manually
   workflow_dispatch:
     inputs:
@@ -37,7 +39,7 @@ jobs:
 
       - name: Start CI env
         run: |
-          ./start-ci
+          ./start-vm --ci
 
       - name: Bootstrap virtualenv in ci-runner
         run: |
