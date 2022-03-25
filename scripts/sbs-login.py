@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+import time
+import json
 from selenium.webdriver import Chrome
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.wait import WebDriverWait
@@ -13,11 +15,19 @@ options.add_argument('ignore-certificate-errors')
 browser = Chrome(options=options)
 wait = WebDriverWait(browser, timeout=2)
 
+health = 'https://sbs.scz-vm.net/health'
 start = 'https://sbs.scz-vm.net/landing'
 profile = 'https://sbs.scz-vm.net/profile'
 
 try:
-    # Start browser
+    # Wait for SBS health up
+    status = ""
+    while status != "UP":
+        browser.get(health)
+        state = json.loads(browser.find_element(By.XPATH, "//pre").text)
+        status = state.get("status")
+        time.sleep(1)
+
     browser.get(start)
 
     # Wait for SBS to load
@@ -64,6 +74,7 @@ except Exception as e:
     url = browser.current_url
     print(f"url: {url}")
     page = browser.page_source
-    # print(f"page: {page}")
+    print(f"page: {page}")
+    browser.save_screenshot("screenshot.png")
     browser.close()
     exit(e)

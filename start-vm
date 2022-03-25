@@ -9,11 +9,11 @@ then
     shift
 fi
 
-ENV_DIR=./environments/vm/
+ENV_DIR=./environments/vm
 if [ "$1" = "--ci" ]
 then
     CI="--ci"
-    ENV_DIR=./environments/ci/
+    ENV_DIR=./environments/ci
     shift
 fi
 
