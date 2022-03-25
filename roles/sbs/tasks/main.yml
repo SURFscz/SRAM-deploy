@@ -187,6 +187,21 @@
     src: "{{ sbs_log_dir }}"
   notify: "restart apache"
 
+- name: Check if python in virtualenv is out of date
+  shell: |
+    if [ "$({{ sbs_env_dir }}/bin/python3 --version)" = "$(/usr/bin/python3 --version)" ]
+      then echo "identical"
+      else echo "different"
+    fi
+  register: 'sbs_python_version_diff'
+  changed_when: false
+
+- name: Remove out of date python venv
+  file:
+    path: "{{ sbs_env_dir }}"
+    state: "absent"
+  when: 'sbs_python_version_diff.stdout == "different"'
+
 - name: Create python3 virtualenv
   pip:
     virtualenv: "{{ sbs_env_dir }}"
