@@ -108,7 +108,7 @@ do
     fi
 done
 ANSIBLE_VERSION=$(ansible --version | sed 's/.*\[core \([0-9.]\+\)\].*/\1/; q')
-if [ -n "$MITOGEN_PATH" ] && ! echo "$ANSIBLE_VERSION\n2.11~" | sort -V | head -1 | grep -q "2.11~"
+if [ -n "$MITOGEN_PATH" ]
 then
     echo "Found Mitogen at $MITOGEN_PATH"
     export ANSIBLE_STRATEGY_PLUGINS=$MITOGEN_PATH/$MITOGEN_SUBPATH/

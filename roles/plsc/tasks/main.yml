@@ -44,8 +44,10 @@
     mode: "0640"
   no_log: "{{sram_ansible_nolog}}"
 
-- name: Install virtualenv from requirements.txt
-  pip:
-    requirements: "{{ plsc_dir }}/requirements.txt"
-    virtualenv: "{{ plsc_dir }}"
-    virtualenv_python: python3
+
+- name: Create python3 virtualenv
+  import_role:
+    name: "python-venv"
+  vars:
+    python_venv_dir: "{{ plsc_venv_dir }}"
+    python_venv_requirements: "{{ plsc_dir }}/requirements.txt"
