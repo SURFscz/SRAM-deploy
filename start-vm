@@ -107,14 +107,13 @@ do
         break
     fi
 done
-ANSIBLE_VERSION=$(ansible --version | sed 's/.*\[core \([0-9.]\+\)\].*/\1/; q')
 if [ -n "$MITOGEN_PATH" ]
 then
     echo "Found Mitogen at $MITOGEN_PATH"
     export ANSIBLE_STRATEGY_PLUGINS=$MITOGEN_PATH/$MITOGEN_SUBPATH/
     export ANSIBLE_STRATEGY=mitogen_linear
 else
-    echo "Mitogen not found or incompatibe Ansible version; falling back to default ansible ssh"
+    echo "Mitogen not found"
 fi
 
 ANSIBLE_VAULT_ARG=
