@@ -47,6 +47,8 @@
     url: "{{ simplesaml_download_url }}/v{{ simplesaml_version }}/\
           simplesamlphp-{{ simplesaml_version }}.tar.gz"
     dest: "{{ simplesaml_project_dir }}/simplesamlphp-{{ simplesaml_version }}.tar.gz"
+    checksum: "{{ simplesaml_chksum }}"
+
   register: ssp_download
 
 - name: Check SimpleSamlPHP dest dir
@@ -74,16 +76,12 @@
   with_items:
     - "{{simplesaml_project_dir}}/simplesaml/log"
 
-- name: Install composer lock file
-  copy:
-    src: "composer.lock"
-    dest: "{{ simplesaml_project_dir }}/simplesaml"
-
 - name: Install OIDC modules
   composer:
     working_dir: "{{ simplesaml_project_dir }}/simplesaml"
-    command: install
-    optimize_autoloader: False
+    command: "require"
+    arguments: "bradjonesllc/simplesamlphp-module-openidconnect dev-master"
+    optimize_autoloader: false
 
 - name: SimpleSaml configuration
   template:

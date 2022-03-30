@@ -6,7 +6,6 @@
     name:
       - slapd
       - ldap-utils
-      - python-ldap  # for ansible ldap modules
       - python3-ldap  # for ansible ldap modules
     install_recommends: no
   notify: restart LDAP

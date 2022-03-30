@@ -1,12 +1,11 @@
-FROM debian:buster AS scz-base
+FROM debian:bullseye AS scz-base
 MAINTAINER SURFnet <info@surfnet.nl>
 
 ARG DEBIAN_FRONTEND=noninteractive
 ARG RUNLEVEL=1
 ENV TERM linux
 
-RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections  && \
-    echo "deb http://ftp.de.debian.org/debian/ buster-backports main" >> /etc/apt/sources.list
+RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 
 RUN apt-get update -y                && \
     apt-get install -y                  \

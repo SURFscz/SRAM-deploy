@@ -6,6 +6,8 @@ lsc_backup_dir: "{{backup_base}}/lsc"
 plsc_repo_url: "https://github.com/SURFscz/plsc.git"
 plsc_repo_version: "master"
 plsc_dir: "/opt/plsc"
+plsc_venv_dir: "{{plsc_dir}}/venv"
+
 
 plsc_interval_seconds: 120
 

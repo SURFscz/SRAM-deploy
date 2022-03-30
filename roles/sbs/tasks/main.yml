@@ -24,7 +24,6 @@
       - python3-virtualenv
       - python3-setuptools
       - python-setuptools
-      - python-pymysql
       - python3-pymysql
       - virtualenv
       - python3-distutils
@@ -189,11 +188,11 @@
   notify: "restart apache"
 
 - name: Create python3 virtualenv
-  pip:
-    virtualenv: "{{ sbs_env_dir }}"
-    virtualenv_python: "python3"
-    requirements: "{{ sbs_git_dir }}/server/requirements/test.txt"
-    state: "forcereinstall"
+  import_role:
+    name: "python-venv"
+  vars:
+    python_venv_dir: "{{ sbs_env_dir }}"
+    python_venv_requirements: "{{ sbs_git_dir }}/server/requirements/test.txt"
   notify: "restart apache"
 
 - name: install database dump script

@@ -54,14 +54,16 @@
     src: "requirements.txt.j2"
     dest: "{{ pyff_project_dir }}/requirements.txt"
 
-- name: Install pyFF from requirements.txt
-  pip:
-    requirements: "{{ pyff_project_dir }}/requirements.txt"
-    virtualenv: "{{ pyff_env_dir }}"
-    virtualenv_python: python3
+- name: Create python3 virtualenv
+  import_role:
+    name: "python-venv"
+  vars:
+    python_venv_dir: "{{ pyff_env_dir }}"
+    python_venv_requirements: "{{ pyff_project_dir }}/requirements.txt"
   notify: "pyff changed"
   become: true
-  become_user: pyff
+  become_user: "pyff"
+
 
 - name: Create certs directory
   file:

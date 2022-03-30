@@ -1,0 +1,30 @@
+---
+- name: Check if python in virtualenv is out of date
+  shell: |
+    if [ -e "{{ python_venv_dir }}/bin/python3" -a \
+            "$({{ python_venv_dir }}/bin/python3 --version)" = "$(/usr/bin/python3 --version)" ]
+      then echo "identical or missing"
+      else echo "different"
+    fi
+  register: 'python_venv_version_diff'
+  changed_when: false
+
+# can't remove the entire dir, because their might be other things in there ("python -m venv .")
+- name: Remove out of date python venv
+  file:
+    path: "{{ python_venv_dir }}/{{ item }}"
+    state: "absent"
+  with_items:
+    - "bin"
+    - "include"
+    - "lib"
+    - "share"
+    - "pyvenv.cfg"
+  when: 'python_venv_version_diff.stdout == "different"'
+
+- name: Create virtualenv and install requirements
+  pip:
+    requirements: "{{ python_venv_requirements }}"
+    virtualenv: "{{ python_venv_dir }}"
+    virtualenv_python: python3
+    state: "present"

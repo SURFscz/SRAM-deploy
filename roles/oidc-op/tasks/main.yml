@@ -21,11 +21,12 @@
       Flask
       /opt/oidc-op
 
-- name: Create virtualenv and install requirements
-  pip:
-    requirements: "{{ oidc_dir }}/sram-req.txt"
-    virtualenv: "{{ oidc_dir }}"
-    virtualenv_python: python3
+- name: Create python3 virtualenv
+  import_role:
+    name: "python-venv"
+  vars:
+    python_venv_dir: "{{ oidc_dir_venv }}"
+    python_venv_requirements: "{{ oidc_dir }}/sram-req.txt"
   notify: "restart oidc-op"
 
 - name: "Make server executable"
