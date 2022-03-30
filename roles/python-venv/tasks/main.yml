@@ -27,5 +27,5 @@
     requirements: "{{ python_venv_requirements }}"
     virtualenv: "{{ python_venv_dir }}"
     virtualenv_python: "python3"
-    virtualenv_command: "-m venv"
+    virtualenv_command: "python3 -m venv"
     state: "present"
