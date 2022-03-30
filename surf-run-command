@@ -2,6 +2,29 @@
 # run command on all specified hosts
 set -e
 
+ARG=${1#--}
+if [ "$ARG" = "bhr" -o "$ARG" = "beheer" ]
+then
+    ENV=bhr
+    CONFDIR=./environments/aws_bhr/
+elif [ "$ARG" = "prd" -o "$ARG" = "prod" ]
+then
+    ENV=prd
+    CONFDIR=./environments/aws_prd/
+elif [ "$ARG" = "acc" ]
+then
+    ENV=acc
+    CONFDIR=./environments/aws_acc/
+elif [ "$ARG" = "tst" -o "$ARG" = "test" ]
+then
+    ENV=tst
+    CONFDIR=./environments/aws_tst/
+else
+    echo "Please specify an environment to deploy (bhr, prod, acc, test)"
+    exit 1
+fi
+shift
+
 if [ "$#" -lt 2 ]
 then
 	echo "Please specify a host selector (i.e., 'all') and a command"
@@ -18,7 +41,7 @@ fi
 host=$1
 cmd=$2
 
-echo -n "Will run '$cmd' on host '$host'"
+echo -n "Will run '$cmd' on host '$ENV/$host'"
 if [ -n "$root" ]
 then
 	echo -n " as root"
@@ -28,6 +51,6 @@ echo -n "Press enter to continue"
 read
 echo
 
-ansible -v -i environments/surf/inventory $root "$host" -m command -a "$cmd"
+ansible -v -i $CONFDIR $root "$host" -m command -a "$cmd"
 
 exit 0
