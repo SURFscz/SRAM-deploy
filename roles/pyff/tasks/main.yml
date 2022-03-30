@@ -11,12 +11,6 @@
       - python3-pip
     state: present
 
-- name: install python virtualenv
-  pip:
-    name: virtualenv
-    executable: pip3
-  notify: "pyff changed"
-
 - name: create pyFF user
   user:
     name: pyff
@@ -36,17 +30,6 @@
     state: directory
     mode: 0755
     owner: pyff
-
-- name: check python version in virtualenv
-  stat:
-    path: "{{ pyff_env_dir }}/bin/python2"
-  register: "venv_python2"
-
-- name: remove python2 virtualenv
-  file:
-    path: "{{ pyff_env_dir }}"
-    state: "absent"
-  when: "venv_python2.stat.exists"
 
 # requirements.txt can be generated from virtualenv/bin/pip freeze
 - name: Generate requirements.txt.j2 from template
