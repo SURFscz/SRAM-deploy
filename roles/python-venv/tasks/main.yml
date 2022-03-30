@@ -1,10 +1,15 @@
 ---
 - name: Check if python in virtualenv is out of date
   shell: |
-    if [ -e "{{ python_venv_dir }}/bin/python3" -a \
-            "$({{ python_venv_dir }}/bin/python3 --version)" = "$(/usr/bin/python3 --version)" ]
-      then echo "identical or missing"
-      else echo "different"
+    if ! [ -e "{{ python_venv_dir }}/pyvenv.cfg" ]
+    then
+      echo "missing-pyvenv"
+    elif [   "$(awk '/^version/{print $3}' < {{ python_venv_dir }}/pyvenv.cfg)" \
+           = "$(/usr/bin/python3 --version|awk '{print $2}')" ]
+    then
+      echo "identical"
+    else
+      echo "different"
     fi
   register: 'python_venv_version_diff'
   changed_when: false
@@ -20,7 +25,7 @@
     - "lib"
     - "share"
     - "pyvenv.cfg"
-  when: 'python_venv_version_diff.stdout == "different"'
+  when: 'python_venv_version_diff.stdout != "identical"'
 
 - name: Create virtualenv and install requirements
   pip:
