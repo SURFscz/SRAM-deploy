@@ -65,6 +65,7 @@
       - "netcat"
       - "parted"
       - "python3-apt"
+      - "python3-venv"
       - "rsyslog"
       - "sudo"
       - "unzip"
