@@ -1,5 +1,5 @@
 FROM debian:bullseye AS scz-base
-MAINTAINER SURFnet <info@surfnet.nl>
+LABEL org.opencontainers.image.authors="SRAM team <sram-beheer@surf.nl>"
 
 ARG DEBIAN_FRONTEND=noninteractive
 ARG RUNLEVEL=1
