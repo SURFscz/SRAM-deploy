@@ -51,7 +51,7 @@ jobs:
         run: |
           sudo rm -f /opt/pipx_bin/ansible*
           sudo rm -rf /etc/apt/sources.list.d/*
-          sudo add-apt-repository --yes --no-update ppa:ansible/ansible-2.10
+          sudo add-apt-repository --yes --no-update ppa:ansible/ansible-5
           sudo apt -q update
           sudo apt -y purge ansible
           sudo apt -y install ansible bridge-utils apparmor-utils
