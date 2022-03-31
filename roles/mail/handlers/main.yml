@@ -1,14 +1,4 @@
 ---
-- name: restart nullmailer
-  systemd:
-    name: nullmailer
-    state: restarted
-
-- name: restart postfix
-  systemd:
-    name: postfix
-    state: restarted
-
 - name: postalias
   command:
     cmd: "/usr/sbin/postalias hash:/etc/postfix/aliases"
@@ -20,4 +10,14 @@
   args:
     chdir: /etc/postfix
   notify: restart postfix
+
+- name: restart nullmailer
+  systemd:
+    name: nullmailer
+    state: restarted
+
+- name: restart postfix
+  systemd:
+    name: postfix
+    state: restarted
 

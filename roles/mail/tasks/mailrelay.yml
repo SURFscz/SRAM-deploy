@@ -25,6 +25,11 @@
     - postmap virtual
     - restart postfix
 
+- name: remove useless symlnk (gives warning)
+  file:
+    path: "/etc/postfix/makedefs.out"
+    state: absent
+
 - name: remove default alias file
   file: dest=/etc/aliases src=/etc/postfix/aliases state=link force=yes
 
