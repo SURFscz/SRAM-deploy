@@ -83,3 +83,11 @@
     - "sram-backup-sync.timer"
   notify:
     - "enable backup sync job"
+
+- name: Monitoring for number of backups
+  copy:
+    dest: "/etc/zabbix/zabbix_agent2.d/sram-offsitebackups.conf"
+    content: >
+      UserParameter=sram.num_backups,
+      find /opt/sram-offsite-backups/backups/ -type f -name '*.gpg' -mtime -1 | wc -l
+  notify: "restart zabbix-agent"
