@@ -142,12 +142,14 @@
   copy:
     dest: "{{backup_collector_client_cert_path}}"
     content: "{{backup_offsite_https_cert.pub}}"
+  notify: restart nginx
 
 - name: Create documentroot
   file:
     path: "{{backup_collector_basedir}}/webroot"
     state: "directory"
     mode: "0755"
+  notify: restart nginx
 
 - name: Copy backup nginx configuration
   template:
