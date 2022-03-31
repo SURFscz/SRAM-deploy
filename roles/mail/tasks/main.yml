@@ -1,19 +1,19 @@
 ---
 - name: set up mail relay
-  include: mailrelay.yml
+  include_tasks: "mailrelay.yml"
   when: "mail_relay == true"
 
 - name: set up mail
-  include: mailleaf.yml
+  include_tasks: "mailleaf.yml"
   when: "mail_relay == false"
 
 - name: clean up after exim
   apt:
-    state: absent
-    purge: true
     name:
-      - exim4
-      - exim4-base
-      - exim4-config
-      - exim4-daemon-light
+      - "exim4"
+      - "exim4-base"
+      - "exim4-config"
+      - "exim4-daemon-light"
+    state: "absent"
+    purge: true
 

@@ -40,4 +40,4 @@
     mode: 0644
 
 - name: set up nxginx proxy
-  include: nginx.yml
+  include_tasks: nginx.yml
