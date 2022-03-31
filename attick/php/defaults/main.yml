@@ -1,4 +1,0 @@
----
-php_debug: false
-php_xdebug_host: localhost
-php_xdebug_port: 9000
