@@ -1,3 +1,4 @@
 # rewrite everything to the main domain
 /^(.*)@(.*).{{mail.domain}}/          info+${1}_${2}@{{mail.domain}}
+/^root@{{mail.domain}}/               root+{{ansible_hostname}}@{{mail.domain}}
 

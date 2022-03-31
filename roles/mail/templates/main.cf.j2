@@ -4,7 +4,7 @@ myhostname = {{inventory_hostname}}
 myorigin = {{mail.domain}}
 
 # address rewriting
-canonical_maps = regexp:/etc/postfix/canonical
+sender_canonical_maps = regexp:/etc/postfix/canonical
 alias_maps = hash:/etc/postfix/aliases
 alias_database = hash:/etc/postfix/aliases
 virtual_alias_maps = hash:/etc/postfix/virtual
