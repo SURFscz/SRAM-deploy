@@ -11,6 +11,6 @@ ftp: root
 abuse: root
 noc: root
 security: root
-{% if mail.admin_address is defined %}
-root: {{ mail.admin_address }}
+{% if mail.debug_address is defined %}
+root: {{ mail.debug_address }}
 {% endif %}

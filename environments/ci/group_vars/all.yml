@@ -58,6 +58,8 @@ mail:
     - "{{iprange.mgnt}}"
   domain: "{{base_domain}}"
   admin_address: "root@{{base_domain}}"
+  debug_address: "root@{{base_domain}}"
+
 
 admin:
   fn: "B."
