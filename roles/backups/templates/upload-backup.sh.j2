@@ -20,6 +20,12 @@ cd "$BACKUP_DIR"
 # find all backup files that were created more recently dan 30 minutes ago
 files=$( find -mindepth 2 -name '*.gz' -o -name '*.bz2' -cmin -30 )
 
+if [ -z "$files" ]
+then
+    echo "No files found to upload"
+    exit 0
+fi
+
 commands="cd incoming"
 for file in $files
 do
