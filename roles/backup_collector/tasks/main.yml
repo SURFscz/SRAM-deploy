@@ -4,6 +4,12 @@
     name: "tmpreaper"
     state: "present"
 
+- name: Disbable tmpreaper cron
+  lineinfile:
+    path: "/etc/cron.daily/tmpreaper"
+    insertafter: "^#!"
+    line: "exit 0  # disabled by sram"
+
 - name: create backup groups
   user:
     name: "{{ item }}"
