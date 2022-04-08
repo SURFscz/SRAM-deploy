@@ -15,3 +15,11 @@
     state: "restarted"
     enabled: true
   with_dict: "{{journal_upload_ports}}"
+
+- name: enable vacuum job
+  systemd:
+    name: "sram-vacuum-journal.timer"
+    enabled: true
+    state: "started"
+    daemon_reload: true
+
