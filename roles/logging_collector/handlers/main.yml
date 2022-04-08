@@ -23,3 +23,7 @@
     state: "started"
     daemon_reload: true
 
+- name: "restart zabbix-agent"
+  systemd:
+    name: "zabbix-agent2.service"
+    state: "restarted"
