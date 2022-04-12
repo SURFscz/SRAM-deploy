@@ -4,3 +4,4 @@ letsencrypt_challenge_dir: "/var/www/certbot"
 
 certbot_account_dir: "/etc/letsencrypt/accounts"
 cerbot_cert_dir: "/etc/letsencrypt/live"
+certbot_renewal_hooks: "/etc/letsencrypt/renewal-hooks/post"
