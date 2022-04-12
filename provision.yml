@@ -81,6 +81,11 @@
   roles:
     - { role: 'tools',   tags: ['bhr1','tools']}
 
+- name: "ci-runner"
+  hosts: "bhr12"
+  roles:
+    - { role: 'ci-runner', tags: ['bhr12','ci-runner']}
+
 - name: "lb"
   hosts: lb
   tasks:
@@ -147,6 +152,7 @@
 #  roles:
 #    - { role: pam_websso,         tags: ['client','pam-websso'], when: experimental_features }
 
+# CI test docker
 - name: "test"
   hosts: test
   tasks:
