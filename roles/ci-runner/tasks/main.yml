@@ -16,3 +16,8 @@
     regexp: '^GRUB_CMDLINE_LINUX='
     state: "present"
 
+# TODO:
+# - add apache (of nog liever: nginx)
+# -
+# - add user for ci-runner (draai nu nog als martin)
+# - install github action runner
