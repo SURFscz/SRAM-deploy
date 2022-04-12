@@ -1,15 +1,7 @@
-# if we enable https, we need a http-only nginx to handle acme-verification
-# and http redirects
 ---
 - name: enable nginx
-  include_tasks: nginx.yml
-  when: enable_https
-
-- name: disable nginx
-  apt:
-    name: nginx
-    state: absent
-  when: not enable_https
+  include_tasks:
+    name: nginx.yml
 
 # make sure handlers are run befor we are continueing with the play
 - meta: flush_handlers
