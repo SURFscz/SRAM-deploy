@@ -30,9 +30,3 @@
     src: "proxy_log.conf"
     dest: "/etc/nginx/conf.d"
   notify: "restart nginx"
-
-- name: enable nginx
-  systemd:
-    name: "nginx.service"
-    state: "started"
-    enabled: true

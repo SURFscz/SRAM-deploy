@@ -1,23 +1,23 @@
 
 server {
     listen 443 ssl;
-    server_name demo-sp.sram.surf.nl;
+    server_name tools.sram.surf.nl;
 
-    ssl_certificate        /etc/pki/tls/certs/idp.example.com.crt;
-    ssl_certificate_key    /etc/pki/tls/private/idp.example.com.key;
-    ssl_protocols          TLSv1.3 TLSv1.2;
+    ssl_certificate        {{ ssl_certs_dir }}/tools_https.crt;
+    ssl_certificate_key    {{ ssl_certs_dir }}/tools_https.key;
+    ssl_protocols          TLSv1.3;
     ssl_ciphers            EECDH+AESGCM:EDH+AESGCM;
 
-    location ^~ /simplesaml {
-        alias /var/simplesamlphp/www;
+    location ^~ /saml {
+        alias {{simplesaml_project_dir}}/simplesamlphp/www;
 
-        location ~^(?<prefix>/simplesaml)(?<phpfile>.+?\.php)(?<pathinfo>/.*)?$ {
+        location ~^(?<prefix>/saml)(?<phpfile>.+?\.php)(?<pathinfo>/.*)?$ {
             include          fastcgi_params;
-            fastcgi_pass     $fastcgi_pass;
+            fastcgi_pass     unix:/run/php/{{demosp_name}}.sock;
             fastcgi_param SCRIPT_FILENAME $document_root$phpfile;
 
             # Must be prepended with the baseurlpath
-            fastcgi_param SCRIPT_NAME /simplesaml$phpfile;
+            fastcgi_param SCRIPT_NAME /saml$phpfile;
 
             fastcgi_param PATH_INFO $pathinfo if_not_empty;
         }

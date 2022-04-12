@@ -4,89 +4,22 @@
  *
  */
 $config = array(
-
-    /**
-     * Setup the following parameters to match the directory of your installation.
-     * See the user manual for more details.
-     *
-     * Valid format for baseurlpath is:
-     * [(http|https)://(hostname|fqdn)[:port]]/[path/to/simplesaml/]
-     * (note that it must end with a '/')
-     *
-     * The full url format is useful if your SimpleSAMLphp setup is hosted behind
-     * a reverse proxy. In that case you can specify the external url here.
-     *
-     * Please note that SimpleSAMLphp will then redirect all queries to the
-     * external url, no matter where you come from (direct access or via the
-     * reverse proxy).
-     */
     'baseurlpath' => 'https://' . $_SERVER['HTTP_HOST'] . '/saml/',
     'certdir' => 'cert/',
     'loggingdir' => 'log/',
     'datadir' => 'data/',
 
-    /*
-     * A directory where SimpleSAMLphp can save temporary files.
-     *
-     * SimpleSAMLphp will attempt to create this directory if it doesn't exist.
-     */
     'tempdir' => '{{simplesaml_tmp_dir}}',
-
-
-    /*
-     * If you enable this option, SimpleSAMLphp will log all sent and received messages
-     * to the log file.
-     *
-     * This option also enables logging of the messages that are encrypted and decrypted.
-     *
-     * Note: The messages are logged with the DEBUG log level, so you also need to set
-     * the 'logging.level' option to LOG_DEBUG.
-     */
     'debug' => false,
-
-    /*
-     * When showerrors is enabled, all error messages and stack traces will be output
-     * to the browser.
-     *
-     * When errorreporting is enabled, a form will be presented for the user to report
-     * the error to technicalcontact_email.
-     */
     'showerrors' => false,
     'errorreporting' => false,
-
-    /**
-     * Custom error show function called from SimpleSAML_Error_Error::show.
-     * See docs/simplesamlphp-errorhandling.txt for function code example.
-     *
-     * Example:
-     *   'errors.show_function' => array('sspmod_example_Error_Show', 'show'),
-     */
-
-    /**
-     * This option allows you to enable validation of XML data against its
-     * schemas. A warning will be written to the log if validation fails.
-     */
     'debug.validatexml' => false,
 
-    /**
-     * This password must be kept secret, and modified from the default value 123.
-     * This password will give access to the installation page of SimpleSAMLphp with
-     * metadata listing and diagnostics pages.
-     * You can also put a hash here; run "bin/pwgen.php" to generate one.
-     */
     'auth.adminpassword' => '{{ simplesaml_admin_passwd }}',
     'admin.protectindexpage' => true,
     'admin.protectmetadata' => false,
 
-    /**
-     * This is a secret salt used by SimpleSAMLphp when it needs to generate a secure hash
-     * of a value. It must be changed from its default value to a secret value. The value of
-     * 'secretsalt' can be any valid string of any length.
-     *
-     * A possible way to generate a random salt is by running the following command from a unix shell:
-     * tr -c -d '0123456789abcdefghijklmnopqrstuvwxyz' </dev/urandom | dd bs=32 count=1 2>/dev/null;echo
-     */
-    'secretsalt' => '{{ simplesaml_salt }}',
+    'secretsalt' => '{{ simplesaml_salt.content }}',
 
     /*
      * Some information about the technical persons running this installation.
