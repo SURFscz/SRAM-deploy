@@ -1,4 +1,7 @@
 ---
+- include_role:
+    name: "nginx"
+
 - name: Ensure that packages are installed
   apt:
     name:

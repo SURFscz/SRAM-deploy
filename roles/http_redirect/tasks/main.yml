@@ -11,5 +11,5 @@
     state: absent
   when: not enable_https
 
-# make sure handlers are run befor we ar econtinueing with the play
+# make sure handlers are run befor we are continueing with the play
 - meta: flush_handlers

@@ -2,15 +2,13 @@
 ---
 - name: install nginx
   apt:
-    name: nginx
-    state: present
-  register: "first_apt"
-  failed_when: false
+    name: "nginx"
+    state: "present"
 
 - name: remove upstream nginx default
   file:
     dest: "{{item}}"
-    state: absent
+    state: "absent"
   with_items:
     - "/etc/nginx/sites-enabled/default"
     - "/etc/nginx/sites-enabled/00-default"
@@ -24,17 +22,17 @@
   file:
     src: "/etc/nginx/sites-available/scz-default"
     dest: "/etc/nginx/sites-enabled/00-scz-default"
-    state: link
-  notify: restart nginx
+    state: "link"
+  notify: "restart nginx"
 
-- name: install nginx again
-  apt:
-    name: nginx
-    state: present
-  when: "first_apt.changed and 'rc' in first_apt"
+- name: install logging config
+  copy:
+    src: "proxy_log.conf"
+    dest: "/etc/nginx/conf.d"
+  notify: "restart nginx"
 
 - name: enable nginx
-  service:
-    name: nginx.service
-    state: started
+  systemd:
+    name: "nginx.service"
+    state: "started"
     enabled: true

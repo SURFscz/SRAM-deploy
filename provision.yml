@@ -66,7 +66,6 @@
 - name: "bhr2"
   hosts: "bhr2"
   roles:
-    - { role: http_dummy,        tags: ['bhr2','backup_collector']                        }
     - { role: backup_collector,  tags: ['bhr2','backup_collector']                        }
     - { role: logging_collector, tags: ['bhr2','logging_collector']                       }
     - { role: zabbix-server,     tags: ['bhr2','zabbix-server'],    when: "not is_docker" }
@@ -86,7 +85,7 @@
   tasks:
     - { import_tasks: "tasks/versions.yml", tags: ['common'] }
   roles:
-    - { role: http_nginx,      tags: ['lb','http_nginx']       }
+    - { role: http_redirect,   tags: ['lb','http_redirect']    }
     - { role: tls_letsencrypt, tags: ['lb','tls_letsencrypt'],
         when: enable_https and not use_fixed_cert              }
     - { role: tls_fixed_cert,  tags: ['lb','tls_fixedcert'],
@@ -137,7 +136,6 @@
     - { import_tasks: "tasks/versions.yml", tags: ['common'] }
   roles:
     - { role: pyff-metadata, tags: ['meta','pyff-metadata']}
-    - { role: http_dummy,    tags: ['meta','http'    ]     }
     - { role: metadata,      tags: ['meta','metadata']     }
 
 - name: "sandbox"
