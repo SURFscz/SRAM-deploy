@@ -6,39 +6,29 @@
 
 - name: write certbot config for all domains
   template:
-    src: "certbot.conf.j2 "
+    src: "certbot.conf.j2"
     dest: "/etc/letsencrypt/cli.ini"
+  notify: "renew letsencrypt certificates"
 
 - name: create webroot for acme challenges
   file:
     dest: "{{letsencrypt_challenge_dir}}"
-    state: "directory "
-    owner: "root "
-    group: "www-data "
+    state: "directory"
+    owner: "root"
+    group: "www-data"
     mode: "0755"
+  notify: "renew letsencrypt certificates"
 
 - name: register letsencrypt account
   command: "/usr/bin/certbot register"
   args:
-    creates: "{{certbot_account_dir}}"
-  register: result
+    creates: "{{letsencrypt_account_dir}}"
+  notify: "renew letsencrypt certificates"
 
-- name: create or renew certificates
-  command: "/usr/bin/certbot certonly --noninteractive --keep-until-expiring \
-            --renew-with-new-domains --domains={{item}}"
+- name: check for new certs to generate
+  stat:
+    path: "{{letsencrypt_cert_dir}}/{{item}}"
   register: result
-  changed_when: "'Your certificate and chain have been saved' in result.stdout"
-  with_items: "{{ letsencrypt_hosts }}"
-
-# extra renewal is necessary, because certbot does not run its renew_hook when the
-# certificate is first created
-- name: renew certificates
-  command:
-    cmd: >
-      /usr/bin/certbot renew --noninteractive
-                             --no-random-sleep-on-renew --force-renewal --cert-name={{item}}
-    creates: '{{certbot_cert_dir}}/{{item}}/priv+fullchain.pem'
-  register: result
-  changed_when: '"Your certificate and chain have been saved" in result.stdout'
-  with_items: "{{ letsencrypt_hosts }}"
-
+  changed_when: "not result.stat.exists"
+  with_items: "{{letsencrypt_hosts}}"
+  notify: "renew letsencrypt certificates"

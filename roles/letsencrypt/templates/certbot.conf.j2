@@ -1,7 +1,7 @@
 # certbot config
 
 {% if letsencrypt_staging %}
-staging
+test-cert
 {% endif %}
 
 email={{mail.admin_address}}
@@ -14,5 +14,5 @@ rsa-key-size 2048
 authenticator = webroot
 webroot-path {{letsencrypt_challenge_dir}}
 
-renew-hook = /bin/bash -c 'cd "$RENEWED_LINEAGE" && cat privkey.pem fullchain.pem > priv+fullchain.pem'
+deploy-hook = /bin/bash -c 'cd "$RENEWED_LINEAGE" && cat privkey.pem fullchain.pem > priv+fullchain.pem'
 

@@ -30,3 +30,12 @@
     src: "proxy_log.conf"
     dest: "/etc/nginx/conf.d"
   notify: "restart nginx"
+
+# needs to be changed in this file, can't override lateron
+- name: disable gzip to prevent BREACH
+  lineinfile:
+    path: "/etc/nginx/nginx.conf"
+    line: "\tgzip off;"
+    regexp: "^\\s*gzip\\s"
+  notify: "restart nginx"
+

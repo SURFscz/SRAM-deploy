@@ -10,26 +10,26 @@
 - include_role:
     name: "nginx"
 
-- name: write tools private key
-  copy:
-    content: "{{tools_https_cert.priv}}"
-    dest: "{{ ssl_certs_dir }}/tools_https.key"
-    owner: "root"
-    group: "ssl-cert"
-    mode: "0640"
-  no_log: "{{sram_ansible_nolog}}"
-
-- name: write tools certificate
-  copy:
-    content: "{{tools_https_cert.pub}}"
-    dest: "{{ ssl_certs_dir }}/tools_https.crt"
-    owner: "root"
-    group: "root"
-    mode: 0644
-
+- include_role:
+    name: "letsencrypt"
+    public: true
+  vars:
+    letsencrypt_staging: false
+    letsencrypt_hosts: [ "demo-sp.sram.surf.nl" ]
 
 - name: Install nginx config
   template:
     src: "nginx.conf.j2"
     dest: "/etc/nginx/sites-enabled/01-sram-demosp.conf"
   notify: "restart nginx"
+
+- name: Restart nginx after certificate rollover
+  copy:
+    content: |
+      #!/bin/sh
+      echo "restarting nginx"
+      /usr/bin/systemctl reload nginx.service
+      exit 0
+    dest: "{{letsencrypt_hooks}}/sram-nginx.sh"
+    mode: "0755"
+
