@@ -8,27 +8,34 @@ $config['admin'] = array(
         'core:AdminPassword',
     );
 
-// An authentication source which can authenticate against both SAML 2.0
-// and Shibboleth 1.3 IdPs.
-$config['default-sp'] = array(
+$config['test'] = array(
         'saml:SP',
         'entityID' => null,
-        'idp' => null,
-        'discoURL' => null,
-        'UIInfo' => array(
-            'DisplayName' => array(
-                'en' => 'SRAM Demo SP'
-             ),
-            'Description' => array(
-                'en' => 'SURF Research Access Management demo SP'
-             ),
-        ),
-        'signature.algorithm' => 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256',
-        /*'attributes' => array(
-            'attrname' => 'urn:oid:x.x.x.x',
-        ),*/
-        /*'attributes.required' => array (
-            'urn:oid:x.x.x.x',
-        ),*/
+        'certificate' => "saml.pem",
+        'privatekey' => "saml.key",
+        'idp' => "https://proxy.acc.sram.eduteams.org/proxy",
+        'name' => [ 'en' => 'SRAM Test Demo SP' ],
+        'description' => [ 'en' => 'SURF Research Access Management demo SP For TEST' ],
 );
 
+$config['acc'] = array(
+        'saml:SP',
+        'entityID' => null,
+        'certificate' => "saml.pem",
+        'privatekey' => "saml.key",
+        'idp' => "https://proxy.acc.sram.eduteams.org/proxy",
+        'name' => [ 'en' => 'SRAM Acc Demo SP' ],
+        'description' => [ 'en' => 'SURF Research Access Management demo SP For ACC' ],
+);
+
+$config['prd'] = array(
+        'saml:SP',
+        'entityID' => null,
+        'certificate' => "saml.pem",
+        'privatekey' => "saml.key",
+        'idp' => "https://proxy.sram.surf.nl/proxy",
+        'name' => [ 'en' => 'SRAM Prod Demo SP' ],
+        'description' => [ 'en' => 'SURF Research Access Management demo SP For PROD' ],
+);
+
+#        'signature.algorithm' => 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256',

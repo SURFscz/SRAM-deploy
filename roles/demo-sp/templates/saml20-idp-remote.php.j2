@@ -18,3 +18,19 @@ $metadata['https://proxy.acc.sram.eduteams.org/proxy'] = array(
       ],
     ],
 );
+$metadata['https://proxy.sram.surf.nl/proxy'] = array(
+     'name' => [
+        'en' => 'SRAM prod',
+        'nl' => 'SRAM prod',
+    ],
+    'SingleSignOnService' => 'https://proxy.sram.surf.nl/saml2sp/sso/redirect',
+    'certificate' => 'sram-prd.pem',
+
+    // convert OID formatted attributes from SAML assertion to 'name' similar to LDAP
+    // so they will be available as 'mail' and 'displayName'
+    'authproc' => [
+      50 => [
+        'class' => 'core:AttributeMap', 'oid2name',
+      ],
+    ],
+);

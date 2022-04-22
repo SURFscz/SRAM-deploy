@@ -25,13 +25,16 @@
     create_home: false
     password: "!"
 
-- name: Create simplesaml project dir
+- name: Create simplesaml project dirs
   file:
-    path: "{{ simplesaml_project_dir }}/config"
+    path: "{{ item }}"
     state: directory
     mode: 0755
     owner: "root"
     group: "{{simplesaml_group}}"
+  with_items:
+    - "{{ simplesaml_project_dir }}/config"
+    - "{{ simplesaml_cert_dir }}"
 
 - name: Create simplesaml temp dir
   file:

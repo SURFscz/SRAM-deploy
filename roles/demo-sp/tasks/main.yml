@@ -7,6 +7,38 @@
     simplesaml_user: "{{demosp_user}}"
     simplesaml_group: "{{demosp_group}}"
 
+- name: install SSP config
+  template:
+    src: "{{item}}.j2"
+    dest: "{{simplesaml_project_dir}}/config/{{item}}"
+    mode: "0755"
+  with_items:
+    - "authsources.php"
+    - "saml20-idp-remote.php"
+
+- name: Generate a SAML signing certificate
+  command:
+    cmd: >
+      openssl req -x509 -newkey rsa:2048 -sha256 -days 36500 -nodes
+              -keyout saml.key -out saml.pem
+              -subj '/CN=simpelsamlphp/'
+    chdir: "{{simplesaml_cert_dir}}"
+    creates: "{{simplesaml_cert_dir}}/saml.pem"
+
+- name: Set permissions for keys
+  file:
+    path: "{{simplesaml_cert_dir}}/saml.key"
+    mode: "0640"
+    group: "{{demosp_group}}"
+
+- name: install EduTeams certs
+  copy:
+    src: "{{item}}"
+    dest: "{{simplesaml_cert_dir}}/{{item}}"
+  with_items:
+    - "eduteams-prd.pem"
+    - "eduteams-acc.pem"
+
 - include_role:
     name: "nginx"
 
@@ -16,6 +48,7 @@
   vars:
     letsencrypt_staging: false
     letsencrypt_hosts: [ "demo-sp.sram.surf.nl" ]
+
 
 - name: Install nginx config
   template:
