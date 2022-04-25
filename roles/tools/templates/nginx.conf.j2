@@ -2,9 +2,11 @@ server {
     listen 80;
     server_name tools.sram.surf.nl;
 
+{% if letsencrypt_challenge_dir is defined %}
     location /.well-known/acme-challenge {
         alias {{letsencrypt_challenge_dir}}/.well-known/acme-challenge;
     }
+{% endif %}
 
     location / {
         rewrite ^(.*) https://tools.sram.surf.nl/$1 permanent;
@@ -21,6 +23,14 @@ server {
     ssl_ciphers            EECDH+AESGCM:EDH+AESGCM;
 
     location / {
-        return 444
+{% for ip in iprange.vpn.values() %}
+        allow {{ ip }};
+{% endfor %}
+{% for ip in iprange.vpn6.values() %}
+        allow {{ ip }};
+{% endfor %}
+        deny all;
+
+        root {{ sram_tools_wwwroot }};
     }
 }

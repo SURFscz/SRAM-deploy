@@ -1,2 +1,4 @@
 ---
 sram_tools_basedir: "/opt/sram-tools"
+sram_tools_wwwroot: "{{sram_tools_basedir}}/www"
+sram_tools_group: "sram-tools"

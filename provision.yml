@@ -78,7 +78,6 @@
 - name: "bhr1"
   hosts: "bhr1"
   roles:
-    - { role: 'tools',   tags: ['bhr1','tools']}
 
 - name: "lb"
   hosts: lb
@@ -144,6 +143,7 @@
     - { import_tasks: "tasks/versions.yml", tags: ['common'] }
   roles:
     - { role: demo-sp,              tags: ['bhr13','demo-sp'] }
+    - { role: tools,                tags: ['bhr13','tools']   }
 
 - name: "sandbox"
   hosts: sandbox1

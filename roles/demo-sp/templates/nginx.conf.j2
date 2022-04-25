@@ -2,9 +2,11 @@ server {
     listen 80;
     server_name demo-sp.sram.surf.nl;
 
+{% if letsencrypt_challenge_dir is defined %}
     location /.well-known/acme-challenge {
         alias {{letsencrypt_challenge_dir}}/.well-known/acme-challenge;
     }
+{% endif %}
 
     location / {
         rewrite ^(.*) https://demo-sp.sram.surf.nl/$1 permanent;
