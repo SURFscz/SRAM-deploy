@@ -41,6 +41,7 @@
       - "unattended-upgrades"
       - "cryptsetup"
       - "cryptsetup-initramfs"
+      - "javascript-common"
 
 - name: Install common tools / clients
   apt:
