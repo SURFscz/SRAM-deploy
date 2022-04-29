@@ -163,7 +163,31 @@
     - { path: "jwt_private_key",      content: "{{ sbs_jwt_server.priv }}" }
     - { path: "jwt_public_keys.json", content: "{{ sbs_jwt_server.pub }}"  }
   notify: "restart apache"
-  no_log: "{{sram_ansible_nolog}}"
+  no_log: "{{ sram_ansible_nolog }}"
+
+- name: Create SBS SURFSecure ID config files
+  template:
+    src: "{{ item.name }}"
+    dest: "{{ sbs_conf_dir }}/saml/{{item.name}}"
+    group: "www-data"
+    mode: "{{ item.mode }}"
+  with_items:
+    - { name: "settings.json",     mode: "0640" }
+    - { name: "advanced_settings.json", mode: "0644" }
+  notify: "restart apache"
+  no_log: "{{ sram_ansible_nolog }}"
+
+- name: write server SURFSecure ID keys
+  copy:
+    content: "{{ item.content }}"
+    dest: "{{ sbs_conf_dir }}/saml/certs/{{ item.path }}"
+    group: "www-data"
+    mode: "0640"
+  with_items:
+    - { path: "sp.cert",      content: "{{ sbs_surf_secure_id.priv }}" }
+    - { path: "sp.key",       content: "{{ sbs_surf_secure_id.pub }}"  }
+  notify: "restart apache"
+  no_log: "{{ sram_ansible_nolog }}"
 
 - name: Create links to config files
   file:
