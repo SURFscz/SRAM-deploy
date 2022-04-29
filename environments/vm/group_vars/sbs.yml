@@ -41,3 +41,6 @@ sbs_impersonation_allowed: True
 sbs_mfa_idp_allowed:
   - schac_home: "ci-runner.sram.surf.nl"
     entity_id: "https://idp.scz-vm.net/saml/saml2/idp/metadata.php"
+
+  - schac_home: "ssid.org"
+    entity_id: "https://ssid.org"
