@@ -97,18 +97,17 @@ jobs:
           SKIP_ANSIBLE: 1
         run: "./start-vm"
 
-      # Runs a single command using the runners shell
+      # Deploy components
       - name: Run start-vm
         shell: bash
         run: "./start-vm"
 
-      # Runs a single command using the runners shell
+      # Deploy components again for idempotency
       - name: Run start-vm --diff
         env:
           REEANTRANT: 1
         run: "./start-vm --diff"
 
-      # Runs a single command using the runners shell
       - name: Run idempotency check...
         run: /usr/bin/python3 ./scripts/check-idempotency-status
 
@@ -116,7 +115,7 @@ jobs:
       - name: Run SBS logintest
         run: /usr/bin/python3 ./scripts/sbs-login.py
 
-      - name: Create Artifact
+      - name: Save screenshot of error
         uses: actions/upload-artifact@v3
         with:
           name: "sbs-logintest"
@@ -151,7 +150,7 @@ jobs:
         uses: mxschmitt/action-tmate@v3
         with:
           limit-access-to-actor: true
-        timeout-minutes: 45
+        timeout-minutes: 15
 
       # Get scz-base ImageID
       - name: Get scz-base ImageID

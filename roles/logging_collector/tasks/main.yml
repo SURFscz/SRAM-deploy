@@ -65,3 +65,44 @@
   notify:
     - "systemd daemon-reload"
     - "restart journal-remote"
+
+- name: copy vacuuming timer
+  template:
+    src: "{{item}}.j2"
+    dest: "/etc/systemd/system/{{item}}"
+  with_items:
+    - sram-vacuum-journal.service
+    - sram-vacuum-journal.timer
+  notify:
+    - "enable vacuum job"
+
+- name: Monitoring for journal usage per environemnt
+  copy:
+    dest: "/etc/zabbix/zabbix_agent2.d/sram-journals.conf"
+    content: >
+      UserParameter=sram.journal_size[*],
+      journalctl --disk-usage -D "/var/log/journal/$1"
+      | grep -oP '(?<=take up ).*(?= in the file system)'
+      | numfmt --from=auto
+  notify: "restart zabbix-agent"
+
+- name: Monitoring for undelivered mail
+  copy:
+    dest: "/etc/zabbix/zabbix_agent2.d/sram-postfix-errors.conf"
+    content: >
+      UserParameter=sram.postfix_errors[*],
+      journalctl -D "/var/log/journal/$1/"
+      -u postfix@- SYSLOG_IDENTIFIER=postfix/smtp -S -1h
+      | grep -P 'status=(?!sent)'
+      | wc -l
+  notify: "restart zabbix-agent"
+
+# todo fix this: create proper groups per env which are allowed to read logs
+#                put regular users and zabbix there
+- name: adding user zabbix-agent to journal group
+  user:
+    name: "zabbix"
+    groups: "systemd-journal-remote"
+    append: true
+  notify: "restart zabbix-agent"
+

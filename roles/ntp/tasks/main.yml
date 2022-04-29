@@ -2,11 +2,10 @@
 - name: NTP
   block:
 
-    - name: disable systemd timesyncd
-      systemd:
-        name: "systemd-timesyncd.service"
-        masked: true
-        state: "stopped"
+    - name: remove systemd-timesyncd
+      apt:
+        name: "systemd-timesyncd"
+        state: "absent"
 
     - name: install chrony
       apt:
@@ -20,9 +19,12 @@
         purge: true
 
     - name: install chrony config
-      template: src=chrony.conf.j2 dest=/etc/chrony/chrony.conf force=yes
+      template:
+        src: "chrony.conf.j2"
+        dest: "/etc/chrony/chrony.conf"
+        force: true
       notify:
-        - restart chrony
+        - "restart chrony"
 
     - name: "start chrony"
       systemd:
@@ -31,4 +33,4 @@
         enabled: true
 
   when:
-    - environment_name!="vm"
+    - "not is_docker"
