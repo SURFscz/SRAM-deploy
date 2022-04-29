@@ -1,6 +1,9 @@
 database:
   uri: "mysql+pymysql://{{ sbs_db_user }}:{{ sbs_db_password }}@{{ db_host }}/{{ sbs_db_name }}?ssl=true&ssl_ca={{sbs_db_cert_path}}&charset=utf8mb4"
 
+# Lifetime of session in minutes (one day is 60 * 24)
+permanent_session_lifetime: 1440
+
 redis:
   host: "{{sbs_redis_host}}"
   port: "{{sbs_redis_port}}"
@@ -187,3 +190,13 @@ mfa_idp_allowed:
 
 # A MFA login in a different flow is valid for X minutes
 mfa_sso_time_in_minutes: 10
+
+# Lower case schachome organisations / entity ID's where SURFSecure ID is used for step-up
+# If this feature is no longer needed, just replace the value with an empty list []
+ssid_identity_providers:
+{% for idp in sbs_ssid_identity_providers %}
+  - schac_home: "{{ idp.schac_home }}"
+    entity_id: "{{ idp.entity_id }}"
+{% endfor %}
+
+ssid_config_folder: saml
