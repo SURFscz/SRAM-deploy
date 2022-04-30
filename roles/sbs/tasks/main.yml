@@ -26,6 +26,8 @@
       - python3-distutils
       - libapache2-mod-wsgi-py3
       - mariadb-client
+      - libxmlsec1-dev # for python xmlsec pkg
+      - pkg-config     # for python xmlsec pkg
 
 - name: Remove obsolete packages
   apt:
