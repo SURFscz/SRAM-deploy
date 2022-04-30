@@ -27,9 +27,17 @@
     - "pyvenv.cfg"
   when: 'python_venv_version_diff.stdout != "identical"'
 
-- name: Create virtualenv and install requirements
+- name: Create virtualenv and install pip
+  pip:
+    name:
+      - "pip        >=22.0.4, <23"
+      - "setuptools >=62.1,   <63"
+    state: "present"
+    virtualenv: "{{ python_venv_dir }}"
+    virtualenv_command: "python3 -m venv"
+
+- name: Install requirements
   pip:
     requirements: "{{ python_venv_requirements }}"
     virtualenv: "{{ python_venv_dir }}"
-    virtualenv_command: "python3 -m venv"
     state: "present"
