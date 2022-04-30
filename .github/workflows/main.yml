@@ -135,6 +135,7 @@ jobs:
               echo ===sbs log===;
               cat /opt/sbs/sbs/log/sbs.log
             fi;
+            echo ===apt log===; cat /var/log/apt/term.log
             echo ===netstat===; netstat -lnp
           '"
         if: failure()
