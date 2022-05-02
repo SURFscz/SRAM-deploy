@@ -97,6 +97,22 @@ jobs:
           SKIP_ANSIBLE: 1
         run: "./start-vm"
 
+      # Get scz-base ImageID
+      - name: Get scz-base ImageID
+        id: scz-base-id
+        run: >
+          ID=$(docker image list scz-base -q) &&
+          echo "::set-output name=ID::$ID"
+
+      # Save docker cache
+      - name: Save docker cache
+        run: >
+          mkdir -p ~/docker-save &&
+          docker tag scz-base scz-base-cache &&
+          docker save scz-base-cache -o ~/docker-save/scz-base-cache.tar &&
+          ls -lh ~/docker-save || true
+        if: steps.scz-base-cache-id.outputs.ID != steps.scz-base-id.outputs.ID
+
       # Deploy components
       - name: Run start-vm
         shell: bash
@@ -153,18 +169,3 @@ jobs:
           limit-access-to-actor: true
         timeout-minutes: 15
 
-      # Get scz-base ImageID
-      - name: Get scz-base ImageID
-        id: scz-base-id
-        run: >
-          ID=$(docker image list scz-base -q) &&
-          echo "::set-output name=ID::$ID"
-
-      # Save docker cache
-      - name: Save docker cache
-        run: >
-          mkdir -p ~/docker-save &&
-          docker tag scz-base scz-base-cache &&
-          docker save scz-base-cache -o ~/docker-save/scz-base-cache.tar &&
-          ls -lh ~/docker-save || true
-        if: steps.scz-base-cache-id.outputs.ID != steps.scz-base-id.outputs.ID
