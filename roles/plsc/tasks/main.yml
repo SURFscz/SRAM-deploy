@@ -3,13 +3,8 @@
   apt:
     state: present
     name:
-      - python3-ldap3
-      - python3-dev
       - libldap2-dev
       - libsasl2-dev
-      - python-setuptools
-      - virtualenv
-      - build-essential
     install_recommends: no
 
 #TODO: draai plsc als aparte gebruiker, niet als root.
