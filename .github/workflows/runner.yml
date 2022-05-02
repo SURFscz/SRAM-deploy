@@ -65,7 +65,7 @@ jobs:
 
       - name: Show error output
         run: >
-          ansible -v -i environments/vm/inventory --become "all" -m command -a "/bin/sh -c '
+          ansible -v -i ./environments/ci/inventory --become "all" -m command -a "/bin/sh -c '
             echo ====journal===;
             journalctl -n200;
             if [ -e /var/log/apache2/error.log ]; then
