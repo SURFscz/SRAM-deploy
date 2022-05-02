@@ -8,6 +8,8 @@ redis:
 
 secret_key: {{ sbs_db_secret }}
 
+permanent_session_lifetime: {{ sbs_session_lifetime }}
+
 # Valid scopes are "READ" and "WRITE"
 api_users:
 {% for name, user in sbs_api_users.items() %}
