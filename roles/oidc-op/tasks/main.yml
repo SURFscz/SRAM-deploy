@@ -1,12 +1,4 @@
 ---
-- name: Ensure that packages are installed
-  apt:
-    name:
-      - python3
-      - python3-virtualenv
-      - virtualenv
-    state: present
-
 - name: fetch oidc-op from {{ oidc_op_repo_url }}, version {{ oidc_op_repo_version }}
   git:
     repo: "{{ oidc_op_repo_url }}"
