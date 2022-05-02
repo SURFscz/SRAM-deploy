@@ -48,9 +48,13 @@
     state: "present"
     virtualenv: "{{ python_venv_dir }}"
     virtualenv_command: "python3 -m venv"
+  become: "{{python_venv_become}}"
+  become_user: "{{python_venv_user}}"
 
 - name: Install requirements
   pip:
     requirements: "{{ python_venv_requirements }}"
     virtualenv: "{{ python_venv_dir }}"
     state: "present"
+  become: "{{python_venv_become}}"
+  become_user: "{{python_venv_user}}"
