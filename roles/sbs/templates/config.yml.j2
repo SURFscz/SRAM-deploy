@@ -35,6 +35,8 @@ oidc:
   public_rsa_signing_key_path: config/jwt_public_key
   second_factor_authentication_required: {{ sbs_second_factor_authentication_required }}
   totp_token_name: "{{ sbs_totp_token_name }}"
+  # The issuer_id in the proxy_authz endpoint when logging into SBS. Most likely to equal the oidc.client_id
+  sram_issuer_id: "{{ sbs_client_id }}"
   scopes:
     - profile
     - eduperson_scoped_affiliation
