@@ -119,3 +119,15 @@
   register: result
   failed_when: result.rc not in [0,20,68]
   changed_when: result.rc not in [20,68]
+
+- name: Set indices
+  ldap_attrs:
+    dn: "olcDatabase={1}mdb,cn=config"
+    attributes:
+      olcDbIndex: "{{item}}"
+    state: "present"
+  with_items:
+    - "entryUUID eq"
+    - "o eq"
+    - "dc eq"
+    - "entryCSN eq"
