@@ -97,18 +97,33 @@ jobs:
           SKIP_ANSIBLE: 1
         run: "./start-vm"
 
-      # Runs a single command using the runners shell
+      # Get scz-base ImageID
+      - name: Get scz-base ImageID
+        id: scz-base-id
+        run: >
+          ID=$(docker image list scz-base -q) &&
+          echo "::set-output name=ID::$ID"
+
+      # Save docker cache
+      - name: Save docker cache
+        run: >
+          mkdir -p ~/docker-save &&
+          docker tag scz-base scz-base-cache &&
+          docker save scz-base-cache -o ~/docker-save/scz-base-cache.tar &&
+          ls -lh ~/docker-save || true
+        if: steps.scz-base-cache-id.outputs.ID != steps.scz-base-id.outputs.ID
+
+      # Deploy components
       - name: Run start-vm
         shell: bash
         run: "./start-vm"
 
-      # Runs a single command using the runners shell
+      # Deploy components again for idempotency
       - name: Run start-vm --diff
         env:
           REEANTRANT: 1
         run: "./start-vm --diff"
 
-      # Runs a single command using the runners shell
       - name: Run idempotency check...
         run: /usr/bin/python3 ./scripts/check-idempotency-status
 
@@ -116,7 +131,7 @@ jobs:
       - name: Run SBS logintest
         run: /usr/bin/python3 ./scripts/sbs-login.py
 
-      - name: Create Artifact
+      - name: Save screenshot of error
         uses: actions/upload-artifact@v3
         with:
           name: "sbs-logintest"
@@ -136,6 +151,7 @@ jobs:
               echo ===sbs log===;
               cat /opt/sbs/sbs/log/sbs.log
             fi;
+            echo ===apt log===; cat /var/log/apt/term.log
             echo ===netstat===; netstat -lnp
           '"
         if: failure()
@@ -151,20 +167,5 @@ jobs:
         uses: mxschmitt/action-tmate@v3
         with:
           limit-access-to-actor: true
-        timeout-minutes: 45
+        timeout-minutes: 15
 
-      # Get scz-base ImageID
-      - name: Get scz-base ImageID
-        id: scz-base-id
-        run: >
-          ID=$(docker image list scz-base -q) &&
-          echo "::set-output name=ID::$ID"
-
-      # Save docker cache
-      - name: Save docker cache
-        run: >
-          mkdir -p ~/docker-save &&
-          docker tag scz-base scz-base-cache &&
-          docker save scz-base-cache -o ~/docker-save/scz-base-cache.tar &&
-          ls -lh ~/docker-save || true
-        if: steps.scz-base-cache-id.outputs.ID != steps.scz-base-id.outputs.ID
