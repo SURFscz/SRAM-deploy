@@ -65,14 +65,6 @@
     attributes:
       olcAccess:
         - >-
-          to attrs=userPassword
-          by self write by anonymous auth
-          by * none
-        - >-
-          to attrs=shadowLastChange
-          by self write
-          by * read
-        - >-
           to dn.regex="(([^,]+),{{ services_ldap.basedn }})$"
           by dn.exact="{{ services_ldap.binddn }}" write
           by dn.exact=gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth write
@@ -85,6 +77,11 @@
           by dn.exact=gidNumber=1000+uidNumber=1000,cn=peercred,cn=external,cn=auth manage
           {% endif %}
           by * break
+        - >-
+          to attrs=userPassword
+          by self write
+          by anonymous auth
+          by * none
     state: "exact"
     ordered: true
 
