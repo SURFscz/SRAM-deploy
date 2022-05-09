@@ -20,8 +20,8 @@
       - python3-pymysql
       - libapache2-mod-wsgi-py3
       - mariadb-client
-      - libxmlsec1-dev # for python xmlsec pkg
-      - pkg-config     # for python xmlsec pkg
+      - libxmlsec1-dev  # for python xmlsec pkg
+      - pkg-config      # for python xmlsec pkg
     install_recommends: false
 
 - name: Remove obsolete packages
@@ -98,9 +98,11 @@
     group: "{{item.owner}}"
     mode: "0755"
   with_items:
-    - { path: "{{sbs_work_dir}}", owner: "root"     }
-    - { path: "{{sbs_conf_dir}}", owner: "root"     }
-    - { path: "{{sbs_log_dir}}",  owner: "www-data" }
+    - { path: "{{sbs_work_dir}}",            owner: "root"     }
+    - { path: "{{sbs_conf_dir}}",            owner: "root"     }
+    - { path: "{{sbs_conf_dir}}/saml",       owner: "root"     }
+    - { path: "{{sbs_conf_dir}}/saml/certs", owner: "root"     }
+    - { path: "{{sbs_log_dir}}",             owner: "www-data" }
 
 - name: Download SBS build
   get_url:
@@ -160,7 +162,31 @@
     - { path: "jwt_private_key",      content: "{{ sbs_jwt_server.priv }}" }
     - { path: "jwt_public_keys.json", content: "{{ sbs_jwt_server.pub }}"  }
   notify: "restart apache"
-  no_log: "{{sram_ansible_nolog}}"
+  no_log: "{{ sram_ansible_nolog }}"
+
+- name: Create SBS SURFSecure ID config files
+  template:
+    src: "{{ item.name }}"
+    dest: "{{ sbs_conf_dir }}/saml/{{item.name}}"
+    group: "www-data"
+    mode: "{{ item.mode }}"
+  with_items:
+    - { name: "settings.json",     mode: "0640" }
+    - { name: "advanced_settings.json", mode: "0644" }
+  notify: "restart apache"
+  no_log: "{{ sram_ansible_nolog }}"
+
+- name: write server SURFSecure ID keys
+  copy:
+    content: "{{ item.content }}"
+    dest: "{{ sbs_conf_dir }}/saml/certs/{{ item.path }}"
+    group: "www-data"
+    mode: "0640"
+  with_items:
+    - { path: "sp.cert",      content: "{{ sbs_surf_secure_id.priv }}" }
+    - { path: "sp.key",       content: "{{ sbs_surf_secure_id.pub }}"  }
+  notify: "restart apache"
+  no_log: "{{ sram_ansible_nolog }}"
 
 - name: Create links to config files
   file:
@@ -169,6 +195,7 @@
     src: "{{ sbs_conf_dir }}/{{ item.links_to }}"
   with_items:
     - { path: "server/config/config.yml",           links_to: "config.yml"           }
+    - { path: "server/config/saml",                 links_to: "saml"                 }
     - { path: "client/build/static/disclaimer.css", links_to: "disclaimer.css"       }
     - { path: "server/config/jwt_private_key",      links_to: "jwt_private_key"      }
     - { path: "server/config/jwt_public_keys.json", links_to: "jwt_public_keys.json" }
