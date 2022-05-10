@@ -37,6 +37,8 @@ sbs_second_factor_authentication_required: True
 sbs_totp_token_name: "SRAM-VM"
 sbs_notifications_enabled: True
 sbs_impersonation_allowed: True
+sbs_admin_platform_backdoor_totp: True
+sbs_swagger_enabled: True
 
 sbs_mfa_idp_allowed:
   - schac_home: "ci-runner.sram.surf.nl"
