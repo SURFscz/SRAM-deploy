@@ -15,6 +15,7 @@ Listen {{ sbs_backend_port }}
         WSGIDaemonProcess server python-home={{sbs_env_dir}} user=www-data group=www-data processes=2 threads=5
 
         WSGIScriptAlias /api {{ sbs_work_dir }}/sbs-api.wsgi/api
+        WSGIScriptAlias /pam-websso {{ sbs_work_dir }}/sbs-api.wsgi/pam-websso
         WSGIScriptAlias /health {{ sbs_work_dir }}/sbs-api.wsgi/health
         WSGIScriptAlias /config {{ sbs_work_dir }}/sbs-api.wsgi/config
         WSGIScriptAlias /info {{ sbs_work_dir }}/sbs-api.wsgi/info
