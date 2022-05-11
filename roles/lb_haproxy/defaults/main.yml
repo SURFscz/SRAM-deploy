@@ -12,3 +12,5 @@ haproxy_oscp_bin_dir: "/opt/scz-misc/bin/"
 haproxy_admin_secret: "gehe1m"
 
 haproxy_redirect_hosts: []
+
+haproxy_ldap_acl_file: "/etc/haproxy/acl_ldap_sbs.cfg"
