@@ -29,6 +29,8 @@ global
     tune.ssl.default-dh-param {{haproxy.dhparam_keysize}}
 {% endif %}
 
+    server-state-file {{haproxy_state_file}}
+
 defaults
     log     global
     option  dontlognull
@@ -43,6 +45,7 @@ defaults
     errorfile 503 /etc/haproxy/errors/503.http
     errorfile 504 /etc/haproxy/errors/504.http
     default-server ca-file {{ssl_certs_dir}}/{{internal_base_domain}}.crt
+    load-server-state-from-file global
 
 #--------------------------------------------------------------------
 #  frontend
