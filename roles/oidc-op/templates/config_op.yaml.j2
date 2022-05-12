@@ -197,6 +197,12 @@ op:
       class: oidcop.user_info.UserInfo
       kwargs:
         db_file: sram_users.json
+    session_params:
+      sub_func:
+        pairwise:
+          class: oidcop.session.manager.RawID
+        public:
+          class: oidcop.session.manager.RawID
     authentication:
       user:
         acr: urn:oasis:names:tc:SAML:2.0:ac:classes:InternetProtocolPassword
