@@ -106,7 +106,7 @@
 
 - name: Download SBS build
   get_url:
-    url: "{{sbs_build_url}}/{{sbs_build_type}}/sbs-{{sbs_version}}.tar.xz"
+    url: "{{sbs_build_url}}"
     dest: "{{sbs_work_dir}}/sbs.tar.xz"
     force: true
   register: "sbs_download"

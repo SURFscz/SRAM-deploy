@@ -1,10 +1,8 @@
 ---
 sbs_openidc_timeout: 86400
 
-sbs_build_url: "https://artie.ia.surfsara.nl/artifactory/SRAM-Production-Public/SBS-builds/"
-sbs_build_type: "branch"
-sbs_version: "main"
-sbs_repository: "{{ sbs_repository_base }}.git"
+sbs_build_url: "https://github.com/SURFscz/SBS/releases/download/{{sbs_version}}/sbs.tar.xz"
+sbs_version: "latest"
 
 sbs_work_dir: "/opt/sbs"
 sbs_git_dir: "{{ sbs_work_dir }}/sbs"
