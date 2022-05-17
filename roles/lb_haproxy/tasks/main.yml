@@ -43,7 +43,7 @@
 
 - name: Create LDAP ACL file
   copy:
-    contentls -: ""
+    content: ""
     dest: "{{haproxy_ldap_acl_file}}"
     force: false
     owner: "root"
