@@ -13,6 +13,8 @@ http_hosts:
 zabbix_templates_extra:
   - "HAProxy by Zabbix agent"
 
+aclsync_interval_seconds: 30
+
 firewall_v4_incoming:
   - { name: bastion,      src: "{{iprange.bastion}}",  dport:  "22",           proto: tcp }
   - { name: public_http,                               dport:  "80",           proto: tcp }

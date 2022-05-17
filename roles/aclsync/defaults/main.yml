@@ -1,0 +1,5 @@
+---
+plsc_repo_url: "https://github.com/SURFscz/plsc.git"
+plsc_repo_version: "main"
+aclsync_dir: "/opt/aclsync"
+aclsync_interval_seconds: 120

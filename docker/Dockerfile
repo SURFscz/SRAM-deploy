@@ -51,7 +51,7 @@ RUN systemctl enable ssh.service                 && \
     systemctl disable systemd-timesyncd.service  && \
     echo "exit 0" > /usr/sbin/policy-rc.d
 
-RUN useradd --create-home -s /bin/bash ansible        && \
+RUN useradd --create-home --shell /bin/bash --groups adm ansible        && \
     install -d -o ansible -m 0700 /home/ansible/.ssh  && \
     echo -n 'ansible:ansible' | chpasswd
 

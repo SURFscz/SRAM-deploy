@@ -1,0 +1,21 @@
+#!/bin/sh
+
+set -e
+
+# save frontend state
+echo "show servers state" \
+    | socat unix-connect:/run/haproxy/admin.sock stdio \
+    > "{{haproxy_state_file}}.tmp"
+mv "{{haproxy_state_file}}.tmp" "{{haproxy_state_file}}"
+
+# save current acls
+echo "show acl {{haproxy_ldap_acl_file}}" \
+	| socat unix-connect:/run/haproxy/admin.sock stdio \
+	| awk '/^Unknown ACL identifier/ { exit 1 }; {print $2}' \
+	> "{{haproxy_ldap_acl_file}}.tmp"
+
+chown root:haproxy "{{haproxy_ldap_acl_file}}.tmp"
+chmod 0660 "{{haproxy_ldap_acl_file}}.tmp"
+mv "{{haproxy_ldap_acl_file}}.tmp" "{{haproxy_ldap_acl_file}}"
+
+exit 0
