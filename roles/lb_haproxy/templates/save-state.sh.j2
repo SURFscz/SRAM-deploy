@@ -14,6 +14,8 @@ echo "show acl {{haproxy_ldap_acl_file}}" \
 	| awk '{print $2}' \
 	> "{{haproxy_ldap_acl_file}}.tmp"
 
+chown root:haproxy "{{haproxy_ldap_acl_file}}.tmp"
+chmod 0660 "{{haproxy_ldap_acl_file}}.tmp"
 mv "{{haproxy_ldap_acl_file}}.tmp" "{{haproxy_ldap_acl_file}}"
 
 exit 0
