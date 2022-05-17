@@ -11,7 +11,7 @@ mv "{{haproxy_state_file}}.tmp" "{{haproxy_state_file}}"
 # save current acls
 echo "show acl {{haproxy_ldap_acl_file}}" \
 	| socat unix-connect:/run/haproxy/admin.sock stdio \
-	| awk '{print $2}' \
+	| awk '/^Unknown ACL identifier/ { exit 1 }; {print $2}' \
 	> "{{haproxy_ldap_acl_file}}.tmp"
 
 chown root:haproxy "{{haproxy_ldap_acl_file}}.tmp"
