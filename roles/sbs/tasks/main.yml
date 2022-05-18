@@ -90,6 +90,9 @@
           perm: "SELECT,SHOW VIEW,EVENT,TRIGGER"
       no_log: "{{sram_ansible_nolog}}"
 
+  notify: "restart apache"
+
+
 - name: "Create directories"
   file:
     path: "{{item.path}}"
