@@ -70,6 +70,7 @@
         encoding: 'utf8mb4'
         collation: 'utf8mb4_unicode_ci'
         ca_cert: "{{sbs_db_cert_path}}"
+      notify: "restart apache"
 
     - name: Add SBS user
       community.mysql.mysql_user:
@@ -89,9 +90,7 @@
           passwd: "{{ sbs_dbbackup_password }}"
           perm: "SELECT,SHOW VIEW,EVENT,TRIGGER"
       no_log: "{{sram_ansible_nolog}}"
-
-  notify: "restart apache"
-
+      notify: "restart apache"
 
 - name: "Create directories"
   file:
