@@ -1,5 +1,20 @@
 ---
-# playbook to install and configure general components of the LDAP
+# playbook to install and configure all components of the LDAP
+- name: Install LDAP
+  apt:
+    state: present
+    name:
+      - slapd
+      - ldap-utils
+      - python3-ldap  # for ansible ldap modules
+    install_recommends: no
+  notify: restart LDAP
+
+- name: make sure slapd can read ssl keys
+  user:
+    name: openldap
+    groups: ssl-cert
+
 - name: Copying alternative service script
   become: true
   template:
@@ -22,6 +37,7 @@
   tags: ldap
   with_items:
     - "{{ ldap_ldif_dir }}"
+    - /var/run/slapd
 
 - name: Copy schemas
   become_user: "{{ ldap_user }}"
@@ -30,6 +46,8 @@
     dest: "{{ ldap_ldif_dir }}/{{ item }}"
     mode: 0755
   with_items:
+    - sczGroup.ldif
+    - groupOfMembers.ldif
     - eduPerson.ldif
     - ldapPublicKey.ldif
     - eduMember.ldif
@@ -42,10 +60,12 @@
     src: "{{ item }}.j2"
     dest: "{{ ldap_ldif_dir }}/{{ item }}"
     mode: 0644
-  with_items:
-    - "set_loglevel_stats.ldif"
-    - "enable_syncprov.ldif"
-    - "enable_dynlist.ldif"
+  loop:
+    - set_root_credentials.ldif
+    - enable_memberof.ldif
+    - enable_syncrepl.ldif
+    - enable_syncprov.ldif
+    - enable_dynlist.ldif
 
 - name: Generate ldap.conf
   template:
@@ -53,121 +73,102 @@
     dest: "{{ ldap_dir }}/ldap.conf"
     mode: 0644
 
-- name: Set loglevel to stats
-  command: ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f "{{ ldap_ldif_dir }}/set_loglevel_stats.ldif"
-  # return code 20 means entry already exists
-  register: result
-  failed_when: result.rc != 0
-  changed_when: result.rc != 0
-
-- name: Enable synchronization
-  command: ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f "{{ ldap_ldif_dir }}/enable_syncprov.ldif"
-  # return code 20 means entry already exists
-  register: result
-  failed_when: result.rc not in [0,20,68]
-  changed_when: result.rc not in [20,68]
-
-- name: Enable dynamic lists
-  command: ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f "{{ ldap_ldif_dir }}/enable_dynlist.ldif"
-  # return code 20 means entry already exists
-  register: result
-  failed_when: result.rc not in [0,20,68]
-  changed_when: result.rc != 20
-
-- name: Set sizelimit
+- name: Set indices
   ldap_attrs:
-    dn: "cn=config"
+    dn: "olcDatabase={1}mdb,cn=config"
     attributes:
-      olcSizeLimit: 2000
-    state: "exact"
+      olcDbIndex: "{{item}}"
+    state: present
+  with_items:
+    - "entryUUID eq"
+    - "o eq"
+    - "dc eq"
+    - "entryCSN eq"
 
-- name: Enable tls
+- name: Set config
   community.general.ldap_attrs:
     dn: "cn=config"
-    state: "exact"
+    state: exact
     attributes:
+      olcSizeLimit: 2000
+      olcLogLevel: "stats stats2 filter"
+      olcAttributeOptions: "time-"
       olcTLSCertificateKeyFile: "{{ ssl_certs_dir }}/{{ internal_base_domain }}.key"
       olcTLSCertificateFile: "{{ ssl_certs_dir }}/{{ internal_base_domain }}.crt"
       olcTLSCACertificateFile: "{{ ssl_certs_dir }}/{{ internal_base_domain }}.crt"
       olcTLSCipherSuite: >
         SECURE256:-VERS-DTLS-ALL:-VERS-SSL3.0:-VERS-TLS1.0:-VERS-TLS1.1:-RSA:-DHE-RSA:-ECDHE-RSA
 
-# OpenLDAP does not like adding existing entries again. Only add the
-# schema if it has not been added already. This does not yet take care
-# of changes in the eduPerson schema.
-- name: Check if eduPerson schema is already present
-  shell: >
-    ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// -b 'cn=schema,cn=config' '(cn=*)' dn
-    | grep -i 'cn={[0123456789]\+}eduperson,cn=schema,cn=config'
-  register:
-    eduPersonSchemaPresent
-  failed_when: eduPersonSchemaPresent.rc not in [0, 1]
-  changed_when: False
+- name: Setup LDAP
+  ansible.builtin.script: 'scripts/ldap-modify {{ ldap_ldif_dir }}/{{ item }}'
+  register: result
+  failed_when: result.rc not in [0,20,68]
+  changed_when: result.rc != 20
+  loop:
+    - set_root_credentials.ldif
+    - enable_memberof.ldif
+    - enable_syncrepl.ldif
+    - enable_syncprov.ldif
+    - enable_dynlist.ldif
 
-# Based on the success or failure of copying the eduPerson schema add
-# the schema to the ldap database. Copying the same file in the previous
-# task, would lead to not registering the edoPersonSchema variable.
-- name: Ensure the eduPerson schema is added to LDAP
-  become: true
-  command: >
-    ldapadd -Q -Y EXTERNAL -H ldapi:///
-    -f "{{ ldap_ldif_dir }}/eduPerson.ldif"
-  when: eduPersonSchemaPresent.stdout == ""
+- name: Ensure the schema's are added to LDAP
+  ansible.builtin.script: 'scripts/ldap-add {{ ldap_ldif_dir }}/{{ item }}'
+  register: register_add
+  changed_when: (register_add.stdout|d() and
+                 (item | basename | regex_replace('.schema$','') + ' already exists in the LDAP, skipping…')
+                 not in register_add.stdout_lines)
+  loop:
+    - sczGroup.ldif
+    - groupOfMembers.ldif
+    - eduPerson.ldif
+    - ldapPublicKey.ldif
+    - eduMember.ldif
+    - voPerson.ldif
 
-- name: Check if the ldapPublicKey schema is already present
-  shell: >
-    ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// -b 'cn=schema,cn=config' '(cn=*)' dn
-    | grep -i 'cn={[0-9]\+}openssh-lpk-openldap,cn=schema,cn=config'
-  register:
-    ldapPublicKeyTask
-  failed_when: ldapPublicKeyTask.rc not in [0, 1]
-  changed_when: False
-
-- name: Ensure the ldapPublicKey schema is added to LDAP
-  become: true
-  command: >
-    ldapadd -Q -Y EXTERNAL -H ldapi:///
-    -f "{{ ldap_ldif_dir }}/ldapPublicKey.ldif"
-  when: ldapPublicKeyTask.stdout == ""
-
-- name: Check if the eduMember schema is already present
-  shell: >
-    ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// -b 'cn=schema,cn=config' '(cn=*)' dn
-    | grep -i 'cn={[0-9]\+}edumember,cn=schema,cn=config'
-  register:
-    eduMemberTask
-  failed_when: eduMemberTask.rc not in [0, 1]
-  changed_when: False
-
-- name: Ensure the eduMember schema is added to LDAP
-  become: true
-  command: >
-    ldapadd -Q -Y EXTERNAL -H ldapi:///
-    -f "{{ ldap_ldif_dir }}/eduMember.ldif"
-  when: eduMemberTask.stdout == ""
-
-- name: Check if the voPerson schema is already present
-  shell: >
-    ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// -b 'cn=schema,cn=config' '(cn=*)' dn
-    | grep -i 'cn={[0-9]\+}voperson,cn=schema,cn=config'
-  register:
-    voPersonTask
-  failed_when: voPersonTask.rc not in [0, 1]
-  changed_when: False
-
-- name: Ensure the voPerson schema is added to LDAP
-  become: true
-  command: >
-    ldapadd -Q -Y EXTERNAL -H ldapi:///
-    -f "{{ ldap_ldif_dir }}/voPerson.ldif"
-  when: voPersonTask.stdout == ""
-
-- name: Set allowed attribute options for voPerson
-  ldap_attrs:
-    dn: "cn=config"
+- name: Initialize DIT
+  community.general.ldap_entry:
+    dn: "{{ services_ldap.basedn }}"
+    state: present
+    objectClass:
+      - top
+      - dcObject
+      - organization
     attributes:
-      olcAttributeOptions: "time-"
-    state: "present"
+      dc: "{{ services_ldap.basedn | regex_replace('^dc=([^,]+).*', '\\1') }}"
+      o: "{{ services_ldap.o }}"
+
+- name: Initialize DIT admin
+  community.general.ldap_entry:
+    dn: "{{ services_ldap.binddn }}"
+    objectClass: organizationalRole
+    attributes:
+      cn: "{{ services_ldap.binddn | regex_replace('^cn=([^,]+).*', '\\1') }}"
+
+- name: Set ACLs
+  community.general.ldap_attrs:
+    dn: "olcDatabase={1}mdb,cn=config"
+    attributes:
+      olcAccess:
+        - >-
+          to dn.regex="(([^,]+),{{ services_ldap.basedn }})$"
+          by dn.exact="{{ services_ldap.binddn }}" write
+          by dn.exact=gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth write
+          by dn.exact,expand="cn=admin,$1" read
+          by * break
+        - >-
+          to *
+          by dn.exact=gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth manage
+          {% if environment_name=="vm" %}
+          by dn.exact=gidNumber=1000+uidNumber=1000,cn=peercred,cn=external,cn=auth manage
+          {% endif %}
+          by * break
+        - >-
+          to attrs=userPassword
+          by self write
+          by anonymous auth
+          by * none
+    state: exact
+    ordered: true
 
 - name: Redirect slapd log to /var/log/slapd.log
   copy:
@@ -185,4 +186,3 @@
     src: ldap-backup.sh.j2
     dest: "{{backup_runparts}}/ldap-backup.sh"
     mode: 0755
-
