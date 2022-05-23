@@ -18,7 +18,7 @@ api_users:
 {% for name, user in sbs_api_users.items() %}
   - name: "{{ name }}"
     password: "{{ user.password }}"
-    scopes: [ {{ user.scopes|join(', ') }} ]
+    scopes: "[ {{ user.scopes | join(', ') }} ]"
 {% endfor %}
 
 oidc:
