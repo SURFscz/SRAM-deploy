@@ -39,7 +39,7 @@ if [[ "${schema_file}" == *.ldif ]] ; then
     if schema_list | grep -q "${schema_dn}" ; then
 
         # Schema is already installed, do nothing
-        exit 0
+        exit 80
 
     else
 

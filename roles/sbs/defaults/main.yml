@@ -68,3 +68,5 @@ sbs_backup_dir: "{{backup_base}}/sbs"
 sbs_db_cert_path: "/etc/ssl/sbs_db_root_cert.pem"
 
 sbs_swagger_enabled: true
+sbs_ldap_url: "ldap://ldap.example.com/dc=example,dc=com"
+sbs_ldap_bind_account: "cn=admin,dc=entity_id,dc=services,dc=sram-tst,dc=surf,dc=nl"
