@@ -115,8 +115,8 @@
   ansible.builtin.script: 'scripts/ldap-add {{ ldap_ldif_dir }}/{{ item }}'
   register: register_add
   changed_when: (register_add.stdout|d() and
-                 (item | basename | regex_replace('.schema$','') + ' already exists in the LDAP, skipping…')
-                 not in register_add.stdout_lines)
+                (item | basename | regex_replace('.schema$','') + ' already
+                exists in the LDAP, skipping...') not in register_add.stdout_lines)
   loop:
     - sczGroup.ldif
     - groupOfMembers.ldif
