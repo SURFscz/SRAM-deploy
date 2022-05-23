@@ -99,24 +99,11 @@
       olcTLSCipherSuite: >
         SECURE256:-VERS-DTLS-ALL:-VERS-SSL3.0:-VERS-TLS1.0:-VERS-TLS1.1:-RSA:-DHE-RSA:-ECDHE-RSA
 
-- name: Setup LDAP
-  ansible.builtin.script: 'scripts/ldap-modify {{ ldap_ldif_dir }}/{{ item }}'
-  register: result
-  failed_when: result.rc not in [0,20,68]
-  changed_when: result.rc != 20
-  loop:
-    - set_root_credentials.ldif
-    - enable_memberof.ldif
-    - enable_syncrepl.ldif
-    - enable_syncprov.ldif
-    - enable_dynlist.ldif
-
 - name: Ensure the schema's are added to LDAP
   ansible.builtin.script: 'scripts/ldap-add {{ ldap_ldif_dir }}/{{ item }}'
-  register: register_add
-  changed_when: (register_add.stdout|d() and
-                (item | basename | regex_replace('.schema$','') + ' already
-                exists in the LDAP, skipping...') not in register_add.stdout_lines)
+  register: result
+  failed_when: result.rc not in [0,80]
+  changed_when: result.rc != 80
   loop:
     - sczGroup.ldif
     - groupOfMembers.ldif
@@ -125,24 +112,17 @@
     - eduMember.ldif
     - voPerson.ldif
 
-- name: Initialize DIT
-  community.general.ldap_entry:
-    dn: "{{ services_ldap.basedn }}"
-    state: present
-    objectClass:
-      - top
-      - dcObject
-      - organization
-    attributes:
-      dc: "{{ services_ldap.basedn | regex_replace('^dc=([^,]+).*', '\\1') }}"
-      o: "{{ services_ldap.o }}"
-
-- name: Initialize DIT admin
-  community.general.ldap_entry:
-    dn: "{{ services_ldap.binddn }}"
-    objectClass: organizationalRole
-    attributes:
-      cn: "{{ services_ldap.binddn | regex_replace('^cn=([^,]+).*', '\\1') }}"
+- name: Setup LDAP
+  ansible.builtin.script: 'scripts/ldap-modify {{ ldap_ldif_dir }}/{{ item }}'
+  register: result
+  failed_when: result.rc not in [0,20,68,80]
+  changed_when: result.rc != 20 and result.rc != 0
+  loop:
+    - enable_memberof.ldif
+    - enable_syncrepl.ldif
+    - enable_syncprov.ldif
+    - enable_dynlist.ldif
+    - set_root_credentials.ldif
 
 - name: Set ACLs
   community.general.ldap_attrs:
@@ -169,6 +149,25 @@
           by * none
     state: exact
     ordered: true
+
+- name: Initialize DIT
+  community.general.ldap_entry:
+    dn: "{{ services_ldap.basedn }}"
+    state: present
+    objectClass:
+      - top
+      - dcObject
+      - organization
+    attributes:
+      dc: "{{ services_ldap.basedn | regex_replace('^dc=([^,]+).*', '\\1') }}"
+      o: "{{ services_ldap.o }}"
+
+- name: Initialize DIT admin
+  community.general.ldap_entry:
+    dn: "{{ services_ldap.binddn }}"
+    objectClass: organizationalRole
+    attributes:
+      cn: "{{ services_ldap.binddn | regex_replace('^cn=([^,]+).*', '\\1') }}"
 
 - name: Redirect slapd log to /var/log/slapd.log
   copy:
