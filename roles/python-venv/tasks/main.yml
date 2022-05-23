@@ -9,6 +9,7 @@
       - python3-distutils
       - python3-setuptools
       - python3-pip
+      - libxmlsec1-dev
     install_recommends: false
 
 - name: Check if python in virtualenv is out of date
