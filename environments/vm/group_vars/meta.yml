@@ -6,3 +6,4 @@ firewall_v4_incoming:
 
 metadata_project_dir: "/opt/metadata"
 proxy_hostname: "localhost"
+metadata_registration_authority: "http://federatie.example.org/"

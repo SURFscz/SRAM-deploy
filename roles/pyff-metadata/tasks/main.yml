@@ -29,8 +29,11 @@
 
 - name: Create pyFF mdq configuration
   template:
-    src: "idp_feed.fd.j2"
-    dest: "{{ pyff_env_dir }}/idp_feed.fd"
+    src: "{{item}}.j2"
+    dest: "{{ pyff_env_dir }}/{{item}}"
+  with_items:
+    - "idp_feed.fd"
+    - "transform.xslt"
   become: "yes"
   become_user: "pyff"
   notify: "run pyff-metadata job"
