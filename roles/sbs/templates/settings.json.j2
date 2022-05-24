@@ -15,6 +15,6 @@
             "url": "https://{{ sbs_surf_secure_id.sa_gw_environment }}/second-factor-only/single-sign-on }]",
             "binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
         },
-        "x509cert": "{{ sbs_surf_secure_id.sa_idp_certificate }}"
+        "x509cert": "{{ sbs_surf_secure_id.sa_idp_certificate | barepem }}"
     }
 }

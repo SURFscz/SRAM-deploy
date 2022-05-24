@@ -68,3 +68,23 @@ sbs_backup_dir: "{{backup_base}}/sbs"
 sbs_db_cert_path: "/etc/ssl/sbs_db_root_cert.pem"
 
 sbs_swagger_enabled: true
+
+sbs_ssid_identity_providers: []
+sbs_surf_secure_id:
+  environment: "unknown.example.org"
+  sp_entity_id: "https://sbs.{{base_domain}}"
+  acs_url: "https://{{base_domain}}/api/users/acs"
+  sa_gw_environment: "sa-gw.unknown.example.org"
+  sa_idp_certificate: |
+    -----BEGIN CERTIFICATE-----
+    12345
+    -----END CERTIFICATE-----
+  priv: |
+    -----BEGIN RSA PRIVATE KEY-----
+    abcde
+    -----END RSA PRIVATE KEY-----
+  pub: |
+    -----BEGIN CERTIFICATE-----
+    12345
+    -----END CERTIFICATE-----
+

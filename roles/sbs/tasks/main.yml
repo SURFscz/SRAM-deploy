@@ -168,7 +168,7 @@
 
 - name: Create SBS SURFSecure ID config files
   template:
-    src: "{{ item.name }}"
+    src: "{{ item.name }}.j2"
     dest: "{{ sbs_conf_dir }}/saml/{{item.name}}"
     group: "www-data"
     mode: "{{ item.mode }}"
