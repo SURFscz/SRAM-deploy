@@ -5,6 +5,8 @@
 {% for f in metadata_idps_filters %}
   - "{{f}}"
 {% endfor %}
+- xslt:
+    stylesheet: transform.xslt
 - finalize:
     cacheDuration: P7D
     validUntil: P14D
