@@ -6,12 +6,13 @@
     simplesaml_name: "{{demosp_name}}"
     simplesaml_user: "{{demosp_user}}"
     simplesaml_group: "{{demosp_group}}"
+    simplesaml_project_dir: "{{demosp_dir}}"
 
-- name: install SSP config
+- name: Install SSP config
   template:
     src: "{{item}}.j2"
     dest: "{{simplesaml_project_dir}}/config/{{item}}"
-    mode: "0755"
+    mode: "0644"
   with_items:
     - "authsources.php"
     - "saml20-idp-remote.php"
@@ -31,13 +32,32 @@
     mode: "0640"
     group: "{{demosp_group}}"
 
-- name: install EduTeams certs
+- name: Install EduTeams certs
   copy:
     src: "{{item}}"
     dest: "{{simplesaml_cert_dir}}/{{item}}"
   with_items:
     - "eduteams-prd.pem"
     - "eduteams-acc.pem"
+
+
+- name: Create html dir
+  file:
+    path: "{{demosp_html_dir}}"
+    state: "directory"
+    mode: "0755"
+
+- name: Copy DemoSP files
+  copy:
+    src: "{{item}}"
+    dest: "{{demosp_html_dir}}"
+    mode: "0644"
+  with_items:
+    - "index.html"
+    - "auth.css"
+    - "auth.php"
+  notify: "restart php-fpm"
+
 
 - include_role:
     name: "nginx"

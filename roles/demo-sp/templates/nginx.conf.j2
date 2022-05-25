@@ -44,4 +44,17 @@ server {
             fastcgi_param PATH_INFO       $fastcgi_path_info;
         }
     }
+
+    root {{demosp_html_dir}};
+
+    location ~ ^/auth/(test|acc|prd)$ {
+        fastcgi_pass     unix:/run/php/{{demosp_name}}.sock;
+
+        include          fastcgi_params;
+
+        fastcgi_split_path_info       ^/(auth)/(.+)$;
+        fastcgi_param SCRIPT_FILENAME {{demosp_html_dir}}/$fastcgi_script_name.php;
+        fastcgi_param SCRIPT_NAME     $fastcgi_script_name.php;
+        fastcgi_param PATH_INFO       $fastcgi_path_info;
+    }
 }

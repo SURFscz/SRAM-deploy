@@ -8,13 +8,11 @@ $metadata['https://proxy.acc.sram.eduteams.org/proxy'] = array(
         'nl' => 'SRAM acc',
     ],
     'SingleSignOnService' => 'https://proxy.acc.sram.eduteams.org/saml2sp/sso/redirect',
-    'certificate' => 'sram-acc.pem',
+    'certificate' => 'eduteams-acc.pem',
 
-    // convert OID formatted attributes from SAML assertion to 'name' similar to LDAP
-    // so they will be available as 'mail' and 'displayName'
     'authproc' => [
       50 => [
-        'class' => 'core:AttributeMap', 'oid2name',
+        'class' => 'core:AttributeMap', 'oid2name', 'urn2name',
       ],
     ],
 );
@@ -24,13 +22,11 @@ $metadata['https://proxy.sram.surf.nl/proxy'] = array(
         'nl' => 'SRAM prod',
     ],
     'SingleSignOnService' => 'https://proxy.sram.surf.nl/saml2sp/sso/redirect',
-    'certificate' => 'sram-prd.pem',
+    'certificate' => 'eduteams-prd.pem',
 
-    // convert OID formatted attributes from SAML assertion to 'name' similar to LDAP
-    // so they will be available as 'mail' and 'displayName'
     'authproc' => [
       50 => [
-        'class' => 'core:AttributeMap', 'oid2name',
+        'class' => 'core:AttributeMap', 'oid2name', 'urn2name',
       ],
     ],
 );
