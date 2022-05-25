@@ -10,9 +10,9 @@
         "NameIDFormat": "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified"
     },
     "idp": {
-        "entityId": "https://{{ sbs_surf_secure_id.sa_gw_environment }}/second-factor-only/metadata }}",
+        "entityId": "https://{{ sbs_surf_secure_id.sa_gw_environment }}/second-factor-only/metadata",
         "singleSignOnService": {
-            "url": "https://{{ sbs_surf_secure_id.sa_gw_environment }}/second-factor-only/single-sign-on }]",
+            "url": "https://{{ sbs_surf_secure_id.sa_gw_environment }}/second-factor-only/single-sign-on",
             "binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
         },
         "x509cert": "{{ sbs_surf_secure_id.sa_idp_certificate | barepem }}"
