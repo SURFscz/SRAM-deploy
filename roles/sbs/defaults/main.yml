@@ -88,3 +88,9 @@ sbs_surf_secure_id:
     12345
     -----END CERTIFICATE-----
 
+sbs_ssid_authncontext: |
+  http://{{ sbs_surf_secure_id.environment }}/assurance/sfo-level2
+sbs_ssid_entityid: |
+  https://{{ sbs_surf_secure_id.sa_gw_environment }}/second-factor-only/metadata
+sbs_ssid_sso_endpoint: |
+  https://{{ sbs_surf_secure_id.sa_gw_environment }}/second-factor-only/single-sign-on

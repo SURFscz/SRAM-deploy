@@ -103,7 +103,6 @@
     - { path: "{{sbs_work_dir}}",            owner: "root"     }
     - { path: "{{sbs_conf_dir}}",            owner: "root"     }
     - { path: "{{sbs_conf_dir}}/saml",       owner: "root"     }
-    - { path: "{{sbs_conf_dir}}/saml/certs", owner: "root"     }
     - { path: "{{sbs_log_dir}}",             owner: "www-data" }
 
 - name: Download SBS build
@@ -168,25 +167,13 @@
 
 - name: Create SBS SURFSecure ID config files
   template:
-    src: "{{ item.name }}.j2"
+    src: "saml_{{ item.name }}.j2"
     dest: "{{ sbs_conf_dir }}/saml/{{item.name}}"
     group: "www-data"
     mode: "{{ item.mode }}"
   with_items:
-    - { name: "settings.json",     mode: "0640" }
+    - { name: "settings.json",          mode: "0640" }
     - { name: "advanced_settings.json", mode: "0644" }
-  notify: "restart apache"
-  no_log: "{{ sram_ansible_nolog }}"
-
-- name: write server SURFSecure ID keys
-  copy:
-    content: "{{ item.content }}"
-    dest: "{{ sbs_conf_dir }}/saml/certs/{{ item.path }}"
-    group: "www-data"
-    mode: "0640"
-  with_items:
-    - { path: "sp.cert",      content: "{{ sbs_surf_secure_id.priv }}" }
-    - { path: "sp.key",       content: "{{ sbs_surf_secure_id.pub }}"  }
   notify: "restart apache"
   no_log: "{{ sram_ansible_nolog }}"
 
