@@ -94,3 +94,5 @@ sbs_ssid_entityid: "\
   https://{{ sbs_surf_secure_id.sa_gw_environment }}/second-factor-only/metadata"
 sbs_ssid_sso_endpoint: "\
   https://{{ sbs_surf_secure_id.sa_gw_environment }}/second-factor-only/single-sign-on"
+
+sbs_mfa_sso_minutes: 10

@@ -192,7 +192,7 @@ mfa_idp_allowed:
 {% endfor %}
 
 # A MFA login in a different flow is valid for X minutes
-mfa_sso_time_in_minutes: 10
+mfa_sso_time_in_minutes: {{sbs_mfa_sso_minutes}}
 
 # Lower case schachome organisations / entity ID's where SURFSecure ID is used for step-up
 # If this feature is no longer needed, just replace the value with an empty list []
