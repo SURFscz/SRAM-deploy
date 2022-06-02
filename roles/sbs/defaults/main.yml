@@ -96,3 +96,4 @@ sbs_ssid_sso_endpoint: "\
   https://{{ sbs_surf_secure_id.sa_gw_environment }}/second-factor-only/single-sign-on"
 
 sbs_mfa_sso_minutes: 10
+sbs_mfa_fallback_enabled: true
