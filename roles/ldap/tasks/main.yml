@@ -130,6 +130,11 @@
     attributes:
       olcAccess:
         - >-
+          to attrs=userPassword
+          by self write
+          by anonymous auth
+          by * break
+        - >-
           to dn.regex="(([^,]+),{{ services_ldap.basedn }})$"
           by dn.exact="{{ services_ldap.binddn }}" write
           by dn.exact=gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth write
@@ -137,16 +142,12 @@
           by * break
         - >-
           to *
-          by dn.exact=gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth manage
           {% if environment_name=="vm" %}
           by dn.exact=gidNumber=1000+uidNumber=1000,cn=peercred,cn=external,cn=auth manage
           {% endif %}
+          by dn.exact=gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth manage
+          by dn.exact="cn=scz,{{services_ldap.basedn}}" read
           by * break
-        - >-
-          to attrs=userPassword
-          by self write
-          by anonymous auth
-          by * none
     state: exact
     ordered: true
 
@@ -168,6 +169,9 @@
     objectClass: organizationalRole
     attributes:
       cn: "{{ services_ldap.binddn | regex_replace('^cn=([^,]+).*', '\\1') }}"
+
+- name: Initialize DIT platform admins
+  ansible.builtin.script: "scripts/add-ro-roles '{{ services_ldap.basedn }}' {% for user in users %}'{{user.uid}},{{user.pw_hash}}' {% endfor %}"
 
 - name: Redirect slapd log to /var/log/slapd.log
   copy:

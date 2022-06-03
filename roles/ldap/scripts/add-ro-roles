@@ -1,0 +1,86 @@
+#!/usr/bin/python3
+import sys
+import ldap
+import ldap.modlist
+
+#uri = "ldaps://ldap.scz-vm.net"
+uri = "ldapi:///"
+binddn = "cn=admin,dc=services,dc=vnet"
+passwd = "changethispassword"
+ldap.set_option(ldap.OPT_X_TLS_REQUIRE_CERT, 0)
+ldap.set_option(ldap.OPT_X_TLS_DEMAND, True)
+ldapc = ldap.initialize(uri)
+#ldapc.simple_bind_s(binddn, passwd)
+ldapc.sasl_external_bind_s()
+
+if len(sys.argv) < 2:
+    exit(1)
+
+basedn = sys.argv[1]
+users = sys.argv[2:]
+
+print(f"basedn: {basedn}")
+
+def encode(entry):
+    r = {}
+    for k, v in entry.items():
+        rv = []
+        for ev in v:
+            rv.append(str(ev).encode('UTF-8'))
+        r[k] = rv
+    return r
+
+def get_admins(basedn):
+    admins = []
+    s = ldapc.search_s(basedn, ldap.SCOPE_ONELEVEL, '(objectClass=organizationalRole)', ['dn'])
+    for entry in s:
+        dn,_ = entry
+        parts = ldap.dn.str2dn(dn)
+        #print(f"admin dn: {dn}")
+        #print(f"admin parts: {parts}")
+        attr, user, _ = parts[0][0]
+        #print(f"user: {user}")
+        admins.append(user)
+    return admins
+
+admins = get_admins(basedn)
+admins.remove('admin')
+
+print(f"admins {admins}")
+
+new_entry = {
+    'objectClass': ['organizationalRole', 'simpleSecurityObject'],
+}
+
+# provision admin users
+for item in users:
+    user, password = item.split(',')
+    if user == 'admin':
+        continue
+    print(f"add user: {user}")
+    print(f"add password: {password}")
+    dn = f"cn={user},{basedn}"
+    new_entry['cn'] = [user]
+    new_entry['userPassword'] = ["{CRYPT}"+password]
+    dst_dns = ldapc.search_s(basedn, ldap.SCOPE_ONELEVEL, f"(cn={user})")
+    if len(dst_dns) == 1:
+        dn, entry = dst_dns[0]
+        modifylist = ldap.modlist.modifyModlist(encode(entry), encode(new_entry))
+        ldapc.modify_s(dn, modifylist)
+    elif len(dst_dns) == 0:
+        addlist = ldap.modlist.addModlist(encode(new_entry))
+        ldapc.add_s(dn, addlist)
+    else:
+        print("Too many dn's This shouldn't happen")
+
+    if user in admins:
+        admins.remove(user)
+
+print(f"admins {admins}")
+
+# deprovision existing admins
+for admin in admins:
+    print(f"remove admin: {admin}")
+    ldapc.delete_s(f"cn={admin},{basedn}")
+
+
