@@ -172,7 +172,9 @@
     objectClass: organizationalRole
 
 - name: Initialize DIT platform admins
-  ansible.builtin.script: "scripts/add-ro-roles '{{ services_ldap.basedn }}' {% for user in users %}'{{user.uid}},{{user.pw_hash}}' {% endfor %}"
+  ansible.builtin.script: >-
+    scripts/add-ro-roles '{{ services_ldap.basedn }}'
+    {% for user in users %}'{{user.uid}},{{user.pw_hash}}' {% endfor %}
   register: result
   failed_when: result.rc not in [0,1]
   changed_when: result.rc != 0
