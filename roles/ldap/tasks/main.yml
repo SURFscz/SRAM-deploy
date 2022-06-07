@@ -124,6 +124,8 @@
     - enable_dynlist.ldif
     - set_root_credentials.ldif
 
+# Controls or what to do after a match
+# https://www.openldap.org/faq/data/cache/454.html
 - name: Set ACLs
   community.general.ldap_attrs:
     dn: "olcDatabase={1}mdb,cn=config"
@@ -135,18 +137,18 @@
           by anonymous auth
           by * break
         - >-
-          to dn.regex="(([^,]+),{{ services_ldap.basedn }})$"
-          by dn.exact="{{ services_ldap.binddn }}" write
-          by dn.exact=gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth write
-          by dn.exact,expand="cn=admin,$1" read
-          by * break
-        - >-
           to *
           {% if environment_name=="vm" %}
           by dn.exact=gidNumber=1000+uidNumber=1000,cn=peercred,cn=external,cn=auth manage
           {% endif %}
           by dn.exact=gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth manage
           by dn.exact="cn=scz,{{services_ldap.basedn}}" read
+          by * break
+        - >-
+          to dn.regex="(dc=.+,{{ services_ldap.basedn }})$"
+          by dn.exact=gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth write
+          by dn.exact="{{ services_ldap.binddn }}" write
+          by dn.exact,expand="cn=admin,$0" read
           by * break
     state: exact
     ordered: true
@@ -166,12 +168,14 @@
 - name: Initialize DIT admin
   community.general.ldap_entry:
     dn: "{{ services_ldap.binddn }}"
+    state: present
     objectClass: organizationalRole
-    attributes:
-      cn: "{{ services_ldap.binddn | regex_replace('^cn=([^,]+).*', '\\1') }}"
 
 - name: Initialize DIT platform admins
   ansible.builtin.script: "scripts/add-ro-roles '{{ services_ldap.basedn }}' {% for user in users %}'{{user.uid}},{{user.pw_hash}}' {% endfor %}"
+  register: result
+  failed_when: result.rc not in [0,1]
+  changed_when: result.rc != 0
 
 - name: Redirect slapd log to /var/log/slapd.log
   copy:
