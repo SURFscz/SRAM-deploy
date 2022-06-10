@@ -132,6 +132,7 @@
     dest: "{{ sbs_work_dir }}"
     remote_src: true
     owner: "{{sbs_file_owner}}"
+    group: "{{sbs_file_owner}}"
   notify: "restart apache"
   when: "sbs_download.changed"
 
