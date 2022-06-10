@@ -100,10 +100,10 @@
     group: "{{item.owner}}"
     mode: "0755"
   with_items:
-    - { path: "{{sbs_work_dir}}",            owner: "root"     }
-    - { path: "{{sbs_conf_dir}}",            owner: "root"     }
-    - { path: "{{sbs_conf_dir}}/saml",       owner: "root"     }
-    - { path: "{{sbs_log_dir}}",             owner: "www-data" }
+    - { path: "{{sbs_work_dir}}",            owner: "{{sbs_file_owner}}" }
+    - { path: "{{sbs_conf_dir}}",            owner: "{{sbs_file_owner}}" }
+    - { path: "{{sbs_conf_dir}}/saml",       owner: "{{sbs_file_owner}}" }
+    - { path: "{{sbs_log_dir}}",             owner: "www-data"           }
 
 - name: Download SBS build
   get_url:
