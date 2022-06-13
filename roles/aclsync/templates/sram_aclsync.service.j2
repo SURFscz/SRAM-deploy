@@ -1,0 +1,16 @@
+[Unit]
+Description=SRAM HAproxy ACL syncer
+
+[Service]
+DynamicUser=true
+User=sram_aclsync
+Group=sram_aclsync
+SupplementaryGroups=haproxy
+
+ReadWritePaths={{ aclsync_aclfile }}
+
+Type=oneshot
+Environment="REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt"
+WorkingDirectory={{ aclsync_dir }}
+ExecStart={{ aclsync_dir }}/venv/bin/python ./plsc/haproxy_aclsync.py ./aclsync.yml
+

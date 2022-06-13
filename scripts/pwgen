@@ -29,11 +29,12 @@ do
     pw=${pw:0:$LEN}
 done
 
-echo "$pw"
 
 if [ $ENCRYPT -eq 1 ]
 then
     echo -n "$pw" | ansible-vault encrypt_string --stdin-name password
+else
+    echo "$pw"
 fi
 
 exit 0

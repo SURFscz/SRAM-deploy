@@ -26,9 +26,9 @@
 
 - name: fetch plsc from {{ plsc_repo_url }}, version {{ plsc_repo_version }}
   git:
-    repo: "{{ scz_repo.plsc.src }}"
+    repo: "{{ plsc_repo_url }}"
     dest: "{{ plsc_dir }}"
-    version: "{{ scz_repo.plsc.version }}"
+    version: "{{ plsc_repo_version }}"
     accept_hostkey: "yes"
     force: "yes"
 

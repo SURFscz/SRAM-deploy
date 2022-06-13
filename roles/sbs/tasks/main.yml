@@ -20,8 +20,8 @@
       - python3-pymysql
       - libapache2-mod-wsgi-py3
       - mariadb-client
-      - libxmlsec1-dev # for python xmlsec pkg
-      - pkg-config     # for python xmlsec pkg
+      - libxmlsec1-dev  # for python xmlsec pkg
+      - pkg-config      # for python xmlsec pkg
     install_recommends: false
 
 - name: Remove obsolete packages
@@ -70,6 +70,7 @@
         encoding: 'utf8mb4'
         collation: 'utf8mb4_unicode_ci'
         ca_cert: "{{sbs_db_cert_path}}"
+      notify: "restart apache"
 
     - name: Add SBS user
       community.mysql.mysql_user:
@@ -89,6 +90,7 @@
           passwd: "{{ sbs_dbbackup_password }}"
           perm: "SELECT,SHOW VIEW,EVENT,TRIGGER"
       no_log: "{{sram_ansible_nolog}}"
+      notify: "restart apache"
 
 - name: "Create directories"
   file:
@@ -98,13 +100,14 @@
     group: "{{item.owner}}"
     mode: "0755"
   with_items:
-    - { path: "{{sbs_work_dir}}", owner: "root"     }
-    - { path: "{{sbs_conf_dir}}", owner: "root"     }
-    - { path: "{{sbs_log_dir}}",  owner: "www-data" }
+    - { path: "{{sbs_work_dir}}",            owner: "{{sbs_file_owner}}" }
+    - { path: "{{sbs_conf_dir}}",            owner: "{{sbs_file_owner}}" }
+    - { path: "{{sbs_conf_dir}}/saml",       owner: "{{sbs_file_owner}}" }
+    - { path: "{{sbs_log_dir}}",             owner: "www-data"           }
 
 - name: Download SBS build
   get_url:
-    url: "{{sbs_build_url}}/{{sbs_build_type}}/sbs-{{sbs_version}}.tar.xz"
+    url: "{{sbs_build_url}}"
     dest: "{{sbs_work_dir}}/sbs.tar.xz"
     force: true
   register: "sbs_download"
@@ -128,6 +131,8 @@
     src: "{{sbs_work_dir}}/sbs.tar.xz"
     dest: "{{ sbs_work_dir }}"
     remote_src: true
+    owner: "{{sbs_file_owner}}"
+    group: "{{sbs_file_owner}}"
   notify: "restart apache"
   when: "sbs_download.changed"
 
@@ -160,7 +165,19 @@
     - { path: "jwt_private_key",      content: "{{ sbs_jwt_server.priv }}" }
     - { path: "jwt_public_keys.json", content: "{{ sbs_jwt_server.pub }}"  }
   notify: "restart apache"
-  no_log: "{{sram_ansible_nolog}}"
+  no_log: "{{ sram_ansible_nolog }}"
+
+- name: Create SBS SURFSecure ID config files
+  template:
+    src: "saml_{{ item.name }}.j2"
+    dest: "{{ sbs_conf_dir }}/saml/{{item.name}}"
+    group: "www-data"
+    mode: "{{ item.mode }}"
+  with_items:
+    - { name: "settings.json",          mode: "0640" }
+    - { name: "advanced_settings.json", mode: "0644" }
+  notify: "restart apache"
+  no_log: "{{ sram_ansible_nolog }}"
 
 - name: Create links to config files
   file:
@@ -169,6 +186,7 @@
     src: "{{ sbs_conf_dir }}/{{ item.links_to }}"
   with_items:
     - { path: "server/config/config.yml",           links_to: "config.yml"           }
+    - { path: "server/config/saml",                 links_to: "saml"                 }
     - { path: "client/build/static/disclaimer.css", links_to: "disclaimer.css"       }
     - { path: "server/config/jwt_private_key",      links_to: "jwt_private_key"      }
     - { path: "server/config/jwt_public_keys.json", links_to: "jwt_public_keys.json" }

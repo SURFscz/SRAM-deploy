@@ -1,0 +1,7 @@
+---
+- name: enable sram_aclsync job
+  systemd:
+    name: "sram_aclsync.timer"
+    enabled: true
+    state: "restarted"
+    daemon_reload: true

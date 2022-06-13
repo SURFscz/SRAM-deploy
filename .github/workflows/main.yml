@@ -77,7 +77,7 @@ jobs:
 
       # Run Syntax check
       - name: Run Syntax check
-        run: ./scripts/syntax-check
+        run: ./scripts/check-syntax
 
       # Restore docker cache
       - name: Restore docker cache

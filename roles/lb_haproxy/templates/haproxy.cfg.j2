@@ -29,6 +29,8 @@ global
     tune.ssl.default-dh-param {{haproxy.dhparam_keysize}}
 {% endif %}
 
+    server-state-file {{haproxy_state_file}}
+
 defaults
     log     global
     option  dontlognull
@@ -43,6 +45,7 @@ defaults
     errorfile 503 /etc/haproxy/errors/503.http
     errorfile 504 /etc/haproxy/errors/504.http
     default-server ca-file {{ssl_certs_dir}}/{{internal_base_domain}}.crt
+    load-server-state-from-file global
 
 #--------------------------------------------------------------------
 #  frontend
@@ -108,10 +111,10 @@ frontend fe_https
     http-request deny deny_status 429 if exceeds_limit !network_allowed
 {% endif %}
 
-{% if iprange.vpn is defined %}
-    acl vpn src {% for vpnname in iprange.vpn %}{{iprange.vpn[vpnname]}} {% endfor %}{% for vpnname in iprange.vpn6 %}{{iprange.vpn6[vpnname]}} {% endfor %}
+    acl vpn src --
+      {%- for ip in iprange.get("vpn", {}).values() %} {{ip}}{% endfor %}
+      {%- for ip in iprange.get("vpn6",{}).values() %} {{ip}}{% endfor %}
 
-{% endif %}
 
 {% for host in lb_http %}
     acl acl_{{host.hostname}} hdr(host) -i {{host.hostname}}
@@ -154,6 +157,14 @@ listen ldap_{{name}}_{{host.frontend_port}}
     server {{servername}} {{be_server}}:{{host.backend_port}} ssl check weight 10 {% if loop.index==1 %}on-marked-up shutdown-backup-sessions{%else%}backup{%endif%}
 
 {% endfor %}
+
+    acl ldap_sbs_allow src -f {{ haproxy_ldap_acl_file }}
+    acl ldap_local_allow src 127.0.0.1 ::1 {{ iprange.internal }}
+    acl ldap_vpn_allow src --
+      {%- for ip in iprange.get("vpn", {}).values() %} {{ip}}{% endfor %}
+      {%- for ip in iprange.get("vpn6",{}).values() %} {{ip}}{% endfor %}
+
+    tcp-request connection reject unless ldap_sbs_allow or ldap_local_allow or ldap_vpn_allow
 
     timeout client 900s
     timeout server 901s

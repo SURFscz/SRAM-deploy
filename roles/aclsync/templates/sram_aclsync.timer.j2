@@ -1,0 +1,9 @@
+[Unit]
+Description=PLSC timer
+
+[Timer]
+OnBootSec=30
+OnUnitActiveSec={{aclsync_interval_seconds}}
+
+[Install]
+WantedBy=multi-user.target
