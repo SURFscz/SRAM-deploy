@@ -4,7 +4,9 @@
     repo: "{{ oidc_op_repo_url }}"
     dest: "{{ oidc_dir }}"
     version: "{{ oidc_op_repo_version }}"
+    force: yes
   notify: "restart oidc-op"
+  changed_when: false
 
 - name: Copy requirements files
   copy:
