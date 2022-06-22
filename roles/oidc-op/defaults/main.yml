@@ -2,6 +2,6 @@
 oidc_dir: "/opt/oidc-op"
 oidc_dir_venv: "{{ oidc_dir }}/venv"
 
-oidc_op_repo_url: "https://github.com/IdentityPython/oidc-op.git"
-oidc_op_repo_version: "v2.4.3"
+oidc_op_repo_url: "https://github.com/IdentityPython/idpy-oidc.git"
+oidc_op_repo_version: "1.2.2"
 oidc_op_port: "5000"
