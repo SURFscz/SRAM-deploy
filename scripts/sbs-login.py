@@ -33,8 +33,9 @@ try:
     # Get SBS start page, MFA test
     browser.get(start)
 
-    # Wait for SBS to load
-    wait.until(title_is('Research Access Management'), 'Timeout waiting for landing page')
+    # Wait for login button
+    wait.until(presence_of_element_located((By.XPATH, "//a[@href='/Login' and text()='Login']")),
+               'Timeout waiting for Login button')
 
     # Click login
     login = browser.find_element(By.XPATH, "//a[@href='/Login' and text()='Login']")
@@ -80,8 +81,9 @@ try:
     # Get SBS start page, non-MFA test
     browser.get(start)
 
-    # Wait for SBS to load
-    wait.until(title_is('Research Access Management'), 'Timeout waiting for landing page')
+    # Wait for login button
+    wait.until(presence_of_element_located((By.XPATH, "//a[@href='/Login' and text()='Login']")),
+               'Timeout waiting for Login button')
 
     # Click login
     login = browser.find_element(By.XPATH, "//a[@href='/Login' and text()='Login']")
