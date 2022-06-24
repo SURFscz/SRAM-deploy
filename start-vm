@@ -28,10 +28,12 @@ while getopts -- '-:h' OPT; do
         ci )            CI="--ci"
                         ENV_DIR=./environments/ci
                         ;;
-        skip-ansible )  SKIP_ANSIBLE=1
+        skip-ansible | \
+        sa | no )       SKIP_ANSIBLE=1
                         ;;
         skip-docker | \
-        skip-vm )       SKIP_VM=1
+        skip-vm | \
+        sd | sv )       SKIP_VM=1
                         ;;
         * )             OPTPROCESSED=$(( $OPTPROCESSED - 1 ))
                         ;;
