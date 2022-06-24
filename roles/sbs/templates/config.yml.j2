@@ -9,7 +9,8 @@ redis:
   port: "{{sbs_redis_port}}"
   password:
 
-secret_key: {{ sbs_db_secret }}
+# add a per-release suffix here to invalidate sessions on new releases
+secret_key: {{ sbs_db_secret }}{{sbs_secret_key_suffix}}
 
 permanent_session_lifetime: {{ sbs_session_lifetime }}
 
