@@ -18,6 +18,13 @@
       register: git_version
       changed_when: false
       run_once: true
+
+- hosts: all
+  serial: 20
+  gather_facts: true
+  tags: always
+  become: false
+  tasks:
     - name: set local time
       run_once: true
       set_fact:
