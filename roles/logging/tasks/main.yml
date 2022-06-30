@@ -34,8 +34,9 @@
       # service will exit when upstream server in unavailable; needs to restart automatically
       Restart=on-failure
       RestartSec=5s
-      StartLimitBurst=5
+      [Unit]
       StartLimitIntervalSec=60s
+      StartLimitBurst=5
   notify:
     - "systemd daemon-reload"
     - "enable journal-upload"
