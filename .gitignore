@@ -22,3 +22,4 @@ mitogen
 ci-runner/lib
 ci-runner/bin
 ci-runner/pyvenv.cfg
+screenshot.png
