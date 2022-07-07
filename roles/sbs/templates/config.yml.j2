@@ -181,6 +181,13 @@ membership_expiration:
   # How many days before actual expiration do we mail the co admin and member
   expired_warning_mail_days_threshold: 10
 
+orphan_users:
+  # Do we daily check for users that are orphans so they can be deleted?
+  enabled:  {{ sbs_notifications_enabled }}
+  cron_hour_of_day: {{ sbs_cron_hour_of_day }}
+  # How long after created do we delete orphan users
+  delete_days_threshold: 14
+
 ldap:
   url: "{{ sbs_ldap_url }}"
   bind_account: "{{ sbs_ldap_bind_account }}"
