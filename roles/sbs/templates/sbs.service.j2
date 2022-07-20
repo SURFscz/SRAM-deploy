@@ -1,0 +1,17 @@
+[Unit]
+Description=SBS
+After=network.target
+
+[Service]
+Environment="CONFIG=config/config.yml"
+Type=simple
+WorkingDirectory=/opt/sbs/sbs
+ExecStart=/opt/sbs/sbs-env/bin/python -m server
+Restart=on-failure
+RestartSec=10
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=sbs
+
+[Install]
+WantedBy=multi-user.target
