@@ -82,11 +82,11 @@ try:
     browser.get(start)
 
     # Wait for login button
-    wait.until(presence_of_element_located((By.XPATH, "//a[@href='/Login' and text()='Login']")),
+    wait.until(presence_of_element_located((By.XPATH, "//a[@href='/Login']")),
                'Timeout waiting for Login button')
 
     # Click login
-    login = browser.find_element(By.XPATH, "//a[@href='/Login' and text()='Login']")
+    login = browser.find_element(By.XPATH, "//a[@href='/Login']")
     login.click()
 
     # Wait for login button to disappear
