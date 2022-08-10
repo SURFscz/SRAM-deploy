@@ -135,7 +135,9 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: "sbs-logintest"
-          path: "screenshot.png"
+          path: |
+            screenshot.png
+            page.html
         if: failure()
 
       - name: Show error output
