@@ -55,7 +55,7 @@ try:
     # Wait for user profile to appear
     wait.until(presence_of_element_located((By.XPATH, "//label[@for='aup']")), 'Timeout waiting for AUP')
 
-    browser.find_element(By.XPATH, "//div[@class='checkbox']").click()
+    browser.find_element(By.XPATH, "//label[@for='aup']").click()
     browser.find_element(By.XPATH, "//a[text()='Looks good, onwards']").click()
 
     # Wait for landing page
@@ -103,7 +103,7 @@ try:
     # Wait for user profile to appear
     wait.until(presence_of_element_located((By.XPATH, "//label[@for='aup']")), 'Timeout waiting for AUP')
 
-    browser.find_element(By.XPATH, "//div[@class='checkbox']").click()
+    browser.find_element(By.XPATH, "//label[@for='aup']").click()
     browser.find_element(By.XPATH, "//a[text()='Looks good, onwards']").click()
 
     # Wait for 2fa information
