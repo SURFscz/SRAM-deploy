@@ -2,16 +2,24 @@
 
 import time
 import json
+import traceback
 from selenium.webdriver import Chrome
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support.expected_conditions import staleness_of, title_is, presence_of_element_located
 from selenium.webdriver.common.by import By
 
+
+class CustomChrome(Chrome):
+    def get(self, url) -> None:
+        print(f"Fetching page '{url}'")
+        return super(CustomChrome, self).get(url)
+
+
 options = Options()
 options.headless = True
 options.add_argument('ignore-certificate-errors')
-browser = Chrome(options=options)
+browser = CustomChrome(options=options)
 wait = WebDriverWait(browser, timeout=2)
 
 send_command = ('POST', '/session/$sessionId/chromium/send_command')
@@ -119,8 +127,22 @@ try:
 except Exception as e:
     url = browser.current_url
     print(f"url: {url}")
-    page = browser.page_source
-    print(f"page: {page}")
+
+    tr = traceback.extract_tb(e.__traceback__)[0]
+    print(f"error {e.args[0]} on line {tr.lineno} of '{tr.filename}'")
+    print("  ", tr.line)
+
+    print("error: ", e.args[0])
+
+    from bs4 import BeautifulSoup
+    page = BeautifulSoup(browser.page_source, 'html.parser').prettify()
+    print(f"page:")
+    print(page)
+    with open("page.html", "w") as f:
+        f.write(page)
+
     browser.save_screenshot("screenshot.png")
     browser.close()
-    exit(e)
+
+    print("", end="", flush=True)
+    exit(1)
