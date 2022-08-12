@@ -6,6 +6,14 @@
       - "libsasl2-modules"
     state: "present"
 
+- name: remove obsolete compiled database files
+  file:
+    path: "/etc/postfix/{{item}}"
+    state: "absent"
+  with_items:
+    - "aliases.db"
+    - "virtual.db"
+
 - name: install postfix config
   template:
     src: "main.cf.j2"
@@ -23,7 +31,6 @@
     src: "aliases.j2"
     dest: "/etc/postfix/aliases"
   notify:
-    - "postalias"
     - "restart postfix"
 
 - name: install postfix virtual addresses
@@ -31,7 +38,6 @@
     src: "virtual.j2"
     dest: "/etc/postfix/virtual"
   notify:
-    - "postmap virtual"
     - "restart postfix"
 
 - name: install smarthost relay_credentials

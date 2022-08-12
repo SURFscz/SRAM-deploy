@@ -5,9 +5,9 @@ myorigin = {{mail.domain}}
 
 # address rewriting
 sender_canonical_maps = regexp:/etc/postfix/canonical
-alias_maps = hash:/etc/postfix/aliases
-alias_database = hash:/etc/postfix/aliases
-virtual_alias_maps = hash:/etc/postfix/virtual
+alias_maps = texthash:/etc/postfix/aliases
+alias_database = texthash:/etc/postfix/aliases
+virtual_alias_maps = texthash:/etc/postfix/virtual
 
 # add missing headers for all replayed mail
 local_header_rewrite_clients = permit_inet_interfaces,permit_mynetworks
