@@ -14,6 +14,10 @@ on:
       - review_requested
       - closed
 
+env:
+  organization: ${{ github.repository_owner }}
+  project_id: 5
+
 jobs:
   issue_opened_or_reopened:
     name: issue_opened_or_reopened
@@ -22,10 +26,10 @@ jobs:
       github.event_name == 'issues'
       && (github.event.action == 'opened' || github.event.action == 'reopened')
     steps:
-      - name: Move issue to ${{ env.todo }}
+      - name: Add issue to project
         uses: leonsteinhaeuser/project-beta-automations@v1.3.0
         with:
           gh_token: ${{ secrets.SRAM_PROJECT_SECRET }}
-          organization: SURFscz
-          project_id: 5
+          organization: ${{ env.organization }}
+          project_id: ${{ env.project_id }}
           resource_node_id: ${{ github.event.issue.node_id }}
