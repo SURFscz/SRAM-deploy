@@ -1,0 +1,47 @@
+---
+name: Project automation
+
+# reusable workflow, call this like:
+# jobs:
+#   foo:
+#     - uses: SURFscz/SCZ-deploy/.github/workflows/project.yml
+#       with:
+#         event: github.event_name
+#         action: github.event.action
+
+on:
+  workflow_call:
+    inputs:
+      event:
+        required: true
+        type: string
+        action:
+          required: true
+          type: string
+
+env:
+  organization: ${{ github.repository_owner }}
+  project_id: 5
+  gh_app_id: 228588
+  # Iv1.76bdf1bcdb2addd5
+  gh_app_inst_id: 28270300
+  gh_app_secret: ${{ secrets.SRAM_PROJECT_SECRET }}
+
+jobs:
+  issue_opened_or_reopened:
+    name: issue_opened_or_reopened
+    runs-on: ubuntu-latest
+    if: >
+      inputs.event == 'issues'
+      && (inputs.action == 'opened' || inputs.action == 'reopened')
+    steps:
+      - name: Add issue to project
+        uses: leonsteinhaeuser/project-beta-automations@v1.3.0
+        with:
+          #gh_token: ${{ secrets.SRAM_PROJECT_SECRET }}
+          gh_app_ID: ${{ env.gh_app_id }}
+          gh_app_installation_ID: ${{ env.gh_app_inst_id }}
+          gh_app_secret_key: ${{ env.gh_app_secret }}
+          organization: ${{ env.organization }}
+          project_id: ${{ env.project_id }}
+          resource_node_id: ${{ github.event.issue.node_id }}
