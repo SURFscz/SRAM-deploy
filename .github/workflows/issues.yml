@@ -20,3 +20,4 @@ jobs:
     with:
       event: ${{ github.event_name }}
       action: ${{ github.event.action }}
+    secrets: inherit
