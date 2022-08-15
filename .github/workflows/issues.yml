@@ -1,19 +1,24 @@
 ---
-name: "Issue handling"
+name: Assign ticket to project
 
 on:
   issues:
-    types:
-      - opened
+    types: [opened]
+  pull_request:
+    types: [opened]
+  issue_comment:
+    types: [created]
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
-  add_to_project:
+  assign_one_project:
     runs-on: ubuntu-latest
+    name: Assign to One Project
     steps:
-      - uses: skeet70/default-project-board-action@v1
+      - name: Assign NEW issues and NEW pull requests to project 2
+        uses: srggrs/assign-one-project-github-action@1.2.1
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          repository: ${{ github.repository }}
-          issue: ${{ github.event.issue.number }}
-          project: 5
-
+          project: 'https://github.com/orgs/SURFscz/projects/5'
+          column_name: ''
