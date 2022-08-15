@@ -25,7 +25,10 @@ User=systemd-journal-remote
 SupplementaryGroups=journal-ssl
 WatchdogSec=1min
 Restart=on-failure
-RestartSec=60s
+RestartSec=5s
+StartLimitBurst=5
+StartLimitIntervalSec=60s
+
 
 # If there are many split up journal files we need a lot of fds to access them
 # all in parallel.

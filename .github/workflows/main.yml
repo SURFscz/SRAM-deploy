@@ -51,11 +51,12 @@ jobs:
         run: |
           sudo rm -f /opt/pipx_bin/ansible*
           sudo rm -rf /etc/apt/sources.list.d/*
-          sudo add-apt-repository --yes --no-update ppa:ansible/ansible-2.10
+          sudo add-apt-repository --yes --no-update ppa:ansible/ansible-5
           sudo apt -q update
           sudo apt -y purge ansible
           sudo apt -y install ansible bridge-utils apparmor-utils
-          sudo pip3 install --upgrade wheel yamllint jinja2 pyyaml selenium zabbix-api
+          sudo pip3 install --upgrade wheel yamllint jinja2 pyyaml selenium \
+                                      zabbix-api requests bs4
           git clone https://github.com/dw/mitogen.git ~/mitogen
           cat docker/hosts | sudo tee -a /etc/hosts
 
@@ -77,7 +78,7 @@ jobs:
 
       # Run Syntax check
       - name: Run Syntax check
-        run: ./scripts/syntax-check
+        run: ./scripts/check-syntax
 
       # Restore docker cache
       - name: Restore docker cache
@@ -97,55 +98,6 @@ jobs:
           SKIP_ANSIBLE: 1
         run: "./start-vm"
 
-      # Runs a single command using the runners shell
-      - name: Run start-vm
-        shell: bash
-        run: "./start-vm"
-
-      # Runs a single command using the runners shell
-      - name: Run start-vm --diff
-        env:
-          REEANTRANT: 1
-        run: "./start-vm --diff"
-
-      # Runs a single command using the runners shell
-      - name: Run idempotency check...
-        run: /usr/bin/python3 ./scripts/check-idempotency-status
-
-      # Run SBS logintest
-      - name: Run SBS logintest
-        run: /usr/bin/python3 ./scripts/sbs-login.py
-
-      - name: Show error output
-        run: >
-          ansible -v -i environments/vm/inventory --become "all" -m command -a "/bin/sh -c '
-            echo ====journal===;
-            journalctl -n200;
-            if [ -e /var/log/apache2/error.log ]; then
-              echo ===apache errorlog===;
-              cat /var/log/apache2/error.log;
-            fi;
-            if [ -e /opt/sbs/sbs/log/sbs.log ]; then
-              echo ===sbs log===;
-              cat /opt/sbs/sbs/log/sbs.log
-            fi;
-            echo ===netstat===; netstat -lnp
-          '"
-        if: failure()
-
-      # Destroy secret
-      - name: Destroy secret
-        run: shred secret_vm
-        if: always()
-
-      # Setup tmate session
-      - name: Setup tmate session
-        if: failure()
-        uses: mxschmitt/action-tmate@v3
-        with:
-          limit-access-to-actor: true
-        timeout-minutes: 45
-
       # Get scz-base ImageID
       - name: Get scz-base ImageID
         id: scz-base-id
@@ -161,3 +113,62 @@ jobs:
           docker save scz-base-cache -o ~/docker-save/scz-base-cache.tar &&
           ls -lh ~/docker-save || true
         if: steps.scz-base-cache-id.outputs.ID != steps.scz-base-id.outputs.ID
+
+      # Deploy components
+      - name: Run start-vm
+        shell: bash
+        run: "./start-vm"
+
+      # Deploy components again for idempotency
+      - name: Run start-vm --diff
+        env:
+          REEANTRANT: 1
+        run: "./start-vm --diff"
+
+      - name: Run idempotency check...
+        run: /usr/bin/python3 ./scripts/check-idempotency-status
+
+      # Run SBS logintest
+      - name: Run SBS logintest
+        run: /usr/bin/python3 ./scripts/sbs-login.py
+
+      - name: Save screenshot of error
+        uses: actions/upload-artifact@v3
+        with:
+          name: "sbs-logintest"
+          path: |
+            screenshot.png
+            page.html
+        if: failure()
+
+      - name: Show error output
+        run: >
+          ansible -v -i environments/vm/inventory --become "all" -m command -a "/bin/sh -c '
+            echo ====journal===;
+            journalctl -n200;
+            if [ -e /var/log/apache2/error.log ]; then
+              echo ===apache errorlog===;
+              cat /var/log/apache2/error.log;
+            fi;
+            if [ -e /opt/sbs/sbs/log/sbs.log ]; then
+              echo ===sbs log===;
+              cat /opt/sbs/sbs/log/sbs.log
+            fi;
+            echo ===apt log===; cat /var/log/apt/term.log
+            echo ===netstat===; netstat -lnp
+          '"
+        if: failure()
+
+      # Destroy secret
+      - name: Destroy secret
+        run: shred secret_vm
+        if: always()
+
+      # Setup tmate session
+      - name: Setup tmate session
+        if: failure()
+        uses: mxschmitt/action-tmate@v3
+        with:
+          limit-access-to-actor: true
+        timeout-minutes: 15
+

@@ -1,0 +1,9 @@
+---
+sbs:
+  host: "{{ sbs_base_url }}"
+  user: "haproxy_acl"
+  passwd: "{{ sbs_ipaddress_password }}"
+  verify_ssl: {{ false if environment_name=='vm' else true }}
+haproxy:
+  socket: /run/haproxy/admin.sock
+  acl_file: {{ aclsync_aclfile }}

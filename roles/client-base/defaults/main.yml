@@ -2,7 +2,8 @@
 http_proto: https
 # SimpleSAMLphp
 simplesaml_download_url: "https://github.com/simplesamlphp/simplesamlphp/releases/download"
-simplesaml_version: "1.17.7"
+simplesaml_version: "1.19.5"
+simplesaml_chksum: "sha256:ab1a71a4eed2c086774829d47ce72137e4d1a7bd6b8a2535b4a1ddfd6e7da51f"
 simplesaml_project_dir: "/opt/simplesaml"
 simplesaml_authsources_dir: "{{ simplesaml_project_dir }}/simplesaml/config/authsources"
 simplesaml_idpmetadata_dir: "{{ simplesaml_project_dir }}/simplesaml/metadata/idp"

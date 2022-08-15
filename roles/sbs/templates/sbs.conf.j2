@@ -12,22 +12,30 @@ Listen {{ sbs_backend_port }}
         SSLCertificateFile {{ ssl_certs_dir }}/{{ internal_base_domain }}.crt
         SSLCertificateKeyFile {{ ssl_certs_dir }}/{{ internal_base_domain }}.key
 
-        WSGIDaemonProcess server user=www-data group=www-data processes=2 threads=5
+        WSGIDaemonProcess server python-home={{sbs_env_dir}} user=www-data group=www-data processes=2 threads=5
 
-        WSGIScriptAlias /api {{ sbs_git_dir }}/sbs-api.wsgi/api
-        WSGIScriptAlias /health {{ sbs_git_dir }}/sbs-api.wsgi/health
-        WSGIScriptAlias /config {{ sbs_git_dir }}/sbs-api.wsgi/config
-        WSGIScriptAlias /info {{ sbs_git_dir }}/sbs-api.wsgi/info
+        WSGIScriptAlias /api {{ sbs_work_dir }}/sbs-api.wsgi/api
+        WSGIScriptAlias /pam-weblogin {{ sbs_work_dir }}/sbs-api.wsgi/pam-weblogin
+        WSGIScriptAlias /health {{ sbs_work_dir }}/sbs-api.wsgi/health
+        WSGIScriptAlias /config {{ sbs_work_dir }}/sbs-api.wsgi/config
+        WSGIScriptAlias /info {{ sbs_work_dir }}/sbs-api.wsgi/info
 
+{% if sbs_swagger_enabled %}
         # Swagger UI
-        WSGIScriptAlias /apidocs {{ sbs_git_dir }}/sbs-api.wsgi/apidocs
-        WSGIScriptAlias /flasgger_static {{ sbs_git_dir }}/sbs-api.wsgi/flasgger_static
-        WSGIScriptAlias /swagger_api {{ sbs_git_dir }}/sbs-api.wsgi/swagger_api
+        WSGIScriptAlias /apidocs {{ sbs_work_dir }}/sbs-api.wsgi/apidocs
+        WSGIScriptAlias /flasgger_static {{ sbs_work_dir }}/sbs-api.wsgi/flasgger_static
+        WSGIScriptAlias /swagger_api {{ sbs_work_dir }}/sbs-api.wsgi/swagger_api
+        WSGIScriptAlias /swagger {{ sbs_work_dir }}/sbs-api.wsgi/swagger
+{% endif %}
 
         WSGIApplicationGroup %{GLOBAL}
         WSGIPassAuthorization On
 
+{% if sbs_swagger_enabled %}
+        Header set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; frame-ancestors 'none'; form-action 'self'; style-src 'self' 'unsafe-inline' fonts.googleapis.com fonts.gstatic.com; font-src 'self' 'unsafe-inline' fonts.googleapis.com fonts.gstatic.com; img-src 'self' data:; block-all-mixed-content"
+{% else %}
         Header set Content-Security-Policy "default-src 'self'; script-src 'self'; frame-ancestors 'none'; form-action 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; block-all-mixed-content"
+{% endif %}
 
         # rewite everything to {{sbs_base_url}}
         RewriteCond "https://%{HTTP_HOST}" !^{{sbs_base_url}} [NC]
@@ -35,8 +43,17 @@ Listen {{ sbs_backend_port }}
         RewriteCond "%{REQUEST_URI}"       !^/api
         RewriteRule "^/?(.*)"  "{{sbs_base_url}}/$1" [L,R,NE]
 
-        <Directory {{ sbs_git_dir }}>
+        <Directory {{ sbs_work_dir }} >
+            <Files sbs-api.wsgi>
+                WSGIProcessGroup server
+                Require all granted
+            </Files>
+        </Directory>
+        <Directory {{ sbs_git_dir }}/server >
             WSGIProcessGroup server
+            Require all granted
+        </Directory>
+        <Directory {{ sbs_git_dir }}/client/build >
             Require all granted
         </Directory>
 

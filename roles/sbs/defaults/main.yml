@@ -1,12 +1,14 @@
 ---
 sbs_openidc_timeout: 86400
 
-sbs_repository: https://github.com/SURFscz/SBS.git
-sbs_version: main
+sbs_build_url: "https://github.com/SURFscz/SBS/releases/download/{{sbs_version}}/sbs.tar.xz"
+sbs_version: "latest"
 
 sbs_work_dir: "/opt/sbs"
 sbs_git_dir: "{{ sbs_work_dir }}/sbs"
 sbs_env_dir: "{{ sbs_work_dir }}/sbs-env"
+sbs_conf_dir: "{{ sbs_work_dir }}/config"
+sbs_log_dir: "{{ sbs_work_dir }}/log"
 
 sbs_db_host: "localhost"
 sbs_db_name: "sbs"
@@ -19,6 +21,11 @@ sbs_redis_port: 6379
 sbs_mail_host: "{{ mail.relay_to }}"
 sbs_mail_port: "{{ mail.relay_port }}"
 
+sbs_file_owner: "root"
+
+sbs_session_lifetime: 1440
+sbs_secret_key_suffix: ""
+
 sbs_oidc_crypto_password: "CHANGEME"
 sbs_uid_attribute: "sub"
 
@@ -30,8 +37,8 @@ sbs_eppn_scope: "env.sram.surf.nl"
 sbs_restricted_co_default_org: "example.org"
 
 sbs_mail_sender_name: "SURF"
-sbs_mail_sender_email: "no-reply@surf.nl"
-sbs_exceptions_mail: root@localhost
+sbs_mail_sender_email: "no-reply@localhost"
+sbs_exceptions_mail: "root@localhost"
 
 sbs_wiki_link: "https://www.example.org/wiki"
 
@@ -48,6 +55,7 @@ sbs_second_factor_authentication_required: True
 sbs_totp_token_name: "SRAM"
 sbs_notifications_enabled: True
 sbs_impersonation_allowed: False
+sbs_admin_platform_backdoor_totp: False
 
 sbs_oidc_config_url: "http://localhost/.well-known/openid-configuration"
 sbs_oidc_authz_endpoint: "http://localhost/OIDC/authorization"
@@ -61,3 +69,34 @@ sbs_continue_eduteams_redirect_uri: "https://localhost/continue"
 
 sbs_backup_dir: "{{backup_base}}/sbs"
 sbs_db_cert_path: "/etc/ssl/sbs_db_root_cert.pem"
+
+sbs_swagger_enabled: true
+
+sbs_ssid_identity_providers: []
+sbs_surf_secure_id:
+  environment: "unknown.example.org"
+  sp_entity_id: "https://sbs.{{base_domain}}"
+  acs_url: "https://{{base_domain}}/api/users/acs"
+  sa_gw_environment: "sa-gw.unknown.example.org"
+  sa_idp_certificate: |
+    -----BEGIN CERTIFICATE-----
+    12345
+    -----END CERTIFICATE-----
+  priv: |
+    -----BEGIN RSA PRIVATE KEY-----
+    abcde
+    -----END RSA PRIVATE KEY-----
+  pub: |
+    -----BEGIN CERTIFICATE-----
+    12345
+    -----END CERTIFICATE-----
+
+sbs_ssid_authncontext: "\
+  http://{{ sbs_surf_secure_id.environment }}/assurance/sfo-level2"
+sbs_ssid_entityid: "\
+  https://{{ sbs_surf_secure_id.sa_gw_environment }}/second-factor-only/metadata"
+sbs_ssid_sso_endpoint: "\
+  https://{{ sbs_surf_secure_id.sa_gw_environment }}/second-factor-only/single-sign-on"
+
+sbs_mfa_sso_minutes: 10
+sbs_mfa_fallback_enabled: true

@@ -1,7 +1,0 @@
----
-- name: enable slp job
-  systemd:
-    name: "scz-slp.timer"
-    enabled: true
-    state: started
-    daemon_reload: true

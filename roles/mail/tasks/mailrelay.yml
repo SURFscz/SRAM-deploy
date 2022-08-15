@@ -1,30 +1,66 @@
 ---
 - name: install postfix
-  apt: name=postfix state=present
+  apt:
+    name:
+      - "postfix"
+      - "libsasl2-modules"
+    state: "present"
 
-- name: remove ssmtp
-  apt: name=ssmtp state=absent purge=true
+- name: remove obsolete compiled database files
+  file:
+    path: "/etc/postfix/{{item}}"
+    state: "absent"
+  with_items:
+    - "aliases.db"
+    - "virtual.db"
 
 - name: install postfix config
-  template: src=main.cf.j2 dest=/etc/postfix/main.cf
-  notify: restart postfix
+  template:
+    src: "main.cf.j2"
+    dest: "/etc/postfix/main.cf"
+  notify: "restart postfix"
 
 - name: install postfix rewriting config
-  template: src=canonical.j2 dest=/etc/postfix/canonical
-  notify: restart postfix
+  template:
+    src: "canonical.j2"
+    dest: "/etc/postfix/canonical"
+  notify: "restart postfix"
 
 - name: install postfix aliases
-  template: src=aliases.j2 dest=/etc/postfix/aliases
+  template:
+    src: "aliases.j2"
+    dest: "/etc/postfix/aliases"
   notify:
-    - postalias
-    - restart postfix
+    - "restart postfix"
 
 - name: install postfix virtual addresses
-  template: src=virtual.j2 dest=/etc/postfix/virtual
+  template:
+    src: "virtual.j2"
+    dest: "/etc/postfix/virtual"
   notify:
-    - postmap virtual
-    - restart postfix
+    - "restart postfix"
+
+- name: install smarthost relay_credentials
+  copy:
+    content: |
+      [{{mail.relay_to}}]:{{mail.relay_port}} {{mail.relay_username}}:{{mail.relay_password}}
+    dest: "{{postfix_relay_secret_file}}"
+    owner: "root"
+    mode: "0600"
+  no_log: true
+  when: "'relay_password' in mail"
+  notify:
+    - "restart postfix"
+
+- name: remove useless symlink (gives warning)
+  file:
+    path: "/etc/postfix/makedefs.out"
+    state: absent
 
 - name: remove default alias file
-  file: dest=/etc/aliases src=/etc/postfix/aliases state=link force=yes
+  file:
+    dest: "/etc/aliases"
+    src: "/etc/postfix/aliases"
+    state: "link"
+    force: true
 

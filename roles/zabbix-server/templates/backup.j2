@@ -1,0 +1,35 @@
+#!/bin/bash
+# vim:ft=sh
+set -e
+
+if [ $UID -ne 0 ]
+then
+	echo "Sorry, this script must run as root"
+	exit 1
+fi
+
+BACKUP_DIR="{{zabbix_backup_dir}}"
+BACKUP_FILE="$BACKUP_DIR/db_zabbix_$(/bin/date +%Y-%m-%d_%H:%M).sql"
+
+
+mkdir -p -m 0755 "$BACKUP_DIR"
+
+export MYSQL_PWD="{{ zabbix_server_dbpassword }}"
+mysqldump --host=localhost \
+          --user="{{ zabbix_server_dbuser }}" \
+          --single-transaction \
+          --set-charset --create-options \
+          --routines --add-drop-table \
+          --disable-keys --extended-insert \
+          --ignore-table=zabbix.history \
+          --ignore-table=zabbix.history_log \
+          --ignore-table=zabbix.history_str \
+          --ignore-table=zabbix.history_text \
+          --ignore-table=zabbix.history_uint \
+          --ignore-table=zabbix.trends \
+          --ignore-table=zabbix.trends_uint \
+          --databases "{{ zabbix_server_dbname }}" \
+    > "${BACKUP_FILE}"
+bzip2 "${BACKUP_FILE}"
+
+exit 0

@@ -8,7 +8,13 @@ haproxy:
   dhparam_file: /etc/ssl/dh_param.pem
   dhparam_keysize: 2048
 
+haproxy_timeout_client: "5s"
+haproxy_timeout_server: "30s"
+
 haproxy_oscp_bin_dir: "/opt/scz-misc/bin/"
 haproxy_admin_secret: "gehe1m"
 
 haproxy_redirect_hosts: []
+
+haproxy_ldap_acl_file: "/etc/haproxy/acl_ldap_sbs.cfg"
+haproxy_state_file: "/var/lib/haproxy/state"

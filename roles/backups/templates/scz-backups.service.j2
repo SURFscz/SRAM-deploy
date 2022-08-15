@@ -8,4 +8,4 @@ Type=oneshot
 WorkingDirectory={{backup_base}}
 ExecStart=/bin/run-parts --verbose --new-session --umask=077 --regex='.*\\.sh' -- '{{backup_runparts}}'
 ExecStartPost={{backup_base}}/upload-backup.sh
-ExecStartPost=/usr/sbin/tmpreaper --showdeleted --protect '*' --protect '{{backup_runparts}}/*' --mtime '{{backup_retention_days}}d' '{{backup_base}}'
+ExecStartPost=/usr/sbin/tmpreaper --showdeleted --protect '*.sh' --protect 'sshkey*' --protect '{{backup_runparts}}' --mtime '{{backup_retention_days}}d' '{{backup_base}}'

@@ -1,4 +1,7 @@
 ---
+## TODO: draai SBS als non-www-data user
+
+
 - name: "Install node repository key"
   apt_key:
     id: "9FD3B784BC1C6FC31A8A0A1C1655A0AB68576280"
@@ -13,20 +16,13 @@
   apt:
     state: "latest"
     name:
-      - yarnpkg
       - nodejs
-      - build-essential
-      - python3
-      - python3-dev
-      - python3-virtualenv
-      - python3-setuptools
-      - python-setuptools
-      - python-pymysql
       - python3-pymysql
-      - virtualenv
-      - python3-distutils
       - libapache2-mod-wsgi-py3
       - mariadb-client
+      - libxmlsec1-dev  # for python xmlsec pkg
+      - pkg-config      # for python xmlsec pkg
+    install_recommends: false
 
 - name: Remove obsolete packages
   apt:
@@ -74,6 +70,7 @@
         encoding: 'utf8mb4'
         collation: 'utf8mb4_unicode_ci'
         ca_cert: "{{sbs_db_cert_path}}"
+      notify: "restart apache"
 
     - name: Add SBS user
       community.mysql.mysql_user:
@@ -93,110 +90,122 @@
           passwd: "{{ sbs_dbbackup_password }}"
           perm: "SELECT,SHOW VIEW,EVENT,TRIGGER"
       no_log: "{{sram_ansible_nolog}}"
+      notify: "restart apache"
 
-- name: Clone SBS repository
-  git:
-    repo: "{{ sbs_repository }}"
-    dest: "{{ sbs_git_dir }}"
-    version: "{{ sbs_version }}"
+- name: "Create directories"
+  file:
+    path: "{{item.path}}"
+    state: "directory"
+    owner: "{{item.owner}}"
+    group: "{{item.owner}}"
+    mode: "0755"
+  with_items:
+    - { path: "{{sbs_work_dir}}",            owner: "{{sbs_file_owner}}" }
+    - { path: "{{sbs_conf_dir}}",            owner: "{{sbs_file_owner}}" }
+    - { path: "{{sbs_conf_dir}}/saml",       owner: "{{sbs_file_owner}}" }
+    - { path: "{{sbs_log_dir}}",             owner: "www-data"           }
+
+- name: Download SBS build
+  get_url:
+    url: "{{sbs_build_url}}"
+    dest: "{{sbs_work_dir}}/sbs.tar.xz"
+    force: true
+  register: "sbs_download"
+
+- name: Remove previous SBS backup
+  file:
+    path: "{{ sbs_git_dir }}.old"
+    state: "absent"
+  when: "sbs_download.changed"
+
+- name: Save old SBS dir
+  shell: |
+    if test -e '{{ sbs_git_dir }}'
+    then
+      mv '{{ sbs_git_dir }}' '{{ sbs_git_dir }}.old'
+    fi
+  when: "sbs_download.changed"
+
+- name: Deploy SBS build
+  unarchive:
+    src: "{{sbs_work_dir}}/sbs.tar.xz"
+    dest: "{{ sbs_work_dir }}"
+    remote_src: true
+    owner: "{{sbs_file_owner}}"
+    group: "{{sbs_file_owner}}"
   notify: "restart apache"
-  register: git_apps
-
-- name: Add git info to server
-  shell: git --git-dir {{ sbs_git_dir }}/.git  log -1 > {{ sbs_git_dir }}/server/api/git.info
-  changed_when: false
-
-- name: Create python3 virtualenv
-  pip:
-    virtualenv: "{{ sbs_env_dir }}"
-    virtualenv_python: python3
-    requirements: "{{ sbs_git_dir }}/server/requirements/test.txt"
-    state: forcereinstall
-  notify: "restart apache"
-
-- name: check for yarn dependencies
-  stat:
-    path: "{{ sbs_git_dir }}/client/node_modules"
-  register: yarn_deps
-
-- name: Install yarn dependancies
-  yarn:
-    executable: "/usr/bin/yarnpkg"
-    path: "{{ sbs_git_dir }}/client"
-  environment:
-    NODE_PATH: "/usr/lib/nodejs:/usr/share/nodejs"
-  register: yarn_install
-  when: git_apps.changed or not yarn_deps.stat.exists
-
-- name: Build client yarn
-  command:
-    cmd: "yarnpkg --pure-lockfile build"
-    chdir: "{{ sbs_git_dir }}/client"
-  environment:
-    NODE_PATH: "/usr/lib/nodejs:/usr/share/nodejs"
-  when: git_apps.changed or yarn_install.changed
-
-# yarn install modifies yarn.lock (ARGRGRGR), which dirties the repository and
-# causes git pulls to fail, so clean up yarn's mess manually
-- name: Clear up yarn crap
-  command:
-    cmd: "git checkout client/yarn.lock"
-    chdir: "{{ sbs_git_dir }}"
-  when: yarn_install.changed
-  changed_when: true
-
-# TODO: draai SBS als non-www-data user
-- name: Create SBS config file
-  template:
-    src: config.yml.j2
-    dest: "{{ sbs_git_dir }}/server/config/config.yml"
-    group: "www-data"
-    mode: "0640"
-  notify: "restart apache"
-  no_log: "{{sram_ansible_nolog}}"
-
-- name: write server JWT private signing key
-  copy:
-    content: "{{ sbs_jwt_server.priv }}"
-    dest: "{{ sbs_git_dir }}/server/config/jwt_private_key"
-    group: "www-data"
-    mode: "0640"
-  notify: "restart apache"
-  no_log: "{{sram_ansible_nolog}}"
-
-- name: write server JWT public signing key
-  copy:
-    content: "{{ sbs_jwt_server.pub }}"
-    dest: "{{ sbs_git_dir }}/server/config/jwt_public_keys.json"
-    group: "www-data"
-    mode: "0640"
-  notify: "restart apache"
-  no_log: "{{sram_ansible_nolog}}"
+  when: "sbs_download.changed"
 
 - name: Create SBS wsgi file
   template:
     src: sbs-api.wsgi.j2
-    dest: "{{ sbs_git_dir }}/sbs-api.wsgi"
+    dest: "{{ sbs_work_dir }}/sbs-api.wsgi"
+    mode: "0644"
   notify: "restart apache"
 
-- name: Create SBS environment disclaimer file
+- name: Create SBS config files
   template:
-    src: disclaimer.css.j2
-    dest: "{{ sbs_git_dir }}/server/static/disclaimer.css"
+    src: "{{item.name}}.j2"
+    dest: "{{ sbs_conf_dir }}/{{item.name}}"
+    group: "www-data"
+    mode: "{{item.mode}}"
+  with_items:
+    - { name: "config.yml",     mode: "0640" }
+    - { name: "disclaimer.css", mode: "0644" }
+  notify: "restart apache"
+  no_log: "{{sram_ansible_nolog}}"
 
-- name: Copy static files to apache document root
+- name: write server JWT keys
   copy:
-    src: "{{ sbs_git_dir }}/server/static/"
-    dest: "{{ sbs_git_dir }}/client/build/static"
-    remote_src: yes
+    content: "{{ item.content }}"
+    dest: "{{ sbs_conf_dir }}/{{ item.path }}"
+    group: "www-data"
+    mode: "0640"
+  with_items:
+    - { path: "jwt_private_key",      content: "{{ sbs_jwt_server.priv }}" }
+    - { path: "jwt_public_keys.json", content: "{{ sbs_jwt_server.pub }}"  }
+  notify: "restart apache"
+  no_log: "{{ sram_ansible_nolog }}"
 
-- name: touch sbs.log file
+- name: Create SBS SURFSecure ID config files
+  template:
+    src: "saml_{{ item.name }}.j2"
+    dest: "{{ sbs_conf_dir }}/saml/{{item.name}}"
+    group: "www-data"
+    mode: "{{ item.mode }}"
+  with_items:
+    - { name: "settings.json",          mode: "0640" }
+    - { name: "advanced_settings.json", mode: "0644" }
+  notify: "restart apache"
+  no_log: "{{ sram_ansible_nolog }}"
+
+- name: Create links to config files
   file:
-    path: /opt/sbs/sbs/log
-    state: directory
-    owner: www-data
-    group: www-data
-    mode: 0755
+    state: "link"
+    path: "{{ sbs_git_dir }}/{{ item.path }}"
+    src: "{{ sbs_conf_dir }}/{{ item.links_to }}"
+  with_items:
+    - { path: "server/config/config.yml",           links_to: "config.yml"           }
+    - { path: "server/config/saml",                 links_to: "saml"                 }
+    - { path: "client/build/static/disclaimer.css", links_to: "disclaimer.css"       }
+    - { path: "server/config/jwt_private_key",      links_to: "jwt_private_key"      }
+    - { path: "server/config/jwt_public_keys.json", links_to: "jwt_public_keys.json" }
+  notify: "restart apache"
+
+- name: Link log dir
+  file:
+    state: "link"
+    path: "{{ sbs_git_dir }}/log"
+    src: "{{ sbs_log_dir }}"
+  notify: "restart apache"
+
+- name: Create python3 virtualenv
+  import_role:
+    name: "python-venv"
+  vars:
+    python_venv_dir: "{{ sbs_env_dir }}"
+    python_venv_requirements: "{{ sbs_git_dir }}/server/requirements/test.txt"
+  notify: "restart apache"
 
 - name: install database dump script
   template:

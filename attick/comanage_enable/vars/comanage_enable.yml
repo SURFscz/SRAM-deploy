@@ -1,9 +1,0 @@
----
-apache_modules:
-  - auth_mellon
-
-apache_templates:
-  - { src: apache.conf.j2, dest: /etc/apache2/sites-available/comanage.conf }
-
-comanage_roundup_disable:
-  - 000-default

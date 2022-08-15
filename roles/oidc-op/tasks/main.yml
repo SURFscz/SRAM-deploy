@@ -1,18 +1,12 @@
 ---
-- name: Ensure that packages are installed
-  apt:
-    name:
-      - python3
-      - python3-virtualenv
-      - virtualenv
-    state: present
-
 - name: fetch oidc-op from {{ oidc_op_repo_url }}, version {{ oidc_op_repo_version }}
   git:
     repo: "{{ oidc_op_repo_url }}"
     dest: "{{ oidc_dir }}"
     version: "{{ oidc_op_repo_version }}"
+    force: yes
   notify: "restart oidc-op"
+  changed_when: false
 
 - name: Copy requirements files
   copy:
@@ -21,19 +15,32 @@
       Flask
       /opt/oidc-op
 
-- name: Create virtualenv and install requirements
-  pip:
-    requirements: "{{ oidc_dir }}/sram-req.txt"
-    virtualenv: "{{ oidc_dir }}"
-    virtualenv_python: python3
+- name: Create python3 virtualenv
+  import_role:
+    name: "python-venv"
+  vars:
+    python_venv_dir: "{{ oidc_dir_venv }}"
+    python_venv_requirements: "{{ oidc_dir }}/sram-req.txt"
   notify: "restart oidc-op"
 
-- name: "Make server executable"
+- name: Make server executable
   file:
     dest: "{{ oidc_dir }}/example/flask_op/server.py"
     mode: 'a+x'
 
-- name: "Copy users and passwd files"
+- name: Copy sram template
+  copy:
+    src: "sram_user_pass.jinja2"
+    dest: "{{oidc_dir }}/example/flask_op/templates/sram_user_pass.jinja2"
+    mode: 0644
+
+- name: Copy static script
+  copy:
+    src: "script.js"
+    dest: "{{oidc_dir }}/example/flask_op/static/script.js"
+    mode: 0644
+
+- name: Copy users and passwd files
   template:
     src: "{{ item }}.j2"
     dest: "{{oidc_dir }}/example/flask_op/{{ item }}"
@@ -41,7 +48,7 @@
   with_items:
     - sram_users.json
     - sram_passwd.json
-    - config_op.yaml
+    - config_op.json
   notify: "restart oidc-op"
 
 - name: Make sure cdb directory exists
@@ -50,7 +57,7 @@
     state: directory
     mode: 0755
 
-- name: "Create client config if it doesn't exist"
+- name: Create client config if it doesn't exist
   template:
     src: "client_id.j2"
     dest: "{{ oidc_dir }}/example/flask_op/cdb/{{ sbs_client_id }}"

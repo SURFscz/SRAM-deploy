@@ -1,2 +1,3 @@
 ---
 zabbix_validate_certs: true
+zabbix_backup_dir: "{{backup_base}}/zabbix-server"

@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"
+                xmlns:mdrpi="urn:oasis:names:tc:SAML:metadata:rpi"
+                version="2.0">
+    <!-- Identity transform -->
+    <xsl:template match="@* | node()">
+        <xsl:copy>
+            <xsl:apply-templates select="@* | node()"/>
+        </xsl:copy>
+    </xsl:template>
+
+{% if metadata_registration_authority is defined %}
+    <!-- Add mdrpi:RegistrationInfo to each EntityDescriptor -->
+    <xsl:template match="//md:EntityDescriptor[not(md:Extensions)]">
+      <xsl:copy>
+        <xsl:copy-of select="@*"/>
+        <md:Extensions>
+            <mdrpi:RegistrationInfo xmlns:mdrpi="urn:oasis:names:tc:SAML:metadata:rpi" registrationAuthority="{{metadata_registration_authority}}"/>
+        </md:Extensions>
+        <xsl:copy-of select="node()"/>
+      </xsl:copy>
+    </xsl:template>
+{% endif %}
+</xsl:stylesheet>

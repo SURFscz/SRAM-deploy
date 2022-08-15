@@ -144,3 +144,9 @@
     usrgrps: ["Host registration"]
     state: "present"
     validate_certs: "{{zabbix_validate_certs}}"
+
+- name: Install zabbix backup script
+  template:
+    src: "backup.j2"
+    dest: "/opt/backups/run.d/sram-zabbix-server.sh"
+    mode: "0700"

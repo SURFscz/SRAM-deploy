@@ -78,7 +78,7 @@
   ldap_attrs:
     dn: "cn=config"
     attributes:
-      olcSizeLimit: 2000
+      olcSizeLimit: "unlimited"
     state: "exact"
 
 - name: Enable tls
@@ -161,6 +161,13 @@
     ldapadd -Q -Y EXTERNAL -H ldapi:///
     -f "{{ ldap_ldif_dir }}/voPerson.ldif"
   when: voPersonTask.stdout == ""
+
+- name: Set allowed attribute options for voPerson
+  ldap_attrs:
+    dn: "cn=config"
+    attributes:
+      olcAttributeOptions: "time-"
+    state: "present"
 
 - name: Redirect slapd log to /var/log/slapd.log
   copy:

@@ -17,3 +17,7 @@ ff02::2 ip6-allrouters
 {%- for h in hostnames | sort %} {{hostnames[h]}}{% endfor %}
 {% endif %}
 
+{% if extra_hosts is defined %}
+{{extra_hosts}}
+{% endif %}
+

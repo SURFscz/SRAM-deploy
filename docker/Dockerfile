@@ -1,21 +1,22 @@
-FROM debian:buster AS scz-base
-MAINTAINER SURFnet <info@surfnet.nl>
+FROM debian:bullseye AS scz-base
+LABEL org.opencontainers.image.authors="SRAM team <sram-beheer@surf.nl>"
 
 ARG DEBIAN_FRONTEND=noninteractive
 ARG RUNLEVEL=1
 ENV TERM linux
 
-RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections  && \
-    echo "deb http://ftp.de.debian.org/debian/ buster-backports main" >> /etc/apt/sources.list
+RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 
 RUN apt-get update -y                && \
     apt-get install -y                  \
         acl                             \
         apt-transport-https             \
+        aptitude                        \
         bash                            \
         bash-completion                 \
         bzip2                           \
         ca-certificates                 \
+        chrony                          \
         cloud-init                      \
         curl                            \
         dnsutils                        \
@@ -27,12 +28,16 @@ RUN apt-get update -y                && \
         netcat                          \
         nullmailer                      \
         openssh-server                  \
+        parted                          \
         python3                         \
         python3-apt                     \
         python3-setuptools              \
+        rsyslog                         \
         sudo                            \
+        tmpreaper                       \
         unzip                           \
         vim                             \
+        wget                            \
         xz-utils                     && \
     apt-get purge -y isc-dhcp-client && \
     apt-get clean -y                 && \
@@ -46,7 +51,7 @@ RUN systemctl enable ssh.service                 && \
     systemctl disable systemd-timesyncd.service  && \
     echo "exit 0" > /usr/sbin/policy-rc.d
 
-RUN useradd --create-home -s /bin/bash ansible        && \
+RUN useradd --create-home --shell /bin/bash --groups adm ansible        && \
     install -d -o ansible -m 0700 /home/ansible/.ssh  && \
     echo -n 'ansible:ansible' | chpasswd
 

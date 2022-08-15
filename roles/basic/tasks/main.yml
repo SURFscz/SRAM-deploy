@@ -4,12 +4,14 @@
   when:
     - not is_aws
     - environment_name!="vm"
+    - environment_name!="ci"
 
 - name: fix dhclient.conf
   template: src=dhclient.conf.j2 dest=/etc/dhcp/dhclient.conf force=yes
   when:
     - is_aws
     - environment_name!="vm"
+    - environment_name!="ci"
   register: dhclient
 
 - name: Restart networking
@@ -38,12 +40,14 @@
   hostname: name={{inventory_hostname_short}}
   when:
     - environment_name!="vm"
+    - environment_name!="ci"
 
 - name: set /etc/hosts
   template: src=hosts.j2 dest=/etc/hosts force=yes
   when:
     - not is_aws
     - environment_name!="vm"
+    - environment_name!="ci"
 
 - name: check that hostname and fqdn are set up correctly
   command: "/usr/bin/hostname --fqdn"
@@ -51,6 +55,7 @@
   changed_when: false
   when:
     - environment_name!="vm"
+    - environment_name!="ci"
 
 - name: disable resume
   file:

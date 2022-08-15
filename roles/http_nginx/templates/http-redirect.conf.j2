@@ -1,5 +1,3 @@
-{% set hosts = loadbalancer|selectattr("protocol", "equalto", "http")|list %}
-
 server {
     listen      80 default_server;
     listen [::]:80 default_server;
@@ -12,12 +10,12 @@ server {
 }
 
 
-{% for h in hosts %}
+{% for h in http_hosts %}
 server {
     listen      80;
     listen [::]:80;
 
-    server_name {{ h.hostname }};
+    server_name {{ h }};
 
 {% if letsencrypt is defined %}
     location /.well-known/acme-challenge {
@@ -26,7 +24,7 @@ server {
 {% endif %}
 
     location / {
-        rewrite ^(.*) https://{{ h.hostname }}$1 permanent;
+        rewrite ^(.*) https://{{ h }}$1 permanent;
     }
 }
 {% endfor %}
