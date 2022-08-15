@@ -1,5 +1,5 @@
 ---
-name: Assign ticket to project
+name: Issue automation
 
 on:
   issues:
@@ -10,7 +10,7 @@ on:
     types: [created]
 
 env:
-  MY_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  MY_GITHUB_TOKEN: ${{ secrets.SRAM_PROJECT_SECRET }}
 
 jobs:
   assign_one_project:
