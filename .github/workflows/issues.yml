@@ -15,8 +15,8 @@ on:
       - closed
 
 jobs:
-  project management:
-    - uses: SURFscz/SCZ-deploy/.github/workflows/project.yml
-      with:
-        event: ${{ github.event_name }}
-        action: ${{ github.event.action }}
+  project_management:
+    uses: SURFscz/SCZ-deploy/.github/workflows/project.yml
+    with:
+      event: ${{ github.event_name }}
+      action: ${{ github.event.action }}
