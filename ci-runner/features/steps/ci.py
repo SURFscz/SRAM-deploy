@@ -46,9 +46,9 @@ def step_impl(context, user):
     test = user.split(':')
     username = test[0]
     password = test[1]
-    context.browser.find_element_by_id('username').send_keys(username)
-    context.browser.find_element_by_id('password').send_keys(password)
-    context.browser.find_element_by_xpath('//button[@type="submit"]').click()
+    context.browser.find_element(By.ID, 'username').send_keys(username)
+    context.browser.find_element(By.ID, 'password').send_keys(password)
+    context.browser.find_element(By.XPATH, '//button[@type="submit"]').click()
 
 @then('sub is {sub}')
 def step_impl(context, sub):
@@ -60,7 +60,7 @@ def step_impl(context, sub):
     assert(title == "Test RP"), "Error loading OP return url"
 
     # Test user attributes
-    output = json.loads(context.browser.find_element_by_id('id_token').text)
+    output = json.loads(context.browser.find_element(By.ID, 'id_token').text)
 
     token_sub = output.get('sub', None)
     assert(token_sub == sub), "No valid identifier found"
@@ -75,9 +75,9 @@ def step_impl(context, file):
     assert(title == "Test RP"), "Error loading OP return url"
 
     # Test user attributes
-    id_token = json.loads(context.browser.find_element_by_id('id_token').text)
-    access_token = json.loads(context.browser.find_element_by_id('access_token').text)
-    user_info = json.loads(context.browser.find_element_by_id('user_info').text)
+    id_token = json.loads(context.browser.find_element(By.ID, 'id_token').text)
+    access_token = json.loads(context.browser.find_element(By.ID, 'access_token').text)
+    user_info = json.loads(context.browser.find_element(By.ID, 'user_info').text)
 
     with open(file) as f:
         user_claims = json.load(f)
