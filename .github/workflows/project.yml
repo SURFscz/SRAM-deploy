@@ -15,9 +15,9 @@ on:
       event:
         required: true
         type: string
-        action:
-          required: true
-          type: string
+      action:
+        required: true
+        type: string
 
 env:
   organization: ${{ github.repository_owner }}
