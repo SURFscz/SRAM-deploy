@@ -1,5 +1,5 @@
 ---
-name: Project automation
+name: Project automation (Generic)
 
 # reusable workflow, call this like:
 # jobs:
