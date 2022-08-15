@@ -33,7 +33,10 @@ jobs:
       - name: Add issue to project
         uses: leonsteinhaeuser/project-beta-automations@v1.3.0
         with:
-          gh_token: ${{ secrets.SRAM_PROJECT_SECRET }}
+          #gh_token: ${{ secrets.SRAM_PROJECT_SECRET }}
+          gh_app_ID: ${{ env.gh_app_id }}
+          gh_app_installation_ID: ${{ env.gh_app_inst_id }}
+          gh_app_secret_key: ${{ env.gh_app_secret }}
           organization: ${{ env.organization }}
           project_id: ${{ env.project_id }}
           resource_node_id: ${{ github.event.issue.node_id }}
