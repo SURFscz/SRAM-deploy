@@ -57,4 +57,16 @@ server {
         fastcgi_param SCRIPT_NAME     $fastcgi_script_name.php;
         fastcgi_param PATH_INFO       $fastcgi_path_info;
     }
+
+    location ~ /rp/(test|acc|prd)$ {
+        fastcgi_pass     unix:/run/php/sram-demosp.sock;
+
+        include          fastcgi_params;
+
+        fastcgi_split_path_info       ^/(rp)/(.+)$;
+        fastcgi_param SCRIPT_FILENAME {{demosp_html_dir}}/$fastcgi_script_name.php;
+        fastcgi_param SCRIPT_NAME     $fastcgi_script_name.php;
+        fastcgi_param PATH_INFO       $fastcgi_path_info;
+    }
+
 }

@@ -8,6 +8,12 @@
     simplesaml_group: "{{demosp_group}}"
     simplesaml_project_dir: "{{demosp_dir}}"
 
+- name: Ensure that packages are installed
+  apt:
+    name:
+      - composer
+    state: present
+
 - name: Install SSP config
   template:
     src: "{{item}}.j2"
@@ -40,7 +46,6 @@
     - "eduteams-prd.pem"
     - "eduteams-acc.pem"
 
-
 - name: Create html dir
   file:
     path: "{{demosp_html_dir}}"
@@ -58,6 +63,17 @@
     - "auth.php"
   notify: "restart php-fpm"
 
+- name: Install JumboJett OIDC PHP module
+  community.general.composer:
+    command: require
+    arguments: jumbojett/openid-connect-php
+    working_dir: "{{ demosp_dir}}"
+
+- name: Install OIDC RP
+  template:
+    src: "rp.php.j2"
+    dest: "{{demosp_html_dir}}"
+    mode: "0644"
 
 - include_role:
     name: "nginx"

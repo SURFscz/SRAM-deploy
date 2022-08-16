@@ -1,0 +1,77 @@
+<?php
+require '{{ demosp_dir}}/vendor/autoload.php';
+use Jumbojett\OpenIDConnectClient;
+
+# supported environments; should correspond to configured SPs
+$ENVS = array("test","acc","prd");
+
+# sanitize user input
+$env = $_SERVER['PATH_INFO'];
+if (!in_array($env, $ENVS)) {
+    http_response_code(404);
+    die();
+}
+
+# TEST credentials
+$client['test']['id'] = '{{ demosp.test.client_id }}';
+$client['test']['secret'] = '{{ demosp.test.client_secret }}';
+$client['test']['op'] = '{{ demosp.test.op }}';
+
+# ACC credentials
+$client['acc']['id']  = '{{ demosp.acc.client_id }}';
+$client['acc']['secret']  = '{{ demosp.acc.client_secret }}';
+$client['acc']['op'] = '{{ demosp.acc.op }}';
+
+# PRD Acc credentials
+$client['prd']['id']  = '{{ demosp.prd.client_id }}';
+$client['prd']['secret']  = '{{ demosp.prd.client_secret }}';
+$client['prd']['op'] = '{{ demosp.prd.op }}';
+
+$oidc_op = $client[$env]['op'];
+$client_id = $client[$env]['id'];
+$client_secret = $client[$env]['secret'];
+$redirect_url = $_SERVER['REQUEST_SCHEME'] . "://" . $_SERVER['SERVER_NAME'] . "/rp/" . $env;
+$response_type = 'code';
+$scopes = array('profile', 'email', 'uid', 'eduperson_principal_name eduperson_entitlement eduperson_scoped_affilation voperson_external_affiliation ssh_public_key');
+$claims = '';
+
+$oidc = new OpenIDConnectClient($oidc_op, $client_id, $client_secret);
+
+# For debug purposes on local dev
+// $oidc->setVerifyHost(false);
+// $oidc->setVerifyPeer(false);
+
+$oidc->setRedirectURL($redirect_url);
+$oidc->setResponseTypes(array($response_type));
+#$oidc->setAllowImplicitFlow(true);
+#$oidc->addAuthParam(array('response_mode' => 'form_post'));
+if ($scopes) $oidc->addScope($scopes);
+if ($claims) $oidc->addAuthParam(array('claims' => $claims));
+
+
+try {
+    $oidc->authenticate();
+} catch (Exception $e) {
+    $error = htmlspecialchars(json_encode($e->getMessage(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+}
+
+?>
+<html>
+<head><title>Test RP</title></head>
+<body>
+<h1>Test RP</h1>
+<?php
+echo "<a href=\"$redirect_url\">Retry</a><br><br>\n";
+
+if ($error) {
+  echo "<pre id=result>$error</pre>\n";
+} else {
+  $claims = $oidc->getVerifiedClaims();
+  echo "id_token:\n";
+  echo "<pre id=claims>" . htmlspecialchars(json_encode($claims, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)) . "</pre>\n";
+  $userinfo = $oidc->requestUserInfo();
+  echo "userinfo:\n";
+  echo "<pre id=userinfo>" . htmlspecialchars(json_encode($userinfo, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)) . "</pre>\n";
+}
+?>
+</body></html>
