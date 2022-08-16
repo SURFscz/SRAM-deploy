@@ -3,7 +3,7 @@ server {
 
         ssl_certificate     {{ ssl_certs_dir }}/{{ internal_base_domain }}.crt;
         ssl_certificate_key {{ ssl_certs_dir }}/{{ internal_base_domain }}.key;
-        ssl_protocols       TLSv1.3;
+        ssl_protocols       TLSv1.2 TLSv1.3;
         ssl_ciphers         HIGH:!aNULL:!MD5;
 
         ssl_client_certificate {{backup_collector_client_cert_path}};

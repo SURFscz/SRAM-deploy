@@ -78,7 +78,7 @@
   ldap_attrs:
     dn: "cn=config"
     attributes:
-      olcSizeLimit: 2000
+      olcSizeLimit: "unlimited"
     state: "exact"
 
 - name: Enable tls

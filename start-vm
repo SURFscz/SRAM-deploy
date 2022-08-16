@@ -1,100 +1,130 @@
 #!/bin/bash
 set -e
 export TERM=xterm-256color
-
-
-if [ "$1" = "--skip-ansible" ]
-then
-    SKIP_ANSIBLE=1
-    shift
-fi
-
 ENV_DIR=./environments/vm
-if [ "$1" = "--ci" ]
-then
-    CI="--ci"
-    ENV_DIR=./environments/ci
-    shift
-fi
 
-if [ ! -f docker/ansible_key.pub ]; then
-    echo "No ansible key found"
-    ssh-keygen -f docker/ansible_key -N ""
-fi
+# argument parsing from https://stackoverflow.com/a/28466267
+die() { echo "$*" >&2; exit 2; }  # complain to STDERR and exit with error
+needs_arg() { if [ -z "$OPTARG" ]; then die "No arg for --$OPT option"; fi; }
 
-# Build single docker image before docker-compose starts
-if [ -z "$REENTRANT" ]; then
-    scz_image=$(docker image list scz-base -q)
-    if [ -z "$scz_image" ]
-    then
-        echo "Building docker image"
-        time docker build -t scz-base --target=scz-base --cache-from=scz-base-cache docker/
-    else
-        echo "Docker image found"
+OPTERR=0
+OPTPROCESSED=0
+while getopts -- '-:h' OPT; do
+    OPTPROCESSED=$(( $OPTPROCESSED + 1 ))
+    # support long options: https://stackoverflow.com/a/28466267/519360
+    if [ "$OPT" = "-" ]; then   # long option: reformulate OPT and OPTARG
+        OPT="${OPTARG%%=*}"       # extract long option name
+        OPTARG="${OPTARG#$OPT}"   # extract long option argument (may be empty)
+        OPTARG="${OPTARG#=}"      # if long option argument, remove assigning `=`
     fi
-fi
+    case "$OPT" in
+        h | help )      echo "Start SRAM VMs for local testing"
+                        echo "Options:"
+                        echo "  --ci : for use in CI runs"
+                        echo "  --skip-ansible : only bring up VMs, skip Ansible run"
+                        echo "  --skip-vm : skip bringing up VMs, only run Ansible"
+                        exit 0
+                        ;;
+        ci )            CI="--ci"
+                        ENV_DIR=./environments/ci
+                        ;;
+        skip-ansible | \
+        sa | no )       SKIP_ANSIBLE=1
+                        ;;
+        skip-docker | \
+        skip-vm | \
+        sd | sv )       SKIP_VM=1
+                        ;;
+        * )             OPTPROCESSED=$(( $OPTPROCESSED - 1 ))
+                        ;;
+    esac
+done
+shift $OPTPROCESSED # remove parsed options and args from $@ list
 
-# Bring up the VMs if they're not running
-echo "Bringing docker containers up"
-./docker/docker-compose.yml.py $CI > ./docker/docker-compose.yml
-time docker-compose -f docker/docker-compose.yml up --no-recreate -d --remove-orphans
+if [ "$SKIP_VM" ]
+then
+    echo "Skipping docker spin-up"
+else
 
-echo "Waiting until containers have booted"
-TIMEOUT=120
-for c in $(docker ps -q)
-do
-    host=$(docker inspect --format='{{.Config.Hostname}}'     $c)
-    printf " - %-10s" $host
-    stat=xxx
-    starttime=$(date +%s)
-    while true
+    if [ ! -f docker/ansible_key.pub ]; then
+        echo "No ansible key found"
+        ssh-keygen -f docker/ansible_key -N ""
+    fi
+
+    # Build single docker image before docker-compose starts
+    if [ -z "$REENTRANT" ]; then
+        scz_image=$(docker image list scz-base -q)
+        if [ -z "$scz_image" ]
+        then
+            echo "Building docker image"
+            time docker build -t scz-base --target=scz-base --cache-from=scz-base-cache docker/
+        else
+            echo "Docker image found"
+        fi
+    fi
+
+    # Bring up the VMs if they're not running
+    echo "Bringing docker containers up"
+    ./docker/docker-compose.yml.py $CI > ./docker/docker-compose.yml
+    time docker-compose -f docker/docker-compose.yml up --no-recreate -d --remove-orphans
+
+    echo "Waiting until containers have booted"
+    TIMEOUT=120
+    for c in $(docker ps -q)
     do
-        if [ $(( $(date +%s) - $starttime )) -gt $TIMEOUT ]
-        then
-            tput setaf 1
-            echo "timeout"
-            tput sgr0
-            exit 1
-        fi
-
-        stat=$(docker inspect --format='{{.State.Health.Status}}' $c)
-        if [ "$stat" = "healthy" ]
-        then
-            tput setaf 2
-            echo -n "up "
-            tput sgr0
-
-            break
-        fi
-        echo -n "."
-        sleep 2
-    done
-
-    # wait until ssh is running
-    if [ "$host" != "mail" -a "$host" != "redis" ]
-    then
-        echo -n "."
+        host=$(docker inspect --format='{{.Config.Hostname}}'     $c)
+        printf " - %-10s" $host
+        stat=xxx
         starttime=$(date +%s)
-        while ! ssh-keyscan -T 1 ${host}.vm.scz-vm.net > /dev/null 2>&1
+        while true
         do
             if [ $(( $(date +%s) - $starttime )) -gt $TIMEOUT ]
             then
                 tput setaf 1
                 echo "timeout"
                 tput sgr0
-                ssh-keyscan -T 1 ${host}.vm.scz-vm.net || true
                 exit 1
             fi
 
-            sleep 2
+            stat=$(docker inspect --format='{{.State.Health.Status}}' $c)
+            if [ "$stat" = "healthy" ]
+            then
+                tput setaf 2
+                echo -n "up "
+                tput sgr0
+
+                break
+            fi
             echo -n "."
+            sleep 2
         done
-        tput setaf 2
-        echo -n "ssh ok"
-        tput sgr0
-    fi
-    echo
-done
+
+        # wait until ssh is running
+        if [ "$host" != "mail" -a "$host" != "redis" ]
+        then
+            echo -n "."
+            starttime=$(date +%s)
+            while ! ssh-keyscan -T 1 ${host}.vm.scz-vm.net > /dev/null 2>&1
+            do
+                if [ $(( $(date +%s) - $starttime )) -gt $TIMEOUT ]
+                then
+                    tput setaf 1
+                    echo "timeout"
+                    tput sgr0
+                    ssh-keyscan -T 1 ${host}.vm.scz-vm.net || true
+                    exit 1
+                fi
+
+                sleep 2
+                echo -n "."
+            done
+            tput setaf 2
+            echo -n "ssh ok"
+            tput sgr0
+        fi
+        echo
+    done
+fi
 
 # try to find mitogen
 MITOGEN_PATH=

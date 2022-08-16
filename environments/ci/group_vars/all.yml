@@ -57,9 +57,13 @@ mail:
   relay_for:
     - "{{iprange.mgnt}}"
   domain: "{{base_domain}}"
+  admin_name: "Root User"
   admin_address: "root@{{base_domain}}"
   debug_address: "root@{{base_domain}}"
 
+org:
+  name: "SCZ-vm"
+  url: "https://sbs.scz-vm.net/"
 
 admin:
   fn: "B."

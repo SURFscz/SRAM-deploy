@@ -19,21 +19,22 @@
       changed_when: false
       run_once: true
 
-- name: test1
-  hosts: all
+- hosts: all
+  serial: 20
+  gather_facts: true
+  tags: always
+  become: false
   tasks:
-    - debug:
-        var: sram_ansible_nolog
-- name: test2
-  hosts: all
-  tasks:
-    - debug:
-        msg: "deploying '{{environment_name}}'"
+    - name: set local time
+      run_once: true
+      set_fact:
+        local_time: "{{ansible_date_time.iso8601}}"
 
 # first gather facts from all hosts that we're actually deploying to
 # TODO: this is not aggressive enough; we need to gather facts from _all_
 #       hosts, even if we're limiting the actual deployments
 - hosts: all
+  tags: always
   become: yes
   serial: 20
   no_log: "{{sram_ansible_nolog}}}"
@@ -61,7 +62,7 @@
     - { role: users,          tags: ['common','users']                               }
     - { role: mail,           tags: ['common','mail']                                }
     - { role: backups,        tags: ['common','backups']                             }
-    - { role: zabbix-agent,   tags: ['zabbix','zabbix-agent'],                       }
+    - { role: zabbix-agent,   tags: ['common','zabbix-agent'],                       }
 
 - name: "bhr2"
   hosts: "bhr2"

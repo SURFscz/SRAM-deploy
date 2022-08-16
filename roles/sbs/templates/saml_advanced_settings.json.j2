@@ -11,9 +11,7 @@
         "wantNameIdEncrypted": false,
         "wantAttributeStatement": false,
         "wantAssertionsEncrypted": false,
-        "requestedAuthnContext": [
-            "http://{{ sbs_surf_secure_id.environment }}/assurance/sfo-level2 }}"
-        ],
+        "requestedAuthnContext": ["{{sbs_ssid_authncontext}}"],
         "requestedAuthnContextComparison": "minimum",
         "failOnAuthnContextMismatch": false,
         "allowSingleLabelDomains": false,
@@ -23,15 +21,15 @@
     },
     "contactPerson": {
         "technical": {
-            "givenName": "sbs",
-            "emailAddress": "sbs@urf.nl"
+            "givenName": "{{ mail.admin_name }}",
+            "emailAddress": "{{ mail.admin_address }}"
         }
     },
     "organization": {
         "en-US": {
-            "name": "SBS",
-            "displayname": "SBS",
-            "url": "https:/surf.nl"
+            "name": "{{ org.name }}",
+            "displayname": "{{ org.name }}",
+            "url": "{{ org.url }}"
         }
     }
 }
