@@ -17,7 +17,7 @@ global
 {% if enable_https and use_fixed_cert %}
     crt-base {{cert_dir}}
 {% elif enable_https %}
-    crt-base {{letsencrypt.cert_dir}}
+    crt-base {{letsencrypt_cert_dir}}
 {% endif %}
 
     ssl-default-bind-ciphers ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA256

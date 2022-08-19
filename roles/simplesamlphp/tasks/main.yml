@@ -1,0 +1,108 @@
+---
+- name: Ensure that packages are installed
+  apt:
+    name:
+      - php-date
+      - php-json
+      - php-xml
+      - php-mbstring
+      - php-curl
+      - php-gmp
+      - php-sqlite3
+      - php-zip
+    state: present
+
+- name: Create simplesaml group
+  group:
+    name: "{{simplesaml_group}}"
+    state: present
+
+- name: Create simplesaml user
+  user:
+    name: "{{simplesaml_user}}"
+    group: "{{simplesaml_group}}"
+    home: "{{ simplesaml_project_dir }}"
+    create_home: false
+    password: "!"
+
+- name: Create simplesaml project dirs
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+    owner: "root"
+    group: "{{simplesaml_group}}"
+  with_items:
+    - "{{ simplesaml_project_dir }}/config"
+    - "{{ simplesaml_cert_dir }}"
+
+- name: Create simplesaml temp dir
+  file:
+    path: "{{ simplesaml_tmp_dir }}"
+    state: directory
+    mode: 01775
+    owner: "{{simplesaml_user}}"
+    group: "{{simplesaml_group}}"
+
+- name: Download SimpleSamlPHP
+  get_url:
+    url: "{{simplesaml_download_url}}"
+    dest: "{{ simplesaml_project_dir }}/simplesamlphp-{{ simplesaml_version }}.tar.gz"
+    checksum: "{{simplesaml_checksum}}"
+  register: ssp_download
+
+- name: Check SimpleSamlPHP dest dir
+  stat:
+    path: "{{ simplesaml_project_dir }}/simplesamlphp-{{ simplesaml_version }}"
+  register: ssp_destdir
+
+- name: Unpack SimpleSamlPHP
+  unarchive:
+    src: "{{ simplesaml_project_dir }}/simplesamlphp-{{ simplesaml_version }}.tar.gz"
+    dest: "{{ simplesaml_project_dir }}"
+    remote_src: true
+  when: ssp_download.changed or not ssp_destdir.stat.exists
+
+- name: Link simplesaml
+  file:
+    src: "{{ simplesaml_project_dir }}/simplesamlphp-{{ simplesaml_version }}"
+    dest: "{{ simplesaml_project_dir }}/simplesaml"
+    state: link
+
+- name: Generate random salt
+  copy:
+    content: "{{ lookup('community.general.random_string', base64=true, length=32) }}"
+    dest: "{{ simplesaml_project_dir }}/config/salt"
+    mode: "0600"
+    force: false
+
+- name: Read random salt
+  slurp:
+    src: "{{ simplesaml_project_dir }}/config/salt"
+  register: simplesaml_salt
+
+- name: SimpleSaml configuration
+  template:
+    src: "{{item}}.j2"
+    dest: "{{ simplesaml_project_dir }}/config/{{item}}"
+  with_items:
+    - "config.php"
+    - "authsources.php"
+    - "saml20-idp-remote.php"
+
+- name: Link SimpleSaml configuration
+  file:
+    src: "{{ simplesaml_project_dir }}/config/{{item.key}}"
+    path: "{{ simplesaml_project_dir }}/simplesaml/{{item.value}}/{{item.key}}"
+    state: "link"
+    force: true
+  with_dict:
+    config.php: "config"
+    authsources.php: "config"
+    saml20-idp-remote.php: "metadata"
+
+- name: Install fpm pool config
+  template:
+    src: "fpm-pool.j2"
+    dest: "/etc/php/7.4/fpm/pool.d/{{simplesaml_name}}.conf"
+  notify: "restart php-fpm"

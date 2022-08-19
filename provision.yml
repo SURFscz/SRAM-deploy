@@ -67,7 +67,6 @@
 - name: "bhr2"
   hosts: "bhr2"
   roles:
-    - { role: http_dummy,        tags: ['bhr2','backup_collector']                        }
     - { role: backup_collector,  tags: ['bhr2','backup_collector']                        }
     - { role: logging_collector, tags: ['bhr2','logging_collector']                       }
     - { role: zabbix-server,     tags: ['bhr2','zabbix-server'],    when: "not is_docker" }
@@ -80,14 +79,13 @@
 - name: "bhr1"
   hosts: "bhr1"
   roles:
-    - { role: 'tools',   tags: ['bhr1','tools']}
 
 - name: "lb"
   hosts: lb
   tasks:
     - { import_tasks: "tasks/versions.yml", tags: ['common'] }
   roles:
-    - { role: http_nginx,      tags: ['lb','http_nginx']       }
+    - { role: http_redirect,   tags: ['lb','http_redirect']    }
     - { role: tls_letsencrypt, tags: ['lb','tls_letsencrypt'],
         when: enable_https and not use_fixed_cert              }
     - { role: tls_fixed_cert,  tags: ['lb','tls_fixedcert'],
@@ -100,15 +98,6 @@
     - { import_tasks: "tasks/versions.yml", tags: ['common'] }
   roles:
     - { role: db_server,        tags: ['db', 'db-server'] }
-
-- name: "client"
-  hosts: client
-  tasks:
-    - { import_tasks: "tasks/versions.yml", tags: ['common'] }
-  roles:
-    - { role: http_apache,          tags: ['client','client-base'  ] }
-    - { role: client-base,          tags: ['client','client-base'  ] }
-    - { role: oidc-op,              tags: ['client','oidc-op'      ] }
 
 - name: "sbs"
   hosts: sbs
@@ -138,8 +127,24 @@
     - { import_tasks: "tasks/versions.yml", tags: ['common'] }
   roles:
     - { role: pyff-metadata, tags: ['meta','pyff-metadata']}
-    - { role: http_dummy,    tags: ['meta','http'    ]     }
     - { role: metadata,      tags: ['meta','metadata']     }
+
+- name: "client"
+  hosts: client
+  tasks:
+    - { import_tasks: "tasks/versions.yml", tags: ['common'] }
+  roles:
+    - { role: http_apache,          tags: ['client','client-base'  ] }
+    - { role: client-base,          tags: ['client','client-base'  ] }
+    - { role: oidc-op,              tags: ['client','oidc-op'      ] }
+
+- name: "demo clients"
+  hosts: "bhr13"
+  tasks:
+    - { import_tasks: "tasks/versions.yml", tags: ['common'] }
+  roles:
+    - { role: demo-sp,              tags: ['bhr13','demo-sp'] }
+    - { role: tools,                tags: ['bhr13','tools']   }
 
 - name: "sandbox"
   hosts: sandbox1
