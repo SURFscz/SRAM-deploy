@@ -1,4 +1,27 @@
 ---
+#########################################################
+## Demop app
+#########################################################
+- name: Create html dir
+  file:
+    path: "{{demosp_html_dir}}"
+    state: "directory"
+    mode: "0755"
+
+- name: Copy DemoSP files
+  copy:
+    src: "{{item}}"
+    dest: "{{demosp_html_dir}}"
+    mode: "0644"
+  with_items:
+    - "index.html"
+    - "auth.css"
+    - "auth.php"
+  notify: "restart php-fpm"
+
+#########################################################
+## SAML SP
+#########################################################
 - include_role:
     name: "simplesamlphp"
     public: true
@@ -7,12 +30,6 @@
     simplesaml_user: "{{demosp_user}}"
     simplesaml_group: "{{demosp_group}}"
     simplesaml_project_dir: "{{demosp_dir}}"
-
-- name: Ensure that packages are installed
-  apt:
-    name:
-      - composer
-    state: present
 
 - name: Install SSP config
   template:
@@ -46,22 +63,14 @@
     - "eduteams-prd.pem"
     - "eduteams-acc.pem"
 
-- name: Create html dir
-  file:
-    path: "{{demosp_html_dir}}"
-    state: "directory"
-    mode: "0755"
-
-- name: Copy DemoSP files
-  copy:
-    src: "{{item}}"
-    dest: "{{demosp_html_dir}}"
-    mode: "0644"
-  with_items:
-    - "index.html"
-    - "auth.css"
-    - "auth.php"
-  notify: "restart php-fpm"
+#########################################################
+## OIDC RP
+#########################################################
+- name: Ensure that packages are installed
+  apt:
+    name:
+      - composer
+    state: present
 
 - name: Install JumboJett OIDC PHP module
   community.general.composer:
@@ -86,6 +95,9 @@
     mode: "0644"
   notify: "restart php-fpm"
 
+#########################################################
+## nginx
+#########################################################
 - include_role:
     name: "nginx"
 
@@ -95,7 +107,6 @@
   vars:
     letsencrypt_staging: false
     letsencrypt_hosts: [ "demo-sp.sram.surf.nl" ]
-
 
 - name: Install nginx config
   template:
