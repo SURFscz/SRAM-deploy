@@ -13,7 +13,7 @@ if (!in_array($env, $ENVS)) {
 }
 
 # include th oidc config
-include("{{demosp_dir}}/rp_config.php"
+include("{{demosp_dir}}/rp_config.php");
 
 $oidc_op = $client[$env]['op'];
 $client_id = $client[$env]['id'];
