@@ -68,12 +68,23 @@
     command: require
     arguments: jumbojett/openid-connect-php
     working_dir: "{{ demosp_dir}}"
+  notify: "restart php-fpm"
+
+- name: Install OIDC RP config
+  template:
+    src: "rp_config.php.j2"
+    dest: "{{demosp_dir}}"
+    owner: "root"
+    group: "{{demosp_group}}"
+    mode: "0640"
+  notify: "restart php-fpm"
 
 - name: Install OIDC RP
   template:
     src: "rp.php.j2"
     dest: "{{demosp_html_dir}}"
     mode: "0644"
+  notify: "restart php-fpm"
 
 - include_role:
     name: "nginx"
