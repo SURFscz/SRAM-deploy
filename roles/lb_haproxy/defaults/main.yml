@@ -18,3 +18,5 @@ haproxy_redirect_hosts: []
 
 haproxy_ldap_acl_file: "/etc/haproxy/acl_ldap_sbs.cfg"
 haproxy_state_file: "/var/lib/haproxy/state"
+
+haproxy_socket_group: "haproxy_admins"

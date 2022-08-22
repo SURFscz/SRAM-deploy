@@ -11,11 +11,17 @@
     dest: "{{ aclsync_dir }}/plsc"
     version: "{{ plsc_repo_version }}"
 
+- name: create group for aclsync config file
+  group:
+    name: "{{aclsync_group}}"
+    state: "present"
+    system: True
+
 - name: Create config file
   template:
     src: "aclsync.yml.j2"
     dest: "{{ aclsync_dir }}/aclsync.yml"
-    group: "haproxy"
+    group: "{{aclsync_group}}"
     mode: "0640"
   no_log: "{{sram_ansible_nolog}}"
 

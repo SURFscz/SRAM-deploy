@@ -20,6 +20,12 @@
   when: enable_https and haproxy.custom_dhparam
 
 
+- name: create group for haproxy socket access
+  group:
+    name: "{{haproxy_socket_group}}"
+    state: "present"
+    system: True
+
 ##########################################
 ## produce warning
 ##
