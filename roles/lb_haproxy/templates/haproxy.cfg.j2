@@ -131,19 +131,22 @@ frontend fe_https
 {% endfor %}
 
 {% for host in lb_http %}
-backend be_{{host.name}}
+backend {{host.name}}
     mode    http
     cookie  SERVERID insert indirect maxidle 60m secure httponly nocache
     {% for be_server in host.backend_hosts -%}
-    {% set server_name = be_server.split('.')[0] + ":" + host.backend_port|string -%}
+    {% set colour = "blue"  if "blue"  in groups and be_server in groups  else
+                    "green" if "green" in groups and be_server in groups  else
+                    "server" -%}
+    {% set server_name = "{}-{}".format(colour, loop.index) -%}
     server {{server_name}} {{be_server}}:{{host.backend_port}} ssl check cookie {{be_server}}
     {% endfor %}
 
 {% endfor %}
 
 {% for host in lb_ldap %}
-{% set name = host.hostname.split('.')[0] -%}
-listen ldap_{{name}}_{{host.frontend_port}}
+{% set name = "{}{}".format(host.hostname.split('.')[0], "" if loop.index==1 else "{}".format(loop.index)) -%}
+listen {{name}}
 {% if enable_https %}
     bind    *:{{host.frontend_port}} ssl crt {{host.hostname}}/priv+fullchain.pem transparent
     bind [::]:{{host.frontend_port}} ssl crt {{host.hostname}}/priv+fullchain.pem transparent
@@ -152,11 +155,14 @@ listen ldap_{{name}}_{{host.frontend_port}}
     bind [::]:{{host.frontend_port}} transparent
 {% endif %}
 
-{% for be_server in host.backend_hosts %}
-{% set servername = be_server.split('.')[0] + ":" + host.backend_port|string %}
-    server {{servername}} {{be_server}}:{{host.backend_port}} ssl check weight 10 {% if loop.index==1 %}on-marked-up shutdown-backup-sessions{%else%}backup{%endif%}
+    {% for be_server in host.backend_hosts -%}
+    {% set colour = "blue"  if "blue"  in groups and be_server in groups["blue"]  else
+                    "green" if "green" in groups and be_server in groups["green"] else
+                    "server" -%}
+    {% set server_name = "{}-{}".format(colour, loop.index) -%}
+    server {{server_name}} {{be_server}}:{{host.backend_port}} ssl check weight 10 {% if loop.index==1 %}on-marked-up shutdown-backup-sessions{%else%}backup{%endif%}
 
-{% endfor %}
+    {% endfor %}
 
     acl ldap_sbs_allow src -f {{ haproxy_ldap_acl_file }}
     acl ldap_local_allow src 127.0.0.1 ::1 {{ iprange.internal }}
