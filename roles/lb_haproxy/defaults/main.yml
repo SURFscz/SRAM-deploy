@@ -1,5 +1,4 @@
 ---
-enable_https: true
 use_fixed_cert: true
 enable_ratelimit: true
 

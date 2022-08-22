@@ -85,12 +85,10 @@
   tasks:
     - { import_tasks: "tasks/versions.yml", tags: ['common'] }
   roles:
-    - { role: http_redirect,   tags: ['lb','http_redirect']    }
-    - { role: tls_letsencrypt, tags: ['lb','tls_letsencrypt'],
-        when: enable_https and not use_fixed_cert              }
-    - { role: tls_fixed_cert,  tags: ['lb','tls_fixedcert'],
-        when: enable_https and use_fixed_cert                  }
-    - { role: lb_haproxy,      tags: ['lb','haproxy']          }
+    - { role: http_redirect,   tags: ['lb','http_redirect']                             }
+    - { role: tls_letsencrypt, tags: ['lb','tls_letsencrypt'], when: not use_fixed_cert }
+    - { role: tls_fixed_cert,  tags: ['lb','tls_fixedcert'],   when: use_fixed_cert     }
+    - { role: lb_haproxy,      tags: ['lb','haproxy']                                   }
 
 - name: "database"
   hosts: db
