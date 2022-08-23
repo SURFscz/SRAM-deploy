@@ -2,16 +2,24 @@
 
 import time
 import json
+import traceback
 from selenium.webdriver import Chrome
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support.expected_conditions import staleness_of, title_is, presence_of_element_located
 from selenium.webdriver.common.by import By
 
+
+class CustomChrome(Chrome):
+    def get(self, url) -> None:
+        print(f"Fetching page '{url}'")
+        return super(CustomChrome, self).get(url)
+
+
 options = Options()
 options.headless = True
 options.add_argument('ignore-certificate-errors')
-browser = Chrome(options=options)
+browser = CustomChrome(options=options)
 wait = WebDriverWait(browser, timeout=2)
 
 send_command = ('POST', '/session/$sessionId/chromium/send_command')
@@ -34,11 +42,11 @@ try:
     browser.get(start)
 
     # Wait for login button
-    wait.until(presence_of_element_located((By.XPATH, "//a[@href='/Login' and text()='Login']")),
+    wait.until(presence_of_element_located((By.XPATH, "//a[@href='/Login']")),
                'Timeout waiting for Login button')
 
     # Click login
-    login = browser.find_element(By.XPATH, "//a[@href='/Login' and text()='Login']")
+    login = browser.find_element(By.XPATH, "//a[@href='/Login']")
     login.click()
 
     # Wait for login button to disappear
@@ -55,7 +63,7 @@ try:
     # Wait for user profile to appear
     wait.until(presence_of_element_located((By.XPATH, "//label[@for='aup']")), 'Timeout waiting for AUP')
 
-    browser.find_element(By.XPATH, "//div[@class='checkbox']").click()
+    browser.find_element(By.XPATH, "//label[@for='aup']").click()
     browser.find_element(By.XPATH, "//a[text()='Looks good, onwards']").click()
 
     # Wait for landing page
@@ -82,11 +90,11 @@ try:
     browser.get(start)
 
     # Wait for login button
-    wait.until(presence_of_element_located((By.XPATH, "//a[@href='/Login' and text()='Login']")),
+    wait.until(presence_of_element_located((By.XPATH, "//a[@href='/Login']")),
                'Timeout waiting for Login button')
 
     # Click login
-    login = browser.find_element(By.XPATH, "//a[@href='/Login' and text()='Login']")
+    login = browser.find_element(By.XPATH, "//a[@href='/Login']")
     login.click()
 
     # Wait for login button to disappear
@@ -103,7 +111,7 @@ try:
     # Wait for user profile to appear
     wait.until(presence_of_element_located((By.XPATH, "//label[@for='aup']")), 'Timeout waiting for AUP')
 
-    browser.find_element(By.XPATH, "//div[@class='checkbox']").click()
+    browser.find_element(By.XPATH, "//label[@for='aup']").click()
     browser.find_element(By.XPATH, "//a[text()='Looks good, onwards']").click()
 
     # Wait for 2fa information
@@ -119,8 +127,22 @@ try:
 except Exception as e:
     url = browser.current_url
     print(f"url: {url}")
-    page = browser.page_source
-    print(f"page: {page}")
+
+    tr = traceback.extract_tb(e.__traceback__)[0]
+    print(f"error {e.args[0]} on line {tr.lineno} of '{tr.filename}'")
+    print("  ", tr.line)
+
+    print("error: ", e.args[0])
+
+    from bs4 import BeautifulSoup
+    page = BeautifulSoup(browser.page_source, 'html.parser').prettify()
+    print(f"page:")
+    print(page)
+    with open("page.html", "w") as f:
+        f.write(page)
+
     browser.save_screenshot("screenshot.png")
     browser.close()
-    exit(e)
+
+    print("", end="", flush=True)
+    exit(1)

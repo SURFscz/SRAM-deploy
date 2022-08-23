@@ -3,7 +3,7 @@
 global
     log /dev/log    local0
     chroot /var/lib/haproxy
-    stats socket /run/haproxy/admin.sock mode 660 level admin
+    stats socket /run/haproxy/admin.sock mode 660 group {{haproxy_socket_group}} level admin
     stats timeout 30s
     user    haproxy
     group   haproxy
@@ -14,18 +14,18 @@ global
 
     # Default SSL material locations
     ca-base /etc/ssl/certs
-{% if enable_https and use_fixed_cert %}
+{% if use_fixed_cert %}
     crt-base {{cert_dir}}
-{% elif enable_https %}
-    crt-base {{letsencrypt.cert_dir}}
+{% else %}
+    crt-base {{letsencrypt_cert_dir}}
 {% endif %}
 
     ssl-default-bind-ciphers ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA256
     ssl-default-bind-ciphersuites TLS_AES_128_GCM_SHA256:TLS_CHACHA20_POLY1305_SHA256:TLS_AES_256_GCM_SHA384
     ssl-default-bind-options no-sslv3 no-tlsv10 no-tlsv11
-{% if enable_https and haproxy.custom_dhparam %}
+{% if haproxy.custom_dhparam %}
     ssl-dh-param-file {{haproxy.dhparam_file}}
-{% elif enable_https %}
+{% else %}
     tune.ssl.default-dh-param {{haproxy.dhparam_keysize}}
 {% endif %}
 
@@ -51,13 +51,8 @@ defaults
 #  frontend
 # -------------------------------------------------------------------
 frontend fe_https
-{% if enable_https %}
     bind    *:443 ssl crt-list /etc/haproxy/crt-list.txt transparent alpn h2,http/1.1
     bind [::]:443 ssl crt-list /etc/haproxy/crt-list.txt transparent alpn h2,http/1.1
-{% else %}
-    bind    *:80 transparent
-    bind [::]:80 transparent
-{% endif %}
 
     mode    http
     option  httplog
@@ -67,7 +62,6 @@ frontend fe_https
     http-request redirect prefix https://{{host.to}} code 301 if { hdr(host) -i {{host.from}} }
 {% endfor %}
 
-{% if enable_https %}
     # always use https
     http-response set-header Strict-Transport-Security "max-age=16000000; includeSubDomains; preload;"
 
@@ -87,18 +81,12 @@ frontend fe_https
     # insert strict Feature-Policy if none was set
     acl has_fp_header res.hdr(Feature-Policy) -m found
     http-response set-header Feature-Policy "accelerometer: none; ambient-light-sensor: none; autoplay: none; battery: none; camera: none; display-capture: none; document-domain: none; encrypted-media: none; execution-while-not-rendered: self; execution-while-out-of-viewport: self; fullscreen: none; geolocation: none; gyroscope: none; layout-animations: self; legacy-image-formats: none; magnetometer: none; microphone: none; midi: none; navigation-override: none; oversized-images: self; payment: none; picture-in-picture: none; publickey-credentials: self; sync-xhr: self; usb: none; vr: none; wake-lock: none; xr-spatial-tracking: none" if !has_fp_header
-{% endif %}
 
     http-request set-header X-Forwarded-For "%[src]"
     http-request set-header X-Forwarded-Host "%[req.hdr(Host)]"
     http-request set-header X-Forwarded-Port "%[dst_port]"
-{% if enable_https %}
     http-request set-header X-Forwarded-Proto "https"
     http-request set-header Forwarded "for=%[src]; proto=https; by=%[dst]"
-{% else %}
-    http-request set-header X-Forwarded-Proto "http"
-    http-request set-header Forwarded "for=%[src]; proto=http; by=%[dst]"
-{% endif %}
 
 {% if enable_ratelimit %}
     http-request track-sc0 src table proxy_rates
@@ -131,32 +119,33 @@ frontend fe_https
 {% endfor %}
 
 {% for host in lb_http %}
-backend be_{{host.name}}
+backend {{host.name}}
     mode    http
     cookie  SERVERID insert indirect maxidle 60m secure httponly nocache
     {% for be_server in host.backend_hosts -%}
-    {% set server_name = be_server.split('.')[0] + ":" + host.backend_port|string -%}
+    {% set colour = "blue"  if "blue"  in groups and be_server in groups  else
+                    "green" if "green" in groups and be_server in groups  else
+                    "server" -%}
+    {% set server_name = "{}-{}".format(colour, loop.index) -%}
     server {{server_name}} {{be_server}}:{{host.backend_port}} ssl check cookie {{be_server}}
     {% endfor %}
 
 {% endfor %}
 
 {% for host in lb_ldap %}
-{% set name = host.hostname.split('.')[0] -%}
-listen ldap_{{name}}_{{host.frontend_port}}
-{% if enable_https %}
+{% set name = "{}{}".format(host.hostname.split('.')[0], "" if loop.index==1 else "{}".format(loop.index)) -%}
+listen {{name}}
     bind    *:{{host.frontend_port}} ssl crt {{host.hostname}}/priv+fullchain.pem transparent
     bind [::]:{{host.frontend_port}} ssl crt {{host.hostname}}/priv+fullchain.pem transparent
-{% else %}
-    bind    *:{{host.frontend_port}} transparent
-    bind [::]:{{host.frontend_port}} transparent
-{% endif %}
 
-{% for be_server in host.backend_hosts %}
-{% set servername = be_server.split('.')[0] + ":" + host.backend_port|string %}
-    server {{servername}} {{be_server}}:{{host.backend_port}} ssl check weight 10 {% if loop.index==1 %}on-marked-up shutdown-backup-sessions{%else%}backup{%endif%}
+    {% for be_server in host.backend_hosts -%}
+    {% set colour = "blue"  if "blue"  in groups and be_server in groups["blue"]  else
+                    "green" if "green" in groups and be_server in groups["green"] else
+                    "server" -%}
+    {% set server_name = "{}-{}".format(colour, loop.index) -%}
+    server {{server_name}} {{be_server}}:{{host.backend_port}} ssl check weight 10 {% if loop.index==1 %}on-marked-up shutdown-backup-sessions{%else%}backup{%endif%}
 
-{% endfor %}
+    {% endfor %}
 
     acl ldap_sbs_allow src -f {{ haproxy_ldap_acl_file }}
     acl ldap_local_allow src 127.0.0.1 ::1 {{ iprange.internal }}

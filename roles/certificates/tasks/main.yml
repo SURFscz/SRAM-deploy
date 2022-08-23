@@ -45,7 +45,7 @@
     owner: "root"
     group: "root"
     mode: 0644
-  when: "is_docker and enable_https and use_fixed_cert"
+  when: "is_docker"
   notify: "update certificates"
 
 - name: remove obsolete files

@@ -1,16 +1,4 @@
 ---
-- name: postalias
-  command:
-    cmd: "/usr/sbin/postalias hash:/etc/postfix/aliases"
-    chdir: "/etc/postfix"
-  notify: "restart postfix"
-
-- name: postmap virtual
-  command: "/usr/sbin/postmap hash:virtual"
-  args:
-    chdir: "/etc/postfix"
-  notify: "restart postfix"
-
 - name: restart nullmailer
   systemd:
     name: "nullmailer"

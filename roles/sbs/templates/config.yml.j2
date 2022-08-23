@@ -74,6 +74,7 @@ mail:
   suppress_sending_mails: False
   info_email: sram-support@surf.nl
   beheer_email: sram-beheer@surf.nl
+  eduteams_email: support+sram@eduteams.org
   # Do we mail a summary of new Organizations and Services to the beheer_email?
   audit_trail_notifications_enabled: {{ sbs_audit_trail_notifications_enabled }}
   account_deletion_notifications_enabled: True
@@ -104,15 +105,13 @@ organisation_categories:
   - "SURF"
 
 feature:
-  admin_users_upgrade: False
-  admin_users_upgrade_url: "{{ sbs_base_url }}/api/users/upgrade_super_user"
-  admin_users_upgrade_redirect_url: {{ sbs_base_url }}
   seed_allowed: {{ sbs_seed_allowed }}
   api_keys_enabled: {{ sbs_api_keys_enabled }}
   feedback_enabled: {{ sbs_feedback_enabled }}
   impersonation_allowed: {{ sbs_impersonation_allowed }}
   sbs_swagger_enabled: {{ sbs_swagger_enabled }}
   admin_platform_backdoor_totp: {{ sbs_admin_platform_backdoor_totp }}
+  past_dates_allowed: {{ sbs_past_dates_allowed }}
 
 metadata:
   idp_url: https://metadata.surfconext.nl/edugain-downstream.xml

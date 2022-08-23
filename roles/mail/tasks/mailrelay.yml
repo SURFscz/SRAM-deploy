@@ -1,8 +1,18 @@
 ---
 - name: install postfix
   apt:
-    name: "postfix"
+    name:
+      - "postfix"
+      - "libsasl2-modules"
     state: "present"
+
+- name: remove obsolete compiled database files
+  file:
+    path: "/etc/postfix/{{item}}"
+    state: "absent"
+  with_items:
+    - "aliases.db"
+    - "virtual.db"
 
 - name: install postfix config
   template:
@@ -21,7 +31,6 @@
     src: "aliases.j2"
     dest: "/etc/postfix/aliases"
   notify:
-    - "postalias"
     - "restart postfix"
 
 - name: install postfix virtual addresses
@@ -29,10 +38,21 @@
     src: "virtual.j2"
     dest: "/etc/postfix/virtual"
   notify:
-    - "postmap virtual"
     - "restart postfix"
 
-- name: remove useless symlnk (gives warning)
+- name: install smarthost relay_credentials
+  copy:
+    content: |
+      [{{mail.relay_to}}]:{{mail.relay_port}} {{mail.relay_username}}:{{mail.relay_password}}
+    dest: "{{postfix_relay_secret_file}}"
+    owner: "root"
+    mode: "0600"
+  no_log: true
+  when: "'relay_password' in mail"
+  notify:
+    - "restart postfix"
+
+- name: remove useless symlink (gives warning)
   file:
     path: "/etc/postfix/makedefs.out"
     state: absent
