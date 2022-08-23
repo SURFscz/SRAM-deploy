@@ -114,7 +114,7 @@
         src: "ocsp-letsencrypt.j2"
         dest: "/etc/letsencrypt/renewal-hooks/post/"
         mode: '0755'
-  when: not is_docker"
+  when: "not is_docker"
 
 - name: create override dir
   file:
