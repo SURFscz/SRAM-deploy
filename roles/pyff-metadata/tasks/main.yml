@@ -41,6 +41,12 @@
   become_user: "pyff"
   notify: "run pyff-metadata job"
 
+- name: Make feeds.sh executable
+  file:
+    path: "{{ pyff_env_dir }}/feeds.sh"
+    state: "file"
+    mode: "0755"
+
 - name: Create pyFF systemd job timer
   template:
     src: "{{item}}.j2"
