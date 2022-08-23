@@ -3,15 +3,22 @@ Description=SBS
 After=network.target
 
 [Service]
-Environment="CONFIG=config/config.yml"
-Type=simple
+DynamicUser=true
+User=_sram_sbs
+Group=_sram_sbs
+SupplementaryGroups={{sbs_group}}
+
 WorkingDirectory=/opt/sbs/sbs
+ReadWritePaths={{sbs_log_dir}}
+NoNewPrivileges=true
+
+Environment="CONFIG=config/config.yml"
+
+Type=simple
 ExecStart=/opt/sbs/sbs-env/bin/python -m server
+
 Restart=on-failure
 RestartSec=10
-StandardOutput=syslog
-StandardError=syslog
-SyslogIdentifier=sbs
 
 [Install]
 WantedBy=multi-user.target

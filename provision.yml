@@ -102,8 +102,7 @@
   tasks:
     - { import_tasks: "tasks/versions.yml", tags: ['common'] }
   roles:
-    - { role: http_apache, tags: ['sbs']             }
-    - { role: sbs,         tags: ['sbs','sbs-only']  }
+    - { role: sbs,         tags: ['sbs']  }
 
 - name: "ldap"
   hosts: ldap

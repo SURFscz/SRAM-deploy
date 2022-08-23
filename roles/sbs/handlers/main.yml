@@ -1,1 +1,11 @@
 ---
+- name: "systemd daemon-reload"
+  systemd:
+    daemon_reload: true
+
+- name: "restart sbs"
+  systemd:
+    name: "sram-sbs.service"
+    state: "restarted"
+    enabled: true
+
