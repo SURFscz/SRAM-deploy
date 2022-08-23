@@ -1,9 +1,12 @@
 ---
+metadata_idps_source: "https://metadata.surfconext.nl/idps-metadata.xml"
 metadata_idps_xrd: "{{pyff_env_dir}}/certs/surfconext.xrd"
-metadata_idps_targetfile: "{{pyff_metadata_dir}}/idps.xml"
+metadata_idps_feed: "{{ pyff_env_dir }}/idps_feed.fd"
+metadata_idps_file: "idps.xml"
+metadata_idps_target: "{{pyff_metadata_dir}}/{{ metadata_idps_file }}"
 metadata_source_dir: "/opt/metadata-src"
+metadata_idps_files: {}
 
-metadata_idps_feed: "https://metadata.surfconext.nl/idps-metadata.xml"
 metadata_idps_cert: |
     -----BEGIN CERTIFICATE-----
     MIIEKjCCAhICEG12w6QqayYAWntxDN59dU0wDQYJKoZIhvcNAQELBQAwPDELMAkG
@@ -34,4 +37,14 @@ metadata_idps_filters:
   - "https://idp.surfnet.nl"
   - "https://sso.surfsara.nl/saml/saml2/idp/metadata.php"
 
-metadata_idps_files: {}
+metadata_proxy_frontend: "https://proxy.sram.surf.nl/metadata/frontend.xml"
+metadata_proxy_frontend_feed: "{{ pyff_env_dir }}/frontend_feed.fd"
+metadata_proxy_frontend_entityid: "https://proxy.sram.surf.nl/proxy"
+metadata_proxy_frontend_file: "frontend.xml"
+metadata_proxy_frontend_target: "{{pyff_metadata_dir}}/{{ metadata_proxy_frontend_file }}"
+
+metadata_proxy_backend: "https://proxy.sram.surf.nl/metadata/backend.xml"
+metadata_proxy_backend_feed: "{{ pyff_env_dir }}/backend_feed.fd"
+metadata_proxy_backend_entityid: "https://proxy.sram.surf.nl/metadata/backend.xml"
+metadata_proxy_backend_file: "backend.xml"
+metadata_proxy_backend_target: "{{pyff_metadata_dir}}/{{ metadata_proxy_backend_file }}"

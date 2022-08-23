@@ -32,7 +32,10 @@
     src: "{{item}}.j2"
     dest: "{{ pyff_env_dir }}/{{item}}"
   with_items:
-    - "idp_feed.fd"
+    - "idps_feed.fd"
+    - "frontend_feed.fd"
+    - "backend_feed.fd"
+    - "feeds.sh"
     - "transform.xslt"
   become: "yes"
   become_user: "pyff"

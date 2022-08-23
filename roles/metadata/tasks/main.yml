@@ -15,9 +15,13 @@
     path: "{{ item }}"
     state: "directory"
     mode: "0755"
+    owner: "pyff"
+    group: "pyff"
+    recurse: yes
   with_items:
     - "{{ metadata_project_dir }}"
     - "{{ metadata_documentroot }}"
+    - "{{ metadata_documentroot }}/metadata"
 
 - name: Copy metadata nginx configuration
   template:

@@ -1,0 +1,9 @@
+#!/bin/sh
+{{ pyff_env_dir }}/bin/pyff {{ metadata_idps_feed }}
+{{ pyff_env_dir }}/bin/pyff {{ metadata_proxy_frontend_feed }}
+{{ pyff_env_dir }}/bin/pyff {{ metadata_proxy_backend_feed }}
+/bin/chmod 644 {{pyff_metadata_dir}}/*.xml.new
+
+/bin/cp {{ metadata_idps_target }}.new {{ metadata_documentroot }}/idps.xml
+/bin/cp {{ metadata_proxy_frontend_target }}.new {{ metadata_documentroot }}/metadata/{{ metadata_proxy_frontend_file }}
+/bin/cp {{ metadata_proxy_backend_target }}.new {{ metadata_documentroot }}/metadata/{{ metadata_proxy_backend_file }}

@@ -1,0 +1,14 @@
+- load:
+  - "{{ metadata_proxy_backend }}"
+- select:
+  - "{{ metadata_proxy_backend_entityid }}"
+- xslt:
+    stylesheet: transform.xslt
+- finalize:
+    cacheDuration: P7D
+    validUntil: P14D
+- sign:
+    key: certs/signing.key
+    cert: certs/signing.crt
+- publish: {{ metadata_proxy_backend_target }}.new
+- stats
