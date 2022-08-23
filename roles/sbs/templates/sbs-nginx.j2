@@ -3,8 +3,6 @@ server {
     server_name _        sbs.vm.scz-vm.net;
     ssl_certificate      /etc/ssl/vm.scz-vm.net.crt;
     ssl_certificate_key  /etc/ssl/vm.scz-vm.net.key;
-    ssl_protocols        TLSv1 TLSv1.1 TLSv1.2;
-    ssl_ciphers          HIGH:!aNULL:!MD5;
 
     root /opt/sbs/sbs/client/build;
 
