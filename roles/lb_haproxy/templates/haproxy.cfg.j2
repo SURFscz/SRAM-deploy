@@ -114,7 +114,7 @@ frontend fe_https
     http-request deny if acl_{{host.hostname}} !acl_ip_{{host.hostname}}
 {% endif %}
 {% endif %}
-    use_backend be_{{host.name}} if acl_{{host.hostname}}
+    use_backend {{host.name}} if acl_{{host.hostname}}
 
 {% endfor %}
 
