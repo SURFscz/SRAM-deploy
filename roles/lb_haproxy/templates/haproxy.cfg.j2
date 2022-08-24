@@ -135,6 +135,7 @@ backend {{host.name}}
 {% for host in lb_ldap %}
 {% set name = "{}{}".format(host.hostname.split('.')[0], "" if loop.index==1 else "{}".format(loop.index)) -%}
 listen {{name}}
+    no option dontlognull
     bind    *:{{host.frontend_port}} ssl crt {{host.hostname}}/priv+fullchain.pem transparent
     bind [::]:{{host.frontend_port}} ssl crt {{host.hostname}}/priv+fullchain.pem transparent
 
@@ -153,7 +154,7 @@ listen {{name}}
       {%- for ip in iprange.get("vpn", {}).values() %} {{ip}}{% endfor %}
       {%- for ip in iprange.get("vpn6",{}).values() %} {{ip}}{% endfor %}
 
-    tcp-request connection reject unless ldap_sbs_allow or ldap_local_allow or ldap_vpn_allow
+    tcp-request content reject unless ldap_sbs_allow or ldap_local_allow or ldap_vpn_allow
 
     timeout client 900s
     timeout server 901s
