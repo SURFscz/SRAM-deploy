@@ -36,7 +36,7 @@ jobs:
         run: |
           ./docker/docker-compose.yml.py --ci > ./docker/docker-compose-ci.yml
           docker-compose -f docker/docker-compose-ci.yml stop
-          docker-compose -f docker/docker-compose-ci.yml rm sbs
+          docker-compose -f docker/docker-compose-ci.yml rm -f sbs
 
       - name: Start CI env
         run: |
