@@ -88,7 +88,7 @@
           perm: "ALL"
         - user: "{{ sbs_dbbackup_user }}"
           passwd: "{{ sbs_dbbackup_password }}"
-          perm: "SELECT,SHOW VIEW,EVENT,TRIGGER"
+          perm: "SELECT"
       no_log: "{{sram_ansible_nolog}}"
       notify: "restart apache"
 
