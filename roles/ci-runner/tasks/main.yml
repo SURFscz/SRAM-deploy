@@ -1,14 +1,15 @@
 ---
 - name: "Install packages"
-  apt:
+  ansible.builtin.apt:
     name:
       - "docker-ce"
       - "docker-ce-cli"
       - "docker-compose"
       - "ansible"
+      - "apache2"
 
 - name: "Fix cgroup v1 for docker"
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: "/etc/default/grub"
     line: >
       GRUB_CMDLINE_LINUX="systemd.legacy_systemd_cgroup_controller=yes
@@ -18,6 +19,67 @@
 
 # TODO:
 # - add apache (of nog liever: nginx)
-# -
-# - add user for ci-runner (draai nu nog als martin)
+- name: Enable Apache modules
+  community.general.apache2_module:
+    state: present
+    name: "{{ item }}"
+  with_items:
+    - ssl
+    - proxy
+    - proxy_http
+
+- name: Create Apache ci-runner config
+  ansible.builtin.template:
+    src: "ci-runner.conf.j2"
+    dest: "/etc/apache2/sites-available/ci-runner.conf"
+    mode: 0644
+
+- name: Link ci-runner config to sites-enabled
+  ansible.builtin.file:
+    src: "/etc/apache2/sites-available/ci-runner.conf"
+    dest: "/etc/apache2/sites-enabled/ci-runner.conf"
+    state: "link"
+
+- name: Write ci-runner private key
+  copy:
+    content: "{{cirunner_cert.key}}"
+    dest: "{{ ssl_certs_dir }}/ci-runner.sram.surf.nl.key"
+    owner: "root"
+    group: "ssl-cert"
+    mode: "0640"
+  no_log: "{{sram_ansible_nolog}}"
+
+- name: Write ci-runner certificate
+  copy:
+    content: "{{cirunner_cert.cert}}"
+    dest: "{{ ssl_certs_dir }}/ci-runner.sram.surf.nl.crt"
+    owner: "root"
+    group: "root"
+    mode: 0644
+
+- name: Write ci-runner chain
+  copy:
+    content: |
+      {{cirunner_cert.chain}}
+      {{cirunner_cert.cert}}
+    dest: "{{ ssl_certs_dir }}/ci-runner.sram.surf.nl.fullchain.crt"
+    owner: "root"
+    group: "root"
+    mode: 0644
+
+# - add user for ci-runner (draait nu nog als martin)
+- name: Add ci-runner group
+  ansible.builtin.group:
+    name: runner
+
+- name: Add ci-runner user
+  ansible.builtin.user:
+    name: runner
+    group: runner
+    shell: /bin/bash
+
 # - install github action runner
+# This seems to be an installation wizard that needs
+# a registration secret created by "adding a self-hosted runner machine"
+# in Github Settings/Actions/Runners:
+# https://docs.github.com/en/actions/hosting-your-own-runners/adding-self-hosted-runners
