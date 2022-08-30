@@ -29,9 +29,6 @@ servers:
 fake_hostnames: true
 use_logserver: false
 
-enable_https: true
-http_proto: "http{% if enable_https %}s{% endif %}"
-
 use_fixed_cert: true
 cert_dir: "/etc/ssl/scz"
 
@@ -135,7 +132,7 @@ docker_ports:
 
 # Enable SBS deploy
 sbs_enabled: true
-sbs_api_url: "{{ http_proto }}://{{ hostnames.sbs }}/"
+sbs_api_url: "https://{{ hostnames.sbs }}/"
 
 # No Zabbix on VM/Travis
 zabbix_enabled: false

@@ -1,0 +1,6 @@
+---
+- name: enable nginx
+  include_tasks: "nginx.yml"
+
+# make sure handlers are run before we are continuing with the play
+- meta: flush_handlers

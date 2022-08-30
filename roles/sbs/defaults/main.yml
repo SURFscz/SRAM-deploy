@@ -24,6 +24,7 @@ sbs_mail_port: "{{ mail.relay_port }}"
 sbs_file_owner: "root"
 
 sbs_session_lifetime: 1440
+sbs_secret_key_suffix: ""
 
 sbs_oidc_crypto_password: "CHANGEME"
 sbs_uid_attribute: "sub"
@@ -55,6 +56,7 @@ sbs_totp_token_name: "SRAM"
 sbs_notifications_enabled: True
 sbs_impersonation_allowed: False
 sbs_admin_platform_backdoor_totp: False
+sbs_past_dates_allowed: False
 
 sbs_oidc_config_url: "http://localhost/.well-known/openid-configuration"
 sbs_oidc_authz_endpoint: "http://localhost/OIDC/authorization"

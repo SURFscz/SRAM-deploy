@@ -55,7 +55,8 @@ jobs:
           sudo apt -q update
           sudo apt -y purge ansible
           sudo apt -y install ansible bridge-utils apparmor-utils
-          sudo pip3 install --upgrade wheel yamllint jinja2 pyyaml selenium zabbix-api requests
+          sudo pip3 install --upgrade wheel yamllint jinja2 pyyaml selenium \
+                                      zabbix-api requests bs4
           git clone https://github.com/dw/mitogen.git ~/mitogen
           cat docker/hosts | sudo tee -a /etc/hosts
 
@@ -135,7 +136,9 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: "sbs-logintest"
-          path: "screenshot.png"
+          path: |
+            screenshot.png
+            page.html
         if: failure()
 
       - name: Show error output
@@ -147,9 +150,9 @@ jobs:
               echo ===apache errorlog===;
               cat /var/log/apache2/error.log;
             fi;
-            if [ -e /opt/sbs/sbs/log/sbs.log ]; then
+            if [ -e /opt/sbs ]; then
               echo ===sbs log===;
-              cat /opt/sbs/sbs/log/sbs.log
+              cat /opt/sbs/log/sbs_debug.log
             fi;
             echo ===apt log===; cat /var/log/apt/term.log
             echo ===netstat===; netstat -lnp

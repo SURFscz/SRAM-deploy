@@ -1,0 +1,6 @@
+---
+demosp_name: "sram-demosp"
+demosp_user: "sram-demosp"
+demosp_group: "sram-demosp"
+demosp_dir: "/opt/{{demosp_name}}"
+demosp_html_dir: "{{demosp_dir}}/html"

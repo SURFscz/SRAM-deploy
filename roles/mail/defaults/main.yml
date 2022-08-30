@@ -1,3 +1,5 @@
 ---
 mail_relay_port: 25
 mail_relay: false
+
+postfix_relay_secret_file: "/etc/postfix/relay_credentials"

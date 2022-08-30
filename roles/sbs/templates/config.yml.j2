@@ -9,7 +9,8 @@ redis:
   port: "{{sbs_redis_port}}"
   password:
 
-secret_key: {{ sbs_db_secret }}
+# add a per-release suffix here to invalidate sessions on new releases
+secret_key: {{ sbs_db_secret }}{{sbs_secret_key_suffix}}
 
 permanent_session_lifetime: {{ sbs_session_lifetime }}
 
@@ -73,6 +74,7 @@ mail:
   suppress_sending_mails: False
   info_email: sram-support@surf.nl
   beheer_email: sram-beheer@surf.nl
+  eduteams_email: support+sram@eduteams.org
   # Do we mail a summary of new Organizations and Services to the beheer_email?
   audit_trail_notifications_enabled: {{ sbs_audit_trail_notifications_enabled }}
   account_deletion_notifications_enabled: True
@@ -103,15 +105,13 @@ organisation_categories:
   - "SURF"
 
 feature:
-  admin_users_upgrade: False
-  admin_users_upgrade_url: "{{ sbs_base_url }}/api/users/upgrade_super_user"
-  admin_users_upgrade_redirect_url: {{ sbs_base_url }}
   seed_allowed: {{ sbs_seed_allowed }}
   api_keys_enabled: {{ sbs_api_keys_enabled }}
   feedback_enabled: {{ sbs_feedback_enabled }}
   impersonation_allowed: {{ sbs_impersonation_allowed }}
   sbs_swagger_enabled: {{ sbs_swagger_enabled }}
   admin_platform_backdoor_totp: {{ sbs_admin_platform_backdoor_totp }}
+  past_dates_allowed: {{ sbs_past_dates_allowed }}
 
 metadata:
   idp_url: https://metadata.surfconext.nl/edugain-downstream.xml
@@ -180,6 +180,13 @@ membership_expiration:
   # How many days before actual expiration do we mail the co admin and member
   expired_warning_mail_days_threshold: 10
 
+orphan_users:
+  # Do we daily check for users that are orphans so they can be deleted?
+  enabled:  {{ sbs_notifications_enabled }}
+  cron_hour_of_day: {{ sbs_cron_hour_of_day }}
+  # How long after created do we delete orphan users
+  delete_days_threshold: 14
+
 ldap:
   url: "{{ sbs_ldap_url }}"
   bind_account: "{{ sbs_ldap_bind_account }}"
@@ -192,18 +199,20 @@ mfa_sso_time_in_minutes: {{sbs_mfa_sso_minutes}}
 mfa_fallback_enabled: {{sbs_mfa_fallback_enabled}}
 
 # Lower case entity ID's allowed skipping MFA
-mfa_idp_allowed:
-{% for idp in sbs_mfa_idp_allowed %}
-  - schac_home: "{{ idp.schac_home }}"
-    entity_id: "{{ idp.entity_id }}"
-{% endfor %}
+# TODO: fix this
+mfa_idp_allowed: {{sbs_mfa_idp_allowed}}
+#{% for idp in sbs_mfa_idp_allowed %}
+#  - schac_home: "{{ idp.schac_home }}"
+#    entity_id: "{{ idp.entity_id }}"
+#{% endfor %}
 
 # Lower case schachome organisations / entity ID's where SURFSecure ID is used for step-up
-ssid_identity_providers:
-{% for idp in sbs_ssid_identity_providers %}
-  - schac_home: "{{ idp.schac_home }}"
-    entity_id: "{{ idp.entity_id }}"
-{% endfor %}
+# TODO: fix this
+ssid_identity_providers: {{sbs_ssid_identity_providers}}
+#{% for idp in sbs_ssid_identity_providers %}
+#  - schac_home: "{{ idp.schac_home }}"
+#    entity_id: "{{ idp.entity_id }}"
+#{% endfor %}
 
 ssid_config_folder: saml
 

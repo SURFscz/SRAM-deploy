@@ -19,21 +19,22 @@
       changed_when: false
       run_once: true
 
-- name: test1
-  hosts: all
+- hosts: all
+  serial: 20
+  gather_facts: true
+  tags: always
+  become: false
   tasks:
-    - debug:
-        var: sram_ansible_nolog
-- name: test2
-  hosts: all
-  tasks:
-    - debug:
-        msg: "deploying '{{environment_name}}'"
+    - name: set local time
+      run_once: true
+      set_fact:
+        local_time: "{{ansible_date_time.iso8601}}"
 
 # first gather facts from all hosts that we're actually deploying to
 # TODO: this is not aggressive enough; we need to gather facts from _all_
 #       hosts, even if we're limiting the actual deployments
 - hosts: all
+  tags: always
   become: yes
   serial: 20
   no_log: "{{sram_ansible_nolog}}}"
@@ -66,7 +67,6 @@
 - name: "bhr2"
   hosts: "bhr2"
   roles:
-    - { role: http_dummy,        tags: ['bhr2','backup_collector']                        }
     - { role: backup_collector,  tags: ['bhr2','backup_collector']                        }
     - { role: logging_collector, tags: ['bhr2','logging_collector']                       }
     - { role: zabbix-server,     tags: ['bhr2','zabbix-server'],    when: "not is_docker" }
@@ -79,7 +79,6 @@
 - name: "bhr1"
   hosts: "bhr1"
   roles:
-    - { role: 'tools',   tags: ['bhr1','tools']}
 
 - name: "ci-runner"
   hosts: "bhr12"
@@ -91,12 +90,10 @@
   tasks:
     - { import_tasks: "tasks/versions.yml", tags: ['common'] }
   roles:
-    - { role: http_nginx,      tags: ['lb','http_nginx']       }
-    - { role: tls_letsencrypt, tags: ['lb','tls_letsencrypt'],
-        when: enable_https and not use_fixed_cert              }
-    - { role: tls_fixed_cert,  tags: ['lb','tls_fixedcert'],
-        when: enable_https and use_fixed_cert                  }
-    - { role: lb_haproxy,      tags: ['lb','haproxy']          }
+    - { role: http_redirect,   tags: ['lb','http_redirect']                             }
+    - { role: tls_letsencrypt, tags: ['lb','tls_letsencrypt'], when: not use_fixed_cert }
+    - { role: tls_fixed_cert,  tags: ['lb','tls_fixedcert'],   when: use_fixed_cert     }
+    - { role: lb_haproxy,      tags: ['lb','haproxy']                                   }
 
 - name: "database"
   hosts: db
@@ -104,15 +101,6 @@
     - { import_tasks: "tasks/versions.yml", tags: ['common'] }
   roles:
     - { role: db_server,        tags: ['db', 'db-server'] }
-
-- name: "client"
-  hosts: client
-  tasks:
-    - { import_tasks: "tasks/versions.yml", tags: ['common'] }
-  roles:
-    - { role: http_apache,          tags: ['client','client-base'  ] }
-    - { role: client-base,          tags: ['client','client-base'  ] }
-    - { role: oidc-op,              tags: ['client','oidc-op'      ] }
 
 - name: "sbs"
   hosts: sbs
@@ -142,8 +130,24 @@
     - { import_tasks: "tasks/versions.yml", tags: ['common'] }
   roles:
     - { role: pyff-metadata, tags: ['meta','pyff-metadata']}
-    - { role: http_dummy,    tags: ['meta','http'    ]     }
     - { role: metadata,      tags: ['meta','metadata']     }
+
+- name: "client"
+  hosts: client
+  tasks:
+    - { import_tasks: "tasks/versions.yml", tags: ['common'] }
+  roles:
+    - { role: http_apache,          tags: ['client','client-base'  ] }
+    - { role: client-base,          tags: ['client','client-base'  ] }
+    - { role: oidc-op,              tags: ['client','oidc-op'      ] }
+
+- name: "demo clients"
+  hosts: "bhr13"
+  tasks:
+    - { import_tasks: "tasks/versions.yml", tags: ['common'] }
+  roles:
+    - { role: demo-sp,              tags: ['bhr13','demo-sp'] }
+    - { role: tools,                tags: ['bhr13','tools']   }
 
 - name: "sandbox"
   hosts: sandbox1

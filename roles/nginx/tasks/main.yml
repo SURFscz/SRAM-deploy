@@ -1,0 +1,41 @@
+# install a dummy http server
+---
+- name: install nginx
+  apt:
+    name: "nginx"
+    state: "present"
+
+- name: remove upstream nginx default
+  file:
+    dest: "{{item}}"
+    state: "absent"
+  with_items:
+    - "/etc/nginx/sites-enabled/default"
+    - "/etc/nginx/sites-enabled/00-default"
+
+- name: install our NGINX default file
+  template:
+    src: "default.j2"
+    dest: "/etc/nginx/sites-available/scz-default"
+
+- name: Create symlink to default in /etc/nginx/sites-enabled
+  file:
+    src: "/etc/nginx/sites-available/scz-default"
+    dest: "/etc/nginx/sites-enabled/00-scz-default"
+    state: "link"
+  notify: "restart nginx"
+
+- name: install logging config
+  copy:
+    src: "proxy_log.conf"
+    dest: "/etc/nginx/conf.d"
+  notify: "restart nginx"
+
+# needs to be changed in this file, can't override lateron
+- name: disable gzip to prevent BREACH
+  lineinfile:
+    path: "/etc/nginx/nginx.conf"
+    line: "\tgzip off;"
+    regexp: "^\\s*gzip\\s"
+  notify: "restart nginx"
+

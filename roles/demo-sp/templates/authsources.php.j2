@@ -1,0 +1,41 @@
+<?php
+$config = array();
+
+$config['admin'] = array(
+        // The default is to use core:AdminPassword, but it can be replaced with
+        // any authentication source.
+
+        'core:AdminPassword',
+    );
+
+$config['test'] = array(
+        'saml:SP',
+        'entityID' => null,
+        'certificate' => "saml.pem",
+        'privatekey' => "saml.key",
+        'idp' => "https://proxy.acc.sram.eduteams.org/proxy",
+        'name' => [ 'en' => 'SRAM Test Demo SP' ],
+        'description' => [ 'en' => 'SURF Research Access Management demo SP For TEST' ],
+);
+
+$config['acc'] = array(
+        'saml:SP',
+        'entityID' => null,
+        'certificate' => "saml.pem",
+        'privatekey' => "saml.key",
+        'idp' => "https://proxy.acc.sram.eduteams.org/proxy",
+        'name' => [ 'en' => 'SRAM Acc Demo SP' ],
+        'description' => [ 'en' => 'SURF Research Access Management demo SP For ACC' ],
+);
+
+$config['prd'] = array(
+        'saml:SP',
+        'entityID' => null,
+        'certificate' => "saml.pem",
+        'privatekey' => "saml.key",
+        'idp' => "https://proxy.sram.surf.nl/proxy",
+        'name' => [ 'en' => 'SRAM Prod Demo SP' ],
+        'description' => [ 'en' => 'SURF Research Access Management demo SP For PROD' ],
+);
+
+#        'signature.algorithm' => 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256',
