@@ -43,12 +43,12 @@
 - name: install smarthost relay_credentials
   copy:
     content: |
-      [{{mail.relay_to}}]:{{mail.relay_port}} {{mail.relay_username}}:{{mail.relay_password}}
+      [{{mail.relay_to}}]:{{mail.relay_port}} {{mail_relay_username}}:{{mail_relay_password}}
     dest: "{{postfix_relay_secret_file}}"
     owner: "root"
     mode: "0600"
   no_log: true
-  when: "'relay_password' in mail"
+  when: "mail_relay is true"
   notify:
     - "restart postfix"
 
