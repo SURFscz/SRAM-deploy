@@ -35,7 +35,7 @@ oidc:
   sfo_eduteams_redirect_uri: "{{ sbs_oidc_sfo_endpoint }}"
   continue_eduteams_redirect_uri: "{{ sbs_eduteams_continue_endpoint }}"
   private_rsa_signing_key_path: config/jwt_private_key
-  public_rsa_signing_key_path: config/jwt_public_key
+  public_rsa_signing_key_path: config/jwt_public_keys.json
   second_factor_authentication_required: {{ sbs_second_factor_authentication_required }}
   totp_token_name: "{{ sbs_totp_token_name }}"
   # The service_id in the proxy_authz endpoint when logging into SBS. Most likely to equal the oidc.client_id
