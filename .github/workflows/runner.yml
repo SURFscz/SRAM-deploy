@@ -20,6 +20,13 @@ jobs:
       - name: Checkout $GITHUB_WORKSPACE
         uses: actions/checkout@v2
 
+      # Decrypt secret
+      - name: Copy secret
+        shell: bash
+        env:
+          secret_vm: ${{ secrets.SECRET_VM }}
+        run: "echo $secret_vm > secret_vm"
+
       - name: Hello World
         run: |
           touch HelloWorld
