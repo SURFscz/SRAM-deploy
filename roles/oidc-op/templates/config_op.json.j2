@@ -52,52 +52,57 @@
             "essential": false,
             "code_challenge_method": "S256 S384 S512"
           }
-        },
-        "claims": {
-          "function": "idpyoidc.server.oidc.add_on.custom_scopes.add_custom_scopes",
-          "kwargs": {
-            "research_and_scholarship": [
-              "name",
-              "given_name",
-              "family_name",
-              "email",
-              "email_verified",
-              "sub",
-              "iss",
-              "eduperson_scoped_affiliation"
-            ],
-            "eduperson_scoped_affiliation": [
-              "eduperson_scoped_affiliation"
-            ],
-            "voperson_external_affiliation": [
-              "voperson_external_affiliation"
-            ],
-            "ssh_public_key": [
-              "ssh_public_key"
-            ],
-            "eduperson_orcid": [
-              "eduperson_orcid"
-            ],
-            "uid": [
-              "uid"
-            ],
-            "voperson_external_id": [
-              "voperson_external_id"
-            ],
-            "eduperson_entitlement": [
-              "eduperson_entitlement"
-            ],
-            "eduperon_assurance": [
-              "eduperon_assurance"
-            ],
-            "eduperson_principal_name": [
-              "eduperson_principal_name"
-            ],
-            "voperson_id": [
-              "voperson_id"
-            ]
-          }
         }
+      },
+      "scopes_to_claims": {
+        "openid": [
+            "name",
+            "given_name",
+            "family_name"
+        ],
+        "email": [
+            "email"
+        ],
+        "research_and_scholarship": [
+            "name",
+            "given_name",
+            "family_name",
+            "email",
+            "email_verified",
+            "sub",
+            "iss",
+            "eduperson_scoped_affiliation"
+        ],
+        "eduperson_scoped_affiliation": [
+            "eduperson_scoped_affiliation"
+        ],
+        "voperson_external_affiliation": [
+            "voperson_external_affiliation"
+        ],
+        "ssh_public_key": [
+            "ssh_public_key"
+        ],
+        "eduperson_orcid": [
+            "eduperson_orcid"
+        ],
+        "uid": [
+            "uid"
+        ],
+        "voperson_external_id": [
+            "voperson_external_id"
+        ],
+        "eduperson_entitlement": [
+            "eduperson_entitlement"
+        ],
+        "eduperon_assurance": [
+            "eduperon_assurance"
+        ],
+        "eduperson_principal_name": [
+            "eduperson_principal_name"
+        ],
+        "voperson_id": [
+            "voperson_id"
+        ]
       },
       "authz": {
         "class": "idpyoidc.server.authz.AuthzHandling",
@@ -435,6 +440,6 @@
     "verify_user": false,
     "port": {{ oidc_op_port }},
     "domain": "0.0.0.0",
-    "debug": true
+    "debug": false
   }
 }

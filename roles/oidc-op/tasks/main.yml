@@ -51,20 +51,56 @@
     - config_op.json
   notify: "restart oidc-op"
 
+- name: Create group oidc-op
+  ansible.builtin.group:
+    name: oidc-op
+
+- name: Create user oidc-op
+  ansible.builtin.user:
+    name: oidc-op
+    group: oidc-op
+    groups:
+      - ssl-cert
+    shell: /bin/bash
+
 - name: Make sure cdb directory exists
   file:
     path: "{{ oidc_dir }}/example/flask_op/cdb"
     state: directory
+    owner: oidc-op
+    group: oidc-op
     mode: 0755
 
 - name: Create client config if it doesn't exist
   template:
     src: "client_id.j2"
     dest: "{{ oidc_dir }}/example/flask_op/cdb/{{ sbs_client_id }}"
-    mode: "0640"
-    group: "www-data"
+    mode: 0640
+    group: oidc-op
   no_log: "{{sram_ansible_nolog}}"
   notify: "restart oidc-op"
+
+- name: Chown oidc-op static/jwks.json
+  ansible.builtin.file:
+    path: "{{ oidc_dir }}/example/flask_op/static/jwks.json"
+    owner: oidc-op
+    group: oidc-op
+    mode: 0644
+
+- name: Chown oidc-op private/cookie_jwks.json
+  ansible.builtin.file:
+    path: "{{ oidc_dir }}/example/flask_op/private/cookie_jwks.json"
+    owner: oidc-op
+    group: oidc-op
+    mode: 0644
+
+- name: Create and chown oidc-op debug.log
+  ansible.builtin.file:
+    path: "{{ oidc_dir }}/example/flask_op/debug.log"
+    state: touch
+    owner: oidc-op
+    group: oidc-op
+    mode: 0644
 
 - name: Create oidc-op systemd service
   template:
