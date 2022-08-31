@@ -33,7 +33,7 @@ jobs:
       # Restore cache based no fake time key (allways miss)
       - name: Setup cache
         id: cache-docker
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/docker-save
           key: docker-save-${{ steps.get-date.outputs.date }}
