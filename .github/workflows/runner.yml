@@ -14,7 +14,8 @@ on:
 
 jobs:
   test:
-    runs-on: self-hosted
+    if: "github.actor!='dependabot[bot]'"
+    runs-on: "self-hosted"
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Checkout $GITHUB_WORKSPACE
