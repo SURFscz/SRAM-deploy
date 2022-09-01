@@ -63,7 +63,7 @@ frontend fe_https
 {% endfor %}
 
     # always use https
-    http-response set-header Strict-Transport-Security "max-age=16000000; includeSubDomains; preload;"
+    http-response set-header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload;"
 
     # generic security headers
     http-response set-header X-Frame-Options "sameorigin"
