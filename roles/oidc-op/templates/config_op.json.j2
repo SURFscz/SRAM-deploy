@@ -16,7 +16,7 @@
     "handlers": {
       "default": {
         "class": "logging.FileHandler",
-        "filename": "debug.log",
+        "filename": "log/debug.log",
         "formatter": "default"
       },
       "console": {
@@ -218,7 +218,7 @@
                 "kid": "sig"
               }
             ],
-            "read_only": false
+            "read_only": true
           },
           "name": {
             "session": "oidc_op",
@@ -359,7 +359,7 @@
           }
         ],
         "public_path": "static/jwks.json",
-        "read_only": false,
+        "read_only": true,
         "uri_path": "static/jwks.json"
       },
       "login_hint2acrs": {

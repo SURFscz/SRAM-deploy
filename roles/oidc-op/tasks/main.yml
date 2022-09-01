@@ -65,11 +65,14 @@
 
 - name: Make sure cdb directory exists
   file:
-    path: "{{ oidc_dir }}/example/flask_op/cdb"
+    path: "{{ oidc_dir }}/example/flask_op/{{ item }}"
     state: directory
     owner: oidc-op
     group: oidc-op
     mode: 0755
+  with_items:
+    - cdb
+    - log
 
 - name: Create client config if it doesn't exist
   template:
@@ -80,36 +83,6 @@
     group: oidc-op
   no_log: "{{sram_ansible_nolog}}"
   notify: "restart oidc-op"
-
-- name: Chown oidc-op static/jwks.json
-  ansible.builtin.file:
-    path: "{{ oidc_dir }}/example/flask_op/static/jwks.json"
-    owner: oidc-op
-    group: oidc-op
-    mode: 0644
-  # This file is checked out as root but needs to be
-  # writable by oidc-op
-  changed_when: false
-
-- name: Chown oidc-op private/cookie_jwks.json
-  ansible.builtin.file:
-    path: "{{ oidc_dir }}/example/flask_op/private/cookie_jwks.json"
-    owner: oidc-op
-    group: oidc-op
-    mode: 0644
-  # This file is checked out as root but needs to be
-  # writable by oidc-op
-  changed_when: false
-
-- name: Create and chown oidc-op debug.log
-  ansible.builtin.file:
-    path: "{{ oidc_dir }}/example/flask_op/debug.log"
-    state: touch
-    owner: oidc-op
-    group: oidc-op
-    modification_time: preserve
-    access_time: preserve
-    mode: 0644
 
 - name: Create oidc-op systemd service
   template:
