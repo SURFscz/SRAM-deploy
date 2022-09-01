@@ -76,6 +76,7 @@
     src: "client_id.j2"
     dest: "{{ oidc_dir }}/example/flask_op/cdb/{{ sbs_client_id }}"
     mode: 0640
+    owner: oidc-op
     group: oidc-op
   no_log: "{{sram_ansible_nolog}}"
   notify: "restart oidc-op"
@@ -86,6 +87,9 @@
     owner: oidc-op
     group: oidc-op
     mode: 0644
+  # This file is checked out as root but needs to be
+  # writable by oidc-op
+  changed_when: false
 
 - name: Chown oidc-op private/cookie_jwks.json
   ansible.builtin.file:
@@ -93,6 +97,9 @@
     owner: oidc-op
     group: oidc-op
     mode: 0644
+  # This file is checked out as root but needs to be
+  # writable by oidc-op
+  changed_when: false
 
 - name: Create and chown oidc-op debug.log
   ansible.builtin.file:
@@ -100,6 +107,8 @@
     state: touch
     owner: oidc-op
     group: oidc-op
+    modification_time: preserve
+    access_time: preserve
     mode: 0644
 
 - name: Create oidc-op systemd service
