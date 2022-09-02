@@ -47,6 +47,7 @@
   with_items:
     - "surf.svg"
     - "surf.png"
+    - "surf_bimi.svg"
 
 - name: Remove obsolete files
   file:
