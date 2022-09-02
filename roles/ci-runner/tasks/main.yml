@@ -1,4 +1,5 @@
 ---
+
 - name: "Install packages"
   ansible.builtin.apt:
     name:
@@ -78,8 +79,13 @@
     group: runner
     shell: /bin/bash
 
-# - install github action runner
-# This seems to be an installation wizard that needs
-# a registration secret created by "adding a self-hosted runner machine"
-# in Github Settings/Actions/Runners:
-# https://docs.github.com/en/actions/hosting-your-own-runners/adding-self-hosted-runners
+# https://github.com/MonolithProjects/ansible-github_actions_runner
+# ansible-galaxy role install -r requirements.yml
+#
+# This role needs github_access_token with repo scope in vault
+- include_role: monolithprojects.github_actions_runner
+  vars:
+    - runner_user: runner
+    - github_account: {{ github_account }}
+    - github_repo: {{ sram_deploy_repo }}
+    - access_token: {{ github_access_token}}
