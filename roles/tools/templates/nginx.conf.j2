@@ -1,0 +1,36 @@
+server {
+    listen 80;
+    server_name tools.sram.surf.nl;
+
+{% if letsencrypt_challenge_dir is defined %}
+    location /.well-known/acme-challenge {
+        alias {{letsencrypt_challenge_dir}}/.well-known/acme-challenge;
+    }
+{% endif %}
+
+    location / {
+        rewrite ^(.*) https://tools.sram.surf.nl/$1 permanent;
+    }
+}
+
+server {
+    listen 443 ssl http2;
+    server_name tools.sram.surf.nl;
+
+    ssl_certificate        {{ ssl_certs_dir }}/tools_https.crt;
+    ssl_certificate_key    {{ ssl_certs_dir }}/tools_https.key;
+    ssl_protocols          TLSv1.3;
+    ssl_ciphers            EECDH+AESGCM:EDH+AESGCM;
+
+    location / {
+{% for ip in iprange.vpn.values() %}
+        allow {{ ip }};
+{% endfor %}
+{% for ip in iprange.vpn6.values() %}
+        allow {{ ip }};
+{% endfor %}
+        deny all;
+
+        root {{ sram_tools_wwwroot }};
+    }
+}

@@ -1,0 +1,72 @@
+server {
+    listen 80;
+    server_name demo-sp.sram.surf.nl;
+
+{% if letsencrypt_challenge_dir is defined %}
+    location /.well-known/acme-challenge {
+        alias {{letsencrypt_challenge_dir}}/.well-known/acme-challenge;
+    }
+{% endif %}
+
+    location / {
+        rewrite ^(.*) https://demo-sp.sram.surf.nl/$1 permanent;
+    }
+}
+
+
+server {
+    listen 443 ssl http2;
+    server_name demo-sp.sram.surf.nl;
+
+    ssl_certificate        {{ letsencrypt_cert_dir }}/demo-sp.sram.surf.nl/fullchain.pem;
+    ssl_certificate_key    {{ letsencrypt_cert_dir }}/demo-sp.sram.surf.nl/privkey.pem;
+    ssl_protocols          TLSv1.3;
+    ssl_ciphers            EECDH+AESGCM:EDH+AESGCM;
+    ssl_stapling on;
+    ssl_stapling_verify on;
+
+    add_header Strict-Transport-Security "max-age=31536000";
+
+    location ^~ /saml {
+        alias {{simplesaml_project_dir}}/simplesaml/www;
+        index index.php;
+
+        location ~ \.php(/|$) {
+            root             {{simplesaml_project_dir}}/simplesaml/www;
+            fastcgi_pass     unix:/run/php/{{demosp_name}}.sock;
+            fastcgi_index    index.php;
+
+            include          fastcgi_params;
+
+            fastcgi_split_path_info       ^/saml/((?U).+\.php)(/?.+)?$;
+            fastcgi_param SCRIPT_FILENAME $document_root/$fastcgi_script_name;
+            fastcgi_param SCRIPT_NAME     /simplesaml/$fastcgi_script_name;
+            fastcgi_param PATH_INFO       $fastcgi_path_info;
+        }
+    }
+
+    root {{demosp_html_dir}};
+
+    location ~ ^/auth/(test|acc|prd)$ {
+        fastcgi_pass     unix:/run/php/{{demosp_name}}.sock;
+
+        include          fastcgi_params;
+
+        fastcgi_split_path_info       ^/(auth)/(.+)$;
+        fastcgi_param SCRIPT_FILENAME {{demosp_html_dir}}/$fastcgi_script_name.php;
+        fastcgi_param SCRIPT_NAME     $fastcgi_script_name.php;
+        fastcgi_param PATH_INFO       $fastcgi_path_info;
+    }
+
+    location ~ /rp/(test|acc|prd)$ {
+        fastcgi_pass     unix:/run/php/sram-demosp.sock;
+
+        include          fastcgi_params;
+
+        fastcgi_split_path_info       ^/(rp)/(.+)$;
+        fastcgi_param SCRIPT_FILENAME {{demosp_html_dir}}/$fastcgi_script_name.php;
+        fastcgi_param SCRIPT_NAME     $fastcgi_script_name.php;
+        fastcgi_param PATH_INFO       $fastcgi_path_info;
+    }
+
+}

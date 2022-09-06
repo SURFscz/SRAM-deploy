@@ -59,18 +59,11 @@
     group: "ssl-cert"
     mode: "0644"
 
-# - name: generate Diffie-Hellman group
-#   command: openssl dhparam -out {{zabbix_nginx_tls_dhparam}} 2048
-#   args:
-#     creates: "{{zabbix_nginx_tls_dhparam}}"
-#   notify:
-#     - "restart nginx"
-
 - include_role:
     name: "community.zabbix.zabbix_server"
 
 - include_role:
-    name: "http_dummy"
+    name: "nginx"
 
 - include_role:
     name: "community.zabbix.zabbix_web"

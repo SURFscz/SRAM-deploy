@@ -5,7 +5,7 @@ Description=SRAM HAproxy ACL syncer
 DynamicUser=true
 User=sram_aclsync
 Group=sram_aclsync
-SupplementaryGroups=haproxy
+SupplementaryGroups={{haproxy_socket_group}} {{aclsync_group}}
 
 ReadWritePaths={{ aclsync_aclfile }}
 

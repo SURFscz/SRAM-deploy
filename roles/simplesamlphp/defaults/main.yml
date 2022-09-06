@@ -1,0 +1,14 @@
+---
+# SimpleSAMLphp
+simplesaml_version: "1.19.5"
+simplesaml_download_url: "https://github.com/simplesamlphp/simplesamlphp/releases/download/\
+                          v{{ simplesaml_version }}/simplesamlphp-{{ simplesaml_version }}.tar.gz"
+simplesaml_checksum: "sha256:ab1a71a4eed2c086774829d47ce72137e4d1a7bd6b8a2535b4a1ddfd6e7da51f"
+
+simplesaml_name: "ssp"
+simplesaml_user: "ssp-user"
+simplesaml_group: "ssp-group"
+simplesaml_project_dir: "/opt/{{simplesaml_name}}"
+simplesaml_tmp_dir: "{{simplesaml_project_dir}}/tmp/"
+simplesaml_cert_dir: "{{simplesaml_project_dir}}/cert/"
+
