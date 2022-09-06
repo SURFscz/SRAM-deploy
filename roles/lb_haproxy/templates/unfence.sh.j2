@@ -2,5 +2,5 @@
 #!/bin/bash
 {% for host in lb_ldap %}
 {% set name = host.hostname.split('.')[0] -%}
-echo "enable frontend ldap_{{name}}_{{host.frontend_port}}" | socat stdio /run/haproxy/admin.sock
+echo "enable frontend ldap" | socat stdio /run/haproxy/admin.sock
 {% endfor %}
