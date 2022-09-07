@@ -58,7 +58,7 @@ echo "$0 $@" >> $LOG
 
 # first check that deploy and config repos are clean and are using the same version
 # deploy
-echo -n "Checking if SCZ-deploy is clean... "
+echo -n "Checking if SRAM-deploy is clean... "
 if ! git diff-index --quiet HEAD --
 then
     echo -e "$FAIL"
