@@ -12,11 +12,6 @@ Listen {{ sbs_backend_port }}
         SSLCertificateFile {{ ssl_certs_dir }}/{{ internal_base_domain }}.crt
         SSLCertificateKeyFile {{ ssl_certs_dir }}/{{ internal_base_domain }}.key
 
-        # hotfix
-        <Location /api/audit_logs/activity>
-            Require all denied
-        </Location>
-
         WSGIDaemonProcess server python-home={{sbs_env_dir}} user=www-data group=www-data processes=2 threads=5
 
         WSGIScriptAlias /api {{ sbs_work_dir }}/sbs-api.wsgi/api
