@@ -3,10 +3,6 @@ name: Project automation
 
 on:
   issues:
-    types:
-      - opened
-      - reopened
-      - closed
   pull_request:
     types:
       - opened
