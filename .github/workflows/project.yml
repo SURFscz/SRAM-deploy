@@ -44,3 +44,15 @@ jobs:
           organization: ${{ env.organization }}
           project_id: ${{ env.project_id }}
           resource_node_id: ${{ github.event.issue.node_id }}
+
+  issue_closed:
+    name: issue_closed_invalid
+    runs-on: ubuntu-latest
+    if: >
+      inputs.event == 'issues' && inputs.action == 'closed'
+    steps:
+      - name: print info
+        run: |
+          echo event='${{ event }}'
+          echo action='${{ action }}'
+          echo event='${{ toJSON(github.event) }}'
