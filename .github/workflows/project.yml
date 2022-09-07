@@ -49,7 +49,7 @@ jobs:
     name: issue_closed_invalid
     runs-on: ubuntu-latest
     if: >
-      inputs.event == 'issues' && inputs.action == 'closed'
+      inputs.event == 'issues'
     steps:
       - name: print info
         run: |
