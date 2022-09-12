@@ -85,13 +85,13 @@
       with_items:
         - user: "{{ sbs_db_user }}"
           passwd: "{{ sbs_db_password }}"
-          priv: "sbs.*:SELECT,INSERT,DELETE,UPDATE"
+          priv: "SELECT,INSERT,DELETE,UPDATE"
         - user: "{{ sbs_migration_user }}"
           passwd: "{{ sbs_migration_password }}"
           priv: "ALL"
         - user: "{{ sbs_dbbackup_user }}"
           passwd: "{{ sbs_dbbackup_password }}"
-          priv: "sbs.*:SELECT"
+          priv: "SELECT"
       no_log: "{{sram_ansible_nolog}}"
       notify: "restart apache"
 
