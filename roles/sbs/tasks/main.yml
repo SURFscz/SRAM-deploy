@@ -213,7 +213,7 @@
     python_venv_requirements: "{{ sbs_git_dir }}/server/requirements/test.txt"
   notify: "restart apache"
 
-- name: install database dump script
+- name: Install database dump script
   template:
     src: "backup-database.sh.j2"
     dest: "{{backup_runparts}}/backup-database.sh"
@@ -224,7 +224,7 @@
   command:
     cmd: "{{ sbs_env_dir }}/bin/alembic --config migrations/alembic.ini upgrade head"
     chdir: "{{ sbs_work_dir }}/sbs/server"
-  register: result
-  failed_when: result.rc != 0
-  changed_when: result.rc != 0
+  register: "result"
+  failed_when: "result.rc != 0"
+  changed_when: "'[alembic.runtime.migration] Running upgrade' in result.stderr"
   notify: "restart apache"
