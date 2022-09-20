@@ -25,15 +25,15 @@
     state: present
     name: "{{ item }}"
   with_items:
-    - ssl
-    - proxy
-    - proxy_http
+    - "ssl"
+    - "proxy"
+    - "proxy_http"
 
 - name: Create Apache ci-runner config
   ansible.builtin.template:
     src: "ci-runner.conf.j2"
     dest: "/etc/apache2/sites-available/ci-runner.conf"
-    mode: 0644
+    mode: "0644"
 
 - name: Link ci-runner config to sites-enabled
   ansible.builtin.file:
@@ -56,7 +56,7 @@
     dest: "{{ ssl_certs_dir }}/ci-runner.sram.surf.nl.crt"
     owner: "root"
     group: "root"
-    mode: 0644
+    mode: "0644"
 
 - name: Write ci-runner chain
   copy:
@@ -66,26 +66,27 @@
     dest: "{{ ssl_certs_dir }}/ci-runner.sram.surf.nl.fullchain.crt"
     owner: "root"
     group: "root"
-    mode: 0644
+    mode: "0644"
 
 # - add user for ci-runner (draait nu nog als martin)
 - name: Add ci-runner group
   ansible.builtin.group:
-    name: runner
+    name: "runner"
 
 - name: Add ci-runner user
   ansible.builtin.user:
-    name: runner
-    group: runner
-    shell: /bin/bash
+    name: "runner"
+    group: "runner"
+    shell: "/bin/bash"
 
 # https://github.com/MonolithProjects/ansible-github_actions_runner
 # ansible-galaxy role install -r requirements.yml
 #
 # This role needs github_access_token with repo scope in vault
-- include_role: monolithprojects.github_actions_runner
+- include_role:
+    name: "monolithprojects.github_actions_runner"
   vars:
     - runner_user: runner
-    - github_account: {{ github_account }}
-    - github_repo: {{ sram_deploy_repo }}
-    - access_token: {{ github_access_token}}
+    - github_account: "{{ github_account }}"
+    - github_repo: "{{ sram_deploy_repo }}"
+    - access_token: "{{ github_access_token}}"
