@@ -1,9 +1,15 @@
 #!/bin/sh
+set -e
+
 {{ pyff_env_dir }}/bin/pyff {{ metadata_idps_feed }}
 {{ pyff_env_dir }}/bin/pyff {{ metadata_proxy_frontend_feed }}
 {{ pyff_env_dir }}/bin/pyff {{ metadata_proxy_backend_feed }}
-/bin/chmod 644 {{pyff_metadata_dir}}/*.xml.new
 
-/bin/cp {{ metadata_idps_target }}.new {{ metadata_documentroot }}/idps.xml
-/bin/cp {{ metadata_proxy_frontend_target }}.new {{ metadata_documentroot }}/metadata/{{ metadata_proxy_frontend_file }}
-/bin/cp {{ metadata_proxy_backend_target }}.new {{ metadata_documentroot }}/metadata/{{ metadata_proxy_backend_file }}
+for f in "{{metadata_idps_target}}" "{{metadata_proxy_frontend_target}}" "{{metadata_proxy_backend_target}}"
+do
+    cp "$f.new" "{{metadata_web_dir}}"
+    chmod 644 "$f.new"
+    mv "$f.new" "$f"
+done
+
+exit 0
