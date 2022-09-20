@@ -111,6 +111,7 @@ services_ldap:
 db_host: "{{ groups['db'][0] }}"
 sbs_db_name: "sbs"
 sbs_db_user: "sbs"
+sbs_migration_user: "sbs_migrater"
 
 sbs_client_id: sbs-server
 sbs_base_url: "https://{{hostnames.sbs}}"
