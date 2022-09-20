@@ -1,8 +1,9 @@
 {% set lb_ldap = loadbalancer|selectattr("protocol", "equalto", "ldap")|list %}
 #!/bin/bash
+exit 0
 {% for host in lb_ldap %}
 {% set name = host.hostname.split('.')[0] -%}
-echo "enable frontend ldap_{{name}}_{{host.frontend_port}}" | socat stdio /run/haproxy/admin.sock
+echo "enable frontend ldap" | socat stdio /run/haproxy/admin.sock
 {% endfor %}
 
 TARGET="{{ groups['ldap'] | join(' ') }}"
@@ -16,7 +17,7 @@ while : ; do
     if [ $COUNTER -gt ${MAXFAIL} ]; then
 {% for host in lb_ldap %}
 {% set name = host.hostname.split('.')[0] %}
-      echo "disable frontend ldap_{{name}}_{{host.frontend_port}}" | socat stdio /run/haproxy/admin.sock
+      echo "disable frontend ldap" | socat stdio /run/haproxy/admin.sock
 {% endfor %}
       break
     fi

@@ -23,7 +23,7 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Checkout $GITHUB_WORKSPACE
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       # Create date output to seconds
       - name: Get Date
@@ -33,18 +33,11 @@ jobs:
       # Restore cache based no fake time key (allways miss)
       - name: Setup cache
         id: cache-docker
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/docker-save
           key: docker-save-${{ steps.get-date.outputs.date }}
           restore-keys: docker-save-
-
-      # Decrypt secret
-      - name: Copy secret
-        shell: bash
-        env:
-          secret_vm: ${{ secrets.SECRET_VM }}
-        run: "echo $secret_vm > secret_vm"
 
       # Run errands
       - name: Run errands
@@ -158,11 +151,6 @@ jobs:
             echo ===netstat===; netstat -lnp
           '"
         if: failure()
-
-      # Destroy secret
-      - name: Destroy secret
-        run: shred secret_vm
-        if: always()
 
       # Setup tmate session
       - name: Setup tmate session

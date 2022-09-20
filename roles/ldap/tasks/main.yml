@@ -74,9 +74,19 @@
   failed_when: result.rc not in [0,20,68]
   changed_when: result.rc != 20
 
+- name: Remove obsolete sizelimits
+  ldap_attrs:
+    dn: "{{item}}"
+    attributes:
+      olcSizeLimit: []
+    state: "exact"
+  with_items:
+    - "olcDatabase={-1}frontend,cn=config"
+    - "cn=config"
+
 - name: Set sizelimit
   ldap_attrs:
-    dn: "cn=config"
+    dn: "olcDatabase={1}mdb,cn=config"
     attributes:
       olcSizeLimit: "unlimited"
     state: "exact"
