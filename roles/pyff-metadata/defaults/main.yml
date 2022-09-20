@@ -1,4 +1,6 @@
 ---
+metadata_web_dir: "{{metadata_documentroot}}"
+
 metadata_idps_source: "https://metadata.surfconext.nl/idps-metadata.xml"
 metadata_idps_xrd: "{{pyff_env_dir}}/certs/surfconext.xrd"
 metadata_idps_feed: "{{ pyff_env_dir }}/idps_feed.fd"
@@ -37,14 +39,14 @@ metadata_idps_filters:
   - "https://idp.surfnet.nl"
   - "https://sso.surfsara.nl/saml/saml2/idp/metadata.php"
 
-metadata_proxy_frontend: "https://proxy.sram.surf.nl/metadata/frontend.xml"
+metadata_proxy_frontend: "https://satosa.local/frontend.xml"
 metadata_proxy_frontend_feed: "{{ pyff_env_dir }}/frontend_feed.fd"
-metadata_proxy_frontend_entityid: "https://proxy.sram.surf.nl/proxy"
-metadata_proxy_frontend_file: "frontend.xml"
+metadata_proxy_frontend_entityid: "https://satosa.local/proxy"
+metadata_proxy_frontend_file: "proxy_idp.xml"
 metadata_proxy_frontend_target: "{{pyff_metadata_dir}}/{{ metadata_proxy_frontend_file }}"
 
-metadata_proxy_backend: "https://proxy.sram.surf.nl/metadata/backend.xml"
+metadata_proxy_backend: "https://satosa.local/metadata/backend.xml"
 metadata_proxy_backend_feed: "{{ pyff_env_dir }}/backend_feed.fd"
-metadata_proxy_backend_entityid: "https://proxy.sram.surf.nl/metadata/backend.xml"
-metadata_proxy_backend_file: "backend.xml"
+metadata_proxy_backend_entityid: "https://satosa.local/metadata/backend.xml"
+metadata_proxy_backend_file: "proxy_sp.xml"
 metadata_proxy_backend_target: "{{pyff_metadata_dir}}/{{ metadata_proxy_backend_file }}"
