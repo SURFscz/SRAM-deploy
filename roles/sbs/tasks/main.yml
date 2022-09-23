@@ -85,7 +85,7 @@
       with_items:
         - user: "{{ sbs_db_user }}"
           passwd: "{{ sbs_db_password }}"
-          priv: "SELECT,INSERT,DELETE,UPDATE"
+          priv: "SELECT,INSERT,DELETE,UPDATE,TRIGGER"
         - user: "{{ sbs_migration_user }}"
           passwd: "{{ sbs_migration_password }}"
           priv: "ALL"
