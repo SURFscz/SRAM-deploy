@@ -28,6 +28,6 @@ fi
 if [[ "${schema_file}" == *.ldif ]] ; then
 
     # Try installing the schema in the database
-    ldapmodify -c -Y EXTERNAL -H ldapi:/// -f "${schema_file}"
+    ldapmodify -Y EXTERNAL -H ldapi:/// -f "${schema_file}"
 
 fi

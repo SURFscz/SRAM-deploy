@@ -22,8 +22,8 @@ olcSyncrepl: rid={{ '%03d' % i }}
   binddn="{{ services_ldap.binddn }}"
   credentials={{ services_ldap_password }}
   retry="30 +"
-  network-timeout=5
   timeout=30
+  network-timeout=5
 {% endif %}
 {% set i = i+1 %}
 {% endfor %}

@@ -66,6 +66,7 @@
     - enable_syncrepl.ldif
     - enable_syncprov.ldif
     - enable_dynlist.ldif
+    - enable_monitor.ldif
 
 - name: Generate ldap.conf
   template:
@@ -118,11 +119,12 @@
   failed_when: result.rc not in [0,20,68,80]
   changed_when: result.rc != 20 and result.rc != 0
   loop:
-    - enable_memberof.ldif
-    - enable_syncrepl.ldif
-    - enable_syncprov.ldif
-    - enable_dynlist.ldif
     - set_root_credentials.ldif
+    - enable_monitor.ldif
+    - enable_memberof.ldif
+    - enable_dynlist.ldif
+    - enable_syncprov.ldif
+    - enable_syncrepl.ldif
 
 - name: Set ACLs
   community.general.ldap_attrs:
