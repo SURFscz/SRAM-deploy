@@ -1,21 +1,10 @@
 # Configure olcSyncrepl
-dn: cn=config
-changetype: modify
-add: olcServerID
-{% for ldapserver in groups['ldap'] %}
-{% if ldapserver == inventory_hostname %}
-olcServerID: {{ loop.index }}
-{% endif %}
-{% endfor %}
-
+{% if inventory_hostname in groups['vm_ldap_slave']%}
 dn: olcDatabase={1}mdb,cn=config
 changetype: modify
 add: olcSyncrepl
-{% set i = 1 %}
-{% for ldapserver in groups['ldap'] %}
-{% if ldapserver != inventory_hostname %}
-olcSyncrepl: rid={{ '%03d' % i }}
-  provider="ldaps://{{ ldapserver }}/"
+olcSyncrepl: rid=001
+  provider="ldaps://{{ groups['vm_ldap_master'][0] }}/"
   searchbase="{{ services_ldap.basedn }}"
   type=refreshAndPersist
   bindmethod=simple
@@ -25,8 +14,3 @@ olcSyncrepl: rid={{ '%03d' % i }}
   timeout=30
   network-timeout=5
 {% endif %}
-{% set i = i+1 %}
-{% endfor %}
--
-add: olcMirrorMode
-olcMirrorMode: TRUE

@@ -7,9 +7,15 @@
 [vm_lb]
 lb.vm.scz-vm.net ansible_host=172.20.1.24
 
-[vm_ldap]
+[vm_ldap_master]
 ldap1.vm.scz-vm.net ansible_host=172.20.1.20
+
+[vm_ldap_slave]
 ldap2.vm.scz-vm.net ansible_host=172.20.1.21
+
+[vm_ldap:children]
+vm_ldap_master
+vm_ldap_slave
 
 [vm_meta]
 meta.vm.scz-vm.net ansible_host=172.20.1.23
