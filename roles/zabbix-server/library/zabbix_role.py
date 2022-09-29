@@ -47,10 +47,10 @@ EXAMPLES = r'''
     type: 1
     rules:
       ui:
-        name: "monitoring.hosts"
-        status: 0
-        name: "monitoring.maps"
-        status: 1
+        - name: "monitoring.hosts"
+          status: 0
+        - name: "monitoring.maps"
+          status: 1
 '''
 
 RETURN = r'''
