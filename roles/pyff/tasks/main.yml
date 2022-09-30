@@ -6,15 +6,16 @@
       - xmlsec1
     state: present
 
-- name: create pyFF group
-  group:
-    name: "{{pyff_group}}"
-    state: present
-
 - name: remove obsolete pyFF user
   user:
     name: "pyff"
     state: absent
+
+- name: create pyFF group
+  group:
+    name: "{{pyff_group}}"
+    system: true
+    state: present
 
 - name: Create project directories
   file:
