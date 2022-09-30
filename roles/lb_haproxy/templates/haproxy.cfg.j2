@@ -126,8 +126,8 @@ backend {{host.name}}
     mode    http
     cookie  SERVERID insert indirect maxidle 60m secure httponly nocache
     {% for be_server in host.backend_hosts -%}
-    {% set colour = "blue"  if "blue"  in groups and be_server in groups  else
-                    "green" if "green" in groups and be_server in groups  else
+    {% set colour = "blue"  if "blue"  in groups and be_server in groups["blue"]  else
+                    "green" if "green" in groups and be_server in groups["green"] else
                     "server" -%}
     {% set server_name = "{}-{}".format(colour, loop.index) -%}
     server {{server_name}} {{be_server}}:{{host.backend_port}} ssl check cookie {{be_server}}

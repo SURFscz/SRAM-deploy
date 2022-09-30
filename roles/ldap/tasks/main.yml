@@ -82,11 +82,11 @@
     state: "exact"
   with_items:
     - "olcDatabase={-1}frontend,cn=config"
-    - "olcDatabase={1}mdb,cn=config"
+    - "cn=config"
 
 - name: Set sizelimit
   ldap_attrs:
-    dn: "cn=config"
+    dn: "olcDatabase={1}mdb,cn=config"
     attributes:
       olcSizeLimit: "unlimited"
     state: "exact"

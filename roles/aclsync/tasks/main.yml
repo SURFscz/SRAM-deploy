@@ -41,3 +41,17 @@
     - "sram_aclsync.timer"
   notify:
     - "enable sram_aclsync job"
+
+- name: Create empty ACL file
+  copy:
+    dest: "{{ aclsync_aclfile }}"
+    content: ""
+    force: false
+
+- name: Set correct permissions for acl file
+  file:
+    path: "{{ aclsync_aclfile }}"
+    state: "file"
+    owner: "haproxy"
+    group: "{{aclsync_group}}"
+    mode: "0660"

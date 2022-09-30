@@ -159,3 +159,4 @@
     name: "aclsync"
   vars:
     aclsync_aclfile: "{{ haproxy_ldap_acl_file }}"
+    aclsync_group: "{{ haproxy_ldap_acl_group }}"

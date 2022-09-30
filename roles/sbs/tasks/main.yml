@@ -80,15 +80,18 @@
         name: '{{ item.user }}'
         host: '{{ ansible_default_ipv4.address }}'
         password: '{{ item.passwd }}'
-        priv: '{{ sbs_db_name }}.*:{{ item.perm }}'
+        priv: '{{ sbs_db_name }}.*:{{ item.priv }}'
         ca_cert: "{{sbs_db_cert_path}}"
       with_items:
         - user: "{{ sbs_db_user }}"
           passwd: "{{ sbs_db_password }}"
-          perm: "ALL"
+          priv: "SELECT,INSERT,DELETE,UPDATE"
+        - user: "{{ sbs_migration_user }}"
+          passwd: "{{ sbs_migration_password }}"
+          priv: "ALL"
         - user: "{{ sbs_dbbackup_user }}"
           passwd: "{{ sbs_dbbackup_password }}"
-          perm: "SELECT"
+          priv: "SELECT"
       no_log: "{{sram_ansible_nolog}}"
       notify: "restart apache"
 
@@ -151,6 +154,7 @@
     mode: "{{item.mode}}"
   with_items:
     - { name: "config.yml",     mode: "0640" }
+    - { name: "alembic.ini",    mode: "0644" }
     - { name: "disclaimer.css", mode: "0644" }
   notify: "restart apache"
   no_log: "{{sram_ansible_nolog}}"
@@ -184,8 +188,10 @@
     state: "link"
     path: "{{ sbs_git_dir }}/{{ item.path }}"
     src: "{{ sbs_conf_dir }}/{{ item.links_to }}"
+    force: yes
   with_items:
     - { path: "server/config/config.yml",           links_to: "config.yml"           }
+    - { path: "server/migrations/alembic.ini",      links_to: "alembic.ini"           }
     - { path: "server/config/saml",                 links_to: "saml"                 }
     - { path: "client/build/static/disclaimer.css", links_to: "disclaimer.css"       }
     - { path: "server/config/jwt_private_key",      links_to: "jwt_private_key"      }
@@ -207,9 +213,18 @@
     python_venv_requirements: "{{ sbs_git_dir }}/server/requirements/test.txt"
   notify: "restart apache"
 
-- name: install database dump script
+- name: Install database dump script
   template:
     src: "backup-database.sh.j2"
     dest: "{{backup_runparts}}/backup-database.sh"
     mode: "0700"
   no_log: "{{sram_ansible_nolog}}"
+
+- name: Run SBS migrations
+  command:
+    cmd: "{{ sbs_env_dir }}/bin/alembic --config migrations/alembic.ini upgrade head"
+    chdir: "{{ sbs_work_dir }}/sbs/server"
+  register: "result"
+  failed_when: "result.rc != 0"
+  changed_when: "'[alembic.runtime.migration] Running upgrade' in result.stderr"
+  notify: "restart apache"

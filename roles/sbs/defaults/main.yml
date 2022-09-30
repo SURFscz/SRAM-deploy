@@ -15,6 +15,8 @@ sbs_db_name: "sbs"
 sbs_db_user: "sbs"
 sbs_dbbackup_user: "sbs_backupper"
 
+sbs_migration_user: "sbs_migrater"
+
 sbs_redis_host: "localhost"
 sbs_redis_port: 6379
 
@@ -54,6 +56,7 @@ sbs_send_js_exceptions: False
 sbs_second_factor_authentication_required: True
 sbs_totp_token_name: "SRAM"
 sbs_notifications_enabled: True
+sbs_delete_orphaned: True
 sbs_impersonation_allowed: False
 sbs_admin_platform_backdoor_totp: False
 sbs_past_dates_allowed: False

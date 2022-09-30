@@ -10,10 +10,10 @@ from subprocess import STDOUT, PIPE
 
 
 dir_base = Path(Path.home(), ".cache", "SURFscz")
-dir_main = Path(dir_base, "SCZ-deploy")
+dir_main = Path(dir_base, "SRAM-deploy")
 dir_conf = Path(dir_base, "SCZ-deploy-surf")
 
-GIT_MAIN = "git@github.com:SURFscz/SCZ-deploy.git"
+GIT_MAIN = "git@github.com:SURFscz/SRAM-deploy.git"
 GIT_CONF = "git@gitlab.surfnet.nl:SCZ/SCZ-deploy-surf.git"
 
 if len(sys.argv) != 3:
