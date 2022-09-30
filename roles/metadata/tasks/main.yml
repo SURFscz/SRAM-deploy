@@ -18,9 +18,36 @@
     owner: "pyff"
     group: "pyff"
   with_items:
-    - "{{ metadata_project_dir }}"
     - "{{ metadata_documentroot }}"
     - "{{ metadata_documentroot }}/metadata"
+
+- name: Check if obsolete job exists
+  command:
+    cmd: "systemctl list-timers --all --output=json"
+  register: "systemd_timers"
+  changed_when: false
+
+- name: Disable obsolete systemd job
+  systemd:
+    name: "metadata.timer"
+    state: "stopped"
+    enabled: false
+  when: '"\"metadata.timer\"" in systemd_timers.stdout'
+
+- name: Remove obsolete files
+  file:
+    path: "{{item}}"
+    state: "absent"
+  with_items:
+    - "/opt/metadata/create_metadata"
+    - "/opt/metadata/edugain.crt"
+    - "/opt/metadata/idps.xsl"
+    - "/opt/metadata/nohide.xsl"
+    - "/opt/metadata/nologo.xsl"
+    - "/opt/metadata/nosc.xsl"
+    - "/etc/systemd/system/metadata.service"
+    - "/etc/systemd/system/metadata.timer"
+  notify: "systemd daemon-reload"
 
 - name: Copy metadata nginx configuration
   template:
