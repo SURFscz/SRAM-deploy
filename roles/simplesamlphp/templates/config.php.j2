@@ -1,0 +1,81 @@
+<?php
+$config = array(
+    'baseurlpath' => 'https://' . $_SERVER['HTTP_HOST'] . '/saml/',
+    'certdir' => '{{simplesaml_cert_dir}}',
+    'loggingdir' => 'log/',
+    'datadir' => 'data/',
+
+    'tempdir' => '{{simplesaml_tmp_dir}}',
+    'debug' => false,
+    'showerrors' => false,
+    'errorreporting' => false,
+    'debug.validatexml' => false,
+
+    'auth.adminpassword' => '{{ simplesaml_admin_passwd }}',
+    'admin.protectindexpage' => true,
+    'admin.protectmetadata' => false,
+
+    'secretsalt' => '{{ simplesaml_salt.content }}',
+
+    'technicalcontact_name' => 'Administrator',
+    'technicalcontact_email' => '{{ mail.admin_address }}',
+
+    'logging.level' => SimpleSAML\Logger::NOTICE,
+    'logging.handler' => 'syslog',
+    'logging.facility' => defined('LOG_LOCAL5') ? constant('LOG_LOCAL5') : LOG_USER,
+    'logging.processname' => 'simplesamlphp',
+
+    'statistics.out' => array(),
+
+    'enable.saml20-idp' => false,
+    'enable.shib13-idp' => false,
+    'enable.adfs-idp' => false,
+    'enable.wsfed-sp' => false,
+    'enable.authmemcookie' => false,
+
+    'session.duration' => 8 * (60 * 60), // 8 hours.
+    'session.datastore.timeout' => (4 * 60 * 60), // 4 hours
+    'session.state.timeout' => (60 * 60), // 1 hour
+    'session.cookie.name' => 'SRAM_demoSP_session',
+    'session.cookie.lifetime' => 0, // destroy cookie right away, disabling SSO
+    'session.cookie.path' => '/',
+    'session.cookie.domain' => null,
+    'session.cookie.secure' => true,
+
+    'enable.http_post' => false,
+
+    'session.phpsession.cookiename' => 'SimpleSAML',
+    'session.phpsession.savepath' => null,
+    'session.phpsession.httponly' => true,
+    'session.authtoken.cookiename' => 'SimpleSAMLAuthToken',
+
+    'session.rememberme.enable' => false,
+    'session.rememberme.checked' => false,
+    'session.rememberme.lifetime' => (14 * 86400),
+
+    'language.available' => array('en'),
+    'language.rtl' => array(),
+    'language.default' => 'en',
+
+    'theme.use' => 'default',
+
+    'idpdisco.enableremember' => false,
+    'idpdisco.rememberchecked' => false,
+    'idpdisco.validate' => true,
+    'idpdisco.extDiscoveryStorage' => null,
+    'idpdisco.layout' => 'links',
+    'authproc.sp' => array(
+    ),
+    'metadata.sources' => array(
+        array('type' => 'flatfile' ),
+    ),
+
+    'store.type' => 'phpsession',
+
+    'metadata.sign.enable' => false,
+    'metadata.sign.privatekey' => null,
+    'metadata.sign.privatekey_pass' => null,
+    'metadata.sign.certificate' => null,
+
+    'trusted.url.domains' => array(),
+);

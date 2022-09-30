@@ -5,9 +5,9 @@ Description=Create OSCP Runner
 User=root
 Group=root
 Type=oneshot
-{% if enable_https and use_fixed_cert %}
+{% if use_fixed_cert %}
 WorkingDirectory={{ cert_dir }}
-{% elif enable_https %}
-WorkingDirectory={{ letsencrypt.cert_dir }}
+{% else %}
+WorkingDirectory={{ letsencrypt_cert_dir }}
 {% endif %}
 ExecStart={{ haproxy_oscp_bin_dir }}/ocsp.sh

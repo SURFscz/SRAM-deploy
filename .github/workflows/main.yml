@@ -23,7 +23,7 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Checkout $GITHUB_WORKSPACE
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       # Create date output to seconds
       - name: Get Date
@@ -33,18 +33,11 @@ jobs:
       # Restore cache based no fake time key (allways miss)
       - name: Setup cache
         id: cache-docker
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/docker-save
           key: docker-save-${{ steps.get-date.outputs.date }}
           restore-keys: docker-save-
-
-      # Decrypt secret
-      - name: Copy secret
-        shell: bash
-        env:
-          secret_vm: ${{ secrets.SECRET_VM }}
-        run: "echo $secret_vm > secret_vm"
 
       # Run errands
       - name: Run errands
@@ -55,7 +48,8 @@ jobs:
           sudo apt -q update
           sudo apt -y purge ansible
           sudo apt -y install ansible bridge-utils apparmor-utils
-          sudo pip3 install --upgrade wheel yamllint jinja2 pyyaml selenium zabbix-api requests
+          sudo pip3 install --upgrade wheel yamllint jinja2 pyyaml selenium \
+                                      zabbix-api requests bs4
           git clone https://github.com/dw/mitogen.git ~/mitogen
           cat docker/hosts | sudo tee -a /etc/hosts
 
@@ -72,12 +66,13 @@ jobs:
 
       # Install Ansible modules
       - name: Install Ansible modules
-        run: >
+        run: |
+          ansible-galaxy role install -r requirements.yml
           ansible-galaxy collection install -r requirements.yml
 
       # Run Syntax check
       - name: Run Syntax check
-        run: ./scripts/syntax-check
+        run: ./scripts/check-syntax
 
       # Restore docker cache
       - name: Restore docker cache
@@ -135,7 +130,9 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: "sbs-logintest"
-          path: "screenshot.png"
+          path: |
+            screenshot.png
+            page.html
         if: failure()
 
       - name: Show error output
@@ -147,19 +144,14 @@ jobs:
               echo ===apache errorlog===;
               cat /var/log/apache2/error.log;
             fi;
-            if [ -e /opt/sbs/sbs/log/sbs.log ]; then
+            if [ -e /opt/sbs ]; then
               echo ===sbs log===;
-              cat /opt/sbs/sbs/log/sbs.log
+              cat /opt/sbs/log/sbs_debug.log
             fi;
             echo ===apt log===; cat /var/log/apt/term.log
             echo ===netstat===; netstat -lnp
           '"
         if: failure()
-
-      # Destroy secret
-      - name: Destroy secret
-        run: shred secret_vm
-        if: always()
 
       # Setup tmate session
       - name: Setup tmate session

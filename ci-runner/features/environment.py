@@ -1,6 +1,6 @@
 from behave import fixture, use_fixture
 
-from selenium.webdriver import Chrome
+from selenium.webdriver import Chrome, DesiredCapabilities
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.wait import WebDriverWait
 
@@ -19,7 +19,11 @@ def selenium_browser_chrome(context):
     options.add_argument("--disable-gpu")
     options.add_argument("start-maximized")
     options.add_argument("disable-infobars")
-    context.browser = Chrome(options=options)
+
+    caps = DesiredCapabilities.CHROME.copy()
+    caps['goog:loggingPrefs'] = { 'browser':'ALL' }
+
+    context.browser = Chrome(options=options, desired_capabilities=caps)
     context.browser.implicitly_wait(3)
     context.wait = WebDriverWait(context.browser, timeout=3)
     send_command = ('POST', '/session/$sessionId/chromium/send_command')
@@ -38,5 +42,13 @@ def before_scenario(context, scenario):
 
 def after_step(context, step):
     if step.status == "failed":
-        print(context.browser.current_url)
+        print("url: ", context.browser.current_url)
+        print("page source:")
+        print("------")
         print(context.browser.page_source)
+        print("------")
+        print("console logs:")
+        print("------")
+        # print console logs
+        for entry in context.browser.get_log('browser'):
+            print(entry)

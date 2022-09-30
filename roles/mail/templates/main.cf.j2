@@ -5,9 +5,9 @@ myorigin = {{mail.domain}}
 
 # address rewriting
 sender_canonical_maps = regexp:/etc/postfix/canonical
-alias_maps = hash:/etc/postfix/aliases
-alias_database = hash:/etc/postfix/aliases
-virtual_alias_maps = hash:/etc/postfix/virtual
+alias_maps = texthash:/etc/postfix/aliases
+alias_database = texthash:/etc/postfix/aliases
+virtual_alias_maps = texthash:/etc/postfix/virtual
 
 # add missing headers for all replayed mail
 local_header_rewrite_clients = permit_inet_interfaces,permit_mynetworks
@@ -28,8 +28,17 @@ smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache
 smtpd_relay_restrictions = permit_mynetworks defer_unauth_destination
 
 mydestination = $myhostname, localhost
-relayhost = {{mail.relay_to}}:{{mail.relay_port}}
 mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128{% for n in mail.relay_for %} {{n|ansible.utils.ipaddr('net')}}{% endfor %}
+
+relayhost = [{{mail.relay_to}}]:{{mail.relay_port}}
+
+# enable client-side authentication for smarthost; see https://www.postfix.org/SASL_README.html
+{% if mail_relay_password is defined %}
+smtp_sasl_auth_enable = yes
+smtp_tls_security_level = encrypt
+smtp_sasl_tls_security_options = noanonymous
+smtp_sasl_password_maps = texthash:{{postfix_relay_secret_file}}
+{% endif %}
 
 mailbox_command = procmail -a "$EXTENSION"
 mailbox_size_limit = 0

@@ -11,7 +11,7 @@ class FilterModule(object):
 				'-----BEGIN CERTIFICATE-----','-----END CERTIFICATE-----'):
 			str = str.replace(remove,'')
 		# get rid of empty lines etc (https://stackoverflow.com/questions/1140958)
-		return "".join([s for s in str.strip().splitlines(True) if s.strip("\r\n").strip()])
+		return "".join([s.strip() for s in str.splitlines() if s.strip(" \t\r\n")])
 
 	def filters(self):
 		return {

@@ -8,16 +8,31 @@
   apt:
     name: openssl
     state: present
-  when: enable_https and haproxy.custom_dhparam
+  when: haproxy.custom_dhparam
 
+# TODO: get rid of this (not recommended by NCSC)
 - name: generate Diffie-Hellman group
   command: openssl dhparam -out {{ haproxy.dhparam_file }} {{ haproxy.dhparam_keysize }}
   args:
     creates: "{{ haproxy.dhparam_file }}"
   notify:
     - "restart haproxy"
-  when: enable_https and haproxy.custom_dhparam
+  when: haproxy.custom_dhparam
 
+
+- name: create group for haproxy socket access
+  group:
+    name: "{{haproxy_socket_group}}"
+    state: "present"
+    system: True
+
+##########################################
+## produce warning
+##
+- name: check if we are using letsencrypt
+  fail:
+    msg: "Letsencrypt certificates are not currently supported for the lb"
+  when: not use_fixed_cert
 
 ##########################################
 ## install haproxy
@@ -59,7 +74,6 @@
     group: "root"
   notify:
     - "restart haproxy"
-  when: "enable_https"
 
 - name: install haproxy state script
   template:
@@ -100,7 +114,7 @@
         src: "ocsp-letsencrypt.j2"
         dest: "/etc/letsencrypt/renewal-hooks/post/"
         mode: '0755'
-  when: "enable_https and not is_docker"
+  when: "not is_docker"
 
 - name: create override dir
   file:
@@ -145,3 +159,4 @@
     name: "aclsync"
   vars:
     aclsync_aclfile: "{{ haproxy_ldap_acl_file }}"
+    aclsync_group: "{{ haproxy_ldap_acl_group }}"

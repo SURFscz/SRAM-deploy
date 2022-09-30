@@ -1,5 +1,5 @@
 # Science Collaboration Zone
-![build status](https://github.com/SURFscz/SCZ-deploy/actions/workflows/main.yml/badge.svg)
+![build status](https://github.com/SURFscz/SRAM-deploy/actions/workflows/main.yml/badge.svg)
 
 The Science Collaboration Zone (SCZ) project offers an Membership Management System
 for research collaborations. It is a middleware solution for
@@ -29,7 +29,7 @@ OpenLDAP is used to expose authorization information to services.
 pLSC is used to synchronize information from SBS to OpenLDAP.  See <https://github.com/SURFscz/plsc>.
 
 
-## SCZ-deploy
+## SRAM-deploy
 This repository consists of an Ansible playbook to install a complete
 SCZ-platform.
 

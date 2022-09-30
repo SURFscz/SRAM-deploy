@@ -1,4 +1,7 @@
 ---
+- include_role:
+    name: "nginx"
+
 - name: Ensure that packages are installed
   apt:
     name:
@@ -44,6 +47,7 @@
   with_items:
     - "surf.svg"
     - "surf.png"
+    - "surf_bimi.svg"
 
 - name: Remove obsolete files
   file:

@@ -7,6 +7,8 @@ firewall_v4_incoming:
 
 sbs_version: "{{scz_repo.sbs.version}}"
 
+sbs_file_owner: "ansible"
+
 sbs_urn_namespace: "urn:mace:surf.nl:x-sram-vm"
 sbs_eppn_scope: "scz-vm.net"
 
@@ -37,6 +39,7 @@ sbs_totp_token_name: "SRAM-VM"
 sbs_notifications_enabled: True
 sbs_impersonation_allowed: True
 sbs_admin_platform_backdoor_totp: True
+sbs_past_dates_allowed: True
 sbs_swagger_enabled: True
 
 sbs_mfa_idp_allowed:

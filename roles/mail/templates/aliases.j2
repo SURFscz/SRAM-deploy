@@ -1,16 +1,9 @@
-# /etc/aliases
-mailer-daemon: postmaster
-postmaster: root
-nobody: root
-hostmaster: root
-usenet: root
-news: root
-webmaster: root
-www: root
-ftp: root
-abuse: root
-noc: root
-security: root
+# local aliases.
+# Note that this does not have the saem format as a regular /etc/aiases file
+# (which has "key: value").  We have "key value"
+mailer-daemon   root
+nobody          root
+hostmaster      root
 {% if mail.debug_address is defined %}
-root: {{ mail.debug_address }}
+root            {{ mail.debug_address }}
 {% endif %}

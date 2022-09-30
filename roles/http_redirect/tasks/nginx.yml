@@ -1,0 +1,12 @@
+# installs nginx to listen to port 80
+# default install http->https redirection
+---
+- include_role:
+    name: "nginx"
+
+- name: "install NGINX http->https redirect config"
+  template:
+    src: "http-redirect.conf.j2"
+    dest: "/etc/nginx/sites-enabled/00-http-redirect.conf"
+  notify: "restart nginx"
+

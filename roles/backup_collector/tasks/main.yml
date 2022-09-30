@@ -1,4 +1,7 @@
 ---
+- include_role:
+    name: "nginx"
+
 - name: Install tmpreaper
   apt:
     name: "tmpreaper"

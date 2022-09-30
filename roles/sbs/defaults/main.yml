@@ -15,13 +15,18 @@ sbs_db_name: "sbs"
 sbs_db_user: "sbs"
 sbs_dbbackup_user: "sbs_backupper"
 
+sbs_migration_user: "sbs_migrater"
+
 sbs_redis_host: "localhost"
 sbs_redis_port: 6379
 
 sbs_mail_host: "{{ mail.relay_to }}"
 sbs_mail_port: "{{ mail.relay_port }}"
 
+sbs_file_owner: "root"
+
 sbs_session_lifetime: 1440
+sbs_secret_key_suffix: ""
 
 sbs_oidc_crypto_password: "CHANGEME"
 sbs_uid_attribute: "sub"
@@ -51,8 +56,10 @@ sbs_send_js_exceptions: False
 sbs_second_factor_authentication_required: True
 sbs_totp_token_name: "SRAM"
 sbs_notifications_enabled: True
+sbs_delete_orphaned: True
 sbs_impersonation_allowed: False
 sbs_admin_platform_backdoor_totp: False
+sbs_past_dates_allowed: False
 
 sbs_oidc_config_url: "http://localhost/.well-known/openid-configuration"
 sbs_oidc_authz_endpoint: "http://localhost/OIDC/authorization"
@@ -68,5 +75,35 @@ sbs_backup_dir: "{{backup_base}}/sbs"
 sbs_db_cert_path: "/etc/ssl/sbs_db_root_cert.pem"
 
 sbs_swagger_enabled: true
+
+sbs_ssid_identity_providers: []
+sbs_surf_secure_id:
+  environment: "unknown.example.org"
+  sp_entity_id: "https://sbs.{{base_domain}}"
+  acs_url: "https://{{base_domain}}/api/users/acs"
+  sa_gw_environment: "sa-gw.unknown.example.org"
+  sa_idp_certificate: |
+    -----BEGIN CERTIFICATE-----
+    12345
+    -----END CERTIFICATE-----
+  priv: |
+    -----BEGIN RSA PRIVATE KEY-----
+    abcde
+    -----END RSA PRIVATE KEY-----
+  pub: |
+    -----BEGIN CERTIFICATE-----
+    12345
+    -----END CERTIFICATE-----
+
+sbs_ssid_authncontext: "\
+  http://{{ sbs_surf_secure_id.environment }}/assurance/sfo-level2"
+sbs_ssid_entityid: "\
+  https://{{ sbs_surf_secure_id.sa_gw_environment }}/second-factor-only/metadata"
+sbs_ssid_sso_endpoint: "\
+  https://{{ sbs_surf_secure_id.sa_gw_environment }}/second-factor-only/single-sign-on"
+
+sbs_mfa_sso_minutes: 10
+sbs_mfa_fallback_enabled: true
+
 sbs_ldap_url: "ldap://ldap.example.com/dc=example,dc=com"
 sbs_ldap_bind_account: "cn=admin,dc=entity_id,dc=services,dc=sram-tst,dc=surf,dc=nl"

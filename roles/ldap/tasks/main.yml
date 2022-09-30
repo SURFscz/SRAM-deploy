@@ -2,45 +2,43 @@
 # playbook to install and configure all components of the LDAP
 - name: Install LDAP
   apt:
-    state: present
+    state: "present"
     name:
-      - slapd
-      - ldap-utils
-      - python3-ldap  # for ansible ldap modules
-    install_recommends: no
-  notify: restart LDAP
+      - "slapd"
+      - "ldap-utils"
+      - "python3-ldap"  # for ansible ldap modules
+    install_recommends: false
+  notify: "restart LDAP"
 
 - name: make sure slapd can read ssl keys
   user:
-    name: openldap
-    groups: ssl-cert
+    name: "openldap"
+    groups: "ssl-cert"
 
 - name: Copying alternative service script
-  become: true
   template:
     src: "slapd.service.j2"
     dest: "/etc/systemd/system/slapd.service"
   notify:
-    - systemd daemon-reload
-    - restart LDAP
+    - "systemd daemon-reload"
+    - "restart LDAP"
 
 - name: force restart
-  meta: flush_handlers
+  meta: "flush_handlers"
 
 - name: Ensure that a number of directories exist
   file:
     path: "{{ item }}"
-    state: directory
+    state: "directory"
     owner: "{{ ldap_user }}"
     group: "{{ ldap_group }}"
-    mode: 0755
-  tags: ldap
+    mode: "0755"
+  tags: "ldap"
   with_items:
     - "{{ ldap_ldif_dir }}"
-    - /var/run/slapd
+    - "/var/run/slapd"
 
 - name: Copy schemas
-  become_user: "{{ ldap_user }}"
   copy:
     src: "{{ item }}"
     dest: "{{ ldap_ldif_dir }}/{{ item }}"
@@ -54,18 +52,17 @@
     - voPerson.ldif
 
 - name: Generate ldif from template
-  become_user: "{{ ldap_user }}"
-  become: true
   template:
     src: "{{ item }}.j2"
     dest: "{{ ldap_ldif_dir }}/{{ item }}"
     mode: 0644
   loop:
-    - set_root_credentials.ldif
-    - enable_memberof.ldif
-    - enable_syncrepl.ldif
-    - enable_syncprov.ldif
-    - enable_dynlist.ldif
+    - "set_root_credentials.ldif"
+    - "enable_memberof.ldif"
+    - "enable_syncrepl.ldif"
+    - "enable_syncprov.ldif"
+    - "enable_dynlist.ldif"
+    - "enable_monitor.ldif"
 
 - name: Generate ldap.conf
   template:
@@ -78,7 +75,7 @@
     dn: "olcDatabase={1}mdb,cn=config"
     attributes:
       olcDbIndex: "{{item}}"
-    state: present
+    state: "present"
   with_items:
     - "entryUUID eq"
     - "o eq"
@@ -88,9 +85,9 @@
 - name: Set config
   community.general.ldap_attrs:
     dn: "cn=config"
-    state: exact
+    state: "exact"
     attributes:
-      olcSizeLimit: 2000
+      olcSizeLimit: "unlimited"
       olcLogLevel: "stats stats2 filter"
       olcAttributeOptions: "time-"
       olcTLSCertificateKeyFile: "{{ ssl_certs_dir }}/{{ internal_base_domain }}.key"
@@ -100,32 +97,31 @@
         SECURE256:-VERS-DTLS-ALL:-VERS-SSL3.0:-VERS-TLS1.0:-VERS-TLS1.1:-RSA:-DHE-RSA:-ECDHE-RSA
 
 - name: Ensure the schema's are added to LDAP
-  ansible.builtin.script: 'scripts/ldap-add {{ ldap_ldif_dir }}/{{ item }}'
-  register: result
-  failed_when: result.rc not in [0,80]
-  changed_when: result.rc != 80
+  ansible.builtin.script: "scripts/ldap-add {{ ldap_ldif_dir }}/{{ item }}"
+  register: "result"
+  failed_when: "result.rc not in [0,80]"
+  changed_when: "result.rc != 80"
   loop:
-    - sczGroup.ldif
-    - groupOfMembers.ldif
-    - eduPerson.ldif
-    - ldapPublicKey.ldif
-    - eduMember.ldif
-    - voPerson.ldif
+    - "sczGroup.ldif"
+    - "groupOfMembers.ldif"
+    - "eduPerson.ldif"
+    - "ldapPublicKey.ldif"
+    - "eduMember.ldif"
+    - "voPerson.ldif"
 
 - name: Setup LDAP
-  ansible.builtin.script: 'scripts/ldap-modify {{ ldap_ldif_dir }}/{{ item }}'
-  register: result
-  failed_when: result.rc not in [0,20,68,80]
-  changed_when: result.rc != 20 and result.rc != 0
+  ansible.builtin.script: "scripts/ldap-modify {{ ldap_ldif_dir }}/{{ item }}"
+  register: "result"
+  failed_when: "result.rc not in [0,20,68,80]"
+  changed_when: "result.rc not in [0,20]"
   loop:
-    - enable_memberof.ldif
-    - enable_syncrepl.ldif
-    - enable_syncprov.ldif
-    - enable_dynlist.ldif
-    - set_root_credentials.ldif
+    - "enable_monitor.ldif"
+    - "enable_memberof.ldif"
+    - "enable_dynlist.ldif"
+    - "enable_syncprov.ldif"
+    - "enable_syncrepl.ldif"
+    - "set_root_credentials.ldif"
 
-# Controls or what to do after a match
-# https://www.openldap.org/faq/data/cache/454.html
 - name: Set ACLs
   community.general.ldap_attrs:
     dn: "olcDatabase={1}mdb,cn=config"
@@ -156,11 +152,11 @@
 - name: Initialize DIT
   community.general.ldap_entry:
     dn: "{{ services_ldap.basedn }}"
-    state: present
+    state: "present"
     objectClass:
-      - top
-      - dcObject
-      - organization
+      - "top"
+      - "dcObject"
+      - "organization"
     attributes:
       dc: "{{ services_ldap.basedn | regex_replace('^dc=([^,]+).*', '\\1') }}"
       o: "{{ services_ldap.o }}"
@@ -168,30 +164,23 @@
 - name: Initialize DIT admin
   community.general.ldap_entry:
     dn: "{{ services_ldap.binddn }}"
-    state: present
-    objectClass: organizationalRole
-
-- name: Initialize DIT platform admins
-  ansible.builtin.script: >-
-    scripts/add-ro-roles '{{ services_ldap.basedn }}'
-    {% for user in users %}'{{user.uid}},{{user.pw_hash}}' {% endfor %}
-  register: result
-  failed_when: result.rc not in [0,1]
-  changed_when: result.rc != 0
+    objectClass: "organizationalRole"
+    attributes:
+      cn: "{{ services_ldap.binddn | regex_replace('^cn=([^,]+).*', '\\1') }}"
 
 - name: Redirect slapd log to /var/log/slapd.log
   copy:
-    src: rsyslog_slapd.conf
-    dest: /etc/rsyslog.d/slapd.conf
-  notify: restart rsyslog
+    src: "rsyslog_slapd.conf"
+    dest: "/etc/rsyslog.d/slapd.conf"
+  notify: "restart rsyslog"
 
 - name: Rotate conf for slapd log file
   copy:
-    src: logrotate_slapd
-    dest: /etc/logrotate.d/slapd
+    src: "logrotate_slapd"
+    dest: "/etc/logrotate.d/slapd"
 
 - name: Install backup script
   template:
-    src: ldap-backup.sh.j2
+    src: "ldap-backup.sh.j2"
     dest: "{{backup_runparts}}/ldap-backup.sh"
-    mode: 0755
+    mode: "0755"

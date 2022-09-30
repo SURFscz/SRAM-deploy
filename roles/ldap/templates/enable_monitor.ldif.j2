@@ -1,0 +1,14 @@
+# vim:ft=ldif
+# enable monitoring server-component
+# see https://openldap.org/doc/admin24/monitoringslapd.html
+dn: cn=module{0},cn=config
+changetype: modify
+add: olcModuleLoad
+olcModuleLoad: back_monitor
+
+dn: olcdatabase=monitor,cn=config
+changeType: add
+objectclass: olcDatabaseConfig
+olcDatabase: monitor
+olcRootDN: cn=admin,cn=Monitor
+olcRootPW: {{ '%s' | format(monitor_ldap_password) |  slapd_hash }}

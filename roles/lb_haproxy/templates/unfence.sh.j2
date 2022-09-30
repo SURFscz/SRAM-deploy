@@ -1,2 +1,6 @@
+{% set lb_ldap = loadbalancer|selectattr("protocol", "equalto", "ldap")|list %}
 #!/bin/bash
-echo "enable frontend ldap_ldap.scz-vm.net_636" | socat stdio /run/haproxy/admin.sock
+{% for host in lb_ldap %}
+{% set name = host.hostname.split('.')[0] -%}
+echo "enable frontend ldap" | socat stdio /run/haproxy/admin.sock
+{% endfor %}

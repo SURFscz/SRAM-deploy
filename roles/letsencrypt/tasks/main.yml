@@ -1,0 +1,34 @@
+---
+- name: install certbot
+  apt:
+    name: "certbot"
+    state: "present"
+
+- name: write certbot config for all domains
+  template:
+    src: "certbot.conf.j2"
+    dest: "/etc/letsencrypt/cli.ini"
+  notify: "renew letsencrypt certificates"
+
+- name: create webroot for acme challenges
+  file:
+    dest: "{{letsencrypt_challenge_dir}}"
+    state: "directory"
+    owner: "root"
+    group: "www-data"
+    mode: "0755"
+  notify: "renew letsencrypt certificates"
+
+- name: register letsencrypt account
+  command: "/usr/bin/certbot register"
+  args:
+    creates: "{{letsencrypt_account_dir}}"
+  notify: "renew letsencrypt certificates"
+
+- name: check for new certs to generate
+  stat:
+    path: "{{letsencrypt_cert_dir}}/{{item}}"
+  register: result
+  changed_when: "not result.stat.exists"
+  with_items: "{{letsencrypt_hosts}}"
+  notify: "renew letsencrypt certificates"
