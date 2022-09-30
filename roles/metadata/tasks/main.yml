@@ -71,12 +71,23 @@
 
 - name: Install logo
   copy:
-    src: "{{ item }}"
+    src: "{{item}}"
     dest: "{{metadata_documentroot}}/"
     mode: "0644"
   with_items:
     - "surf.svg"
     - "surf.png"
+
+- name: Install symlinks
+  file:
+    path: "{{metadata_documentroot}}/{{item}}"
+    src: "metadata/{{item}}"
+    state: "link"
+    force: true
+  with_items:
+    - "idps.xml"
+    - "proxy_idp.xml"
+    - "proxy_sp.xml"
 
 - name: Remove obsolete files
   file:
