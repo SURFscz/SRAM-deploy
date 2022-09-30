@@ -3,7 +3,6 @@ metadata_basedir: "/opt/metadata"
 metadata_target_dir: "{{metadata_basedir}}/metadata"
 metadata_web_dir: "{{metadata_documentroot}}"
 
-metadata_idps_files: {}
 
 metadata_idps_source: "https://metadata.surfconext.nl/idps-metadata.xml"
 metadata_idps_cert: |
@@ -32,11 +31,10 @@ metadata_idps_cert: |
     9bFiAimF5LLk/LnMfplK9w0vvxWVcdQkDgVPYvEGNtttj0QC7/jM4ZeihGb6Oyzy
     DZA6aeg73/ygOATQ13A=
     -----END CERTIFICATE-----
+metadata_idps_filters: []
+metadata_idps_files: {}
 metadata_idps_xrd: "{{metadata_basedir}}/certs/surfconext.xrd"
 metadata_idps_source_dir: "/opt/metadata-src"
-metadata_idps_filters:
-  - "https://idp.surfnet.nl"
-  - "https://sso.surfsara.nl/saml/saml2/idp/metadata.php"
 metadata_idps_feed: "{{ metadata_basedir }}/idps_feed.fd"
 metadata_idps_file: "idps.xml"
 
