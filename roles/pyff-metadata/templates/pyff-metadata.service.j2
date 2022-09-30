@@ -1,5 +1,5 @@
 [Unit]
-Description=pyFF Meatdata processingew
+Description=pyFF Metadata processing
 After=syslog.target network.target
 
 [Service]
@@ -7,10 +7,8 @@ Type=oneshot
 User=pyff
 UMask=022
 LimitNOFILE=10240
-WorkingDirectory={{ pyff_env_dir }}
-ExecStart={{ pyff_env_dir }}/feeds.sh
-StandardOutput=syslog
-StandardError=syslog
+WorkingDirectory={{metadata_basedir}}
+ExecStart={{metadata_basedir}}/feeds.sh
 SyslogIdentifier=pyff-metadata
 
 [Install]

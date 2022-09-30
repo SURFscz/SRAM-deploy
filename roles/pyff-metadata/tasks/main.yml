@@ -1,8 +1,10 @@
 ---
-
 - name: install PyFF
   import_role:
     name: "pyff"
+  vars:
+    pyff_project_dir: "{{metadata_basedir}}"
+    pyff_metadata_dir: "{{metadata_target_dir}}"
 
 - name: Write source metadata certificate
   template:
@@ -12,7 +14,7 @@
 
 - name: Create metadata source directory
   file:
-    path: "{{ metadata_source_dir }}"
+    path: "{{ metadata_idps_source_dir }}"
     state: "directory"
     mode: "0755"
     owner: "root"
@@ -20,17 +22,24 @@
 - name: install IdP metadata
   copy:
     content: "{{item.metadata}}"
-    dest: "{{ metadata_source_dir }}/{{item.name}}.xml"
+    dest: "{{ metadata_idps_source_dir }}/{{item.name}}.xml"
     mode: "0644"
     owner: "root"
   with_items: "{{ metadata_idps_files }}"
   notify:
     - "run pyff-metadata job"
 
+- name: Remove old files
+  file:
+    path: "{{item}}"
+    state: "absent"
+  with_items:
+    - "{{ pyff_env_dir }}/idp_feed.fd"
+
 - name: Create pyFF mdq configuration
   template:
     src: "{{item}}.j2"
-    dest: "{{ pyff_env_dir }}/{{item}}"
+    dest: "{{metadata_basedir}}/{{item}}"
   with_items:
     - "idps_feed.fd"
     - "frontend_feed.fd"
@@ -43,7 +52,7 @@
 
 - name: Make feeds.sh executable
   file:
-    path: "{{ pyff_env_dir }}/feeds.sh"
+    path: "{{metadata_basedir}}/feeds.sh"
     state: "file"
     mode: "0755"
 
@@ -57,3 +66,16 @@
   notify:
     - "enable pyff-metadata job"
     - "run pyff-metadata job"
+
+- name: check if an obsolete directory is present
+  stat:
+    path: "/opt/pyff/pyff-env/idps_feed.fd"
+  register: "old_dir"
+  changed_when: false
+
+- name: remove old directory
+  file:
+    path: "/opt/pyff"
+    state: "absent"
+  when: "old_dir.stat.exists"
+

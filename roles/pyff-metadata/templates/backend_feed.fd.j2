@@ -1,14 +1,14 @@
 - load:
-  - "{{ metadata_proxy_backend }}"
+  - "{{metadata_proxy_backend_source}}"
 - select:
-  - "{{ metadata_proxy_backend_entityid }}"
+  - "{{metadata_proxy_backend_entityid}}"
 - xslt:
-    stylesheet: transform.xslt
+    stylesheet: "{{metadata_basedir}}/transform.xslt"
 - finalize:
     cacheDuration: P7D
     validUntil: P14D
 - sign:
-    key: certs/signing.key
-    cert: certs/signing.crt
-- publish: {{ metadata_proxy_backend_target }}.new
+    key: "{{pyff_cert_dir}}/signing.key"
+    cert: "{{pyff_cert_dir}}/signing.crt"
+- publish: "{{metadata_target_dir}}/{{metadata_proxy_backend_file}}.new"
 - stats
