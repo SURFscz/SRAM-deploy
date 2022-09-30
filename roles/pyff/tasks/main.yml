@@ -43,19 +43,19 @@
 
 - name: Create certs directory
   file:
-    path: "{{ pyff_env_dir }}/certs"
+    path: "{{pyff_cert_dir}}"
     state: "directory"
     owner: "pyff"
     mode: "0755"
 
 - name: create self-signed Metadata Signing SSL certs
   shell: >
-    openssl genrsa -out "{{ pyff_env_dir }}/certs/{{ item }}.key" 2048;
+    openssl genrsa -out "{{pyff_cert_dir}}/{{ item }}.key" 2048;
     openssl req -new -nodes -x509 -subj "/C=NL/CN={{ item }}"
-    -days 3650 -key "{{ pyff_env_dir }}/certs/{{ item }}.key"
-    -out "{{ pyff_env_dir }}/certs/{{ item }}.crt" -extensions v3_ca
+    -days 3650 -key "{{pyff_cert_dir}}/{{ item }}.key"
+    -out "{{pyff_cert_dir}}/{{ item }}.crt" -extensions v3_ca
   args:
-    creates: "{{ pyff_env_dir }}/certs/{{ item }}.crt"
+    creates: "{{pyff_cert_dir}}/{{ item }}.crt"
   with_items:
     - signing
   become: true
@@ -65,7 +65,7 @@
 
 - name: write fixed Metadata signing certificates
   copy:
-    dest: "{{ pyff_env_dir }}/certs/{{ item.file }}"
+    dest: "{{pyff_cert_dir}}/{{ item.file }}"
     content: "{{item.contents}}"
     owner: pyff
     mode: "{{item.mode}}"
