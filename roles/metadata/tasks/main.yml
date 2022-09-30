@@ -12,14 +12,14 @@
 
 - name: Create directories
   file:
-    path: "{{ item }}"
+    path: "{{item.path}}"
     state: "directory"
-    mode: "0755"
-    owner: "pyff"
-    group: "pyff"
+    mode: "{{item.mode}}"
+    owner: "root"
+    group: "{{item.group}}"
   with_items:
-    - "{{ metadata_documentroot }}"
-    - "{{ metadata_documentroot }}/metadata"
+    - { path: "{{metadata_documentroot}}",          group: "root",               mode: "0755" }
+    - { path: "{{metadata_documentroot}}/metadata", group: "{{metadata_group}}", mode: "0775" }
 
 - name: Check if obsolete job exists
   command:

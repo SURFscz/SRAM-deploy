@@ -3,10 +3,29 @@ Description=pyFF Metadata processing
 After=syslog.target network.target
 
 [Service]
-Type=oneshot
-User=pyff
+DynamicUser=true
+User=sram_metadatapyff
+Group=sram_metadatapyff
+SupplementaryGroups={{metadata_group}}
+
+ProtectSystem=strict
+ProtectHome=tmpfs
+PrivateDevices=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectKernelLogs=True
+ProtectControlGroups=true
+PrivateUsers=true
+RestrictAddressFamilies=AF_INET6 AF_INET
+RestrictNamespaces=true
+LockPersonality=true
+RestrictRealtime=true
+
+ReadWritePaths={{metadata_target_dir}} {{metadata_web_dir}}
 UMask=022
 LimitNOFILE=10240
+
+Type=oneshot
 WorkingDirectory={{metadata_basedir}}
 ExecStart={{metadata_basedir}}/feeds.sh
 SyslogIdentifier=pyff-metadata

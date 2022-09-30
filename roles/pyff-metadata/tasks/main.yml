@@ -5,6 +5,7 @@
   vars:
     pyff_project_dir: "{{metadata_basedir}}"
     pyff_metadata_dir: "{{metadata_target_dir}}"
+    pyff_group: "{{metadata_group}}"
 
 - name: Write source metadata certificate
   template:
@@ -18,6 +19,7 @@
     state: "directory"
     mode: "0755"
     owner: "root"
+    group: "{{metadata_group}}"
 
 - name: install IdP metadata
   copy:
@@ -38,23 +40,18 @@
 
 - name: Create pyFF mdq configuration
   template:
-    src: "{{item}}.j2"
-    dest: "{{metadata_basedir}}/{{item}}"
+    src: "{{item.path}}.j2"
+    dest: "{{metadata_basedir}}/{{item.path}}"
+    owner: "root"
+    group: "root"
+    mode: "{{item.mode}}"
   with_items:
-    - "idps_feed.fd"
-    - "frontend_feed.fd"
-    - "backend_feed.fd"
-    - "feeds.sh"
-    - "transform.xslt"
-  become: "yes"
-  become_user: "pyff"
+    - { path: "idps_feed.fd",     mode: "0644" }
+    - { path: "frontend_feed.fd", mode: "0644" }
+    - { path: "backend_feed.fd",  mode: "0644" }
+    - { path: "feeds.sh",         mode: "0755" }
+    - { path: "transform.xslt",   mode: "0644" }
   notify: "run pyff-metadata job"
-
-- name: Make feeds.sh executable
-  file:
-    path: "{{metadata_basedir}}/feeds.sh"
-    state: "file"
-    mode: "0755"
 
 - name: Create pyFF systemd job timer
   template:

@@ -6,25 +6,27 @@
       - xmlsec1
     state: present
 
-- name: create pyFF user
-  user:
-    name: pyff
-    shell: "/bin/false"
+- name: create pyFF group
+  group:
+    name: "{{pyff_group}}"
     state: present
 
-- name: Create project directory
-  file:
-    path: "{{ pyff_project_dir }}"
-    state: directory
-    mode: 0755
-    owner: pyff
+- name: remove obsolete pyFF user
+  user:
+    name: "pyff"
+    state: absent
 
-- name: Create metadata directory
+- name: Create project directories
   file:
-    path: "{{ pyff_metadata_dir }}"
+    path: "{{item.path}}"
     state: directory
-    mode: 0755
-    owner: pyff
+    mode: "{{item.mode}}"
+    owner: "root"
+    group: "{{item.group}}"
+  with_items:
+    - { path: "{{pyff_project_dir}}",  group: "root",           mode: "0755" }
+    - { path: "{{pyff_metadata_dir}}", group: "{{pyff_group}}", mode: "0775" }
+    - { path: "{{pyff_cert_dir}}",     group: "{{pyff_group}}", mode: "0750" }
 
 # requirements.txt can be generated from virtualenv/bin/pip freeze
 - name: Generate requirements.txt.j2 from template
@@ -38,39 +40,38 @@
   vars:
     python_venv_dir: "{{ pyff_env_dir }}"
     python_venv_requirements: "{{ pyff_project_dir }}/requirements.txt"
-    python_venv_user: "pyff"
   notify: "pyff changed"
-
-- name: Create certs directory
-  file:
-    path: "{{pyff_cert_dir}}"
-    state: "directory"
-    owner: "pyff"
-    mode: "0755"
 
 - name: create self-signed Metadata Signing SSL certs
-  shell: >
-    openssl genrsa -out "{{pyff_cert_dir}}/{{ item }}.key" 2048;
-    openssl req -new -nodes -x509 -subj "/C=NL/CN={{ item }}"
-    -days 3650 -key "{{pyff_cert_dir}}/{{ item }}.key"
-    -out "{{pyff_cert_dir}}/{{ item }}.crt" -extensions v3_ca
-  args:
-    creates: "{{pyff_cert_dir}}/{{ item }}.crt"
-  with_items:
-    - signing
-  become: true
-  become_user: "pyff"
+  command:
+    cmd: >
+      openssl genrsa -out "{{pyff_cert_dir}}/signing.key" 2048;
+      openssl req -new -nodes -x509 -subj "/C=NL/CN=signing"
+      -days 3650 -key "{{pyff_cert_dir}}/signing.key"
+      -out "{{pyff_cert_dir}}/signing.crt" -extensions v3_ca
+    creates: "{{pyff_cert_dir}}/signing.crt"
   notify: "pyff changed"
-  when: metadata_signing_cert is not defined
+  when: "metadata_signing_cert is not defined"
 
 - name: write fixed Metadata signing certificates
   copy:
     dest: "{{pyff_cert_dir}}/{{ item.file }}"
     content: "{{item.contents}}"
-    owner: pyff
+    owner: "root"
+    group: "{{pyff_group}}"
     mode: "{{item.mode}}"
   with_items:
-    - { file: "signing.key", mode: "0600", contents: "{{metadata_signing_cert.priv}}" }
+    - { file: "signing.key", mode: "0640", contents: "{{metadata_signing_cert.priv}}" }
     - { file: "signing.crt", mode: "0644", contents: "{{metadata_signing_cert.pub}}"  }
   notify: "pyff changed"
-  when: metadata_signing_cert is defined
+  when: "metadata_signing_cert is defined"
+
+- name: check signing cert permissions
+  file:
+    path: "{{pyff_cert_dir}}/{{item.path}}"
+    owner: "root"
+    group: "{{pyff_group}}"
+    mode: "{{item.mode}}"
+  with_items:
+    - { path: "signing.crt", mode: "0644" }
+    - { path: "signing.key", mode: "0640" }

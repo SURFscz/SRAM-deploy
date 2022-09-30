@@ -1,8 +1,9 @@
 ---
 metadata_basedir: "/opt/metadata"
 metadata_target_dir: "{{metadata_basedir}}/metadata"
-metadata_web_dir: "{{metadata_documentroot}}"
+metadata_web_dir: "{{metadata_documentroot}}/metadata"
 
+metadata_group: "pyff"
 
 metadata_idps_source: "https://metadata.surfconext.nl/idps-metadata.xml"
 metadata_idps_cert: |
