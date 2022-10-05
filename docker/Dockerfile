@@ -51,6 +51,11 @@ RUN systemctl enable ssh.service                 && \
     systemctl disable systemd-timesyncd.service  && \
     echo "exit 0" > /usr/sbin/policy-rc.d
 
+RUN systemctl disable getty@  && \
+    systemctl disable getty.target  && \
+    rm /lib/systemd/system/multi-user.target.wants/getty.target  && \
+    rm /lib/systemd/system/getty.target.wants/getty-static.service
+
 RUN useradd --create-home --shell /bin/bash --groups adm ansible        && \
     install -d -o ansible -m 0700 /home/ansible/.ssh  && \
     echo -n 'ansible:ansible' | chpasswd

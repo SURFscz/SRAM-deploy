@@ -57,9 +57,9 @@ def host_config(num: int, name: str) -> Dict[str, Any]:
     data: Dict[str, Any] = dict()
     data['image'       ] = 'scz-base'
     data['hostname'    ] =  name
-    data['volumes'     ] = [ './ansible_key.pub:/tmp/authorized_keys', '/sys/fs/cgroup:/sys/fs/cgroup:ro' ]
+    data['volumes'     ] = [ './ansible_key.pub:/tmp/authorized_keys' ]
     data['tmpfs'       ] = [ '/run', '/run/lock', '/tmp' ]
-    data['privileged'  ] = False
+    data['privileged'  ] = True
     data['security_opt'] = [ 'seccomp:unconfined', 'apparmor:unconfined' ]
     data['cap_add'     ] = [ 'SYS_ADMIN', 'SYS_PTRACE' ]
     data['networks'    ] = {

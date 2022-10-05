@@ -1,0 +1,6 @@
+{
+  "features": { "buildkit": true },
+  "experimental": true,
+  "exec-opts": ["native.cgroupdriver=systemd"],
+  "cgroup-parent": "docker.slice"
+}
