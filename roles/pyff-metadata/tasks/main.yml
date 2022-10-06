@@ -51,6 +51,7 @@
     - { path: "backend_feed.fd",  mode: "0644" }
     - { path: "feeds.sh",         mode: "0755" }
     - { path: "transform.xslt",   mode: "0644" }
+    - { path: "transform_proxy.xslt",   mode: "0644" }
   notify: "run pyff-metadata job"
 
 - name: Create pyFF systemd job timer

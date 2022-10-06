@@ -11,13 +11,10 @@
     </xsl:template>
 
 {% if metadata_registration_authority is defined %}
-    <!-- Add mdrpi:RegistrationInfo to each EntityDescriptor -->
-    <xsl:template match="//md:EntityDescriptor[not(md:Extensions)]">
+    <xsl:template match="md:Extensions">
       <xsl:copy>
         <xsl:copy-of select="@*"/>
-        <md:Extensions>
-            <mdrpi:RegistrationInfo xmlns:mdrpi="urn:oasis:names:tc:SAML:metadata:rpi" registrationAuthority="{{metadata_registration_authority}}"/>
-        </md:Extensions>
+           <mdrpi:RegistrationInfo xmlns:mdrpi="urn:oasis:names:tc:SAML:metadata:rpi" registrationAuthority="http://federatie.example.org/"/>
         <xsl:copy-of select="node()"/>
       </xsl:copy>
     </xsl:template>
