@@ -16,7 +16,7 @@
     <xsl:template match="@xml:base"/>
     <xsl:template match="ds:Signature"/>
     <xsl:template match="md:KeyDescriptor"/>
-       <!--<xsl:template match="md:Extensions/mdattr:EntityAttributes"/>-->
+    <xsl:template match="md:Extensions/mdattr:EntityAttributes"/>
 
     <!-- Identity transform -->
     <xsl:template match="@* | node()">
@@ -37,7 +37,7 @@
     </xsl:template>
 
     <!-- Add RegistrationInfo and sirtfi EntityAttributes -->
-    <xsl:template match="md:IDPSSODescriptor|md:SPSSODescriptor/md:Extensions">
+    <xsl:template match="md:IDPSSODescriptor/md:Extensions|md:SPSSODescriptor/md:Extensions">
       <xsl:copy>
         <xsl:apply-templates select="@* | node()"/>
            <mdrpi:RegistrationInfo xmlns:mdrpi="urn:oasis:names:tc:SAML:metadata:rpi" registrationAuthority="http://federatie.example.org/"/>
@@ -49,5 +49,6 @@
            </mdattr:EntityAttributes>
       </xsl:copy>
     </xsl:template>
+
 </xsl:stylesheet>
 
