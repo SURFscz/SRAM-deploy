@@ -1,7 +1,6 @@
 - load:
   - "{{metadata_proxy_frontend_source}}"
-- select:
-  - "{{metadata_proxy_frontend_entityid}}"
+- select
 - xslt:
     stylesheet: "{{metadata_basedir}}/transform.xslt"
 - finalize:

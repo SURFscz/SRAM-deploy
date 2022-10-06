@@ -41,10 +41,8 @@ metadata_idps_file: "idps.xml"
 
 metadata_proxy_frontend_source: "https://satosa.local/frontend.xml"
 metadata_proxy_frontend_feed: "{{ metadata_basedir }}/frontend_feed.fd"
-metadata_proxy_frontend_entityid: "https://satosa.local/proxy"
 metadata_proxy_frontend_file: "proxy_idp.xml"
 
 metadata_proxy_backend_source: "https://satosa.local/metadata/backend.xml"
 metadata_proxy_backend_feed: "{{ metadata_basedir }}/backend_feed.fd"
-metadata_proxy_backend_entityid: "https://satosa.local/metadata/backend.xml"
 metadata_proxy_backend_file: "proxy_sp.xml"
