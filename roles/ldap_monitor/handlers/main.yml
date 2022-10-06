@@ -1,7 +1,7 @@
 ---
-- name: "enable checksum job"
+- name: "enable monitor job"
   systemd:
-    name: "ldap_checksum.timer"
+    name: "ldap_monitor.timer"
     enabled: true
     state: "started"
     daemon_reload: true
