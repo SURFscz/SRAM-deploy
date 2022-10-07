@@ -83,7 +83,8 @@
 - name: "ci-runner"
   hosts: "bhr12"
   roles:
-    - { role: 'ci-runner', tags: ['bhr12','ci-runner']}
+    - { role: 'http_apache', tags: ['bhr12','ci-runner']}
+    - { role: 'ci-runner',   tags: ['bhr12','ci-runner']}
 
 - name: "lb"
   hosts: lb

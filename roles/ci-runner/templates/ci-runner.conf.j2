@@ -1,3 +1,5 @@
+Listen 80
+Listen 443
 <IfModule mod_reqtimeout.c>
   RequestReadTimeout header=20-40,MinRate=500 body=20-40,MinRate=500
 </IfModule>
@@ -9,9 +11,9 @@
         SSLCipherSuite ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES256-GCM-SHA384
         SSLProtocol TLSv1.2 TLSv1.3
 
-        SSLCertificateFile      /etc/ssl/ci-runner.sram.surf.nl.crt
-        SSLCertificateChainFile /etc/ssl/ci-runner.sram.surf.nl.fullchain.crt
-        SSLCertificateKeyFile   /etc/ssl/ci-runner.sram.surf.nl.key
+        SSLCertificateFile      {{ ssl_certs_dir }}/ci-runner.sram.surf.nl.crt
+        SSLCertificateChainFile {{ ssl_certs_dir }}/ci-runner.sram.surf.nl.chain.crt
+        SSLCertificateKeyFile   {{ ssl_certs_dir }}/ci-runner.sram.surf.nl.key
 
         ErrorLog ${APACHE_LOG_DIR}/error.log
         CustomLog ${APACHE_LOG_DIR}/access.log combined
