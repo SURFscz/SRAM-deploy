@@ -9,9 +9,9 @@
         SSLCipherSuite ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES256-GCM-SHA384
         SSLProtocol TLSv1.2 TLSv1.3
 
-        SSLCertificateFile      /etc/apache2/certs/ci-runner.sram.surf.nl.crt
-        SSLCertificateChainFile /etc/apache2/certs/ci-runner.sram.surf.nl.fullchain.crt
-        SSLCertificateKeyFile   /etc/apache2/certs/ci-runner.sram.surf.nl.key
+        SSLCertificateFile      /etc/ssl/ci-runner.sram.surf.nl.crt
+        SSLCertificateChainFile /etc/ssl/ci-runner.sram.surf.nl.fullchain.crt
+        SSLCertificateKeyFile   /etc/ssl/ci-runner.sram.surf.nl.key
 
         ErrorLog ${APACHE_LOG_DIR}/error.log
         CustomLog ${APACHE_LOG_DIR}/access.log combined
