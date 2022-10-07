@@ -40,7 +40,6 @@
     <xsl:template match="md:IDPSSODescriptor/md:Extensions|md:SPSSODescriptor/md:Extensions">
       <xsl:copy>
         <xsl:apply-templates select="@* | node()"/>
-           <mdrpi:RegistrationInfo xmlns:mdrpi="urn:oasis:names:tc:SAML:metadata:rpi" registrationAuthority="http://federatie.example.org/"/>
            <mdattr:EntityAttributes>
              <saml:Attribute NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" Name="urn:oasis:names:tc:SAML:attribute:assurance-certification">
                <saml:AttributeValue>https://refeds.org/sirtfi2</saml:AttributeValue>
@@ -51,4 +50,3 @@
     </xsl:template>
 
 </xsl:stylesheet>
-
