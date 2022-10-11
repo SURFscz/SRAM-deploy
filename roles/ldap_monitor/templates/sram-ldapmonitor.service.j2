@@ -1,0 +1,32 @@
+[Unit]
+Description=LDAP Checksum Runner
+
+[Service]
+Type=oneshot
+WorkingDirectory={{ ldap_monitor_dir }}
+ExecStart={{ ldap_monitor_dir }}/ldapmonitor.sh
+
+User=openldap
+SupplementaryGroups={{ ldap_monitor_group }}
+
+SystemCallArchitectures=native
+NoNewPrivileges=true
+ProtectProc=invisible
+ProcSubset=pid
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths={{ ldap_monitor_status_dir }}
+InaccessiblePaths=/boot /home /root /srv/ /var
+PrivateTmp=true
+PrivateDevices=true
+PrivateUsers=true
+ProtectClock=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectKernelLogs=true
+ProtectControlGroups=true
+RestrictAddressFamilies=AF_INET AF_UNIX
+LockPersonality=true
+RestrictRealtime=yes
+RestrictSUIDSGID=yes
+RemoveIPC=true

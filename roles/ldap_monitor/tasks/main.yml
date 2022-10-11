@@ -4,16 +4,28 @@
     name: "python3-ldap"
     state: "present"
 
+- name: "Create ldap monitor group"
+  group:
+    name: "{{ldap_monitor_group}}"
+
 - name: "Ensure that ldap_monitor_dir exist"
   file:
-    path: "{{ ldap_monitor_dir }}"
+    path: "{{ldap_monitor_dir}}"
     state: "directory"
     mode: "0755"
 
+- name: "Ensure that ldap_monitor_dir status exist"
+  file:
+    path: "{{ldap_monitor_status_dir}}"
+    state: "directory"
+    owner: "root"
+    group: "{{ldap_monitor_group}}"
+    mode: "0775"
+
 - name: "Create ldap_monitor.sh script"
   template:
-    src: "ldap_monitor.sh.j2"
-    dest: "{{ ldap_monitor_dir }}/ldap_monitor.sh"
+    src: "ldapmonitor.sh.j2"
+    dest: "{{ ldap_monitor_dir }}/ldapmonitor.sh"
     mode: "0755"
 
 - name: Copy ldifchecksum.py script
@@ -27,7 +39,7 @@
     src: "{{item}}.j2"
     dest: "/etc/systemd/system/{{item}}"
   with_items:
-    - "ldap_monitor.service"
-    - "ldap_monitor.timer"
+    - "sram-ldapmonitor.service"
+    - "sram-ldapmonitor.timer"
   notify:
     - "enable monitor job"

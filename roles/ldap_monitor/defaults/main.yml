@@ -1,3 +1,5 @@
 ---
-ldap_checksum_dir: "/opt/ldap_checksum"
-ldap_checksum_file: "/opt/ldap_checksum/ldap-chksum.txt"
+ldap_monitor_dir: "/opt/ldapmonitor"
+ldap_monitor_status_dir: "{{ldap_monitor_dir}}/status"
+ldap_monitor_file: "{{ldap_monitor_status_dir}}/ldap-info.txt"
+ldap_monitor_group: "sram-ldapmonitor"
