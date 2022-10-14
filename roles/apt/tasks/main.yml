@@ -61,6 +61,7 @@
       - "gnupg2"
       - "locales-all"
       - "logrotate"
+      - "lsof"
       - "needrestart"
       - "net-tools"
       - "netcat"
