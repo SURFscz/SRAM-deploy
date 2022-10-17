@@ -120,7 +120,7 @@
 #    - { role: pam_websso_daemon,  tags: ['client','websso-daemon'], when: experimental_features }
 
 - name: "first ldap"
-  hosts: vm_ldap_master
+  hosts: "ldap_primary"
   roles:
     - { role: plsc,               tags: ['plsc', 'ldap-plsc'     ] }
 
