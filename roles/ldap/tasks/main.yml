@@ -88,7 +88,7 @@
     state: "exact"
     attributes:
       olcSizeLimit: "unlimited"
-      olcLogLevel: "stats stats2 filter"
+      olcLogLevel: "{{ ldap_loglevel }}"
       olcAttributeOptions: "time-"
       olcTLSCertificateKeyFile: "{{ ssl_certs_dir }}/{{ internal_base_domain }}.key"
       olcTLSCertificateFile: "{{ ssl_certs_dir }}/{{ internal_base_domain }}.crt"
