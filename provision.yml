@@ -116,7 +116,8 @@
   tasks:
     - { import_tasks: "tasks/versions.yml", tags: ['common'] }
   roles:
-    - { role: ldap,               tags: ['ldap'                  ] }
+    - { role: ldap,               tags: ['ldap'                 ] }
+    - { role: ldap_monitor,       tags: ['ldap', 'ldap-monitor' ] }
 #    - { role: pam_websso_daemon,  tags: ['client','websso-daemon'], when: experimental_features }
 
 - name: "first ldap"

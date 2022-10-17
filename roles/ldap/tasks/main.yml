@@ -122,6 +122,17 @@
     - "enable_syncrepl.ldif"
     - "set_root_credentials.ldif"
 
+- name: Get uid of openldap user
+  ansible.builtin.getent:
+    database: "passwd"
+    key: "openldap"
+
+# store it in a nice var (so line below doesn't get too long)
+- name: Save gid of openldap user
+  ansible.builtin.set_fact:
+    openldap_auth: "gidNumber={{ansible_facts.getent_passwd['openldap'][2]}}+\
+                    uidNumber={{ansible_facts.getent_passwd['openldap'][1]}}"
+
 - name: Set ACLs
   community.general.ldap_attrs:
     dn: "olcDatabase={1}mdb,cn=config"
@@ -136,6 +147,7 @@
         - >-
           to *
           by dn.exact=gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth manage
+          by dn.exact={{openldap_auth}},cn=peercred,cn=external,cn=auth read
           {% if environment_name=="vm" %}
           by dn.exact=gidNumber=1000+uidNumber=1000,cn=peercred,cn=external,cn=auth manage
           {% endif %}

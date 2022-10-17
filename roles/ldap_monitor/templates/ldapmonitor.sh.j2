@@ -1,0 +1,29 @@
+#!/bin/bash
+
+set -o errexit
+set -o pipefail
+set -x
+
+TMPFILE=$(mktemp "{{ldap_monitor_file}}_XXXXXX")
+function finish {
+  rm -rf "$TMPFILE"
+}
+trap finish EXIT
+
+#date
+date --utc --iso-8601=seconds >> $TMPFILE
+
+# checksum
+ldapsearch -Y EXTERNAL -Q -H ldapi://%2frun%2fslapd%2fldapi -LLL -o ldif-wrap=no -b "{{services_ldap.basedn}}" -s sub '(objectclass=*)' '*' '+' \
+    | {{ ldap_monitor_dir }}/ldifchecksum.py \
+    >> $TMPFILE
+
+# contextCSN
+ldapsearch -Y EXTERNAL -Q -H ldapi://%2frun%2fslapd%2fldapi -LLL -o ldif-wrap=no -b "{{services_ldap.basedn}}" -s base 'contextCSN' \
+    | grep '^contextCSN' \
+    >> $TMPFILE
+
+# move final into place
+mv "$TMPFILE" "{{ldap_monitor_file}}"
+
+exit 0
