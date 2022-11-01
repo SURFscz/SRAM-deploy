@@ -107,6 +107,15 @@
         - dynlist
         - syncprov
 
+- name: Setup main database
+  community.general.ldap_attrs:
+    dn: olcDatabase={1}mdb,cn=config
+    attributes:
+      olcSuffix: "{{ services_ldap.basedn }}"
+      olcRootDN: "{{ services_ldap.binddn }}"
+      olcRootPW: "{{ '%s' | format(services_ldap_password) |  slapd_hash }}"
+    state: exact
+
 - name: Setup Monitor
   community.general.ldap_entry:
     dn: olcdatabase=monitor,cn=config
