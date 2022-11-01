@@ -107,15 +107,6 @@
         - dynlist
         - syncprov
 
-- name: Setup main database
-  community.general.ldap_attrs:
-    dn: olcDatabase={1}mdb,cn=config
-    attributes:
-      olcSuffix: "{{ services_ldap.basedn }}"
-      olcRootDN: "{{ services_ldap.binddn }}"
-      olcRootPW: "{{ '%s' | format(services_ldap_password) |  slapd_hash }}"
-    state: exact
-
 - name: Setup Monitor
   community.general.ldap_entry:
     dn: olcdatabase=monitor,cn=config
@@ -181,7 +172,7 @@
         network-timeout=5
   when: inventory_hostname in groups['ldap_secondary']
 
-- name: Set root credentials(1)
+- name: Set root credentials
   community.general.ldap_attrs:
     dn: olcDatabase={0}config,cn=config
     attributes:
@@ -194,6 +185,16 @@
           by dn.exact="{{ services_ldap.binddn }}" manage
           by * break
     state: exact
+
+- name: Setup main database
+  community.general.ldap_attrs:
+    dn: olcDatabase={1}mdb,cn=config
+    attributes:
+      olcSuffix: "{{ services_ldap.basedn }}"
+      olcRootDN: "{{ services_ldap.binddn }}"
+      olcRootPW: "{{ '%s' | format(services_ldap_password) |  slapd_hash }}"
+    state: exact
+  when: inventory_hostname in groups['ldap_primary']
 
 - name: Get uid of openldap user
   ansible.builtin.getent:
