@@ -169,7 +169,7 @@
     dn: olcDatabase={0}config,cn=config
     attributes:
       olcAccess: >-
-          to *
+          {0}to *
           by dn.exact=gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth manage
           {% if environment_name=="vm" %}
           by dn.exact=gidNumber=1000+uidNumber=1000,cn=peercred,cn=external,cn=auth manage
@@ -233,7 +233,6 @@
     state: "exact"
     ordered: true
 
-
 - name: Initialize DIT
   community.general.ldap_entry:
     dn: "{{ services_ldap.basedn }}"
@@ -245,6 +244,7 @@
     attributes:
       dc: "{{ services_ldap.basedn | regex_replace('^dc=([^,]+).*', '\\1') }}"
       o: "{{ services_ldap.o }}"
+  when: inventory_hostname in groups['ldap_primary']
 
 - name: Initialize DIT admin
   community.general.ldap_entry:
@@ -252,6 +252,7 @@
     objectClass: "organizationalRole"
     attributes:
       cn: "{{ services_ldap.binddn | regex_replace('^cn=([^,]+).*', '\\1') }}"
+  when: inventory_hostname in groups['ldap_primary']
 
 - name: Redirect slapd log to /var/log/slapd.log
   copy:
