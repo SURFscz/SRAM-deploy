@@ -1,16 +1,16 @@
 #!/bin/bash
 ###########################################################################
 # This scripts checks the status of all subprojects os the SCZ and
-# shows if they have new commits since the last release of SCZ-deploy
+# shows if they have new commits since the last release of SRAM-deploy
 ###########################################################################
 set -e
 shopt -s xpg_echo
 
 dir_my="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 dir_base="$HOME/.cache/SURFscz"
-dir_main="$dir_base/SCZ-deploy"
+dir_main="$dir_base/SRAM-deploy"
 
-GIT_MAIN="git@github.com:SURFscz/SCZ-deploy.git"
+GIT_MAIN="git@github.com:SURFscz/SRAM-deploy.git"
 GIT_CONF="git@gitlab.surfnet.nl:SCZ/SCZ-deploy-surf.git"
 
 N="\e[0m"
@@ -33,7 +33,7 @@ function init {
 }
 
 function check_main_repo {
-	do_echo "Examining ${I}SCZ-deploy${N} repo"
+	do_echo "Examining ${I}SRAM-deploy${N} repo"
 
 	pwd=$(pwd)
 	if ! cd "$dir_main" >/dev/null 2>&1

@@ -2,10 +2,10 @@
 Description=OIDC-OP
 After=syslog.target network.target
 
-# TODO: draai dit als een normale gebruiker neit als root
 [Service]
 Type=simple
-User=root
+User=oidc-op
+Group=oidc-op
 WorkingDirectory={{ oidc_dir }}/example/flask_op
 ExecStart={{ oidc_dir_venv }}/bin/python {{ oidc_dir }}/example/flask_op/server.py config_op.json
 Restart=on-failure

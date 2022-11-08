@@ -63,13 +63,16 @@ frontend fe_https
 {% endfor %}
 
     # always use https
-    http-response set-header Strict-Transport-Security "max-age=16000000; includeSubDomains; preload;"
+    http-after-response set-header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload;"
 
     # generic security headers
     http-response set-header X-Frame-Options "sameorigin"
     http-response set-header X-XSS-Protection "1; mode=block"
     http-response set-header X-Content-Type-Options "nosniff"
     http-response set-header Referrer-Policy "strict-origin-when-cross-origin"
+
+    # diable  mime type sniffing
+    http-response set-header X-Content-Type-Options "nosniff"
 
     # rewrite all cookies to be secure and HttpOnly
     http-response replace-header Set-Cookie (.*)(\s*;\s*(secure|httponly))* \1;secure;httponly
@@ -114,7 +117,7 @@ frontend fe_https
     http-request deny if acl_{{host.hostname}} !acl_ip_{{host.hostname}}
 {% endif %}
 {% endif %}
-    use_backend be_{{host.name}} if acl_{{host.hostname}}
+    use_backend {{host.name}} if acl_{{host.hostname}}
 
 {% endfor %}
 
@@ -123,8 +126,8 @@ backend {{host.name}}
     mode    http
     cookie  SERVERID insert indirect maxidle 60m secure httponly nocache
     {% for be_server in host.backend_hosts -%}
-    {% set colour = "blue"  if "blue"  in groups and be_server in groups  else
-                    "green" if "green" in groups and be_server in groups  else
+    {% set colour = "blue"  if "blue"  in groups and be_server in groups["blue"]  else
+                    "green" if "green" in groups and be_server in groups["green"] else
                     "server" -%}
     {% set server_name = "{}-{}".format(colour, loop.index) -%}
     server {{server_name}} {{be_server}}:{{host.backend_port}} ssl check cookie {{be_server}}
@@ -135,6 +138,7 @@ backend {{host.name}}
 {% for host in lb_ldap %}
 {% set name = "{}{}".format(host.hostname.split('.')[0], "" if loop.index==1 else "{}".format(loop.index)) -%}
 listen {{name}}
+    no option dontlognull
     bind    *:{{host.frontend_port}} ssl crt {{host.hostname}}/priv+fullchain.pem transparent
     bind [::]:{{host.frontend_port}} ssl crt {{host.hostname}}/priv+fullchain.pem transparent
 
@@ -153,7 +157,7 @@ listen {{name}}
       {%- for ip in iprange.get("vpn", {}).values() %} {{ip}}{% endfor %}
       {%- for ip in iprange.get("vpn6",{}).values() %} {{ip}}{% endfor %}
 
-    tcp-request connection reject unless ldap_sbs_allow or ldap_local_allow or ldap_vpn_allow
+    tcp-request content reject unless ldap_sbs_allow or ldap_local_allow or ldap_vpn_allow
 
     timeout client 900s
     timeout server 901s

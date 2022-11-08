@@ -51,18 +51,36 @@
     - config_op.json
   notify: "restart oidc-op"
 
+- name: Create group oidc-op
+  ansible.builtin.group:
+    name: oidc-op
+
+- name: Create user oidc-op
+  ansible.builtin.user:
+    name: oidc-op
+    group: oidc-op
+    groups:
+      - ssl-cert
+    shell: /bin/bash
+
 - name: Make sure cdb directory exists
   file:
-    path: "{{ oidc_dir }}/example/flask_op/cdb"
+    path: "{{ oidc_dir }}/example/flask_op/{{ item }}"
     state: directory
+    owner: oidc-op
+    group: oidc-op
     mode: 0755
+  with_items:
+    - cdb
+    - log
 
 - name: Create client config if it doesn't exist
   template:
     src: "client_id.j2"
     dest: "{{ oidc_dir }}/example/flask_op/cdb/{{ sbs_client_id }}"
-    mode: "0640"
-    group: "www-data"
+    mode: 0640
+    owner: oidc-op
+    group: oidc-op
   no_log: "{{sram_ansible_nolog}}"
   notify: "restart oidc-op"
 

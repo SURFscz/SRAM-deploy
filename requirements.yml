@@ -12,3 +12,6 @@ collections:
     version: ">=1.3.0,<1.4"
   - name: "ansible.utils"
     version: ">=2.5.0,<2.6.0"
+
+roles:
+  - name: "monolithprojects.github_actions_runner"

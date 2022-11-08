@@ -80,6 +80,12 @@
   hosts: "bhr1"
   roles:
 
+- name: "ci-runner"
+  hosts: "bhr12"
+  roles:
+    - { role: 'http_apache', tags: ['bhr12','ci-runner']}
+    - { role: 'ci-runner',   tags: ['bhr12','ci-runner']}
+
 - name: "lb"
   hosts: lb
   tasks:
@@ -109,12 +115,12 @@
   tasks:
     - { import_tasks: "tasks/versions.yml", tags: ['common'] }
   roles:
-    - { role: ldap_services,      tags: ['ldap', 'ldap-services' ] }
-    - { role: ldap,               tags: ['ldap'                  ] }
+    - { role: ldap,               tags: ['ldap'                 ] }
+    - { role: ldap_monitor,       tags: ['ldap', 'ldap-monitor' ] }
 #    - { role: pam_websso_daemon,  tags: ['client','websso-daemon'], when: experimental_features }
 
 - name: "first ldap"
-  hosts: ldap[0]
+  hosts: "ldap_primary"
   roles:
     - { role: plsc,               tags: ['plsc', 'ldap-plsc'     ] }
 
@@ -150,6 +156,7 @@
 #  roles:
 #    - { role: pam_websso,         tags: ['client','pam-websso'], when: experimental_features }
 
+# CI test docker
 - name: "test"
   hosts: test
   tasks:
