@@ -3,7 +3,7 @@ ansible_ssh_common_args: '-o StrictHostKeyChecking=false'
 # note: {{playbook_dir}} would probably be nicer, but it turns out that that is
 # a relative path, which ssh doesn't understand
 ansible_ssh_user: "ansible"
-ansible_ssh_private_key_file: "{{inventory_dir}}/../../docker/ansible_key"
+ansible_ssh_private_key_file: "docker/ansible_key"
 
 secrets_file: "environments/vm/secrets/all.yml"
 secrets_users_file: "environments/vm/secrets/users.yml"
