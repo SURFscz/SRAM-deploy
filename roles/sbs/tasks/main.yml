@@ -150,7 +150,7 @@
     dest: "{{ sbs_work_dir }}"
     remote_src: true
     owner: "{{sbs_file_owner}}"
-    group: "{{sbs_file_owner}}"
+    group: "{{sbs_group}}"
   notify: "restart sbs"
   when: "sbs_download.changed or not sbs_git_dir_stat.stat.exists"
 
