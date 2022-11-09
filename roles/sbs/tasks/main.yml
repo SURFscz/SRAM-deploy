@@ -239,7 +239,6 @@
     dest: "/etc/nginx/sites-enabled/10-sbs.conf"
   notify: "restart nginx"
 
-
 - name: "Install database dump script"
   template:
     src: "backup-database.sh.j2"
@@ -254,4 +253,4 @@
   register: "result"
   failed_when: "result.rc != 0"
   changed_when: "'[alembic.runtime.migration] Running upgrade' in result.stderr"
-  notify: "restart apache"
+  notify: "restart sbs"
