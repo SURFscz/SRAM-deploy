@@ -51,19 +51,6 @@
     - eduMember.ldif
     - voPerson.ldif
 
-- name: Generate ldif from template
-  template:
-    src: "{{ item }}.j2"
-    dest: "{{ ldap_ldif_dir }}/{{ item }}"
-    mode: 0644
-  loop:
-    - "set_root_credentials.ldif"
-    - "enable_memberof.ldif"
-    - "enable_syncrepl.ldif"
-    - "enable_syncprov.ldif"
-    - "enable_dynlist.ldif"
-    - "enable_monitor.ldif"
-
 - name: Generate ldap.conf
   template:
     src: ldap.conf.j2
@@ -71,7 +58,7 @@
     mode: 0644
 
 - name: Set indices
-  ldap_attrs:
+  community.general.ldap_attrs:
     dn: "olcDatabase={1}mdb,cn=config"
     attributes:
       olcDbIndex: "{{item}}"
@@ -109,18 +96,104 @@
     - "eduMember.ldif"
     - "voPerson.ldif"
 
-- name: Setup LDAP
-  ansible.builtin.script: "scripts/ldap-modify {{ ldap_ldif_dir }}/{{ item }}"
-  register: "result"
-  failed_when: "result.rc not in [0,20,68,80]"
-  changed_when: "result.rc not in [0,20]"
-  loop:
-    - "enable_monitor.ldif"
-    - "enable_memberof.ldif"
-    - "enable_dynlist.ldif"
-    - "enable_syncprov.ldif"
-    - "enable_syncrepl.ldif"
-    - "set_root_credentials.ldif"
+- name: Setup Modules
+  community.general.ldap_attrs:
+    dn: cn=module{0},cn=config
+    attributes:
+      olcModuleLoad:
+        - back_monitor
+        - memberof
+        - refint
+        - dynlist
+        - syncprov
+
+- name: Setup Monitor
+  community.general.ldap_entry:
+    dn: olcdatabase=monitor,cn=config
+    objectClass: olcDatabaseConfig
+    attributes:
+      olcRootDN: "cn=admin,cn=Monitor"
+      olcRootPW: "{{ '%s' | format(monitor_ldap_password) |  slapd_hash }}"
+
+- name: Setup MemberOf(1)
+  community.general.ldap_entry:
+    dn: olcOverlay=memberof,olcDatabase={1}mdb,cn=config
+    objectClass:
+      - olcOverlayConfig
+      - olcMemberOf
+    attributes:
+      olcMemberOfRefInt: "TRUE"
+      olcMemberOfGroupOC: groupOfMembers
+      olcMemberOfMemberAD: member
+      olcMemberOfMemberOfAD: memberOf
+
+- name: Setup MemberOf(2)
+  community.general.ldap_entry:
+    dn: olcOverlay=refint,olcDatabase={1}mdb,cn=config
+    objectClass:
+      - olcOverlayConfig
+      - olcRefintConfig
+    attributes:
+      olcRefintAttribute: memberof member
+
+- name: Setup Dynlist
+  community.general.ldap_entry:
+    dn: olcOverlay=dynlist,olcDatabase={1}mdb,cn=config
+    objectClass:
+      - olcOverlayConfig
+      - olcDynamicList
+    attributes:
+      olcDlAttrSet: "{0}organizationalRole labeledURI roleOccupant"
+
+- name: Setup Syncprov
+  community.general.ldap_entry:
+    dn: olcOverlay=syncprov,olcDatabase={1}mdb,cn=config
+    objectClass:
+      - olcOverlayConfig
+      - olcSyncProvConfig
+    attributes:
+      olcSpCheckpoint: 100 10
+      olcSpSessionLog: 100
+
+- name: Setup main database
+  community.general.ldap_attrs:
+    dn: olcDatabase={1}mdb,cn=config
+    attributes:
+      olcSuffix: "{{ services_ldap.basedn }}"
+      olcRootDN: "{{ services_ldap.binddn }}"
+      olcRootPW: "{{ '%s' | format(services_ldap_password) |  slapd_hash }}"
+    state: exact
+
+- name: Set root credentials
+  community.general.ldap_attrs:
+    dn: olcDatabase={0}config,cn=config
+    attributes:
+      olcAccess: >-
+          {0}to *
+          by dn.exact=gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth manage
+          {% if environment_name=="vm" %}
+          by dn.exact=gidNumber=1000+uidNumber=1000,cn=peercred,cn=external,cn=auth manage
+          {% endif %}
+          by dn.exact="{{ services_ldap.binddn }}" manage
+          by * break
+    state: exact
+
+- name: Setup Syncrepl
+  community.general.ldap_attrs:
+    dn: olcDatabase={1}mdb,cn=config
+    attributes:
+      olcSyncrepl: >-
+        rid=001
+        provider="ldaps://{{ groups['ldap_primary'][0] }}/"
+        searchbase="{{ services_ldap.basedn }}"
+        type=refreshAndPersist
+        bindmethod=simple
+        binddn="{{ services_ldap.binddn }}"
+        credentials={{ services_ldap_password }}
+        retry="30 +"
+        timeout=30
+        network-timeout=5
+  when: inventory_hostname in groups['ldap_secondary']
 
 - name: Get uid of openldap user
   ansible.builtin.getent:
@@ -171,6 +244,7 @@
     attributes:
       dc: "{{ services_ldap.basedn | regex_replace('^dc=([^,]+).*', '\\1') }}"
       o: "{{ services_ldap.o }}"
+  when: inventory_hostname in groups['ldap_primary']
 
 - name: Initialize DIT admin
   community.general.ldap_entry:
@@ -178,6 +252,7 @@
     objectClass: "organizationalRole"
     attributes:
       cn: "{{ services_ldap.binddn | regex_replace('^cn=([^,]+).*', '\\1') }}"
+  when: inventory_hostname in groups['ldap_primary']
 
 - name: Redirect slapd log to /var/log/slapd.log
   copy:
