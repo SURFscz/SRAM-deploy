@@ -19,8 +19,6 @@ server {
 
     ssl_certificate        {{ ssl_certs_dir }}/tools_https.crt;
     ssl_certificate_key    {{ ssl_certs_dir }}/tools_https.key;
-    ssl_protocols          TLSv1.3;
-    ssl_ciphers            EECDH+AESGCM:EDH+AESGCM;
 
     location / {
 {% for ip in iprange.vpn.values() %}

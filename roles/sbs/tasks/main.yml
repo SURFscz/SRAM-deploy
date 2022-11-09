@@ -1,67 +1,64 @@
 ---
-## TODO: draai SBS als non-www-data user
 
-
-- name: "Install node repository key"
-  apt_key:
-    id: "9FD3B784BC1C6FC31A8A0A1C1655A0AB68576280"
-    url: "https://deb.nodesource.com/gpgkey/nodesource.gpg.key"
-
-- name: "Install node repository"
+# TODO: remove this in v16
+- name: "Remove node repository"
   apt_repository:
     repo: "deb https://deb.nodesource.com/node_12.x buster main"
-    state: "present"
+    state: "absent"
 
-- name: Install required packages
+- name: "Remove node repository key"
+  apt_key:
+    id: "9FD3B784BC1C6FC31A8A0A1C1655A0AB68576280"
+    state: "absent"
+
+- name: "Remove Apache config"
+  file:
+    path: "/etc/apache2/sites-enabled/sbs.conf"
+    state: "absent"
+
+- name: "Remove Apache"
+  apt:
+    state: "absent"
+    purge: True
+    name:
+      - libapache2-mod-auth-openidc
+      - libapache2-mod-wsgi-py3
+      - apache2
+      - apache2-bin
+      - apache2-data
+      - apache2-utils
+
+- name: "Remove SBS wsgi file"
+  file:
+    path: "{{ sbs_work_dir }}/sbs-api.wsgi"
+    state: "absent"
+
+
+- name: "Install required packages"
   apt:
     state: "latest"
     name:
       - nodejs
       - python3-pymysql
-      - libapache2-mod-wsgi-py3
       - mariadb-client
       - libxmlsec1-dev  # for python xmlsec pkg
       - pkg-config      # for python xmlsec pkg
     install_recommends: false
 
-- name: Remove obsolete packages
-  apt:
-    state: absent
-    name:
-      - libapache2-mod-auth-openidc
-  notify: "restart apache"
+- name: "Create SBS group"
+  group:
+    name: "sram-sbs"
+    system: True
 
-- name: Enable correct apache modules
-  apache2_module:
-    state: "{{ item.value }}"
-    name: "{{ item.key }}"
-    ignore_configcheck: True
-  with_dict:
-    wsgi: present
-  notify: "restart apache"
-
-- name: Configure Apache vhost
-  template:
-    src: sbs.conf.j2
-    dest: /etc/apache2/sites-enabled/sbs.conf
-  notify: "restart apache"
-
-- name: Comment MinProtocol in openssl.conf on dockers
-  replace:
-    path: /etc/ssl/openssl.cnf
-    regexp: '(^MinProtocol.*)'
-    replace: '#\1'
-  when: "is_docker"
-
-- name: Install database certificate
+- name: "Install database certificate"
   copy:
     dest: "{{sbs_db_cert_path}}"
     content: "{{ sbs_db_tls_cert }}"
 
-- name: Initialialize database
+- name: "Initialialize database"
   throttle: 1
   block:
-    - name: Add SBS database
+    - name: "Add SBS database"
       community.mysql.mysql_db:
         login_host: '{{ db_host }}'
         login_user: '{{ db_admin_user }}'
@@ -70,9 +67,9 @@
         encoding: 'utf8mb4'
         collation: 'utf8mb4_unicode_ci'
         ca_cert: "{{sbs_db_cert_path}}"
-      notify: "restart apache"
+      notify: "restart sbs"
 
-    - name: Add SBS user
+    - name: "Add SBS user"
       community.mysql.mysql_user:
         login_host: '{{ db_host }}'
         login_user: '{{ db_admin_user }}'
@@ -93,97 +90,111 @@
           passwd: "{{ sbs_dbbackup_password }}"
           priv: "SELECT"
       no_log: "{{sram_ansible_nolog}}"
-      notify: "restart apache"
+      notify: "restart sbs"
 
 - name: "Create directories"
   file:
     path: "{{item.path}}"
     state: "directory"
-    owner: "{{item.owner}}"
-    group: "{{item.owner}}"
-    mode: "0755"
+    owner: "{{sbs_file_owner}}"
+    group: "{{sbs_group}}"
+    mode: "{{item.mode}}"
   with_items:
-    - { path: "{{sbs_work_dir}}",            owner: "{{sbs_file_owner}}" }
-    - { path: "{{sbs_conf_dir}}",            owner: "{{sbs_file_owner}}" }
-    - { path: "{{sbs_conf_dir}}/saml",       owner: "{{sbs_file_owner}}" }
-    - { path: "{{sbs_log_dir}}",             owner: "www-data"           }
+    - { path: "{{sbs_work_dir}}",            mode: "0755" }
+    - { path: "{{sbs_conf_dir}}",            mode: "0755" }
+    - { path: "{{sbs_conf_dir}}/saml",       mode: "0755" }
+    - { path: "{{sbs_log_dir}}",             mode: "0775" }
 
-- name: Download SBS build
+- name: "Fix file permissions"
+  file:
+    path: "{{sbs_log_dir}}/{{item}}"
+    owner: "{{sbs_file_owner}}"
+    group: "{{sbs_group}}"
+    mode: "0664"
+    state: "touch"
+    modification_time: "preserve"
+    access_time: "preserve"
+  with_items:
+    - "sbs.log"
+    - "sbs_debug.log"
+
+- name: "Download SBS build"
   get_url:
     url: "{{sbs_build_url}}"
     dest: "{{sbs_work_dir}}/sbs.tar.xz"
     force: true
   register: "sbs_download"
 
-- name: Remove previous SBS backup
+- name: "Check if SBS dir exists"
+  stat:
+    path: "{{sbs_git_dir}}"
+    get_attributes: false
+    get_checksum: false
+    get_mime: false
+  register: "sbs_git_dir_stat"
+
+- name: "Remove previous SBS backup"
   file:
     path: "{{ sbs_git_dir }}.old"
     state: "absent"
-  when: "sbs_download.changed"
+  when: "sbs_download.changed and sbs_git_dir_stat.stat.exists"
 
-- name: Save old SBS dir
-  shell: |
-    if test -e '{{ sbs_git_dir }}'
-    then
-      mv '{{ sbs_git_dir }}' '{{ sbs_git_dir }}.old'
-    fi
-  when: "sbs_download.changed"
+- name: "Save old SBS dir"
+  command: |
+    mv '{{ sbs_git_dir }}' '{{ sbs_git_dir }}.old'
+  when: "sbs_download.changed and sbs_git_dir_stat.stat.exists"
 
-- name: Deploy SBS build
+- name: "Deploy SBS build"
   unarchive:
     src: "{{sbs_work_dir}}/sbs.tar.xz"
     dest: "{{ sbs_work_dir }}"
     remote_src: true
     owner: "{{sbs_file_owner}}"
-    group: "{{sbs_file_owner}}"
-  notify: "restart apache"
-  when: "sbs_download.changed"
+    group: "{{sbs_group}}"
+  notify: "restart sbs"
+  when: "sbs_download.changed or not sbs_git_dir_stat.stat.exists"
 
-- name: Create SBS wsgi file
-  template:
-    src: sbs-api.wsgi.j2
-    dest: "{{ sbs_work_dir }}/sbs-api.wsgi"
-    mode: "0644"
-  notify: "restart apache"
-
-- name: Create SBS config files
+- name: "Create SBS config files"
   template:
     src: "{{item.name}}.j2"
     dest: "{{ sbs_conf_dir }}/{{item.name}}"
-    group: "www-data"
+    owner: "{{sbs_file_owner}}"
+    group: "{{sbs_group}}"
     mode: "{{item.mode}}"
   with_items:
     - { name: "config.yml",     mode: "0640" }
     - { name: "alembic.ini",    mode: "0644" }
     - { name: "disclaimer.css", mode: "0644" }
-  notify: "restart apache"
+  notify: "restart sbs"
   no_log: "{{sram_ansible_nolog}}"
 
-- name: write server JWT keys
+- name: "Write server JWT keys"
   copy:
     content: "{{ item.content }}"
     dest: "{{ sbs_conf_dir }}/{{ item.path }}"
-    group: "www-data"
+    owner: "{{sbs_file_owner}}"
+    group: "{{sbs_group}}"
     mode: "0640"
   with_items:
     - { path: "jwt_private_key",      content: "{{ sbs_jwt_server.priv }}" }
     - { path: "jwt_public_keys.json", content: "{{ sbs_jwt_server.pub }}"  }
-  notify: "restart apache"
+  notify: "restart sbs"
   no_log: "{{ sram_ansible_nolog }}"
 
-- name: Create SBS SURFSecure ID config files
+- name: "Create SBS SURFSecureID config files"
   template:
     src: "saml_{{ item.name }}.j2"
     dest: "{{ sbs_conf_dir }}/saml/{{item.name}}"
-    group: "www-data"
+    owner: "{{sbs_file_owner}}"
+    group: "{{sbs_group}}"
     mode: "{{ item.mode }}"
   with_items:
     - { name: "settings.json",          mode: "0640" }
     - { name: "advanced_settings.json", mode: "0644" }
-  notify: "restart apache"
+  notify: "restart sbs"
   no_log: "{{ sram_ansible_nolog }}"
 
-- name: Create links to config files
+- name: "Create links to config files"
   file:
     state: "link"
     path: "{{ sbs_git_dir }}/{{ item.path }}"
@@ -196,14 +207,14 @@
     - { path: "client/build/static/disclaimer.css", links_to: "disclaimer.css"       }
     - { path: "server/config/jwt_private_key",      links_to: "jwt_private_key"      }
     - { path: "server/config/jwt_public_keys.json", links_to: "jwt_public_keys.json" }
-  notify: "restart apache"
+  notify: "restart sbs"
 
 - name: Link log dir
   file:
     state: "link"
     path: "{{ sbs_git_dir }}/log"
     src: "{{ sbs_log_dir }}"
-  notify: "restart apache"
+  notify: "restart sbs"
 
 - name: Create python3 virtualenv
   import_role:
@@ -211,9 +222,29 @@
   vars:
     python_venv_dir: "{{ sbs_env_dir }}"
     python_venv_requirements: "{{ sbs_git_dir }}/server/requirements/test.txt"
-  notify: "restart apache"
+  notify: "restart sbs"
 
-- name: Install database dump script
+
+- name: "Install SBS service"
+  template:
+    src: "sbs.service.j2"
+    dest: "/etc/systemd/system/sram-sbs.service"
+  notify:
+    - "systemd daemon-reload"
+    - "restart sbs"
+
+
+## TODO: draai SBS als non-www-data user
+- include_role:
+    name: "nginx"
+
+- name: "install nginx config"
+  template:
+    src: "sbs-nginx.j2"
+    dest: "/etc/nginx/sites-enabled/10-sbs.conf"
+  notify: "restart nginx"
+
+- name: "Install database dump script"
   template:
     src: "backup-database.sh.j2"
     dest: "{{backup_runparts}}/backup-database.sh"
@@ -227,4 +258,4 @@
   register: "result"
   failed_when: "result.rc != 0"
   changed_when: "'[alembic.runtime.migration] Running upgrade' in result.stderr"
-  notify: "restart apache"
+  notify: "restart sbs"

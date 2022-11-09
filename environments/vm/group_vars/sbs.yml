@@ -7,8 +7,6 @@ firewall_v4_incoming:
 
 sbs_version: "{{scz_repo.sbs.version}}"
 
-sbs_file_owner: "ansible"
-
 sbs_urn_namespace: "urn:mace:surf.nl:x-sram-vm"
 sbs_eppn_scope: "scz-vm.net"
 
