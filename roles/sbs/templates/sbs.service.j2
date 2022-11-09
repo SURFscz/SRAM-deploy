@@ -8,14 +8,17 @@ User=_sram_sbs
 Group=_sram_sbs
 SupplementaryGroups={{sbs_group}}
 
-WorkingDirectory=/opt/sbs/sbs
+WorkingDirectory={{sbs_git_dir}}
 ReadWritePaths={{sbs_log_dir}}
 NoNewPrivileges=true
 
 Environment="CONFIG=config/config.yml"
+# the python requests module uses the CAs provided by the certifi package by default
+# we'll just take the OS-provided CAs, thankyouverymuch
+Environment="REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt"
 
 Type=simple
-ExecStart=/opt/sbs/sbs-env/bin/python -m server
+ExecStart={{sbs_env_dir}}/bin/python -m server
 
 Restart=on-failure
 RestartSec=10
