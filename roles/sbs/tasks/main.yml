@@ -111,6 +111,9 @@
     owner: "{{sbs_file_owner}}"
     group: "{{sbs_group}}"
     mode: "0664"
+    state: "touch"
+    modification_time: "preserve"
+    access_time: "preserve"
   with_items:
     - "sbs.log"
     - "sbs_debug.log"
