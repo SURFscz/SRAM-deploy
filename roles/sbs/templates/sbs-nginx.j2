@@ -1,8 +1,9 @@
 server {
     listen {{sbs_backend_port}} ssl http2;
     server_name _        sbs.vm.scz-vm.net;
-    ssl_certificate      /etc/ssl/vm.scz-vm.net.crt;
-    ssl_certificate_key  /etc/ssl/vm.scz-vm.net.key;
+
+    ssl_certificate     {{ ssl_certs_dir }}/{{ internal_base_domain }}.crt;
+    ssl_certificate_key {{ ssl_certs_dir }}/{{ internal_base_domain }}.key;
 
     root /opt/sbs/sbs/client/build;
 
