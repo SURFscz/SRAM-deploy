@@ -22,11 +22,11 @@
     state: present
     install_recommends: no
 
-- name: fetch PAM WebSSO from {{ pam_websso.repo_url }}, version {{ pam_websso.repo_version }}
+- name: fetch PAM WebSSO from {{ pam_websso.repo_url }}, version {{ pam_websso.version }}
   git:
     repo: "{{ pam_websso.repo_url }}"
     dest: "{{ pam_websso.project_dir }}"
-    version: "{{ pam_websso.repo_version }}"
+    version: "{{ pam_websso.version }}"
     accept_hostkey: "yes"
     force: "yes"
   register: pam_websso_git
