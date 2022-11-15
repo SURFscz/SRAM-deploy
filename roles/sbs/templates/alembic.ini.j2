@@ -35,7 +35,7 @@ script_location = migrations
 # are written from script.py.mako
 # output_encoding = utf-8
 
-sqlalchemy.url = mysql+pymysql://{{ sbs_migration_user }}:{{ sbs_migration_password | percent_escape }}@{{ db_host }}/{{ sbs_db_name }}?ssl=true&ssl_ca={{sbs_db_cert_path}}&charset=utf8mb4
+sqlalchemy.url = mysql+mysqldb://{{ sbs_migration_user }}:{{ sbs_migration_password | percent_escape }}@{{ db_host }}/{{ sbs_db_name }}?ssl=true&ssl_ca={{sbs_db_cert_path}}&charset=utf8mb4
 
 
 # Logging configuration
