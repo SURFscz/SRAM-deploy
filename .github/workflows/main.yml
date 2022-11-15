@@ -28,7 +28,7 @@ jobs:
       # Create date output to seconds
       - name: Get Date
         id: get-date
-        run: echo "date=$(/bin/date -u '+%Y%m%d%k%M%S')" >> $GITHUB_OUTPUT"
+        run: echo "date=$(/bin/date -u '+%Y%m%d%k%M%S')" >> $GITHUB_OUTPUT
 
       # Restore cache based no fake time key (allways miss)
       - name: Setup cache
