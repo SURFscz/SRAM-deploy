@@ -43,6 +43,10 @@ sbs_mail_sender_name: "SURF"
 sbs_mail_sender_email: "no-reply@localhost"
 sbs_exceptions_mail: "root@localhost"
 
+sbs_support_email: "sram-support@localhost"
+sbs_admin_email: "sram-beheer@localhost"
+sbs_eduteams_email: "eduteams@localhost"
+
 sbs_wiki_link: "https://www.example.org/wiki"
 
 sbs_backend_port: 80
