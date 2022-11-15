@@ -41,6 +41,7 @@
       - nodejs
       - python3-pymysql
       - mariadb-client
+      - libmariadb-dev-compat
       - libxmlsec1-dev  # for python xmlsec pkg
       - pkg-config      # for python xmlsec pkg
     install_recommends: false
