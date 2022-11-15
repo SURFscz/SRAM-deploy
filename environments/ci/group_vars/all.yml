@@ -70,12 +70,9 @@ admin:
   sho: "{{base_domain}}"
 
 # versions
-# yamllint disable rule:line-length
-scz_repo:
-  pyff:      { name: "pyFF",                   version: "1.1.5",      src: "https://github.com/IdentityPython/pyFF.git"                    }
-  sbs:       { name: "SBS",                    version: "latest"                                                                           }
-  plsc:      { name: "pLSC",                   version: "main",       src: "https://github.com/SURFscz/plsc.git"                           }
-# yamllint enable rule:line-length
+# versions
+sbs_version: "main"
+plsc_version: "main"
 
 # poor man's user management
 root:

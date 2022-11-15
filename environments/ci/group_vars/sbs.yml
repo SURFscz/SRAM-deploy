@@ -5,8 +5,6 @@ firewall_v4_incoming:
     dport:  "{{sbs_server_port}}"
     proto: tcp
 
-sbs_version: "{{scz_repo.sbs.version}}"
-
 sbs_urn_namespace: "urn:mace:surf.nl:x-sram-ci"
 sbs_eppn_scope: "ci-runner.sram.surf.nl"
 
