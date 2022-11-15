@@ -39,7 +39,7 @@
     state: "latest"
     name:
       - nodejs
-      - python3-mysqlclient
+      - python3-pymysql
       - mariadb-client
       - libmariadb-dev-compat
       - libxmlsec1-dev  # for python xmlsec pkg
