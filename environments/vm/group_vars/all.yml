@@ -73,7 +73,7 @@ admin:
 # yamllint disable rule:line-length
 scz_repo:
   pyff:      { name: "pyFF",                   version: "1.1.5",      src: "https://github.com/IdentityPython/pyFF.git"                    }
-  sbs:       { name: "SBS",                    version: "socket_io_tmp_release"                                                            }
+  sbs:       { name: "SBS",                    version: "latest"                                                            }
   plsc:      { name: "pLSC",                   version: "main",       src: "https://github.com/SURFscz/plsc.git"                           }
 # yamllint enable rule:line-length
 
