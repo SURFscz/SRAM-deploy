@@ -1,5 +1,4 @@
 #!/opt/sbs/sbs-env/bin/python
-# -*- coding: future_fstrings -*-
 import sys
 import base64
 import datetime
