@@ -21,3 +21,9 @@ jobs:
       event: ${{ github.event_name }}
       action: ${{ github.event.action }}
     secrets: inherit
+
+  debug:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dump context
+        uses: crazy-max/ghaction-dump-context@v1
