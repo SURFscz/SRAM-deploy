@@ -44,3 +44,4 @@ jobs:
           organization: ${{ env.organization }}
           project_id: ${{ env.project_id }}
           resource_node_id: ${{ github.event.issue.node_id }}
+          status_value: New
