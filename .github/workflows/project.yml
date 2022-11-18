@@ -36,9 +36,9 @@ jobs:
     steps:
       - name: debug
         run: |
-          echo "event: {{ inputs.event }}"
-          echo "action: {{ inputs.action }}"
-          echo "state_reason: {{ inputs.state_reason }}"
+          echo "event: ${{ inputs.event }}"
+          echo "action: ${{ inputs.action }}"
+          echo "state_reason: ${{ inputs.state_reason }}"
         if: true
       - name: Add issue to project
         uses: leonsteinhaeuser/project-beta-automations@v2.0.1
