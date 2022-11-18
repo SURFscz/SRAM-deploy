@@ -97,7 +97,7 @@ jobs:
         id: scz-base-id
         run: >
           ID=$(docker image list scz-base -q) &&
-          echo "ID::$ID" >> $GITHUB_OUTPUT
+          echo "ID=$ID" >> $GITHUB_OUTPUT
 
       # Save docker cache
       - name: Save docker cache
