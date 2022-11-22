@@ -2,7 +2,7 @@
 Description=Journal Remote Sink Socket
 
 [Socket]
-ListenStream={{item.value}}
+ListenStream={{item.value["port"]}}
 
 [Install]
 WantedBy=sockets.target

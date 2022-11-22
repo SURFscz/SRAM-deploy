@@ -1,7 +1,6 @@
 ---
-journal_upload_ports:
-  local: 1234
+journal_remote_types:
+  - local: { port: 1234, keep_time: "14dday" }
 journal_remote_group: "journal-ssl"
 journal_remote_dir: "/var/log/journal"
 ssl_certs_dir: "/etc/ssl"
-journal_keep_time: "365day"

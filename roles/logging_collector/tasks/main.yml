@@ -46,13 +46,13 @@
     owner: "systemd-journal-remote"
     group: "systemd-journal-remote"
     mode: "755"
-  with_dict: "{{journal_upload_ports}}"
+  with_dict: "{{journal_remote_types}}"
 
 - name: install socket file
   template:
     src: "sram-remotejournal.socket.j2"
     dest: "/etc/systemd/system/sram-remotejournal-{{item.key}}.socket"
-  with_dict: "{{journal_upload_ports}}"
+  with_dict: "{{journal_remote_types}}"
   notify:
     - "systemd daemon-reload"
     - "restart journal-remote-socket"
@@ -61,7 +61,7 @@
   template:
     src: "sram-remotejournal.service.j2"
     dest: "/etc/systemd/system/sram-remotejournal-{{item.key}}.service"
-  with_dict: "{{journal_upload_ports}}"
+  with_dict: "{{journal_remote_types}}"
   notify:
     - "systemd daemon-reload"
     - "restart journal-remote"
