@@ -1,0 +1,18 @@
+#!/bin/sh
+set -e
+
+for f in "{{metadata_idps_feed}}" "{{metadata_proxy_frontend_feed}}" "{{metadata_proxy_backend_feed}}"
+do
+    echo "Processing '$f'"
+    {{ pyff_env_dir }}/bin/pyff "$f"
+done
+
+for f in "{{metadata_idps_file}}" "{{metadata_proxy_frontend_file}}" "{{metadata_proxy_backend_file}}"
+do
+    echo "Installing '$f'"
+    cp "{{metadata_target_dir}}/$f.new" "{{metadata_web_dir}}"
+    chmod 644 "{{metadata_web_dir}}/$f.new"
+    mv "{{metadata_web_dir}}/$f.new" "{{metadata_web_dir}}/$f"
+done
+
+exit 0

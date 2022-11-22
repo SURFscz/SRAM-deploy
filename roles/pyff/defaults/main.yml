@@ -3,3 +3,5 @@
 pyff_project_dir: "/opt/pyff"
 pyff_metadata_dir: "{{ pyff_project_dir }}/metadata"
 pyff_env_dir: "{{ pyff_project_dir }}/pyff-env"
+pyff_cert_dir: "{{ pyff_project_dir }}/certs"
+pyff_group: pyff

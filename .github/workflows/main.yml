@@ -135,20 +135,46 @@ jobs:
             page.html
         if: failure()
 
-      - name: Show error output
+      - name: Show journal output
         run: >
           ansible -v -i environments/vm/inventory --become "all" -m command -a "/bin/sh -c '
             echo ====journal===;
             journalctl -n200;
+          '"
+        if: failure()
+
+      - name: Show apache output
+        run: >
+          ansible -v -i environments/vm/inventory --become "all" -m command -a "/bin/sh -c '
             if [ -e /var/log/apache2/error.log ]; then
               echo ===apache errorlog===;
               cat /var/log/apache2/error.log;
             fi;
-            if [ -e /opt/sbs ]; then
+          '"
+        if: failure()
+
+      - name: Show sbs output
+        run: >
+          ansible -v -i environments/vm/inventory --become "sbs" -m command -a "/bin/sh -c '
+            if [ -e /opt/sbs/sbs/log/sbs.log ]; then
               echo ===sbs log===;
               cat /opt/sbs/log/sbs_debug.log
             fi;
             echo ===apt log===; cat /var/log/apt/term.log
+            echo ===netstat===; netstat -lnp
+          '"
+        if: failure()
+
+      - name: Show apt output
+        run: >
+          ansible -v -i environments/vm/inventory --become "all" -m command -a "/bin/sh -c '
+            echo ===apt log===; cat /var/log/apt/term.log
+          '"
+        if: failure()
+
+      - name: Show netstat output
+        run: >
+          ansible -v -i environments/vm/inventory --become "all" -m command -a "/bin/sh -c '
             echo ===netstat===; netstat -lnp
           '"
         if: failure()
