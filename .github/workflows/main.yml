@@ -179,11 +179,6 @@ jobs:
           '"
         if: failure()
 
-      # Destroy secret
-      - name: Destroy secret
-        run: shred secret_vm
-        if: always()
-
       # Setup tmate session
       - name: Setup tmate session
         if: failure()
