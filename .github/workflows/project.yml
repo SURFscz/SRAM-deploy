@@ -4,7 +4,7 @@ name: Project automation (Generic)
 # reusable workflow, call this like:
 # jobs:
 #   project_management:
-#     uses: SURFscz/SCZ-deploy/.github/workflows/project.yml@main
+#     uses: SURFscz/SRAM-deploy/.github/workflows/project.yml@main
 #     with:
 #       event: ${{ github.event_name }}
 #       action: ${{ github.event.action }}
@@ -19,6 +19,9 @@ on:
       action:
         required: true
         type: string
+      state_reason:
+        required: false
+        type: string
 
 env:
   organization: ${{ github.repository_owner }}
@@ -28,15 +31,17 @@ env:
   gh_app_secret: ${{ secrets.SRAM_PROJECT_SECRET }}
 
 jobs:
-  issue_opened_or_reopened:
-    name: issue_opened_or_reopened
+  issue_project_management:
     runs-on: ubuntu-latest
-    if: >
-      inputs.event == 'issues'
-      && (inputs.action == 'opened' || inputs.action == 'reopened')
     steps:
+      - name: debug
+        run: |
+          echo "event: ${{ inputs.event }}"
+          echo "action: ${{ inputs.action }}"
+          echo "state_reason: ${{ inputs.state_reason }}"
+        if: false
       - name: Add issue to project
-        uses: leonsteinhaeuser/project-beta-automations@v1.3.0
+        uses: leonsteinhaeuser/project-beta-automations@v2.0.1
         with:
           gh_app_ID: ${{ env.gh_app_id }}
           gh_app_installation_ID: ${{ env.gh_app_inst_id }}
@@ -44,3 +49,21 @@ jobs:
           organization: ${{ env.organization }}
           project_id: ${{ env.project_id }}
           resource_node_id: ${{ github.event.issue.node_id }}
+          status_value: New
+        if: >
+          inputs.event == 'issues'
+          && (inputs.action == 'opened' || inputs.action == 'reopened')
+      - name: Set
+        uses: leonsteinhaeuser/project-beta-automations@v2.0.1
+        with:
+          gh_app_ID: ${{ env.gh_app_id }}
+          gh_app_installation_ID: ${{ env.gh_app_inst_id }}
+          gh_app_secret_key: ${{ env.gh_app_secret }}
+          organization: ${{ env.organization }}
+          project_id: ${{ env.project_id }}
+          resource_node_id: ${{ github.event.issue.node_id }}
+          status_value: Done
+        if: >
+          inputs.event == 'issues'
+          && inputs.action == 'closed'
+          && inputs.state_reason == 'not_planned'

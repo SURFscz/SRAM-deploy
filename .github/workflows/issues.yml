@@ -16,8 +16,16 @@ on:
 
 jobs:
   project_management:
-    uses: SURFscz/SCZ-deploy/.github/workflows/project.yml@main
+    uses: SURFscz/SRAM-deploy/.github/workflows/project.yml@main
     with:
       event: ${{ github.event_name }}
       action: ${{ github.event.action }}
+      state_reason: ${{ github.event.issue.state_reason }}
     secrets: inherit
+
+  debug:
+    runs-on: ubuntu-latest
+    if: false
+    steps:
+      - name: Dump context
+        uses: crazy-max/ghaction-dump-context@v1

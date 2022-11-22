@@ -20,8 +20,6 @@ server {
 
     ssl_certificate        {{ letsencrypt_cert_dir }}/demo-sp.sram.surf.nl/fullchain.pem;
     ssl_certificate_key    {{ letsencrypt_cert_dir }}/demo-sp.sram.surf.nl/privkey.pem;
-    ssl_protocols          TLSv1.3;
-    ssl_ciphers            EECDH+AESGCM:EDH+AESGCM;
     ssl_stapling on;
     ssl_stapling_verify on;
 

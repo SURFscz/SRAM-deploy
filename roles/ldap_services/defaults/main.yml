@@ -1,6 +1,0 @@
----
-ldap_install_dir: /etc/ldap
-ldap_ldif_dir: "{{ ldap_install_dir }}/schema"
-
-ldap_user: openldap
-ldap_group: openldap

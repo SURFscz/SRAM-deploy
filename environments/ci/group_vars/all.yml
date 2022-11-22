@@ -1,9 +1,9 @@
 ---
-ansible_ssh_common_args: '-o StrictHostKeyChecking=false'
-# note: {{playbook_dir}} would probably be nicer, but it turns out that that is
-# a relative path, which ssh doesn't understand
+ansible_ssh_common_args: >
+  -o StrictHostKeyChecking=false
+  -o UserKnownHostsFile={{playbook_dir}}/docker/known_hosts
 ansible_ssh_user: "ansible"
-ansible_ssh_private_key_file: "{{inventory_dir}}/../../docker/ansible_key"
+ansible_ssh_private_key_file: "docker/ansible_key"
 
 secrets_file: "environments/vm/secrets/all.yml"
 secrets_users_file: "environments/vm/secrets/users.yml"
@@ -111,6 +111,7 @@ services_ldap:
 db_host: "{{ groups['db'][0] }}"
 sbs_db_name: "sbs"
 sbs_db_user: "sbs"
+sbs_migration_user: "sbs_migrater"
 
 sbs_client_id: !vault |
           $ANSIBLE_VAULT;1.1;AES256

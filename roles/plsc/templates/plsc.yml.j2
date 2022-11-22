@@ -5,17 +5,21 @@ ldap:
     basedn: "{{ services_ldap.basedn }}"
     binddn: "external"
     passwd: "{{ services_ldap_password }}"
+    sizelimit: 500
   dst:
     uri: "ldapi:///"
     basedn: "{{ services_ldap.basedn }}"
     binddn: "external"
     passwd: "{{ services_ldap_password }}"
+    sizelimit: 500
 sbs:
   src:
     host: "{{ sbs_base_url }}"
     user: "sysread"
     passwd: "{{ sbs_sysread_password }}"
     verify_ssl: {{ false if environment_name=='vm' else true }}
+    timeout: 60
+    retry: 3
 pwd: "{CRYPT}!"
 uid: 1000
 gid: 1000

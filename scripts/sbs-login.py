@@ -3,7 +3,7 @@
 import time
 import json
 import traceback
-from selenium.webdriver import Chrome
+from selenium.webdriver import Chrome, DesiredCapabilities
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support.expected_conditions import staleness_of, title_is, presence_of_element_located
@@ -19,8 +19,12 @@ class CustomChrome(Chrome):
 options = Options()
 options.headless = True
 options.add_argument('ignore-certificate-errors')
-browser = CustomChrome(options=options)
-wait = WebDriverWait(browser, timeout=2)
+
+caps = DesiredCapabilities.CHROME.copy()
+caps['goog:loggingPrefs'] = { 'browser':'ALL' }
+
+browser = CustomChrome(options=options, desired_capabilities=caps)
+wait = WebDriverWait(browser, timeout=10)
 
 send_command = ('POST', '/session/$sessionId/chromium/send_command')
 browser.command_executor._commands['SEND_COMMAND'] = send_command
@@ -48,6 +52,7 @@ try:
     # Click login
     login = browser.find_element(By.XPATH, "//a[@href='/Login']")
     login.click()
+    print(" - pressed login")
 
     # Wait for login button to disappear
     wait.until(staleness_of(login), 'Timeout waiting for login page')
@@ -59,15 +64,19 @@ try:
     browser.find_element(By.ID, 'username').send_keys('admin')
     browser.find_element(By.ID, 'password').send_keys('admin')
     browser.find_element(By.TAG_NAME, 'form').submit()
+    print(" - logged in as admin")
 
     # Wait for user profile to appear
     wait.until(presence_of_element_located((By.XPATH, "//label[@for='aup']")), 'Timeout waiting for AUP')
 
     browser.find_element(By.XPATH, "//label[@for='aup']").click()
-    browser.find_element(By.XPATH, "//a[text()='Looks good, onwards']").click()
+    browser.find_element(By.XPATH, "//a[text()='Onwards']").click()
+    print(" - accepted AUP")
 
     # Wait for landing page
     wait.until(presence_of_element_located((By.XPATH, "//div[@class='drop-down ugly']")), 'Timeout waiting for Welcome')
+    print(" - landing page")
+
 
     # Visit Profile
     browser.get(profile)
@@ -81,6 +90,8 @@ try:
     # for a in attributes:
     #     print(f"a.text: {a.text}")
     assert('SCZ Admin' in [a.text for a in attributes]), "No valid admin profile found"
+    print(" - profile ok")
+
 
     # Clear all cookies
     browser.execute('SEND_COMMAND',
@@ -96,6 +107,7 @@ try:
     # Click login
     login = browser.find_element(By.XPATH, "//a[@href='/Login']")
     login.click()
+    print(" - pressed login")
 
     # Wait for login button to disappear
     wait.until(staleness_of(login), 'Timeout waiting for login page')
@@ -107,18 +119,22 @@ try:
     browser.find_element(By.ID, 'username').send_keys('user1')
     browser.find_element(By.ID, 'password').send_keys('user1')
     browser.find_element(By.TAG_NAME, 'form').submit()
+    print(" - logged in as user1")
 
     # Wait for user profile to appear
     wait.until(presence_of_element_located((By.XPATH, "//label[@for='aup']")), 'Timeout waiting for AUP')
 
     browser.find_element(By.XPATH, "//label[@for='aup']").click()
-    browser.find_element(By.XPATH, "//a[text()='Looks good, onwards']").click()
+    browser.find_element(By.XPATH, "//a[text()='Onwards']").click()
+    print(" - accepted AUP")
 
     # Wait for 2fa information
     wait.until(presence_of_element_located((By.XPATH, "//div[@class='information']")), 'Timeout waiting for 2FA')
 
     # Assert 2fa page
     assert("2fa" in browser.current_url), "Error loading 2FA URL"
+    print(" - reached 2FA page")
+
 
     # Close browser
     browser.close()
@@ -132,14 +148,19 @@ except Exception as e:
     print(f"error {e.args[0]} on line {tr.lineno} of '{tr.filename}'")
     print("  ", tr.line)
 
-    print("error: ", e.args[0])
-
     from bs4 import BeautifulSoup
     page = BeautifulSoup(browser.page_source, 'html.parser').prettify()
-    print(f"page:")
+    print("page source:")
+    print("------")
     print(page)
     with open("page.html", "w") as f:
         f.write(page)
+
+    print("------")
+    print("console logs:")
+    print("------")
+    for entry in browser.get_log('browser'):
+        print(entry)
 
     browser.save_screenshot("screenshot.png")
     browser.close()

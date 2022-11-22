@@ -1,51 +1,55 @@
 ---
-# playbook to install and configure general components of the LDAP
+# playbook to install and configure all components of the LDAP
+- name: Install LDAP
+  apt:
+    state: "present"
+    name:
+      - "slapd"
+      - "ldap-utils"
+      - "python3-ldap"  # for ansible ldap modules
+    install_recommends: false
+  notify: "restart LDAP"
+
+- name: make sure slapd can read ssl keys
+  user:
+    name: "openldap"
+    groups: "ssl-cert"
+
 - name: Copying alternative service script
-  become: true
   template:
     src: "slapd.service.j2"
     dest: "/etc/systemd/system/slapd.service"
   notify:
-    - systemd daemon-reload
-    - restart LDAP
+    - "systemd daemon-reload"
+    - "restart LDAP"
 
 - name: force restart
-  meta: flush_handlers
+  meta: "flush_handlers"
 
 - name: Ensure that a number of directories exist
   file:
     path: "{{ item }}"
-    state: directory
+    state: "directory"
     owner: "{{ ldap_user }}"
     group: "{{ ldap_group }}"
-    mode: 0755
-  tags: ldap
+    mode: "0755"
+  tags: "ldap"
   with_items:
     - "{{ ldap_ldif_dir }}"
+    - "/var/run/slapd"
 
 - name: Copy schemas
-  become_user: "{{ ldap_user }}"
   copy:
     src: "{{ item }}"
     dest: "{{ ldap_ldif_dir }}/{{ item }}"
     mode: 0755
   with_items:
+    - sczGroup.ldif
+    - groupOfMembers.ldif
     - eduPerson.ldif
     - ldapPublicKey.ldif
     - eduMember.ldif
     - voPerson.ldif
-
-- name: Generate ldif from template
-  become_user: "{{ ldap_user }}"
-  become: true
-  template:
-    src: "{{ item }}.j2"
-    dest: "{{ ldap_ldif_dir }}/{{ item }}"
-    mode: 0644
-  with_items:
-    - "set_loglevel_stats.ldif"
-    - "enable_syncprov.ldif"
-    - "enable_dynlist.ldif"
 
 - name: Generate ldap.conf
   template:
@@ -53,136 +57,216 @@
     dest: "{{ ldap_dir }}/ldap.conf"
     mode: 0644
 
-- name: Set loglevel to stats
-  command: ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f "{{ ldap_ldif_dir }}/set_loglevel_stats.ldif"
-  # return code 20 means entry already exists
-  register: result
-  failed_when: result.rc != 0
-  changed_when: result.rc != 0
-
-- name: Enable synchronization
-  command: ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f "{{ ldap_ldif_dir }}/enable_syncprov.ldif"
-  # return code 20 means entry already exists
-  register: result
-  failed_when: result.rc not in [0,20,68]
-  changed_when: result.rc not in [20,68]
-
-- name: Enable dynamic lists
-  command: ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f "{{ ldap_ldif_dir }}/enable_dynlist.ldif"
-  # return code 20 means entry already exists
-  register: result
-  failed_when: result.rc not in [0,20,68]
-  changed_when: result.rc != 20
-
-- name: Set sizelimit
-  ldap_attrs:
-    dn: "cn=config"
+- name: Set indices
+  community.general.ldap_attrs:
+    dn: "olcDatabase={1}mdb,cn=config"
     attributes:
-      olcSizeLimit: "unlimited"
-    state: "exact"
+      olcDbIndex: "{{item}}"
+    state: "present"
+  with_items:
+    - "entryUUID eq"
+    - "o eq"
+    - "dc eq"
+    - "entryCSN eq"
 
-- name: Enable tls
+- name: Set config
   community.general.ldap_attrs:
     dn: "cn=config"
     state: "exact"
     attributes:
+      olcSizeLimit: "unlimited"
+      olcLogLevel: "{{ ldap_loglevel }}"
+      olcAttributeOptions: "time-"
       olcTLSCertificateKeyFile: "{{ ssl_certs_dir }}/{{ internal_base_domain }}.key"
       olcTLSCertificateFile: "{{ ssl_certs_dir }}/{{ internal_base_domain }}.crt"
       olcTLSCACertificateFile: "{{ ssl_certs_dir }}/{{ internal_base_domain }}.crt"
       olcTLSCipherSuite: >
         SECURE256:-VERS-DTLS-ALL:-VERS-SSL3.0:-VERS-TLS1.0:-VERS-TLS1.1:-RSA:-DHE-RSA:-ECDHE-RSA
 
-# OpenLDAP does not like adding existing entries again. Only add the
-# schema if it has not been added already. This does not yet take care
-# of changes in the eduPerson schema.
-- name: Check if eduPerson schema is already present
-  shell: >
-    ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// -b 'cn=schema,cn=config' '(cn=*)' dn
-    | grep -i 'cn={[0123456789]\+}eduperson,cn=schema,cn=config'
-  register:
-    eduPersonSchemaPresent
-  failed_when: eduPersonSchemaPresent.rc not in [0, 1]
-  changed_when: False
+- name: Ensure the schema's are added to LDAP
+  ansible.builtin.script: "scripts/ldap-add {{ ldap_ldif_dir }}/{{ item }}"
+  register: "result"
+  failed_when: "result.rc not in [0,80]"
+  changed_when: "result.rc != 80"
+  loop:
+    - "sczGroup.ldif"
+    - "groupOfMembers.ldif"
+    - "eduPerson.ldif"
+    - "ldapPublicKey.ldif"
+    - "eduMember.ldif"
+    - "voPerson.ldif"
 
-# Based on the success or failure of copying the eduPerson schema add
-# the schema to the ldap database. Copying the same file in the previous
-# task, would lead to not registering the edoPersonSchema variable.
-- name: Ensure the eduPerson schema is added to LDAP
-  become: true
-  command: >
-    ldapadd -Q -Y EXTERNAL -H ldapi:///
-    -f "{{ ldap_ldif_dir }}/eduPerson.ldif"
-  when: eduPersonSchemaPresent.stdout == ""
-
-- name: Check if the ldapPublicKey schema is already present
-  shell: >
-    ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// -b 'cn=schema,cn=config' '(cn=*)' dn
-    | grep -i 'cn={[0-9]\+}openssh-lpk-openldap,cn=schema,cn=config'
-  register:
-    ldapPublicKeyTask
-  failed_when: ldapPublicKeyTask.rc not in [0, 1]
-  changed_when: False
-
-- name: Ensure the ldapPublicKey schema is added to LDAP
-  become: true
-  command: >
-    ldapadd -Q -Y EXTERNAL -H ldapi:///
-    -f "{{ ldap_ldif_dir }}/ldapPublicKey.ldif"
-  when: ldapPublicKeyTask.stdout == ""
-
-- name: Check if the eduMember schema is already present
-  shell: >
-    ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// -b 'cn=schema,cn=config' '(cn=*)' dn
-    | grep -i 'cn={[0-9]\+}edumember,cn=schema,cn=config'
-  register:
-    eduMemberTask
-  failed_when: eduMemberTask.rc not in [0, 1]
-  changed_when: False
-
-- name: Ensure the eduMember schema is added to LDAP
-  become: true
-  command: >
-    ldapadd -Q -Y EXTERNAL -H ldapi:///
-    -f "{{ ldap_ldif_dir }}/eduMember.ldif"
-  when: eduMemberTask.stdout == ""
-
-- name: Check if the voPerson schema is already present
-  shell: >
-    ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// -b 'cn=schema,cn=config' '(cn=*)' dn
-    | grep -i 'cn={[0-9]\+}voperson,cn=schema,cn=config'
-  register:
-    voPersonTask
-  failed_when: voPersonTask.rc not in [0, 1]
-  changed_when: False
-
-- name: Ensure the voPerson schema is added to LDAP
-  become: true
-  command: >
-    ldapadd -Q -Y EXTERNAL -H ldapi:///
-    -f "{{ ldap_ldif_dir }}/voPerson.ldif"
-  when: voPersonTask.stdout == ""
-
-- name: Set allowed attribute options for voPerson
-  ldap_attrs:
-    dn: "cn=config"
+- name: Setup Modules
+  community.general.ldap_attrs:
+    dn: cn=module{0},cn=config
     attributes:
-      olcAttributeOptions: "time-"
+      olcModuleLoad:
+        - back_monitor
+        - memberof
+        - refint
+        - dynlist
+        - syncprov
+
+- name: Setup Monitor
+  community.general.ldap_entry:
+    dn: olcdatabase=monitor,cn=config
+    objectClass: olcDatabaseConfig
+    attributes:
+      olcRootDN: "cn=admin,cn=Monitor"
+      olcRootPW: "{{ '%s' | format(monitor_ldap_password) |  slapd_hash }}"
+
+- name: Setup MemberOf(1)
+  community.general.ldap_entry:
+    dn: olcOverlay=memberof,olcDatabase={1}mdb,cn=config
+    objectClass:
+      - olcOverlayConfig
+      - olcMemberOf
+    attributes:
+      olcMemberOfRefInt: "TRUE"
+      olcMemberOfGroupOC: groupOfMembers
+      olcMemberOfMemberAD: member
+      olcMemberOfMemberOfAD: memberOf
+
+- name: Setup MemberOf(2)
+  community.general.ldap_entry:
+    dn: olcOverlay=refint,olcDatabase={1}mdb,cn=config
+    objectClass:
+      - olcOverlayConfig
+      - olcRefintConfig
+    attributes:
+      olcRefintAttribute: memberof member
+
+- name: Setup Dynlist
+  community.general.ldap_entry:
+    dn: olcOverlay=dynlist,olcDatabase={1}mdb,cn=config
+    objectClass:
+      - olcOverlayConfig
+      - olcDynamicList
+    attributes:
+      olcDlAttrSet: "{0}organizationalRole labeledURI roleOccupant"
+
+- name: Setup Syncprov
+  community.general.ldap_entry:
+    dn: olcOverlay=syncprov,olcDatabase={1}mdb,cn=config
+    objectClass:
+      - olcOverlayConfig
+      - olcSyncProvConfig
+    attributes:
+      olcSpCheckpoint: 100 10
+      olcSpSessionLog: 100
+
+- name: Setup main database
+  community.general.ldap_attrs:
+    dn: olcDatabase={1}mdb,cn=config
+    attributes:
+      olcSuffix: "{{ services_ldap.basedn }}"
+      olcRootDN: "{{ services_ldap.binddn }}"
+      olcRootPW: "{{ '%s' | format(services_ldap_password) |  slapd_hash }}"
+    state: exact
+
+- name: Set root credentials
+  community.general.ldap_attrs:
+    dn: olcDatabase={0}config,cn=config
+    attributes:
+      olcAccess: >-
+          {0}to *
+          by dn.exact=gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth manage
+          {% if environment_name=="vm" %}
+          by dn.exact=gidNumber=1000+uidNumber=1000,cn=peercred,cn=external,cn=auth manage
+          {% endif %}
+          by dn.exact="{{ services_ldap.binddn }}" manage
+          by * break
+    state: exact
+
+- name: Setup Syncrepl
+  community.general.ldap_attrs:
+    dn: olcDatabase={1}mdb,cn=config
+    attributes:
+      olcSyncrepl: >-
+        rid=001
+        provider="ldaps://{{ groups['ldap_primary'][0] }}/"
+        searchbase="{{ services_ldap.basedn }}"
+        type=refreshAndPersist
+        bindmethod=simple
+        binddn="{{ services_ldap.binddn }}"
+        credentials={{ services_ldap_password }}
+        retry="30 +"
+        timeout=30
+        network-timeout=5
+  when: inventory_hostname in groups['ldap_secondary']
+
+- name: Get uid of openldap user
+  ansible.builtin.getent:
+    database: "passwd"
+    key: "openldap"
+
+# store it in a nice var (so line below doesn't get too long)
+- name: Save gid of openldap user
+  ansible.builtin.set_fact:
+    openldap_auth: "gidNumber={{ansible_facts.getent_passwd['openldap'][2]}}+\
+                    uidNumber={{ansible_facts.getent_passwd['openldap'][1]}}"
+
+- name: Set ACLs
+  community.general.ldap_attrs:
+    dn: "olcDatabase={1}mdb,cn=config"
+    attributes:
+      olcAccess:
+        - >-
+          to dn.regex="(([^,]+),{{ services_ldap.basedn }})$"
+          by dn.exact="{{ services_ldap.binddn }}" write
+          by dn.exact=gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth write
+          by dn.exact,expand="cn=admin,$1" read
+          by * break
+        - >-
+          to *
+          by dn.exact=gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth manage
+          by dn.exact={{openldap_auth}},cn=peercred,cn=external,cn=auth read
+          {% if environment_name=="vm" %}
+          by dn.exact=gidNumber=1000+uidNumber=1000,cn=peercred,cn=external,cn=auth manage
+          {% endif %}
+          by * break
+        - >-
+          to attrs=userPassword
+          by self write
+          by anonymous auth
+          by * none
+    state: "exact"
+    ordered: true
+
+- name: Initialize DIT
+  community.general.ldap_entry:
+    dn: "{{ services_ldap.basedn }}"
     state: "present"
+    objectClass:
+      - "top"
+      - "dcObject"
+      - "organization"
+    attributes:
+      dc: "{{ services_ldap.basedn | regex_replace('^dc=([^,]+).*', '\\1') }}"
+      o: "{{ services_ldap.o }}"
+  when: inventory_hostname in groups['ldap_primary']
+
+- name: Initialize DIT admin
+  community.general.ldap_entry:
+    dn: "{{ services_ldap.binddn }}"
+    objectClass: "organizationalRole"
+    attributes:
+      cn: "{{ services_ldap.binddn | regex_replace('^cn=([^,]+).*', '\\1') }}"
+  when: inventory_hostname in groups['ldap_primary']
 
 - name: Redirect slapd log to /var/log/slapd.log
   copy:
-    src: rsyslog_slapd.conf
-    dest: /etc/rsyslog.d/slapd.conf
-  notify: restart rsyslog
+    src: "rsyslog_slapd.conf"
+    dest: "/etc/rsyslog.d/slapd.conf"
+  notify: "restart rsyslog"
 
 - name: Rotate conf for slapd log file
   copy:
-    src: logrotate_slapd
-    dest: /etc/logrotate.d/slapd
+    src: "logrotate_slapd"
+    dest: "/etc/logrotate.d/slapd"
 
 - name: Install backup script
   template:
-    src: ldap-backup.sh.j2
+    src: "ldap-backup.sh.j2"
     dest: "{{backup_runparts}}/ldap-backup.sh"
-    mode: 0755
-
+    mode: "0755"

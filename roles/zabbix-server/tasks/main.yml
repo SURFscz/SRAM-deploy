@@ -122,10 +122,32 @@
     gui_access: "disable"
     validate_certs: "{{zabbix_validate_certs}}"
 
-# note: community.zabbix is not able yet to create roles
-#       so you'll need to create the "Host registration" role manually
-# with perms: host.{create,delete,get,update}, hostgroup.{create,get,update},
-#             template.get, hostinterface.{get,update}
+- name: Create Zabbix role
+  zabbix_role:
+    server_url: "{{zabbix_api_url}}"
+    login_user: "Admin"
+    login_password: "{{zabbix_admin_password}}"
+    state: "present"
+    name: "Host registration"
+    type: 3
+    rules:
+      ui.default_access: 0
+      ui:
+        - { name: "inventory.overview", status: 1 }
+      api.access: 1
+      api.mode: 1
+      api:
+        - "host.get"
+        - "host.update"
+        - "host.create"
+        - "host.delete"
+        - "hostgroup.get"
+        - "hostgroup.update"
+        - "hostgroup.create"
+        - "hostinterface.get"
+        - "hostinterface.update"
+        - "template.get"
+
 - name: "Create user for API access"
   community.zabbix.zabbix_user:
     server_url: "{{zabbix_api_url}}"
