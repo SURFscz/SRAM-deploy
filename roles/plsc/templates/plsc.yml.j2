@@ -5,11 +5,13 @@ ldap:
     basedn: "{{ services_ldap.basedn }}"
     binddn: "external"
     passwd: "{{ services_ldap_password }}"
+    sizelimit: 500
   dst:
     uri: "ldapi:///"
     basedn: "{{ services_ldap.basedn }}"
     binddn: "external"
     passwd: "{{ services_ldap_password }}"
+    sizelimit: 500
 sbs:
   src:
     host: "{{ sbs_base_url }}"

@@ -37,6 +37,7 @@ defaults
     timeout connect 4s
     timeout client  {{haproxy_timeout_client}}
     timeout server  {{haproxy_timeout_server}}
+    timeout tunnel  18h # websocket; timeout should > sbs session timeout
     errorfile 400 /etc/haproxy/errors/400.http
     errorfile 403 /etc/haproxy/errors/403.http
     errorfile 408 /etc/haproxy/errors/408.http

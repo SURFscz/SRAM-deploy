@@ -28,18 +28,21 @@
     - "ssl"
     - "proxy"
     - "proxy_http"
+  notify: "restart apache"
 
 - name: Create Apache ci-runner config
   ansible.builtin.template:
     src: "ci-runner.conf.j2"
     dest: "/etc/apache2/sites-available/ci-runner.conf"
     mode: "0644"
+  notify: "restart apache"
 
 - name: Link ci-runner config to sites-enabled
   ansible.builtin.file:
     src: "/etc/apache2/sites-available/ci-runner.conf"
     dest: "/etc/apache2/sites-enabled/ci-runner.conf"
     state: "link"
+  notify: "restart apache"
 
 - name: Write ci-runner private key
   copy:
@@ -49,6 +52,7 @@
     group: "ssl-cert"
     mode: "0640"
   no_log: "{{sram_ansible_nolog}}"
+  notify: "restart apache"
 
 - name: Write ci-runner certificate
   copy:
@@ -57,16 +61,16 @@
     owner: "root"
     group: "root"
     mode: "0644"
+  notify: "restart apache"
 
 - name: Write ci-runner chain
   copy:
-    content: |
-      {{cirunner_cert.chain}}
-      {{cirunner_cert.cert}}
-    dest: "{{ ssl_certs_dir }}/ci-runner.sram.surf.nl.fullchain.crt"
+    content: "{{cirunner_cert.chain}}"
+    dest: "{{ ssl_certs_dir }}/ci-runner.sram.surf.nl.chain.crt"
     owner: "root"
     group: "root"
     mode: "0644"
+  notify: "restart apache"
 
 # - add user for ci-runner (draait nu nog als martin)
 - name: Add ci-runner group

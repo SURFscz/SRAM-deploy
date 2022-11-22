@@ -28,7 +28,7 @@ jobs:
       # Create date output to seconds
       - name: Get Date
         id: get-date
-        run: echo "::set-output name=date::$(/bin/date -u "+%Y%m%d%k%M%S")"
+        run: echo "date=$(/bin/date -u '+%Y%m%d%k%M%S')" >> $GITHUB_OUTPUT
 
       # Restore cache based no fake time key (allways miss)
       - name: Setup cache
@@ -83,7 +83,7 @@ jobs:
         id: scz-base-cache-id
         run: >
           ID=$(docker image list scz-base-cache -q)
-          echo "::set-output name=ID::$ID"
+          echo "ID=$ID" >> $GITHUB_OUTPUT
 
       # Start containers without deploy
       - name: Start containers
@@ -97,7 +97,7 @@ jobs:
         id: scz-base-id
         run: >
           ID=$(docker image list scz-base -q) &&
-          echo "::set-output name=ID::$ID"
+          echo "ID=$ID" >> $GITHUB_OUTPUT
 
       # Save docker cache
       - name: Save docker cache

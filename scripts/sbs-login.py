@@ -70,7 +70,7 @@ try:
     wait.until(presence_of_element_located((By.XPATH, "//label[@for='aup']")), 'Timeout waiting for AUP')
 
     browser.find_element(By.XPATH, "//label[@for='aup']").click()
-    browser.find_element(By.XPATH, "//a[text()='Looks good, onwards']").click()
+    browser.find_element(By.XPATH, "//a[text()='Onwards']").click()
     print(" - accepted AUP")
 
     # Wait for landing page
@@ -125,7 +125,7 @@ try:
     wait.until(presence_of_element_located((By.XPATH, "//label[@for='aup']")), 'Timeout waiting for AUP')
 
     browser.find_element(By.XPATH, "//label[@for='aup']").click()
-    browser.find_element(By.XPATH, "//a[text()='Looks good, onwards']").click()
+    browser.find_element(By.XPATH, "//a[text()='Onwards']").click()
     print(" - accepted AUP")
 
     # Wait for 2fa information

@@ -3,7 +3,7 @@ ansible_ssh_common_args: >
   -o StrictHostKeyChecking=false
   -o UserKnownHostsFile={{playbook_dir}}/docker/known_hosts
 ansible_ssh_user: "ansible"
-ansible_ssh_private_key_file: "{{playbook_dir}}/docker/ansible_key"
+ansible_ssh_private_key_file: "docker/ansible_key"
 
 secrets_file: "environments/vm/secrets/all.yml"
 secrets_users_file: "environments/vm/secrets/users.yml"
@@ -73,7 +73,7 @@ admin:
 # yamllint disable rule:line-length
 scz_repo:
   pyff:      { name: "pyFF",                   version: "1.1.5",      src: "https://github.com/IdentityPython/pyFF.git"                    }
-  sbs:       { name: "SBS",                    version: "latest",                                                                          }
+  sbs:       { name: "SBS",                    version: "latest"                                                            }
   plsc:      { name: "pLSC",                   version: "main",       src: "https://github.com/SURFscz/plsc.git"                           }
 # yamllint enable rule:line-length
 
@@ -111,7 +111,6 @@ services_ldap:
 db_host: "{{ groups['db'][0] }}"
 sbs_db_name: "sbs"
 sbs_db_user: "sbs"
-sbs_migration_user: "sbs_migrater"
 
 sbs_client_id: sbs-server
 sbs_base_url: "https://{{hostnames.sbs}}"

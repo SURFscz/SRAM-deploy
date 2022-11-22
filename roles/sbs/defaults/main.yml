@@ -24,6 +24,7 @@ sbs_mail_host: "{{ mail.relay_to }}"
 sbs_mail_port: "{{ mail.relay_port }}"
 
 sbs_file_owner: "root"
+sbs_group: "sram-sbs"
 
 sbs_session_lifetime: 1440
 sbs_secret_key_suffix: ""
@@ -41,6 +42,10 @@ sbs_restricted_co_default_org: "example.org"
 sbs_mail_sender_name: "SURF"
 sbs_mail_sender_email: "no-reply@localhost"
 sbs_exceptions_mail: "root@localhost"
+
+sbs_support_email: "sram-support@localhost"
+sbs_admin_email: "sram-beheer@localhost"
+sbs_eduteams_email: "eduteams@localhost"
 
 sbs_wiki_link: "https://www.example.org/wiki"
 
@@ -60,6 +65,7 @@ sbs_delete_orphaned: True
 sbs_impersonation_allowed: False
 sbs_admin_platform_backdoor_totp: False
 sbs_past_dates_allowed: False
+sbs_mock_scim_enabled: False
 
 sbs_oidc_config_url: "http://localhost/.well-known/openid-configuration"
 sbs_oidc_authz_endpoint: "http://localhost/OIDC/authorization"

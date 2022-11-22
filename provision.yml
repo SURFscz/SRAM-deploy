@@ -83,7 +83,8 @@
 - name: "ci-runner"
   hosts: "bhr12"
   roles:
-    - { role: 'ci-runner', tags: ['bhr12','ci-runner']}
+    - { role: 'http_apache', tags: ['bhr12','ci-runner']}
+    - { role: 'ci-runner',   tags: ['bhr12','ci-runner']}
 
 - name: "lb"
   hosts: lb
@@ -107,19 +108,19 @@
   tasks:
     - { import_tasks: "tasks/versions.yml", tags: ['common'] }
   roles:
-    - { role: http_apache, tags: ['sbs']             }
-    - { role: sbs,         tags: ['sbs','sbs-only']  }
+    - { role: sbs,         tags: ['sbs']  }
 
 - name: "ldap"
   hosts: ldap
   tasks:
     - { import_tasks: "tasks/versions.yml", tags: ['common'] }
   roles:
-    - { role: ldap,               tags: ['ldap'                  ] }
+    - { role: ldap,               tags: ['ldap'                 ] }
+    - { role: ldap_monitor,       tags: ['ldap', 'ldap-monitor' ] }
 #    - { role: pam_websso_daemon,  tags: ['client','websso-daemon'], when: experimental_features }
 
 - name: "first ldap"
-  hosts: vm_ldap_master
+  hosts: "ldap_primary"
   roles:
     - { role: plsc,               tags: ['plsc', 'ldap-plsc'     ] }
 
@@ -162,4 +163,3 @@
     - { import_tasks: "tasks/versions.yml", tags: ['common']  }
   roles:
     - { role: ci-test,                      tags: ['ci-test'] }
-
