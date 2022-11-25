@@ -31,6 +31,10 @@ pLSC is used to synchronize information from SBS to OpenLDAP.  See <https://gith
 This repository consists of an Ansible playbook to install a complete
 SRAM-platform.
 
+### WARNING
+The instructions below are meant to deploy a TEST, DEV or DEMO environment
+and should never be used to deploy a PRODUCTION setup!
+
 We support this on both Linux (tested on Ubuntu 20.04, experimental on
 openSUSE Tumbleweed) and OSX/MacOS (tested on Big Sur).
 The system is deployed to a number of docker containers.
