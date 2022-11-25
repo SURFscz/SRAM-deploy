@@ -112,9 +112,10 @@ def mail_config(num: int, name: str) -> Dict[str,Any]:
 
 def redis_config(num: int, name: str) -> Dict[str,Any]:
     data: Dict[str, Any] = dict()
-    data['image'       ] = 'redis:6'
+    data['image'       ] = 'bitnami/redis:latest'
     data['hostname'    ] =  name
     data['ports'       ] = [ 6379 ]
+    data['environment' ] = [ 'REDIS_PASSWORD=changethispassword' ]
     data['networks'    ] = {
         'scznet': {
             'ipv4_address': f'{subnet}.{num}',
