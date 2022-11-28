@@ -17,6 +17,8 @@
     - "index.html"
     - "auth.css"
     - "auth.php"
+    - "demosp.css"
+    - "bootstrap.min.css"
   notify: "restart php-fpm"
 
 #########################################################
