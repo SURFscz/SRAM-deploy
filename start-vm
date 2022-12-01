@@ -32,8 +32,10 @@ while getopts -- '-:h' OPT; do
         sa | no )       SKIP_ANSIBLE=1
                         ;;
         skip-docker | \
+        no-docker | \
         skip-vm | \
-        sd | sv )       SKIP_VM=1
+        no-vm | \
+        sd | sv | nd | nv )       SKIP_VM=1
                         ;;
         * )             OPTPROCESSED=$(( $OPTPROCESSED - 1 ))
                         ;;

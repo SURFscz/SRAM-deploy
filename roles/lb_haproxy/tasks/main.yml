@@ -83,6 +83,18 @@
     owner: "root"
     group: "root"
 
+- name: install haproxy error page
+  template:
+    src: "error_sram_down.html.j2"
+    dest: "/etc/haproxy/errors/503.http"
+
+- name: check error pages for max file size
+  stat:
+    path: "/etc/haproxy/errors/{{item}}.http"
+  register: "st"
+  failed_when: "st.stat.size > 65419"
+  loop: [400,403,408,500,502,503,504]
+
 - block:
     - name: Create bin directory
       file:
