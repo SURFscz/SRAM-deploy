@@ -1,0 +1,330 @@
+HTTP/1.1 503 Service Unavailable
+Cache-Control: no-cache
+Connection: close
+Content-Type: text/html
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
+<meta name="theme-color" content="#000000">
+<meta http-equiv="content-security-policy" content="default-src 'none'; font-src 'self' data:; img-src 'self' data:; style-src 'unsafe-inline'; media-src 'self' data:; script-src 'unsafe-inline' data:;">
+<title>SURF Research Access Management</title>
+<link rel="icon" type="image/png" sizes="32x32" href="data:image/png;base64,{{ lookup('file','favicon-32x32.png') | b64encode }}" >
+<style>
+   svg:not(:root).svg-inline--fa {
+      overflow: visible
+   }
+
+   .svg-inline--fa {
+      display: inline-block;
+      font-size: inherit;
+      height: 1em;
+      overflow: visible;
+      vertical-align: -0.125em
+   }
+
+   .svg-inline--fa.fa-w-11 {
+      width: 0.6875em
+   }
+
+   @-webkit-keyframes fa-spin {
+      0% {
+         -webkit-transform: rotate(0deg);
+         transform: rotate(0deg)
+      }
+
+      100% {
+         -webkit-transform: rotate(360deg);
+         transform: rotate(360deg)
+      }
+   }
+
+   @keyframes fa-spin {
+      0% {
+         -webkit-transform: rotate(0deg);
+         transform: rotate(0deg)
+      }
+
+      100% {
+         -webkit-transform: rotate(360deg);
+         transform: rotate(360deg)
+      }
+   }
+
+   @keyframes tooltip-appear {
+      0% {
+         opacity: 0
+      }
+
+      to {
+         opacity: 1
+      }
+   }
+
+   body,
+   html,
+   p,
+   ul {
+      margin: 0;
+      padding: 0
+   }
+
+   html {
+      box-sizing: border-box
+   }
+
+   *,
+   :after,
+   :before {
+      box-sizing: inherit
+   }
+
+   body {
+      font-family: "Source Sans Pro", sans-serif;
+      font-weight: 400;
+      font-size: 16px;
+      line-height: 20px;
+      color: #000;
+      background-color: #fff;
+      -webkit-font-smoothing: antialiased
+   }
+
+   body:after {
+      position: fixed;
+      width: 109px;
+      height: 28px;
+      top: 15px;
+      right: -25px;
+      text-align: center;
+      font-size: 16px;
+      font-family: sans-serif;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: #fff;
+      line-height: 30px;
+      transform: rotate(45deg)
+   }
+
+   @media (max-width:768px) {
+      body:after {
+         content: "" !important;
+         background: transparent !important;
+         z-index: -1
+      }
+   }
+
+   a {
+      cursor: pointer
+   }
+
+   a,
+   a:visited {
+      color: #006db8
+   }
+
+   *,
+   :after,
+   :before {
+      box-sizing: border-box
+   }
+
+   ::-webkit-input-placeholder {
+      color: grey;
+      font-family: "Source Sans Pro", sans-serif
+   }
+
+   .loader:empty,
+   .loader:empty:after {
+      border-radius: 50%;
+      width: 10em;
+      height: 10em
+   }
+
+   .loader:empty {
+      margin: 100px auto;
+      font-size: 14px;
+      position: relative;
+      text-indent: -9999em;
+      border: 1.5em solid gold;
+      border-left-color: #fff;
+      transform: translateZ(0);
+      animation: load8 1.4s linear infinite
+   }
+
+   @keyframes load8 {
+      0% {
+         transform: rotate(0deg)
+      }
+
+      to {
+         transform: rotate(1turn)
+      }
+   }
+
+   .app-container {
+      display: flex;
+      position: relative;
+      min-height: 100vh;
+      width: 100%;
+      flex-direction: column
+   }
+
+   .header-container {
+      margin: 0 auto;
+      padding: 5px 0 10px;
+      color: #000
+   }
+
+   .header-container.surf {
+      background-color: #ffa640;
+      width: 100%
+   }
+
+   .header-container .header {
+      position: relative;
+      transition: margin .15s ease-in-out;
+      display: flex;
+      align-items: center;
+      width: 100%;
+      margin: 0 auto;
+      max-width: 1280px
+   }
+
+   @media (max-width:1300px) {
+      .header-container .header {
+         padding: 0 15px
+      }
+   }
+
+   .header-container .header a.logo {
+      margin-top: 10px
+   }
+
+   .header-container .header a.logo svg {
+      width: 360px;
+      height: auto
+   }
+
+   #happy-gremlin {
+      background: transparent;
+      margin: 0px auto;
+      outline: none;
+      overflow: hidden;
+      height: auto;
+      width: 100%;
+      max-width: 960px
+   }
+
+   .platform-unavailable {
+      max-width: 1280px;
+      width: 100%;
+      margin: 40px auto;
+      text-align: center
+   }
+
+   .platform-unavailable p.platform-unavailable-msg {
+      font-size: 22px;
+      line-height: 22px;
+      margin-bottom: 25px
+   }
+
+   div.footer {
+      background-color: #f4f6f8;
+      padding: 15px;
+      margin-top: auto
+   }
+
+   div.footer div.footer-inner {
+      margin: 0 15px;
+      display: flex;
+      justify-content: space-between
+   }
+
+   div.footer div.footer-inner section.info {
+      display: flex;
+      flex-direction: column
+   }
+
+   div.footer div.footer-inner section.info.right {
+      text-align: right
+   }
+
+   @keyframes pulse {
+      0% {
+         box-shadow: 0 0 0 0#fff;
+         border-radius: 50%;
+         padding: 2px
+      }
+
+      35% {
+         box-shadow: 0 0 1px 1px #0699ff;
+         border-radius: 50%;
+         padding: 2px
+      }
+
+      to {
+         box-shadow: 0 0 0 0#fff;
+         border-radius: 50%;
+         padding: 2px
+      }
+   }
+
+   :focus {
+      outline: 0
+   }
+
+   .sf-hidden {
+      display: none !important
+   }
+
+   img[src="data:,"],
+   source[src="data:,"] {
+      display: none !important
+   }
+
+   @font-face {
+      font-family: "Source Sans Pro";
+      font-weight: 300;
+      src: url(data:font/woff2;base64,{{ lookup('file','SourceSansPro-Light.subset.otf') | b64encode }})format("woff2")
+   }
+
+   @font-face {
+      font-family: "Source Sans Pro";
+      font-weight: 600;
+      src: url(data:font/woff2;base64,{{ lookup('file','SourceSansPro-Semibold.subset.otf') | b64encode }})format("woff2")
+   }
+</style>
+</head>
+<body id=app_body>
+   <div id=app class=loader>
+      <div class=app-container>
+         <div class="header-container guest surf">
+            <div class=header>
+               <a class=logo href=https://sram.surf.nl>{{ lookup('file','sram_logo.svg') }}</a>
+            </div>
+         </div>
+         <div class="platform-unavailable">
+            <p class="platform-unavailable-msg">
+               Oops, SURF Research Access Management is not available at the moment. Hopefully, this was planned.<br/>
+               We'll be back soon!
+            </p>
+         </div>
+         <div id=happy-gremlin>
+
+         </div>
+         <div class=footer>
+            <div class=footer-inner>
+               <section class="info left"><span>Need tips or info?</span><a href=https://edu.nl/vw3jx target=_blank
+                     rel="noopener noreferrer">Help &amp; FAQ</a></section>
+               <section class="info right"><span>Proudly powered by</span><a href=https://surf.nl/ target=_blank
+                     rel="noopener noreferrer">SURF</a></section>
+            </div>
+         </div>
+      </div>
+   </div>
+</body>
+
+</html>
+
