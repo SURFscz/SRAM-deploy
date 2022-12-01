@@ -59,7 +59,7 @@ To get started, do the following:
 
     `./start-vm`
 
-    This will boot 8 containers/VMs and run ansible to deploy SRAM to these 8 hosts.
+    This will boot 8 containers and run ansible to deploy SRAM to these 8 hosts.
 
 - Alternatives:
 
