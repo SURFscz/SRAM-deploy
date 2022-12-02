@@ -11,7 +11,7 @@ function finish {
 trap finish EXIT
 
 #date
-date --utc --iso-8601=seconds >> $TMPFILE
+date --utc +"%s" >> $TMPFILE
 
 # checksum
 ldapsearch -Y EXTERNAL -Q -H ldapi://%2frun%2fslapd%2fldapi -LLL -o ldif-wrap=no -b "{{services_ldap.basedn}}" -s sub '(objectclass=*)' '*' '+' \
