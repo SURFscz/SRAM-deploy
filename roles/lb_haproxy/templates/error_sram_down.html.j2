@@ -212,7 +212,7 @@ Content-Type: text/html
       margin: 0px auto;
       outline: none;
       overflow: hidden;
-      height: auto;
+      height: 100%;
       width: 100%;
       max-width: 960px
    }
@@ -286,8 +286,8 @@ Content-Type: text/html
 
    @font-face {
       font-family: "Source Sans Pro";
-      font-weight: 300;
-      src: url(data:font/woff2;base64,{{ lookup('file','SourceSansPro-Light.subset.otf') | b64encode }})format("woff2")
+      font-weight: 400;
+      src: url(data:font/woff2;base64,{{ lookup('file','SourceSansPro-Regular.subset.otf') | b64encode }})format("woff2")
    }
 
    @font-face {
@@ -307,12 +307,12 @@ Content-Type: text/html
          </div>
          <div class="platform-unavailable">
             <p class="platform-unavailable-msg">
-               Oops, SURF Research Access Management is not available at the moment. Hopefully, this was planned.<br/>
+               Oops, SURF Research Access Management is not available at the moment. Hopefully, this was planned.
                We'll be back soon!
             </p>
          </div>
          <div id=happy-gremlin>
-
+            {{ lookup('file','happy_gremlin.svg') }}
          </div>
          <div class=footer>
             <div class=footer-inner>

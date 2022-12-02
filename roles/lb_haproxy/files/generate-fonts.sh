@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # this scripts takes an full web font (otf) nd generates a smalller version with a minimal subset of glyphs
 # useful for embedding etc
@@ -16,7 +16,7 @@ cat > $TMPFILE <<EOF
     space
 EOF
 
-for font in SourceSansPro-Light SourceSansPro-Semibold
+for font in SourceSansPro-Regular SourceSansPro-Semibold
 do
 	echo ${font}
 	fonttools subset \
@@ -27,5 +27,5 @@ do
 	base64 --wrap=0 < ${font}.subset.otf > ${font}.subset.otf.base64
 done
 
-rm $TMPFILE 
+rm $TMPFILE
 exit 0

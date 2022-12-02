@@ -87,6 +87,7 @@
   template:
     src: "error_sram_down.html.j2"
     dest: "/etc/haproxy/errors/503.http"
+  notify: "restart haproxy"
 
 - name: check error pages for max file size
   stat:
