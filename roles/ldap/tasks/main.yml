@@ -69,6 +69,13 @@
     - "dc eq"
     - "entryCSN eq"
 
+- name: Set olcDatabase={-1}frontend olcSizeLimit
+  community.general.ldap_attrs:
+    dn: "olcDatabase={-1}frontend,cn=config"
+    state: "exact"
+    attributes:
+      olcSizeLimit: "unlimited"
+
 - name: Set config
   community.general.ldap_attrs:
     dn: "cn=config"
