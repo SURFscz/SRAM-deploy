@@ -1,5 +1,6 @@
 # SURF Research Access Management
 ![build status](https://github.com/SURFscz/SRAM-deploy/actions/workflows/main.yml/badge.svg)
+![build status](https://github.com/SURFscz/SRAM-deploy/actions/workflows/ci-runner.yml/badge.svg)
 
 The SURF Research Access Management (SRAM) project offers a Membership Management System
 for research collaborations. It is a middleware solution for
