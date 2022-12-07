@@ -146,8 +146,8 @@ user_requests_retention:
 # The retention config determines how long users may be inactive, how long the reminder email is valid and when do we resent the magic link
 retention:
   allowed_inactive_period_days: 99999
-  reminder_expiry_period_days: 10
-  reminder_resent_period_days: 0
+  reminder_suspend_period_days: 14
+  reminder_expiry_period_days: 7
   cron_hour_of_day: {{ sbs_cron_hour_of_day }}
   remove_suspended_users_period_days: 90
 
