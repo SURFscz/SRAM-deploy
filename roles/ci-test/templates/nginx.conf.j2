@@ -1,0 +1,51 @@
+server {
+    listen {{ ci_rp_backend_port }} ssl http2;
+    server_name {{ inventory_hostname }};
+
+    ssl_certificate        {{ ssl_certs_dir }}/{{ internal_base_domain }}.crt;
+    ssl_certificate_key    {{ ssl_certs_dir }}/{{ internal_base_domain }}.key;
+
+    add_header Strict-Transport-Security "max-age=31536000";
+
+    location / {
+        root             {{ rp_docroot_dir }};
+        index index.php
+        try_files $uri $uri/ /index.php$is_args$args;
+
+        location ~ \.php(/|$) {
+            fastcgi_pass     unix:/run/php/sram-ssphp.sock;
+            fastcgi_index    index.php;
+            fastcgi_split_path_info ^(.+\.php)(/.+)$;
+            fastcgi_param SCRIPT_FILENAME $document_root/$fastcgi_script_name;
+            fastcgi_param SCRIPT_NAME     /$fastcgi_script_name;
+            fastcgi_param PATH_INFO       $fastcgi_path_info;
+            include          fastcgi_params;
+        }
+    }
+}
+
+server {
+    listen {{ ci_idp_backend_port }} ssl http2;
+    server_name {{ inventory_hostname }};
+
+    ssl_certificate        {{ ssl_certs_dir }}/{{ internal_base_domain }}.crt;
+    ssl_certificate_key    {{ ssl_certs_dir }}/{{ internal_base_domain }}.key;
+
+    add_header Strict-Transport-Security "max-age=31536000";
+
+    location ^~ /saml {
+        index index.php
+        try_files $uri $uri/ /index.php$is_args$args;
+        alias /opt/sram-ssphp/simplesaml/www;
+
+        location ~ \.php(/|$) {
+            root             {{simplesaml_project_dir}}/simplesaml/www;
+            fastcgi_pass     unix:/run/php/sram-ssphp.sock;
+            fastcgi_index    index.php;
+            fastcgi_split_path_info  ^/saml/((?U).+\.php)(/?.+)?$;
+            fastcgi_param SCRIPT_FILENAME $document_root/$fastcgi_script_name;
+            fastcgi_param PATH_INFO $fastcgi_path_info;
+            include          fastcgi_params;
+        }
+    }
+}

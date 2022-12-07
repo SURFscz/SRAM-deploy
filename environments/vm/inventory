@@ -65,6 +65,9 @@ vm_meta
 [client:children]
 vm_client
 
+[test:children]
+vm_client
+
 [sandbox1:children]
 vm_sandbox1
 
