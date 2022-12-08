@@ -39,7 +39,7 @@
   copy:
     content: "{{client_saml_cert.priv}}"
     dest: "{{ simplesaml_project_dir }}/simplesaml/cert/server.key"
-    group: "www-data"
+    group: "{{ssphp_group}}"
     mode: "0640"
   no_log: "{{sram_ansible_nolog}}"
   notify: "restart php-fpm"
