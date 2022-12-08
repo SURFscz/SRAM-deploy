@@ -5,7 +5,6 @@ ssphp_group: "sram-ssphp"
 ssphp_dir: "/opt/{{ssphp_name}}"
 ssphp_html_dir: "{{ssphp_dir}}/html"
 ssphp_admin_pass: "changethispassword"
-ssphp_salt: "ThisIsNotASecretSalt,PleaseChangeMe!"
 
 rp_jumbojett_dir: /opt/jumbojett
 rp_docroot_dir: /opt/rp
