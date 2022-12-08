@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# this scripts takes an full web font (otf) nd generates a smalller version with a minimal subset of glyphs
+# this scripts takes an full web font (otf) and generates a smalller version with a minimal subset of glyphs
 # useful for embedding etc
 
 set -e
