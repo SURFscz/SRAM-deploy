@@ -71,7 +71,7 @@ admin:
 
 # versions
 # versions
-sbs_version: "main"
+sbs_version: "latest"
 plsc_version: "main"
 
 # poor man's user management
