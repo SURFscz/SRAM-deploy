@@ -24,11 +24,11 @@
     state: directory
     mode: 0755
 
-- name: fetch plsc from {{ plsc_repo_url }}, version {{ plsc_repo_version }}
+- name: fetch plsc from {{ plsc_repo_url }}, version {{ plsc_version }}
   git:
     repo: "{{ plsc_repo_url }}"
     dest: "{{ plsc_dir }}"
-    version: "{{ plsc_repo_version }}"
+    version: "{{ plsc_version }}"
     accept_hostkey: "yes"
     force: "yes"
 

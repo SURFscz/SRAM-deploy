@@ -9,7 +9,7 @@
   git:
     repo: "{{ plsc_repo_url }}"
     dest: "{{ aclsync_dir }}/plsc"
-    version: "{{ plsc_repo_version }}"
+    version: "{{ plsc_version }}"
 
 - name: create group for aclsync config file
   group:
