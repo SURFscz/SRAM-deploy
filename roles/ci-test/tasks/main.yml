@@ -13,9 +13,9 @@
     simplesaml_admin_passwd: "{{ssphp_admin_pass}}"
 
 - name: Enable exampleauth module
-  ansible.builtin.file:
-    path: "{{ simplesaml_project_dir }}/simplesaml/modules/exampleauth/enable"
-    state: touch
+  ansible.builtin.copy:
+    content: ''
+    dest: "{{ simplesaml_project_dir }}/simplesaml/modules/exampleauth/enable"
 
 - name: SimpleSaml configuration
   template:
