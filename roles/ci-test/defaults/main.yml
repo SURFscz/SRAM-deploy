@@ -5,6 +5,7 @@ ssphp_group: "sram-ssphp"
 ssphp_dir: "/opt/{{ssphp_name}}"
 ssphp_html_dir: "{{ssphp_dir}}/html"
 ssphp_admin_pass: "changethispassword"
+client_ssp_salt: "ThisIsNotASecretSalt,PleaseChangeMe!"
 
 rp_jumbojett_dir: /opt/jumbojett
 rp_docroot_dir: /opt/rp
@@ -20,5 +21,4 @@ ci_idp_backend_port: 8444
 # simplesaml_authsources_dir: "{{ simplesaml_project_dir }}/simplesaml/config/authsources"
 
 # client_ssp_admin_pass: "adj3avonisiz"
-# client_ssp_salt: "ThisIsNotASecretSalt,PleaseChangeMe!"
 
