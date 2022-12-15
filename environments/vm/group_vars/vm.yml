@@ -19,7 +19,7 @@ hostnames:
   pam:      pam.{{base_domain}}
   oidc_op:  oidc-op.{{base_domain}}
 
-idp_test_port: 81
+idp_test_port: 8444
 sp_test_port: 82
 oidc_test_port: 83
 metadata_backend_port: 88
