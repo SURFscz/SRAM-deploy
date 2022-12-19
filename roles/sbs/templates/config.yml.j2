@@ -187,6 +187,12 @@ orphan_users:
   # How long after created do we delete orphan users
   delete_days_threshold: 14
 
+scim_sweep:
+  # Do we enable scim sweeps?
+  enabled: {{ sbs_scim_sweep }}
+  # How often do we check if scim sweeps are needed per service
+  cron_minutes_expression: "*/15"
+
 ldap:
   url: "{{ sbs_ldap_url }}"
   bind_account: "{{ sbs_ldap_bind_account }}"
