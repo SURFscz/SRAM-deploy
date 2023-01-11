@@ -145,11 +145,15 @@ user_requests_retention:
 
 # The retention config determines how long users may be inactive, how long the reminder email is valid and when do we resent the magic link
 retention:
-  allowed_inactive_period_days: 99999
-  reminder_suspend_period_days: 14
-  reminder_expiry_period_days: 7
   cron_hour_of_day: {{ sbs_cron_hour_of_day }}
+  # how many days of inactivity before a user is suspended
+  allowed_inactive_period_days: 99999
+  # how many days before suspension do we send a warning
+  reminder_suspend_period_days: 14
+  # how many days after suspension do we delete the account
   remove_suspended_users_period_days: 90
+  # how many days before deletion do we send a reminder
+  reminder_expiry_period_days: 7
 
 collaboration_expiration:
   # Do we daily check for CO's that will be deleted because they have been expired?
