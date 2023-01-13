@@ -6,6 +6,7 @@
       - "docker-ce"
       - "docker-ce-cli"
       - "docker-compose"
+      - "docker-compose-plugin"
       - "ansible"
       - "apache2"
 

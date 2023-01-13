@@ -137,8 +137,6 @@
   tasks:
     - { import_tasks: "tasks/versions.yml", tags: ['common'] }
   roles:
-    - { role: http_apache,          tags: ['client','client-base'  ] }
-    - { role: client-base,          tags: ['client','client-base'  ] }
     - { role: oidc-op,              tags: ['client','oidc-op'      ] }
 
 - name: "demo clients"

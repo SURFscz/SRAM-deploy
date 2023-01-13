@@ -10,6 +10,7 @@
       - php-gmp
       - php-sqlite3
       - php-zip
+      - php-fpm
     state: present
 
 - name: Create simplesaml group
@@ -88,7 +89,6 @@
   with_items:
     - "config.php"
     - "authsources.php"
-    - "saml20-idp-remote.php"
 
 - name: Link SimpleSaml configuration
   file:
@@ -99,7 +99,6 @@
   with_dict:
     config.php: "config"
     authsources.php: "config"
-    saml20-idp-remote.php: "metadata"
 
 - name: Install fpm pool config
   template:
