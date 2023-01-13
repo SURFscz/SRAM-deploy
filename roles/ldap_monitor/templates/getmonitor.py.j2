@@ -1,0 +1,28 @@
+#!/usr/bin/env python3
+import sys
+
+# getmonitor.py is used to retrieve the ldapmonitor values
+# using Zabbix system.run[]
+
+def get(command):
+    try:
+        with open('{{ldap_monitor_file}}', 'r') as f:
+            time = f.readline()
+            hash = f.readline()
+            csn = f.readline()
+            if command == 'time':
+                return time.strip()
+            elif command == 'hash':
+                return hash.strip()
+            elif command == 'csn':
+                lst = [k.strip() for k in csn.split(':')]
+                parts = [k.strip() for k in lst[1].split('#')]
+                return parts[0][:-1]
+    except Exception:
+        return "error\n"
+
+if __name__ == '__main__':
+    if len(sys.argv) < 2:
+        sys.exit(sys.argv[0] + "  <argument>")
+    command = sys.argv[1]
+    print(get(command))
