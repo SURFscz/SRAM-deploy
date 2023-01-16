@@ -46,3 +46,9 @@
     - "sram-ldapmonitor.timer"
   notify:
     - "enable monitor job"
+
+- name: Copy zabbix agent ldapmonitor key
+  copy:
+    src: sram-ldapmonitor.conf
+    dest: "/etc/zabbix/zabbix_agent2.d/sram-ldapmonitor.conf"
+  notify: "restart zabbix-agent"

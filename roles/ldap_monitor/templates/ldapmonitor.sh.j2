@@ -24,5 +24,6 @@ ldapsearch -Y EXTERNAL -Q -H ldapi://%2frun%2fslapd%2fldapi -LLL -o ldif-wrap=no
 
 # move final into place
 mv "$TMPFILE" "{{ldap_monitor_file}}"
+chmod 644 "{{ldap_monitor_file}}"
 
 exit 0
