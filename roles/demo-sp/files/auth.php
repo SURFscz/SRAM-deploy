@@ -75,6 +75,7 @@ foreach ($ATTRIBUTES as $attr) {
     print("<td>{$attr}</td>"); print("\n");
     print('<td>');
     if (array_key_exists($attr, $user_attr)) {
+        sort($user_attr[$attr]);
         foreach ($user_attr[$attr] as $val) {
             print('<div class="attr_val">');
             print($val);
@@ -101,6 +102,7 @@ foreach ($unknown_attr as $attr) {
     print("<td>{$attr}</td>"); print("\n");
     print('<td>');
     foreach ($user_attr[$attr] as $val) {
+        sort($user_attr[$attr]);
         print('<span class="attr_val">');
         print($val);
         print('</span>');

@@ -1,5 +1,6 @@
 .attr_val {
     white-space: pre;
+    font-family: monospace;
 }
 
 .not_found {
