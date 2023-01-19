@@ -36,7 +36,7 @@ $oidc->setResponseTypes(array($response_type));
 if ($scopes) $oidc->addScope($scopes);
 if ($claims) $oidc->addAuthParam(array('claims' => $claims));
 
-
+$error = '';
 try {
     $oidc->authenticate();
 } catch (Exception $e) {
