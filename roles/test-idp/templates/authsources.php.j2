@@ -8,7 +8,14 @@ $config['admin'] = array(
         'core:AdminPassword',
     );
 
-$config['example-userpass'] => [
+$config['default-sp'] = [
+        'saml:SP',
+        'entityID' => null,
+        'idp' => null,
+        'discoURL' => null,
+    ];
+
+$config['example-userpass'] = [
         'exampleauth:UserPass',
 
         // Give the user an option to save their username for future login attempts
@@ -42,6 +49,4 @@ $config['example-userpass'] => [
             'eduPersonScopedAffiliation' => ['member@test-idp.sram.surf.nl', 'employee@test-idp.sram.surf.nl'],
             'eduPersonEntitlement' => ['urn:disk:200'],
         ],
-    ],
-
-#        'signature.algorithm' => 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256',
+    ];

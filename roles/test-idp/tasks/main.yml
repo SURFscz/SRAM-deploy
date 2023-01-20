@@ -20,12 +20,20 @@
     simplesaml_group: "{{testidp_group}}"
     simplesaml_project_dir: "{{testidp_dir}}"
 
-- name: SimpleSaml configuration
+- name: SimpleSaml configuration (templates)
   template:
     src: "{{item}}.j2"
     dest: "{{ simplesaml_project_dir }}/config/{{item}}"
   with_items:
     - "saml20-idp-hosted.php"
+
+- name: SimpleSaml configuration (copy)
+  copy:
+    src: "{{item}}"
+    dest: "{{ simplesaml_project_dir }}/config/{{item}}"
+  with_items:
+    - "saml20-idp-remote.php"
+    - "saml20-sp-remote.php"
 
 - name: Link SimpleSaml configuration
   file:
@@ -35,6 +43,8 @@
     force: true
   with_dict:
     saml20-idp-hosted.php: "metadata"
+    saml20-idp-remote.php: "metadata"
+    saml20-sp-remote.php: "metadata"
 
 - name: Generate a SAML signing certificate
   command:
