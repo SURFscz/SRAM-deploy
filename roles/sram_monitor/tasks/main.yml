@@ -1,0 +1,55 @@
+---
+- name: "Create sram monitor user"
+  ansible.builtin.user:
+    name: "{{sram_monitor_user}}"
+    group: docker
+
+- name: "Ensure that sram_monitor_dir exist"
+  file:
+    path: "{{sram_monitor_dir}}"
+    state: "directory"
+    mode: "0755"
+
+- name: "Checkout monitoring repo"
+  ansible.builtin.git:
+    repo: "{{sram_monitor_repo}}"
+    dest: "{{sram_monitor_dir}}"
+    version: "{{sram_monitor_version}}"
+
+- name: Create python3 virtualenv
+  import_role:
+    name: "python-venv"
+  vars:
+    python_venv_dir: "{{ sram_monitor_dir }}"
+    python_venv_requirements: "{{ sram_monitor_dir }}/requirements.txt"
+
+- name: "Ensure that sram_monitor_status_dir exist"
+  file:
+    path: "{{sram_monitor_dir}}/status"
+    state: "directory"
+    owner: "{{sram_monitor_user}}"
+    mode: "0775"
+
+- name: Copy configuration files
+  ansible.builtin.copy:
+    src: "{{item}}"
+    dest: "{{sram_monitor_dir}}/{{item}}"
+  with_items:
+    - acc.yml
+    - prd.yml
+
+- name: Copy monitor service files
+  template:
+    src: "{{item}}.j2"
+    dest: "/etc/systemd/system/{{item}}"
+  with_items:
+    - "sram-monitor.service"
+    - "sram-monitor.timer"
+  notify:
+    - "enable monitor job"
+
+- name: Copy zabbix agent srammonitor key
+  ansible.builtin.template:
+    src: sram-monitor.conf.j2
+    dest: "/etc/zabbix/zabbix_agent2.d/sram-monitor.conf"
+  notify: "restart zabbix-agent"

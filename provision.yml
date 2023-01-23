@@ -144,8 +144,9 @@
   tasks:
     - { import_tasks: "tasks/versions.yml", tags: ['common'] }
   roles:
-    - { role: demo-sp,              tags: ['bhr13','demo-sp'] }
-    - { role: tools,                tags: ['bhr13','tools']   }
+    - { role: demo-sp,              tags: ['bhr13','demo-sp']        }
+    - { role: tools,                tags: ['bhr13','tools']          }
+    - { role: sram_monitor,         tags: ['bhr13','sram-monitor']   }
 
 - name: "sandbox"
   hosts: sandbox1
