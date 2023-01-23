@@ -59,7 +59,7 @@ if ($error) {
   echo "<pre id=claims>" . htmlspecialchars(json_encode($claims, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)) . "</pre>\n";
   $userinfo = $oidc->requestUserInfo();
   echo "userinfo:\n";
-  echo "<pre id=userinfo>" . htmlspecialchars(json_encode($userinfo, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)) . "</pre>\n";
+  echo "<pre id=data>" . htmlspecialchars(json_encode($userinfo, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)) . "</pre>\n";
 }
 ?>
 </body></html>
