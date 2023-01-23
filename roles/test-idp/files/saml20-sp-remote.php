@@ -86,7 +86,6 @@ $metadata['https://proxy.acc.sram.eduteams.org/metadata/backend.xml'] = [
         ],
     ],
     'metadata-set' => 'saml20-sp-remote',
-    'expire' => 1675425609,
     'AssertionConsumerService' => [
         [
             'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
@@ -207,7 +206,6 @@ $metadata['https://proxy.sram.surf.nl/metadata/backend.xml'] = [
         ],
     ],
     'metadata-set' => 'saml20-sp-remote',
-    'expire' => 1675425609,
     'AssertionConsumerService' => [
         [
             'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
