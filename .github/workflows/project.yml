@@ -62,8 +62,7 @@ jobs:
           organization: ${{ env.organization }}
           project_id: ${{ env.project_id }}
           resource_node_id: ${{ github.event.issue.node_id }}
-          status_value: Done
+          status_value: ${{ inputs.state_reason == 'not_planned' && 'Done' || 'To be tested' }}
         if: >
           inputs.event == 'issues'
           && inputs.action == 'closed'
-          && inputs.state_reason == 'not_planned'
