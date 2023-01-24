@@ -40,6 +40,29 @@ jobs:
           echo "action: ${{ inputs.action }}"
           echo "state_reason: ${{ inputs.state_reason }}"
         if: false
+      - name: get issue state
+        run: |
+          gh api graphql -f query='
+            query ticket_card {
+              repository(owner: "SURFscz", name:"SRAM-deploy") {
+                issue(number: 408) {
+                  id
+                  state
+                  stateReason
+                  projectItems(first:1 ) {
+                    nodes {
+                      fieldValueByName(name: "Status") {
+                        ... on ProjectV2ItemFieldSingleSelectValue {
+                          name
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ' > issue_data.json
+          jq < issue_data.json
       - name: Add issue to project
         uses: leonsteinhaeuser/project-beta-automations@v2.0.1
         with:
