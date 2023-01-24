@@ -41,6 +41,8 @@ jobs:
           echo "state_reason: ${{ inputs.state_reason }}"
         if: false
       - name: get issue state
+        env:
+          GH_TOKEN: ${{ secrets.SRAM_PROJECT_SECRET }}
         run: |
           gh api graphql -f query='
             query ticket_card {
