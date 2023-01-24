@@ -39,7 +39,7 @@ jobs:
           echo "event: ${{ inputs.event }}"
           echo "action: ${{ inputs.action }}"
           echo "state_reason: ${{ inputs.state_reason }}"
-        if: false
+        if: true
       - name: Add issue to project
         uses: leonsteinhaeuser/project-beta-automations@v2.0.1
         with:
