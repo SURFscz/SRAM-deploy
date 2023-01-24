@@ -24,6 +24,8 @@
     group: "{{simplesaml_group}}"
     home: "{{ simplesaml_project_dir }}"
     create_home: false
+    shell: "/usr/sbin/nologin"
+    system: true
     password: "!"
 
 - name: Create simplesaml project dirs
