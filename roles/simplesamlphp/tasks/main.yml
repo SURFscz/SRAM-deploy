@@ -107,3 +107,18 @@
     src: "fpm-pool.j2"
     dest: "/etc/php/7.4/fpm/pool.d/{{simplesaml_name}}.conf"
   notify: "restart php-fpm"
+
+- name: Find php version
+  command: php -r '$v=phpversion(); echo substr($v, 0, strrpos($v, "."));'
+  register: php_output
+  changed_when: false
+
+- set_fact:
+    php_version={{ php_output.stdout }}
+
+- name: Set php session cookie httponly
+  ansible.builtin.lineinfile:
+    path: /etc/php/{{ php_version }}/fpm/php.ini
+    regexp: '^session.cookie_httponly ='
+    line: 'session.cookie_httponly = 1'
+  notify: "restart php-fpm"
