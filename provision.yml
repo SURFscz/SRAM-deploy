@@ -146,6 +146,7 @@
     - { import_tasks: "tasks/versions.yml", tags: ['common'] }
   roles:
     - { role: demo-sp,              tags: ['bhr13','demo-sp'] }
+    - { role: test-idp,             tags: ['bhr13','test-idp'] }
     - { role: tools,                tags: ['bhr13','tools']   }
 
 - name: "sandbox"
