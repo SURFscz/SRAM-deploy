@@ -11,4 +11,3 @@
     name: "pyff-metadata.service"
     state: "started"
     daemon_reload: true
-

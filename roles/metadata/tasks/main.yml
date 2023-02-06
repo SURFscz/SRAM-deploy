@@ -12,18 +12,48 @@
 
 - name: Create directories
   file:
-    path: "{{ item }}"
+    path: "{{item.path}}"
     state: "directory"
-    mode: "0755"
+    mode: "{{item.mode}}"
+    owner: "root"
+    group: "{{item.group}}"
   with_items:
-    - "{{ metadata_project_dir }}"
-    - "{{ metadata_documentroot }}"
+    - { path: "{{metadata_documentroot}}",          group: "root",               mode: "0755" }
+    - { path: "{{metadata_documentroot}}/metadata", group: "{{metadata_group}}", mode: "0775" }
+
+- name: Check if obsolete job exists
+  command:
+    cmd: "systemctl list-timers --all --output=json"
+  register: "systemd_timers"
+  changed_when: false
+
+- name: Disable obsolete systemd job
+  systemd:
+    name: "metadata.timer"
+    state: "stopped"
+    enabled: false
+  when: '"\"metadata.timer\"" in systemd_timers.stdout'
+
+- name: Remove obsolete files
+  file:
+    path: "{{item}}"
+    state: "absent"
+  with_items:
+    - "/opt/metadata/create_metadata"
+    - "/opt/metadata/edugain.crt"
+    - "/opt/metadata/idps.xsl"
+    - "/opt/metadata/nohide.xsl"
+    - "/opt/metadata/nologo.xsl"
+    - "/opt/metadata/nosc.xsl"
+    - "/etc/systemd/system/metadata.service"
+    - "/etc/systemd/system/metadata.timer"
+  notify: "systemd daemon-reload"
 
 - name: Copy metadata nginx configuration
   template:
     src: metadata.nginx.j2
     dest: "/etc/nginx/sites-available/metadata"
-    mode: 0755
+    mode: 0644
   notify: restart nginx
 
 - name: Create symlink to metadata in /etc/nginx/sites-enabled
@@ -41,13 +71,24 @@
 
 - name: Install logo
   copy:
-    src: "{{ item }}"
+    src: "{{item}}"
     dest: "{{metadata_documentroot}}/"
     mode: "0644"
   with_items:
     - "surf.svg"
     - "surf.png"
     - "surf_bimi.svg"
+
+- name: Install symlinks
+  file:
+    path: "{{metadata_documentroot}}/{{item}}"
+    src: "metadata/{{item}}"
+    state: "link"
+    force: true
+  with_items:
+    - "idps.xml"
+    - "proxy_idp.xml"
+    - "proxy_sp.xml"
 
 - name: Remove obsolete files
   file:
@@ -57,8 +98,6 @@
     - "Light-Bulb_icon_by_Till_Teenck.svg"
     - "Light-Bulb_icon_by_Till_Teenck_1000px.png"
     - "Light-Bulb_icon_by_Till_Teenck_200px.png"
-    - "proxy_idp.xml"
-    - "proxy_sp.xml"
     - "sc_edugain.xml"
     - "sc_edugain_idps.xml"
     - "sc_edugain_idps_nologo.xml"

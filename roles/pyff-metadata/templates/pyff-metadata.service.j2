@@ -1,18 +1,33 @@
 [Unit]
-Description=pyFF Meatdata processingew
+Description=pyFF Metadata processing
 After=syslog.target network.target
 
 [Service]
-Type=oneshot
-User=pyff
+DynamicUser=true
+User=sram_metadatapyff
+Group=sram_metadatapyff
+SupplementaryGroups={{metadata_group}}
+
+ProtectSystem=strict
+ProtectHome=tmpfs
+PrivateDevices=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectKernelLogs=True
+ProtectControlGroups=true
+PrivateUsers=true
+RestrictAddressFamilies=AF_INET6 AF_INET
+RestrictNamespaces=true
+LockPersonality=true
+RestrictRealtime=true
+
+ReadWritePaths={{metadata_target_dir}} {{metadata_web_dir}}
 UMask=022
 LimitNOFILE=10240
-WorkingDirectory={{ pyff_env_dir }}
-ExecStart={{ pyff_env_dir }}/bin/pyff {{ pyff_env_dir }}/idp_feed.fd
-ExecStartPost=/bin/chmod 644 {{metadata_idps_targetfile}}.new
-ExecStartPost=/bin/mv {{metadata_idps_targetfile}}.new {{metadata_idps_targetfile}}
-StandardOutput=syslog
-StandardError=syslog
+
+Type=oneshot
+WorkingDirectory={{metadata_basedir}}
+ExecStart={{metadata_basedir}}/feeds.sh
 SyslogIdentifier=pyff-metadata
 
 [Install]

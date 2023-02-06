@@ -1,0 +1,32 @@
+---
+# cleanup of old aws-cloudwatch and aws_cloudlog roles
+- name: remove aws syslog services
+  systemd:
+    name: "amazon-cloudwatch-agent.service"
+    state: "stopped"
+    enabled: false
+  register: systemd
+  failed_when: "'name' not in systemd and 'Could not find the requested service' not in systemd.msg"
+
+- name: remove aws files
+  file:
+    path: "{{item}}"
+    state: "absent"
+  with_items:
+    - "/root/.aws"
+    - "/var/awslogs"
+    - "/opt/aws"
+    - "/etc/systemd/system/amazon-cloudwatch-agent.service"
+  notify:
+    - "reload systemd"
+
+- name: remove aws user
+  user:
+    name: "cwagent"
+    state: "absent"
+    force: true
+
+- name: remove aws group
+  user:
+    name: "cwagent"
+    state: "absent"

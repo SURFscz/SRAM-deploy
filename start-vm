@@ -32,8 +32,10 @@ while getopts -- '-:h' OPT; do
         sa | no )       SKIP_ANSIBLE=1
                         ;;
         skip-docker | \
+        no-docker | \
         skip-vm | \
-        sd | sv )       SKIP_VM=1
+        no-vm | \
+        sd | sv | nd | nv )       SKIP_VM=1
                         ;;
         * )             OPTPROCESSED=$(( $OPTPROCESSED - 1 ))
                         ;;
@@ -70,7 +72,7 @@ else
 
     echo "Waiting until containers have booted"
     TIMEOUT=120
-    for c in $(docker ps -q)
+    for c in $(docker compose -f docker/docker-compose.yml ps -q)
     do
         host=$(docker inspect --format='{{.Config.Hostname}}'     $c)
         printf " - %-10s" $host
@@ -156,6 +158,7 @@ if [ "$SKIP_ANSIBLE" ]
 then
     echo "Skipping ansible run"
 else
+    ansible-galaxy install -r requirements.yml
     echo "Starting ansible"
     time \
     ansible-playbook provision.yml \

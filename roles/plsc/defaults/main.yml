@@ -1,6 +1,6 @@
 ---
 plsc_repo_url: "https://github.com/SURFscz/plsc.git"
-plsc_repo_version: "main"
+plsc_version: "main"
 plsc_dir: "/opt/plsc"
 plsc_venv_dir: "{{plsc_dir}}/venv"
 

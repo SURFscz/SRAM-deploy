@@ -5,5 +5,8 @@ firewall_v4_incoming:
   - { name: vnet,         src: "{{iprange.internal}}", dport: "22,80,443", proto: tcp }
 
 metadata_project_dir: "/opt/metadata"
-proxy_hostname: "localhost"
+proxy_hostname: "meta.scz-vm.net"
 metadata_registration_authority: "http://federatie.example.org/"
+
+metadata_proxy_frontend_source: "https://proxy.sram.surf.nl/metadata/frontend.xml"
+metadata_proxy_backend_source: "https://proxy.sram.surf.nl/metadata/backend.xml"

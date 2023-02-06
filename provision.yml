@@ -60,6 +60,7 @@
     - { role: firewall,       tags: ['common','firewall'],     when: "not is_docker" }
     - { role: ntp,            tags: ['common','ntp']                                 }
     - { role: users,          tags: ['common','users']                               }
+    - { role: aws-cleanup,    tags: ['common','clean']                               }
     - { role: mail,           tags: ['common','mail']                                }
     - { role: backups,        tags: ['common','backups']                             }
     - { role: zabbix-agent,   tags: ['common','zabbix-agent'],                       }
@@ -137,8 +138,6 @@
   tasks:
     - { import_tasks: "tasks/versions.yml", tags: ['common'] }
   roles:
-    - { role: http_apache,          tags: ['client','client-base'  ] }
-    - { role: client-base,          tags: ['client','client-base'  ] }
     - { role: oidc-op,              tags: ['client','oidc-op'      ] }
 
 - name: "demo clients"

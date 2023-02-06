@@ -2,7 +2,7 @@
 sbs_openidc_timeout: 86400
 
 sbs_build_url: "https://github.com/SURFscz/SBS/releases/download/{{sbs_version}}/sbs.tar.xz"
-sbs_version: "latest"
+sbs_version: "branch+main"
 
 sbs_work_dir: "/opt/sbs"
 sbs_git_dir: "{{ sbs_work_dir }}/sbs"
@@ -19,6 +19,7 @@ sbs_migration_user: "sbs_migrater"
 
 sbs_redis_host: "localhost"
 sbs_redis_port: 6379
+sbs_redis_ssl: false
 
 sbs_mail_host: "{{ mail.relay_to }}"
 sbs_mail_port: "{{ mail.relay_port }}"
@@ -62,6 +63,7 @@ sbs_second_factor_authentication_required: True
 sbs_totp_token_name: "SRAM"
 sbs_notifications_enabled: True
 sbs_delete_orphaned: True
+sbs_scim_sweep: False
 sbs_impersonation_allowed: False
 sbs_admin_platform_backdoor_totp: False
 sbs_past_dates_allowed: False

@@ -70,12 +70,9 @@ admin:
   sho: "{{base_domain}}"
 
 # versions
-# yamllint disable rule:line-length
-scz_repo:
-  pyff:      { name: "pyFF",                   version: "1.1.5",      src: "https://github.com/IdentityPython/pyFF.git"                    }
-  sbs:       { name: "SBS",                    version: "latest"                                                                           }
-  plsc:      { name: "pLSC",                   version: "main",       src: "https://github.com/SURFscz/plsc.git"                           }
-# yamllint enable rule:line-length
+# versions
+sbs_version: "branch+main"
+plsc_version: "main"
 
 # poor man's user management
 root:
@@ -126,6 +123,7 @@ sbs_base_url: "https://sbs.{{ internal_base_domain }}"
 # Redis
 sbs_redis_host: "redis.vm.scz-vm.net"
 sbs_redis_port: 6379
+sbs_redis_ssl: false
 
 # Docker ports
 docker_ports:

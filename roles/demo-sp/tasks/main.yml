@@ -17,6 +17,8 @@
     - "index.html"
     - "auth.css"
     - "auth.php"
+    - "demosp.css"
+    - "bootstrap.min.css"
   notify: "restart php-fpm"
 
 #########################################################
@@ -31,14 +33,21 @@
     simplesaml_group: "{{demosp_group}}"
     simplesaml_project_dir: "{{demosp_dir}}"
 
-- name: Install SSP config
+- name: SimpleSaml configuration
   template:
     src: "{{item}}.j2"
-    dest: "{{simplesaml_project_dir}}/config/{{item}}"
-    mode: "0644"
+    dest: "{{ simplesaml_project_dir }}/config/{{item}}"
   with_items:
-    - "authsources.php"
     - "saml20-idp-remote.php"
+
+- name: Link SimpleSaml configuration
+  file:
+    src: "{{ simplesaml_project_dir }}/config/{{item.key}}"
+    path: "{{ simplesaml_project_dir }}/simplesaml/{{item.value}}/{{item.key}}"
+    state: "link"
+    force: true
+  with_dict:
+    saml20-idp-remote.php: "metadata"
 
 - name: Generate a SAML signing certificate
   command:

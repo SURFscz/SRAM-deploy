@@ -253,6 +253,7 @@
   no_log: "{{sram_ansible_nolog}}"
 
 - name: Run SBS migrations
+  throttle: 1
   command:
     cmd: "{{ sbs_env_dir }}/bin/alembic --config migrations/alembic.ini upgrade head"
     chdir: "{{ sbs_work_dir }}/sbs/server"

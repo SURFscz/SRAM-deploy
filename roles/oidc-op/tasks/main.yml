@@ -1,9 +1,9 @@
 ---
-- name: fetch oidc-op from {{ oidc_op_repo_url }}, version {{ oidc_op_repo_version }}
+- name: fetch oidc-op from {{ oidc_op_repo_url }}, version {{ oidc_op_version }}
   git:
     repo: "{{ oidc_op_repo_url }}"
     dest: "{{ oidc_dir }}"
-    version: "{{ oidc_op_repo_version }}"
+    version: "{{ oidc_op_version }}"
     force: yes
   notify: "restart oidc-op"
   changed_when: false
@@ -61,7 +61,8 @@
     group: oidc-op
     groups:
       - ssl-cert
-    shell: /bin/bash
+    shell: "/usr/sbin/nologin"
+    system: true
 
 - name: Make sure cdb directory exists
   file:

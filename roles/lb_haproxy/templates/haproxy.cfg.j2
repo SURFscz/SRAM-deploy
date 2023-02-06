@@ -59,8 +59,11 @@ frontend fe_https
     option  httplog
 
     # redirects
-{% for host in haproxy_redirect_hosts %}
-    http-request redirect prefix https://{{host.to}} code 301 if { hdr(host) -i {{host.from}} }
+{% for redirect in haproxy_redirect_hosts %}
+    http-request redirect prefix https://{{redirect.to}} code {{redirect.code|default('302')}} if { hdr(host) -i {{redirect.from}} }
+{% endfor %}
+{% for redirect in haproxy_redirect_urls %}
+    http-request redirect prefix https://{{redirect.to}} code {{redirect.code|default('302')}} if { path -i {{redirect.path}} }
 {% endfor %}
 
     # always use https
@@ -125,7 +128,7 @@ frontend fe_https
 {% for host in lb_http %}
 backend {{host.name}}
     mode    http
-    cookie  SERVERID insert indirect maxidle 60m secure httponly nocache
+    cookie  SERVERID insert indirect maxidle 60m secure httponly nocache attr "SameSite=None"
     {% for be_server in host.backend_hosts -%}
     {% set colour = "blue"  if "blue"  in groups and be_server in groups["blue"]  else
                     "green" if "green" in groups and be_server in groups["green"] else
