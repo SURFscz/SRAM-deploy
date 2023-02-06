@@ -2,21 +2,21 @@
 - name: Ensure that packages are installed
   apt:
     name:
-      - php-date
-      - php-json
-      - php-xml
-      - php-mbstring
-      - php-curl
-      - php-gmp
-      - php-sqlite3
-      - php-zip
-      - php-fpm
-    state: present
+      - "php-date"
+      - "php-json"
+      - "php-xml"
+      - "php-mbstring"
+      - "php-curl"
+      - "php-gmp"
+      - "php-sqlite3"
+      - "php-zip"
+      - "php-fpm"
+    state: "present"
 
 - name: Create simplesaml group
   group:
     name: "{{simplesaml_group}}"
-    state: present
+    state: "present"
 
 - name: Create simplesaml user
   user:
@@ -31,7 +31,7 @@
 - name: Create simplesaml project dirs
   file:
     path: "{{ item }}"
-    state: directory
+    state: "directory"
     mode: 0755
     owner: "root"
     group: "{{simplesaml_group}}"
@@ -42,7 +42,7 @@
 - name: Create simplesaml temp dir
   file:
     path: "{{ simplesaml_tmp_dir }}"
-    state: directory
+    state: "directory"
     mode: 01775
     owner: "{{simplesaml_user}}"
     group: "{{simplesaml_group}}"
@@ -52,25 +52,25 @@
     url: "{{simplesaml_download_url}}"
     dest: "{{ simplesaml_project_dir }}/simplesamlphp-{{ simplesaml_version }}.tar.gz"
     checksum: "{{simplesaml_checksum}}"
-  register: ssp_download
+  register: "ssp_download"
 
 - name: Check SimpleSamlPHP dest dir
   stat:
     path: "{{ simplesaml_project_dir }}/simplesamlphp-{{ simplesaml_version }}"
-  register: ssp_destdir
+  register: "ssp_destdir"
 
 - name: Unpack SimpleSamlPHP
   unarchive:
     src: "{{ simplesaml_project_dir }}/simplesamlphp-{{ simplesaml_version }}.tar.gz"
     dest: "{{ simplesaml_project_dir }}"
     remote_src: true
-  when: ssp_download.changed or not ssp_destdir.stat.exists
+  when: "ssp_download.changed or not ssp_destdir.stat.exists"
 
 - name: Link simplesaml
   file:
     src: "{{ simplesaml_project_dir }}/simplesamlphp-{{ simplesaml_version }}"
     dest: "{{ simplesaml_project_dir }}/simplesaml"
-    state: link
+    state: "link"
 
 - name: Generate random salt
   copy:
@@ -82,7 +82,7 @@
 - name: Read random salt
   slurp:
     src: "{{ simplesaml_project_dir }}/config/salt"
-  register: simplesaml_salt
+  register: "simplesaml_salt"
 
 - name: SimpleSaml configuration
   template:
@@ -109,16 +109,18 @@
   notify: "restart php-fpm"
 
 - name: Find php version
-  command: php -r '$v=phpversion(); echo substr($v, 0, strrpos($v, "."));'
-  register: php_output
+  command: >
+    php -r '$v=phpversion(); echo substr($v, 0, strrpos($v, "."));'
+  register: "php_output"
   changed_when: false
 
 - set_fact:
     php_version={{ php_output.stdout }}
 
 - name: Set php session cookie httponly
-  ansible.builtin.lineinfile:
-    path: /etc/php/{{ php_version }}/fpm/php.ini
-    regexp: '^session.cookie_httponly ='
-    line: 'session.cookie_httponly = 1'
+  ansible.builtin.copy:
+    content: |
+      session.cookie_httponly = 1
+      session.cookie_secure = 1
+    dest: "/etc/php/{{ php_version }}/fpm/conf.d/99-sram.ini"
   notify: "restart php-fpm"
