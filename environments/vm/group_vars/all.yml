@@ -70,7 +70,7 @@ admin:
   sho: "{{base_domain}}"
 
 # versions
-sbs_version: "latest"
+sbs_version: "branch+main"
 plsc_version: "main"
 
 # poor man's user management

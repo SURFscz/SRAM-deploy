@@ -7,9 +7,11 @@
 </head>
 <body>
 <?php
+session_start();
 
 # supported environments; should correspond to configured SPs
 $ENVS = array("test","acc","prd");
+$FORMATS = array("table", "json", "raw");
 
 $ATTRIBUTES = array(
     'subject-id',
@@ -28,13 +30,23 @@ $ATTRIBUTES = array(
     'voPersonStatus',
 );
 
-$RAW = 0;
 
 # sanitize user input
 $env = $_SERVER['PATH_INFO'];
 if (!in_array($env, $ENVS)) {
     http_response_code(404);
     die();
+}
+
+# get and store output format
+if ($format = @$_GET['format']) {
+    if (in_array($format, $FORMATS)) {
+        $_SESSION['format'] = $format;
+    } else {
+        $format = '';
+    }
+} else {
+    $format = $_SESSION['format'];
 }
 
 #phpinfo();
@@ -56,15 +68,22 @@ if(!$as->isAuthenticated()) {
 
 $user_attr = $as->getAttributes();
 
-if ($RAW) {
+if ($format=="raw") {
     print('<div id="raw">');
     print('<h1>Raw attributes</h1>');
     print('<code style="white-space: pre;">');
     print_r($user_attr);
     print('</code>');
     print('</div>');
+    exit();
 }
 
+if ($format=="data") {
+    print('<pre id="json">');
+    print(json_encode($user_attr, JSON_PRETTY_PRINT));
+    print('</pre>');
+    exit();
+}
 
 print('<div id="known">');
 print('<h1>Known attributes</h1>');

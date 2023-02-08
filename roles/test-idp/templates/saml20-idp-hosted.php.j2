@@ -1,0 +1,30 @@
+<?php
+
+/**
+ * SAML 2.0 IdP configuration for SimpleSAMLphp.
+ *
+ * See: https://simplesamlphp.org/docs/stable/simplesamlphp-reference-idp-hosted
+ */
+
+$metadata['__DYNAMIC:1__'] = [
+    'host' => '__DEFAULT__',
+    'OrganizationName' => [
+        'en' => 'SRAM Monitoring IdP',
+        'nl' => 'SRAM Monitoring IdP',
+    ],
+    'OrganizationDisplayName' => [
+        'en' => 'SRAM Monitoring IdP',
+        'nl' => 'SRAM Monitoring IdP',
+    ],
+    'OrganizationURL' => 'https://test-idp.sram.surf.nl/',
+    'privatekey' => 'saml.key',
+    'certificate' => 'saml.pem',
+    'auth' => 'example-userpass',
+    'attributes.NameFormat' => 'urn:oasis:names:tc:SAML:2.0:attrname-format:uri',
+    'authproc' => [
+        100 => ['class' => 'core:AttributeMap', 'name2urn', 'name2oid', '%duplicate'],
+    ],
+    'RegistrationInfo' => [
+        'authority' => 'http://www.surfconext.nl/',
+    ],
+];

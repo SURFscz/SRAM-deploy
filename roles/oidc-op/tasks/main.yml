@@ -61,7 +61,8 @@
     group: oidc-op
     groups:
       - ssl-cert
-    shell: /bin/bash
+    shell: "/usr/sbin/nologin"
+    system: true
 
 - name: Make sure cdb directory exists
   file:

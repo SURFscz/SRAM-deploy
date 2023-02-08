@@ -1,27 +1,5 @@
 ---
 #########################################################
-## Demop app
-#########################################################
-- name: Create html dir
-  file:
-    path: "{{demosp_html_dir}}"
-    state: "directory"
-    mode: "0755"
-
-- name: Copy DemoSP files
-  copy:
-    src: "{{item}}"
-    dest: "{{demosp_html_dir}}"
-    mode: "0644"
-  with_items:
-    - "index.html"
-    - "auth.css"
-    - "auth.php"
-    - "demosp.css"
-    - "bootstrap.min.css"
-  notify: "restart php-fpm"
-
-#########################################################
 ## SAML SP
 #########################################################
 - include_role:
@@ -102,6 +80,28 @@
     src: "rp.php.j2"
     dest: "{{demosp_html_dir}}/rp.php"
     mode: "0644"
+  notify: "restart php-fpm"
+
+#########################################################
+## Demop app
+#########################################################
+- name: Create html dir
+  file:
+    path: "{{demosp_html_dir}}"
+    state: "directory"
+    mode: "0755"
+
+- name: Copy DemoSP files
+  copy:
+    src: "{{item}}"
+    dest: "{{demosp_html_dir}}"
+    mode: "0644"
+  with_items:
+    - "index.html"
+    - "auth.css"
+    - "auth.php"
+    - "demosp.css"
+    - "bootstrap.min.css"
   notify: "restart php-fpm"
 
 #########################################################

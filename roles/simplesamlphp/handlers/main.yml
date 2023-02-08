@@ -1,5 +1,6 @@
 ---
-- name: restart php-fpm
+- name: "restart php-fpm"
+  listen: "restart php-fpm"
   systemd:
     name: "php7.4-fpm.service"
     state: "restarted"

@@ -1,0 +1,52 @@
+<?php
+$config = array();
+
+$config['admin'] = array(
+        // The default is to use core:AdminPassword, but it can be replaced with
+        // any authentication source.
+
+        'core:AdminPassword',
+    );
+
+$config['default-sp'] = [
+        'saml:SP',
+        'entityID' => null,
+        'idp' => null,
+        'discoURL' => null,
+    ];
+
+$config['example-userpass'] = [
+        'exampleauth:UserPass',
+
+        // Give the user an option to save their username for future login attempts
+        // And when enabled, what should the default be, to save the username or not
+        //'remember.username.enabled' => false,
+        //'remember.username.checked' => false,
+
+        'student:student' => [
+            'uid' => ['student'],
+            'eduPersonPrincipalName' => 'student@test-idp.sram.surf.nl',
+            'givenName' => 'Student',
+            'sn' => 'One',
+            'cn' => 'Student One',
+            'displayName' => 'Student One',
+            'mail' => 'student@test-idp.sram.surf.nl',
+            'schacHomeOrganization' => 'test-idp.sram.surf.nl',
+            'eduPersonAffiliation' => ['member', 'student'],
+            'eduPersonScopedAffiliation' => ['member@test-idp.sram.surf.nl', 'student@test-idp.sram.surf.nl'],
+            'eduPersonEntitlement' => ['urn:disk:100'],
+        ],
+        'employee:employee' => [
+            'uid' => ['employee'],
+            'eduPersonPrincipalName' => 'employee@test-idp.sram.surf.nl',
+            'givenName' => 'Employee',
+            'sn' => 'One',
+            'cn' => 'Employee One',
+            'displayName' => 'Employee One',
+            'mail' => 'employee@test-idp.sram.surf.nl',
+            'schacHomeOrganization' => 'test-idp.sram.surf.nl',
+            'eduPersonAffiliation' => ['member', 'employee'],
+            'eduPersonScopedAffiliation' => ['member@test-idp.sram.surf.nl', 'employee@test-idp.sram.surf.nl'],
+            'eduPersonEntitlement' => ['urn:disk:200'],
+        ],
+    ];

@@ -83,7 +83,9 @@
     name: "runner"
     group: "runner"
     groups: "docker"
-    shell: "/bin/bash"
+    shell: "/usr/sbin/nologin"
+    system: true
+
 
 # https://github.com/MonolithProjects/ansible-github_actions_runner
 # ansible-galaxy role install -r requirements.yml

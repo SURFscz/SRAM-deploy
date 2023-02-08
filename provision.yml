@@ -60,6 +60,7 @@
     - { role: firewall,       tags: ['common','firewall'],     when: "not is_docker" }
     - { role: ntp,            tags: ['common','ntp']                                 }
     - { role: users,          tags: ['common','users']                               }
+    - { role: aws-cleanup,    tags: ['common','clean']                               }
     - { role: mail,           tags: ['common','mail']                                }
     - { role: backups,        tags: ['common','backups']                             }
     - { role: zabbix-agent,   tags: ['common','zabbix-agent'],                       }
@@ -145,6 +146,7 @@
     - { import_tasks: "tasks/versions.yml", tags: ['common'] }
   roles:
     - { role: demo-sp,              tags: ['bhr13','demo-sp']        }
+    - { role: test-idp,             tags: ['bhr13','test-idp']       }
     - { role: tools,                tags: ['bhr13','tools']          }
     - { role: sram_monitor,         tags: ['bhr13','sram-monitor']   }
 
