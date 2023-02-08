@@ -7,7 +7,7 @@
     name: "tmpreaper"
     state: "present"
 
-- name: Disbable tmpreaper cron
+- name: Disable tmpreaper cron
   lineinfile:
     path: "/etc/cron.daily/tmpreaper"
     insertafter: "^#!"
