@@ -39,6 +39,17 @@
     mode: "0640"
   no_log: "{{sram_ansible_nolog}}"
 
+- name: "Copy plsc_monitor script"
+  copy:
+    src: "plscmonitor.py"
+    dest: "{{ plsc_dir }}/plscmonitor.py"
+    mode: "0755"
+
+- name: Copy zabbix agent plsc_monitor key
+  copy:
+    src: sram-plscmonitor.conf
+    dest: "/etc/zabbix/zabbix_agent2.d/sram-plscmonitor.conf"
+  notify: "restart zabbix-agent"
 
 - name: Create python3 virtualenv
   import_role:
