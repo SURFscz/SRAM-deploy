@@ -6,7 +6,7 @@ import traceback
 from selenium.webdriver import Chrome, DesiredCapabilities
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.wait import WebDriverWait
-from selenium.webdriver.support.expected_conditions import staleness_of, title_is, presence_of_element_located
+from selenium.webdriver.support.expected_conditions import staleness_of, presence_of_element_located
 from selenium.webdriver.common.by import By
 
 
@@ -17,14 +17,14 @@ class CustomChrome(Chrome):
 
 
 options = Options()
-options.headless = True
+options.add_argument('--headless')
 options.add_argument('ignore-certificate-errors')
 
 caps = DesiredCapabilities.CHROME.copy()
-caps['goog:loggingPrefs'] = { 'browser':'ALL' }
+caps['goog:loggingPrefs'] = {'browser': 'ALL'}
 
 browser = CustomChrome(options=options, desired_capabilities=caps)
-wait = WebDriverWait(browser, timeout=10)
+wait = WebDriverWait(browser, timeout=3)
 
 send_command = ('POST', '/session/$sessionId/chromium/send_command')
 browser.command_executor._commands['SEND_COMMAND'] = send_command
@@ -46,11 +46,11 @@ try:
     browser.get(start)
 
     # Wait for login button
-    wait.until(presence_of_element_located((By.XPATH, "//a[@href='/Login']")),
+    wait.until(presence_of_element_located((By.XPATH, "//span[text()='Login']")),
                'Timeout waiting for Login button')
 
     # Click login
-    login = browser.find_element(By.XPATH, "//a[@href='/Login']")
+    login = browser.find_element(By.XPATH, "//button/span[text()='Login']")
     login.click()
     print(" - pressed login")
 
@@ -70,28 +70,27 @@ try:
     wait.until(presence_of_element_located((By.XPATH, "//label[@for='aup']")), 'Timeout waiting for AUP')
 
     browser.find_element(By.XPATH, "//label[@for='aup']").click()
-    browser.find_element(By.XPATH, "//a[text()='Onwards']").click()
+    browser.find_element(By.XPATH, "//button/span[text()='Onwards']").click()
     print(" - accepted AUP")
 
     # Wait for landing page
-    wait.until(presence_of_element_located((By.XPATH, "//div[@class='drop-down ugly']")), 'Timeout waiting for Welcome')
+    wait.until(presence_of_element_located((By.XPATH, "//a[@class='logo' and @href='/']")),
+               'Timeout waiting for logo')
     print(" - landing page")
-
 
     # Visit Profile
     browser.get(profile)
 
     # Wait for Profile to load
-    wait.until(presence_of_element_located((By.XPATH, "//div[@class='user-profile-tab']")),
+    wait.until(presence_of_element_located((By.XPATH, "//h1[text()='Your profile']")),
                'Timeout waiting for Profile')
 
     # Test admin attributes
-    attributes = browser.find_elements(By.XPATH, "//div[@class='user-profile-tab']/*/*")
+    attributes = browser.find_elements(By.XPATH, "//table[@class='my-attributes']/*/*/*")
     # for a in attributes:
     #     print(f"a.text: {a.text}")
     assert('SCZ Admin' in [a.text for a in attributes]), "No valid admin profile found"
     print(" - profile ok")
-
 
     # Clear all cookies
     browser.execute('SEND_COMMAND',
@@ -101,11 +100,11 @@ try:
     browser.get(start)
 
     # Wait for login button
-    wait.until(presence_of_element_located((By.XPATH, "//a[@href='/Login']")),
+    wait.until(presence_of_element_located((By.XPATH, "//span[text()='Login']")),
                'Timeout waiting for Login button')
 
     # Click login
-    login = browser.find_element(By.XPATH, "//a[@href='/Login']")
+    login = browser.find_element(By.XPATH, "//button/span[text()='Login']")
     login.click()
     print(" - pressed login")
 
@@ -125,7 +124,7 @@ try:
     wait.until(presence_of_element_located((By.XPATH, "//label[@for='aup']")), 'Timeout waiting for AUP')
 
     browser.find_element(By.XPATH, "//label[@for='aup']").click()
-    browser.find_element(By.XPATH, "//a[text()='Onwards']").click()
+    browser.find_element(By.XPATH, "//button/span[text()='Onwards']").click()
     print(" - accepted AUP")
 
     # Wait for 2fa information
@@ -134,7 +133,6 @@ try:
     # Assert 2fa page
     assert("2fa" in browser.current_url), "Error loading 2FA URL"
     print(" - reached 2FA page")
-
 
     # Close browser
     browser.close()
