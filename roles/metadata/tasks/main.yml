@@ -103,3 +103,24 @@
     - "sc_edugain_idps_nologo.xml"
     - "sc_edugain_idps_nologo_nohide.xml"
     - "sc_edugain_idps_nologo_nohide_nosc.xml"
+
+- name: Fetch mdparser from {{ mdparser_repo_url }}, version {{ mdparser_version }}
+  git:
+    repo: "{{ mdparser_repo_url }}"
+    dest: "{{ mdparser_dir }}"
+    version: "{{ mdparser_version }}"
+    accept_hostkey: "yes"
+    force: "yes"
+
+- name: Create python3 virtualenv
+  import_role:
+    name: "python-venv"
+  vars:
+    python_venv_dir: "{{ mdparser_venv_dir }}"
+    python_venv_requirements: "{{ mdparser_dir }}/requirements.txt"
+
+- name: Copy zabbix agent mdparser key
+  template:
+    src: sram-mdparser.conf.j2
+    dest: "/etc/zabbix/zabbix_agent2.d/sram-mdparser.conf"
+  notify: "restart zabbix-agent"
