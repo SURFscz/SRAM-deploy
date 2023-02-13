@@ -34,7 +34,7 @@
 - name: Copy scripts
   copy:
     src: "{{ item }}"
-    dest: "{{ ldap_monitor_dir }}/ldifchecksum.py"
+    dest: "{{ ldap_monitor_dir }}/{{ item }}"
     mode: "0755"
   with_items:
     - ldifchecksum.py
