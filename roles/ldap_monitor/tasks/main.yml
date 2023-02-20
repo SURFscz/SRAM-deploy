@@ -31,19 +31,22 @@
     - ldapmonitor.sh
     - getmonitor.py
 
-- name: Copy ldifchecksum.py script
+- name: Copy scripts
   copy:
-    src: ldifchecksum.py
-    dest: "{{ ldap_monitor_dir }}/ldifchecksum.py"
+    src: "{{ item }}"
+    dest: "{{ ldap_monitor_dir }}/{{ item }}"
     mode: "0755"
+  with_items:
+    - ldifchecksum.py
+    - ldifparser.py
 
 - name: Copy monitor service files
   template:
     src: "{{item}}.j2"
     dest: "/etc/systemd/system/{{item}}"
   with_items:
-    - "sram-ldapmonitor.service"
-    - "sram-ldapmonitor.timer"
+    - sram-ldapmonitor.service
+    - sram-ldapmonitor.timer
   notify:
     - "enable monitor job"
 
