@@ -15,6 +15,13 @@
     state: "present"
     install_recommends: false
 
+- name: "Make sure the zabbix user can read journald entries"
+  ansible.builtin.user:
+    name: zabbix
+    groups: systemd-journal
+    append: true
+  notify: "restart zabbix-agent"
+
 - include_tasks: "psk.yml"
 
 - name: "Default configuration"

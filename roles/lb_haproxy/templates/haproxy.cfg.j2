@@ -63,7 +63,7 @@ frontend fe_https
     http-request redirect prefix https://{{redirect.to}} code {{redirect.code|default('302')}} if { hdr(host) -i {{redirect.from}} }
 {% endfor %}
 {% for redirect in haproxy_redirect_urls %}
-    http-request redirect prefix https://{{redirect.to}} code {{redirect.code|default('302')}} if { path -i {{redirect.path}} }
+    http-request redirect prefix {{redirect.to}} code {{redirect.code|default('302')}} if { path -i {{redirect.path}} }
 {% endfor %}
 
     # always use https
