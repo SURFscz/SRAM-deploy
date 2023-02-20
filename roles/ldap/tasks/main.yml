@@ -93,7 +93,7 @@
       olcTLSCipherSuite: >
         SECURE256:-VERS-DTLS-ALL:-VERS-SSL3.0:-VERS-TLS1.0:-VERS-TLS1.1:-RSA:-DHE-RSA:-ECDHE-RSA
 
-- name: Ensure the schema's are added to LDAP
+- name: Ensure the schemas are added to LDAP
   ansible.builtin.script: "scripts/ldap-add {{ ldap_ldif_dir }}/{{ item }}"
   register: "result"
   failed_when: "result.rc not in [0,80]"
@@ -222,7 +222,7 @@
     attributes:
       olcAccess:
         - >-
-          to dn.regex="(([^,]+),{{ services_ldap.basedn }})$"
+          to dn.regex="(dc=.+,{{ services_ldap.basedn }})$"
           by dn.exact="{{ services_ldap.binddn }}" write
           by dn.exact=gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth write
           by dn.exact,expand="cn=admin,$1" read
@@ -231,6 +231,7 @@
           to *
           by dn.exact=gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth manage
           by dn.exact={{openldap_auth}},cn=peercred,cn=external,cn=auth read
+          by dn.regex="cn=[^,]+,{{ services_ldap.basedn }}" read
           {% if environment_name=="vm" %}
           by dn.exact=gidNumber=1000+uidNumber=1000,cn=peercred,cn=external,cn=auth manage
           {% endif %}
@@ -239,8 +240,8 @@
           to attrs=userPassword
           by self write
           by anonymous auth
-          by * none
-    state: "exact"
+          by * break
+    state: exact
     ordered: true
 
 - name: Initialize DIT
@@ -259,10 +260,30 @@
 - name: Initialize DIT admin
   community.general.ldap_entry:
     dn: "{{ services_ldap.binddn }}"
-    objectClass: "organizationalRole"
+    objectClass: organizationalRole
     attributes:
       cn: "{{ services_ldap.binddn | regex_replace('^cn=([^,]+).*', '\\1') }}"
   when: inventory_hostname in groups['ldap_primary']
+
+- name: Initialize admins
+  community.general.ldap_entry:
+    dn: "cn={{ item.uid }},{{ services_ldap.basedn }}"
+    objectClass:
+      - simpleSecurityObject
+      - organizationalRole
+    attributes:
+      description: An LDAP administrator
+      userPassword: "{CRYPT}{{ item.pw_hash }}"
+  when: inventory_hostname in groups['ldap_primary'] and item.uid != 'admin'
+  with_items: "{{ users }}"
+
+- name: Initialize admins (update password)
+  community.general.ldap_attrs:
+    dn: "cn={{ item.uid }},{{ services_ldap.basedn }}"
+    attributes:
+      userPassword: "{CRYPT}{{ item.pw_hash }}"
+  when: inventory_hostname in groups['ldap_primary'] and item.uid != 'admin'
+  with_items: "{{ users }}"
 
 - name: Redirect slapd log to /var/log/slapd.log
   copy:
