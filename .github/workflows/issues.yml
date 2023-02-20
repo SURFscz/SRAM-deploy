@@ -28,4 +28,4 @@ jobs:
     if: false
     steps:
       - name: Dump context
-        uses: crazy-max/ghaction-dump-context@v1
+        uses: crazy-max/ghaction-dump-context@v2
