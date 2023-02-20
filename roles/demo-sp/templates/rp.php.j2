@@ -20,7 +20,8 @@ $client_id = $client[$env]['id'];
 $client_secret = $client[$env]['secret'];
 $redirect_url = $_SERVER['REQUEST_SCHEME'] . "://" . $_SERVER['SERVER_NAME'] . "/rp/" . $env;
 $response_type = 'code';
-$scopes = array('profile', 'email', 'uid', 'eduperson_principal_name eduperson_entitlement eduperson_scoped_affilation voperson_external_affiliation ssh_public_key');
+$scopes = array('profile', 'email', 'uid',
+                'eduperson_assurance eduperson_entitlement eduperson_orcid eduperson_principal_name eduperson_scoped_affiliation voperson_external_affiliation voperson_external_id voperson_id aarc ssh_public_key orcid');
 $claims = '';
 
 $oidc = new OpenIDConnectClient($oidc_op, $client_id, $client_secret);

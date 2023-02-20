@@ -2,16 +2,20 @@
     {
         "sub": "2ec2d0ca006136e2e587a0073dd8fdf6200bbd82@acc.sram.eduteams.org",
         "scope": [
-            "openid",
             "profile",
             "email",
-            "voperson_external_affiliation",
-            "eduperson_scoped_affiliation",
-            "eduperson_entitlement",
+            "uid",
             "eduperson_assurance",
+            "eduperson_entitlement",
             "eduperson_orcid",
             "eduperson_principal_name",
+            "eduperson_scoped_affiliation",
+            "voperson_external_affiliation",
+            "voperson_external_id",
+            "voperson_id",
+            "aarc",
             "ssh_public_key",
+            "orcid",
             "openid"
         ],
         "client_id": "APP-B1F3C5AA-5514-48A9-BBA1-EBC388540BF7",
@@ -25,7 +29,7 @@
     },
     "access_token":
     {
-        "scope": "openid profile email voperson_external_affiliation eduperson_scoped_affiliation eduperson_entitlement eduperson_assurance eduperson_orcid eduperson_principal_name ssh_public_key openid",
+        "scope": "openid profile email eduperson_assurance eduperson_entitlement eduperson_orcid eduperson_principal_name eduperson_scoped_affiliation voperson_external_affiliation voperson_external_id voperson_id aarc ssh_public_key orcid uid",
         "aud": [
             "APP-B1F3C5AA-5514-48A9-BBA1-EBC388540BF7"
         ],
