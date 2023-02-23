@@ -43,6 +43,12 @@
     dest: "/etc/nginx/conf.d"
   notify: "restart nginx"
 
+- name: install max request size config
+  copy:
+    src: "sram_max_size.conf"
+    dest: "/etc/nginx/conf.d"
+  notify: "restart nginx"
+
 # needs to be changed in this file, can't override lateron
 - name: disable gzip to prevent BREACH
   lineinfile:

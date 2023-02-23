@@ -39,6 +39,8 @@
   user:
     name: "{{item}}"
     state: "present"
+    shell: "/usr/sbin/nologin"
+    system: true
   with_items:
     - "{{zabbix_php_fpm_conf_user}}"
     - "{{zabbix_web_conf_web_user}}"
