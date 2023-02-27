@@ -35,6 +35,8 @@ loadbalancer:
     protocol: http
     backend_hosts: "{{groups['vm_sbs']}}"
     backend_port: "{{ sbs_backend_port }}"
+    options:
+      httpchk: "GET /health"
   - name: "meta"
     hostname: "{{hostnames.meta}}"
     protocol: http
