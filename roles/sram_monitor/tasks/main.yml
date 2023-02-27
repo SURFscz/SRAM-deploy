@@ -32,7 +32,7 @@
 
 - name: Copy configuration files
   ansible.builtin.copy:
-    src: "{{item}}"
+    src: "{{inventory_dir}}/files/monitoring-{{item}}"
     dest: "{{sram_monitor_dir}}/{{item}}"
   with_items:
     - acc.yml
