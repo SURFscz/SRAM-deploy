@@ -1,6 +1,10 @@
 ---
 meta_port: 80
 metadata_documentroot: "/var/www/metadata"
+mdparser_repo_url: "https://github.com/SURFscz/mdparser.git"
+mdparser_version: "master"
+mdparser_dir: "/opt/mdparser"
+mdparser_venv_dir: "{{mdparser_dir}}/venv"
 edugain_feed: "https://metadata.surfconext.nl/edugain-downstream.xml"
 edugain_cert: |
   -----BEGIN CERTIFICATE-----
@@ -28,4 +32,3 @@ edugain_cert: |
   9bFiAimF5LLk/LnMfplK9w0vvxWVcdQkDgVPYvEGNtttj0QC7/jM4ZeihGb6Oyzy
   DZA6aeg73/ygOATQ13A=
   -----END CERTIFICATE-----
-
