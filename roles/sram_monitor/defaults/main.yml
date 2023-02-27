@@ -1,0 +1,5 @@
+---
+sram_monitor_repo: "https://github.com/SURFscz/monitoring"
+sram_monitor_version: main
+sram_monitor_dir: "/opt/sram-monitor"
+sram_monitor_user: "sram-monitor"
