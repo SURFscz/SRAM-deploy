@@ -169,18 +169,13 @@
   notify: "restart sbs"
   no_log: "{{sram_ansible_nolog}}"
 
-- name: "Write server JWT keys"
-  copy:
-    content: "{{ item.content }}"
-    dest: "{{ sbs_conf_dir }}/{{ item.path }}"
-    owner: "{{sbs_file_owner}}"
-    group: "{{sbs_group}}"
-    mode: "0640"
+- name: "Remove obsolete JWT keys"
+  file:
+    path: "{{ sbs_conf_dir }}/{{ item }}"
+    state: "absent"
   with_items:
-    - { path: "jwt_private_key",      content: "{{ sbs_jwt_server.priv }}" }
-    - { path: "jwt_public_keys.json", content: "{{ sbs_jwt_server.pub }}"  }
-  notify: "restart sbs"
-  no_log: "{{ sram_ansible_nolog }}"
+    - "jwt_private_key"
+    - "jwt_public_keys.json"
 
 - name: "Create SBS SURFSecureID config files"
   template:
@@ -206,8 +201,6 @@
     - { path: "server/migrations/alembic.ini",      links_to: "alembic.ini"           }
     - { path: "server/config/saml",                 links_to: "saml"                 }
     - { path: "client/build/static/disclaimer.css", links_to: "disclaimer.css"       }
-    - { path: "server/config/jwt_private_key",      links_to: "jwt_private_key"      }
-    - { path: "server/config/jwt_public_keys.json", links_to: "jwt_public_keys.json" }
   notify: "restart sbs"
 
 - name: Link log dir
