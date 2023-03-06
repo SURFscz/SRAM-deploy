@@ -269,7 +269,10 @@
   community.general.ldap_entry:
     dn: "cn={{ item.uid }},{{ services_ldap.basedn }}"
     state: absent
-  when: inventory_hostname in groups['ldap_primary'] and item.uid != 'admin'
+  when: >
+    inventory_hostname in groups['ldap_primary']
+    and 'ldap' not in item.groups
+    and item.uid != 'admin'
   with_items: "{{ users }}"
 
 - name: Initialize admins (II)
@@ -281,7 +284,10 @@
     attributes:
       description: An LDAP administrator
       userPassword: "{CRYPT}{{ item.pw_hash }}"
-  when: inventory_hostname in groups['ldap_primary'] and 'ldap' in item.groups and item.uid != 'admin'
+  when: >
+    inventory_hostname in groups['ldap_primary']
+    and 'ldap' in item.groups
+    and item.uid != 'admin'
   with_items: "{{ users }}"
 
 - name: Initialize admins (III)
@@ -289,7 +295,10 @@
     dn: "cn={{ item.uid }},{{ services_ldap.basedn }}"
     attributes:
       userPassword: "{CRYPT}{{ item.pw_hash }}"
-  when: inventory_hostname in groups['ldap_primary'] and 'ldap' in item.groups and item.uid != 'admin'
+  when: >
+    inventory_hostname in groups['ldap_primary']
+    and 'ldap' in item.groups
+    and item.uid != 'admin'
   with_items: "{{ users }}"
 
 - name: Redirect slapd log to /var/log/slapd.log
