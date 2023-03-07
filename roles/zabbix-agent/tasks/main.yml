@@ -41,42 +41,31 @@
 #     - "restart_services"
 
 - block:
+    - name: Set connection specific variables
+      #delegate_to: "{{zabbix_server}}"
+      set_fact:
+        ansible_network_os: "community.zabbix.zabbix"
+        ansible_connection: "httpapi"
+        ansible_user: "{{zabbix_api_user}}"
+        ansible_httpapi_pass: "{{zabbix_api_password}}"
+        ansible_httpapi_port: 443
+        ansible_httpapi_use_ssl: true
+        ansible_httpapi_validate_certs: "{{zabbix_validate_certs}}"
 
     - name: "Register host group"
+      delegate_to: "{{zabbix_server}}"
+      connection: httpapi
       throttle: 1
-      local_action:
-        module: "zabbix_group"
-        server_url: "{{zabbix_api_url}}"
-        login_user: "{{zabbix_api_user}}"
-        login_password: "{{zabbix_api_password}}"
+      community.zabbix.zabbix_group:
         host_groups:
           - "sram"
           - "sram-{{environment_name}}"
         state: "present"
-        validate_certs: "{{zabbix_validate_certs}}"
       become: false
-
-    # dumb workaround: the zabbix_host module doesn't actually update the PSK when
-    # it has changed;  So remove and recreate the host if that happens.
-    - name: "Delete host"
-      local_action:
-        module: "zabbix_host"
-        server_url: "{{zabbix_api_url}}"
-        validate_certs: "{{zabbix_validate_certs}}"
-        login_user: "{{zabbix_api_user}}"
-        login_password: "{{zabbix_api_password}}"
-        host_name: "{{inventory_hostname}}"
-        state: "absent"
-      become: false
-      when: "psk_file_wite.changed"
 
     - name: "Register host"
-      local_action:
-        module: "zabbix_host"
-        server_url: "{{zabbix_api_url}}"
-        validate_certs: "{{zabbix_validate_certs}}"
-        login_user: "{{zabbix_api_user}}"
-        login_password: "{{zabbix_api_password}}"
+      delegate_to: "{{zabbix_server}}"
+      community.zabbix.zabbix_host:
         host_name: "{{inventory_hostname}}"
         host_groups:
           - "sram"
@@ -96,19 +85,13 @@
             ip: "{{ansible_default_ipv4.address}}"
             dns: ""
             port: "10050"
-      become: false
 
     - name: "Set PSK setting for host"
-      local_action:
-        module: "zabbix_host"
-        server_url: "{{zabbix_api_url}}"
-        validate_certs: "{{zabbix_validate_certs}}"
-        login_user: "{{zabbix_api_user}}"
-        login_password: "{{zabbix_api_password}}"
+      delegate_to: "{{zabbix_server}}"
+      community.zabbix.zabbix_host:
         host_name: "{{inventory_hostname}}"
         tls_psk_identity: "{{inventory_hostname}}"
         tls_psk: "{{zabbix_agent_psk}}"
-      become: false
-      when: "psk_file_wite.changed"
+      when: "psk_file_write.changed"
 
   when: "not is_docker"
