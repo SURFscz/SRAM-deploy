@@ -87,8 +87,6 @@
         link_templates: "{{ zabbix_templates_default|list + zabbix_templates_extra|list }}"
         tls_accept: "2"
         tls_connect: "2"
-        tls_psk_identity: "{{inventory_hostname}}"
-        tls_psk: "{{zabbix_agent_psk}}"
         status: "enabled"
         state: "present"
         interfaces:
@@ -99,5 +97,18 @@
             dns: ""
             port: "10050"
       become: false
+
+    - name: "Set PSK setting for host"
+      local_action:
+        module: "zabbix_host"
+        server_url: "{{zabbix_api_url}}"
+        validate_certs: "{{zabbix_validate_certs}}"
+        login_user: "{{zabbix_api_user}}"
+        login_password: "{{zabbix_api_password}}"
+        host_name: "{{inventory_hostname}}"
+        tls_psk_identity: "{{inventory_hostname}}"
+        tls_psk: "{{zabbix_agent_psk}}"
+      become: false
+      when: "psk_file_wite.changed"
 
   when: "not is_docker"
