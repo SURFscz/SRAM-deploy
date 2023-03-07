@@ -1,51 +1,53 @@
-#!/bin/bash
-set -e
+#!/usr/bin/env python3
+import sys
+import os
+import json
 
-if [ $# -ne 2 ]
-then
-	echo "Syntax: $0 <secrets.yml> <variable_name>"
-	exit 1
-fi
+import ansible.constants
+import ansible.cli
+from ansible.parsing.dataloader import DataLoader
+from ansible.parsing.yaml.objects import AnsibleVaultEncryptedUnicode
 
-SECRETS=$1
-VAR=$2
+import argparse
 
-if [ ! -e $SECRETS ]
-then
-	echo "Can't find file $SECRETS"
-	exit 1
-fi
 
-# macos is really dumb
-if [ -d '/Volumes' ]
-then
-    READLINK=greadlink
-else
-    READLINK=readlink
-fi
+class AnsibleVaultEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, AnsibleVaultEncryptedUnicode):
+            # casting it to string will trigger the embedded decryption magicks in the AnsibleVaultEncryptedUnicode
+            # object
+            return str(obj)
+        else:
+            # Otherwise, use the default encoder
+            return super().default(obj)
 
-# expand path
-SECRETS=$($READLINK -f "$SECRETS")
 
-PLAYBOOK=$(mktemp)
-function cleanup {
-	rm -rf $PLAYBOOK
-}
-trap cleanup EXIT
+# parse arguments
+parser = argparse.ArgumentParser(description='Decrypt an ansible yaml file with embedded vault secrets')
+parser.add_argument('filename', help='filename to process')
+parser.add_argument('variable', nargs='?', default=None, help='optional variable name to display')
+args = parser.parse_args()
+filename = args.filename
+variable = args.variable
+if not os.path.isfile(filename):
+    print(f"Error: File '{filename}' does not exist.")
+    parser.print_help()
+    exit(1)
 
-cat > $PLAYBOOK <<-'EOF'
-	---
-	- hosts: localhost
-	  tasks:
-	  - include_vars: "{{ secrets }}"
-	  - debug: "var={{ var }}"
-EOF
+# input and set up vault secret
+loader = DataLoader()
+vault_pass = ansible.cli.CLI.setup_vault_secrets(
+    loader=loader,
+    vault_ids=ansible.constants.DEFAULT_VAULT_IDENTITY_LIST)
+loader.set_vault_secrets(vault_pass)
 
-ansible-playbook \
-	--ask-vault-pass \
-	--become-method=enable \
-	--extra-vars="secrets=$SECRETS" \
-	--extra-vars="var=$VAR" \
-	$PLAYBOOK
+# load data
+data = loader.load_from_file(filename)
 
-exit 0
+# and print
+if variable is None:
+    print(json.dumps(dict(data), indent=4, cls=AnsibleVaultEncoder))
+else:
+    print(data[variable])
+
+sys.exit(0)
