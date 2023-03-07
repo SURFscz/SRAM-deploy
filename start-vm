@@ -72,7 +72,7 @@ else
 
     echo "Waiting until containers have booted"
     TIMEOUT=120
-    for c in $(docker compose -f docker/docker-compose.yml ps -q)
+    for c in $(docker-compose -f docker/docker-compose.yml ps -q)
     do
         host=$(docker inspect --format='{{.Config.Hostname}}'     $c)
         printf " - %-10s" $host
