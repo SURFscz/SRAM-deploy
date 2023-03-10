@@ -265,16 +265,18 @@
       cn: "{{ services_ldap.binddn | regex_replace('^cn=([^,]+).*', '\\1') }}"
   when: inventory_hostname in groups['ldap_primary']
 
+# Remove LDAP non-admins
 - name: Initialize admins (I)
   community.general.ldap_entry:
     dn: "cn={{ item.uid }},{{ services_ldap.basedn }}"
     state: absent
   when: >
     inventory_hostname in groups['ldap_primary']
-    and 'ldap' not in item.groups
+    and ldap_admins not in item.groups
     and item.uid != 'admin'
   with_items: "{{ users }}"
 
+# Insert LDAP admins
 - name: Initialize admins (II)
   community.general.ldap_entry:
     dn: "cn={{ item.uid }},{{ services_ldap.basedn }}"
@@ -286,10 +288,11 @@
       userPassword: "{CRYPT}{{ item.pw_hash }}"
   when: >
     inventory_hostname in groups['ldap_primary']
-    and 'ldap' in item.groups
+    and ldap_admins in item.groups
     and item.uid != 'admin'
   with_items: "{{ users }}"
 
+# Make sure passwords are updated for existing admins
 - name: Initialize admins (III)
   community.general.ldap_attrs:
     dn: "cn={{ item.uid }},{{ services_ldap.basedn }}"
@@ -297,7 +300,7 @@
       userPassword: "{CRYPT}{{ item.pw_hash }}"
   when: >
     inventory_hostname in groups['ldap_primary']
-    and 'ldap' in item.groups
+    and ldap_admins in item.groups
     and item.uid != 'admin'
   with_items: "{{ users }}"
 

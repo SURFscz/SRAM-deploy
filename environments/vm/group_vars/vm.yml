@@ -2,6 +2,8 @@
 sudo_groups:
   - sudo_test
 
+ldap_admins: ldap_vm
+
 environment_name: vm
 environment_string: "SCZ VM"
 base_domain: "scz-vm.net"
