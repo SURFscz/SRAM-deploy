@@ -27,4 +27,4 @@
     owner: "root"
     group: "zabbix"
     mode: "0640"
-  register: "psk_file_wite"
+  register: "psk_file_write"

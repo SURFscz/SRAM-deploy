@@ -68,7 +68,7 @@
         host_name: "{{inventory_hostname}}"
         state: "absent"
       become: false
-      when: "psk_file_wite.changed"
+      when: "psk_file_write.changed"
 
     - name: "Register host"
       local_action:
@@ -109,6 +109,6 @@
         tls_psk_identity: "{{inventory_hostname}}"
         tls_psk: "{{zabbix_agent_psk}}"
       become: false
-      when: "psk_file_wite.changed"
+      when: "psk_file_write.changed"
 
   when: "not is_docker"
