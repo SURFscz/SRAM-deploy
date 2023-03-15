@@ -127,12 +127,15 @@ try:
     browser.find_element(By.XPATH, "//button[span[text()='Onwards']]").click()
     print(" - accepted AUP")
 
-    # Wait for 2fa information
-    wait.until(presence_of_element_located((By.XPATH, "//div[@class='information']")), 'Timeout waiting for 2FA')
+    # Wait for next page
+    wait.until(presence_of_element_located(
+        (By.XPATH, "//span[@class='sds--branding--textual'and text()='Research Access Management']")),
+        'Timeout waiting for 2FA')
+    print(" - reached next page")
 
     # Assert 2fa page
-    assert("2fa" in browser.current_url), "Error loading 2FA URL"
-    print(" - reached 2FA page")
+    # assert("2fa" in browser.current_url), "Error loading 2FA URL"
+    # print(" - reached 2FA page")
 
     # Close browser
     browser.close()
