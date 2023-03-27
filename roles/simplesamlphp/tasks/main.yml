@@ -78,7 +78,7 @@
   file:
     path: "{{ simplesaml_project_dir }}/\
       simplesamlphp-{{ simplesaml_version }}/log/simplesamlphp.log"
-    state: file
+    state: touch
     owner: www-data
     group: www-data
     mode: '0644'

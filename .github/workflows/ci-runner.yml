@@ -82,13 +82,3 @@ jobs:
             echo ===netstat===; netstat -lnp
           '"
         if: failure()
-
-        # Setup tmate session
-      - name: Setup tmate session
-        env:
-          ACTIONS_STEP_DEBUG: "${{ secrets.ACTIONS_STEP_DEBUG}}"
-        if: failure()
-        uses: mxschmitt/action-tmate@v3
-        with:
-          limit-access-to-actor: true
-        timeout-minutes: 15
