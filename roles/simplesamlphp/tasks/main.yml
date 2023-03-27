@@ -68,7 +68,8 @@
 
 - name: Make sure the simplesamlphp.log file exists
   file:
-    path: "{{ simplesaml_project_dir }}/simplesamlphp-{{ simplesaml_version }}/log/simplesamlphp.log"
+    path: "{{ simplesaml_project_dir }}/\
+      simplesamlphp-{{ simplesaml_version }}/log/simplesamlphp.log"
     state: file
     owner: www-data
     group: www-data
