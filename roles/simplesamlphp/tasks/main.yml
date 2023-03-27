@@ -92,6 +92,14 @@
     - "config.php"
     - "authsources.php"
 
+- name: Make sure the log directory exists
+  file:
+    path: "/opt/simplesamlphp-{{ simplesaml_version }}/log"
+    state: directory
+    owner: www-data
+    group: www-data
+    mode: '0755'
+
 - name: Link SimpleSaml configuration
   file:
     src: "{{ simplesaml_project_dir }}/config/{{item.key}}"
