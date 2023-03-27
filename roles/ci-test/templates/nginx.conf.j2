@@ -36,10 +36,10 @@ server {
     location ^~ /saml {
         index index.php
         try_files $uri $uri/ /index.php$is_args$args;
-        alias /opt/sram-ssphp/simplesaml/www;
+        alias /opt/sram-ssphp/simplesaml/public;
 
         location ~ \.php(/|$) {
-            root             {{simplesaml_project_dir}}/simplesaml/www;
+            root             {{simplesaml_project_dir}}/simplesaml/public;
             fastcgi_pass     unix:/run/php/sram-ssphp.sock;
             fastcgi_index    index.php;
             fastcgi_split_path_info  ^/saml/((?U).+\.php)(/?.+)?$;

@@ -27,11 +27,11 @@ server {
     add_header Strict-Transport-Security "max-age=31536000";
 
     location ^~ /saml {
-        alias {{simplesaml_project_dir}}/simplesaml/www;
+        alias {{simplesaml_project_dir}}/simplesaml/public;
         index index.php;
 
         location ~ \.php(/|$) {
-            root             {{simplesaml_project_dir}}/simplesaml/www;
+            root             {{simplesaml_project_dir}}/simplesaml/public;
             fastcgi_pass     unix:/run/php/{{demosp_name}}.sock;
             fastcgi_index    index.php;
 
