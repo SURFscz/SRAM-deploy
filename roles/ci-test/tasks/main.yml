@@ -10,7 +10,6 @@
     simplesaml_user: "{{ssphp_user}}"
     simplesaml_group: "{{ssphp_group}}"
     simplesaml_project_dir: "{{ssphp_dir}}"
-    simplesaml_admin_passwd: "{{ssphp_admin_pass}}"
 
 - name: Enable exampleauth module
   ansible.builtin.copy:
