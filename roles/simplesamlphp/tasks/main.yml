@@ -66,6 +66,14 @@
     remote_src: true
   when: "ssp_download.changed or not ssp_destdir.stat.exists"
 
+- name: Make sure the log directory exists
+  file:
+    path: "{{ simplesaml_project_dir }}/simplesamlphp-{{ simplesaml_version }}/log"
+    state: directory
+    owner: www-data
+    group: www-data
+    mode: '0755'
+
 - name: Make sure the simplesamlphp.log file exists
   file:
     path: "{{ simplesaml_project_dir }}/\
@@ -74,14 +82,6 @@
     owner: www-data
     group: www-data
     mode: '0644'
-
-- name: Make sure the log directory exists
-  file:
-    path: "{{ simplesaml_project_dir }}/simplesamlphp-{{ simplesaml_version }}/log"
-    state: directory
-    owner: www-data
-    group: www-data
-    mode: '0755'
 
 - name: Link simplesaml
   file:
