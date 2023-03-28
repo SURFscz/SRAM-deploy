@@ -82,6 +82,8 @@
     owner: www-data
     group: www-data
     mode: '0644'
+    access_time: preserve
+    modification_time: preserve
 
 - name: Link simplesaml
   file:
