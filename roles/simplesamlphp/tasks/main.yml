@@ -70,20 +70,9 @@
   file:
     path: "{{ simplesaml_project_dir }}/simplesamlphp-{{ simplesaml_version }}/log"
     state: directory
-    owner: www-data
-    group: www-data
+    owner: sram-ssphp
+    group: sram-ssphp
     mode: '0755'
-
-- name: Make sure the simplesamlphp.log file exists
-  file:
-    path: "{{ simplesaml_project_dir }}/\
-      simplesamlphp-{{ simplesaml_version }}/log/simplesamlphp.log"
-    state: touch
-    owner: www-data
-    group: www-data
-    mode: '0644'
-    access_time: preserve
-    modification_time: preserve
 
 - name: Link simplesaml
   file:
