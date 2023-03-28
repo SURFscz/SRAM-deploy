@@ -5,9 +5,9 @@ $config = [
     /*******************************
      | BASIC CONFIGURATION OPTIONS |
      *******************************/
-    'baseurlpath' => 'saml/',
+    'baseurlpath' => 'https://{{ hostnames.idp }}/saml/',
     'application' => [
-        'baseURL' => 'https://{{ hostnames.idp }}',
+        // 'baseURL' => '',
     ],
     'loggingdir' => 'log/',
     'datadir' => 'data/',
