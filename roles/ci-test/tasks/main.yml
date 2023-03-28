@@ -37,7 +37,7 @@
 - name: Copy self-signed Token signing cert key
   copy:
     content: "{{client_saml_cert.priv}}"
-    dest: "{{ simplesaml_project_dir }}/simplesaml/cert/server.key"
+    dest: "{{simplesaml_cert_dir}}/server.key"
     group: "{{ssphp_group}}"
     mode: "0640"
   no_log: "{{sram_ansible_nolog}}"
@@ -46,7 +46,7 @@
 - name: Copy self-signed Token signing cert
   copy:
     content: "{{client_saml_cert.pub}}"
-    dest: "{{ simplesaml_project_dir }}/simplesaml/cert/server.crt"
+    dest: "{{simplesaml_cert_dir}}/server.crt"
   notify: "restart php-fpm"
 
 
