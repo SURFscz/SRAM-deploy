@@ -265,7 +265,19 @@
       cn: "{{ services_ldap.binddn | regex_replace('^cn=([^,]+).*', '\\1') }}"
   when: inventory_hostname in groups['ldap_primary']
 
-- name: Initialize admins
+# Remove LDAP non-admins
+- name: Initialize admins (I)
+  community.general.ldap_entry:
+    dn: "cn={{ item.uid }},{{ services_ldap.basedn }}"
+    state: absent
+  when: >
+    inventory_hostname in groups['ldap_primary']
+    and ldap_admins not in item.groups
+    and item.uid != 'admin'
+  with_items: "{{ users }}"
+
+# Insert LDAP admins
+- name: Initialize admins (II)
   community.general.ldap_entry:
     dn: "cn={{ item.uid }},{{ services_ldap.basedn }}"
     objectClass:
@@ -274,15 +286,22 @@
     attributes:
       description: An LDAP administrator
       userPassword: "{CRYPT}{{ item.pw_hash }}"
-  when: inventory_hostname in groups['ldap_primary'] and item.uid != 'admin'
+  when: >
+    inventory_hostname in groups['ldap_primary']
+    and ldap_admins in item.groups
+    and item.uid != 'admin'
   with_items: "{{ users }}"
 
-- name: Initialize admins (update password)
+# Make sure passwords are updated for existing admins
+- name: Initialize admins (III)
   community.general.ldap_attrs:
     dn: "cn={{ item.uid }},{{ services_ldap.basedn }}"
     attributes:
       userPassword: "{CRYPT}{{ item.pw_hash }}"
-  when: inventory_hostname in groups['ldap_primary'] and item.uid != 'admin'
+  when: >
+    inventory_hostname in groups['ldap_primary']
+    and ldap_admins in item.groups
+    and item.uid != 'admin'
   with_items: "{{ users }}"
 
 - name: Redirect slapd log to /var/log/slapd.log
