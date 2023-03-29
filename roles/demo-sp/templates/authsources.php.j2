@@ -10,7 +10,7 @@ $config['admin'] = array(
 
 $config['test'] = array(
         'saml:SP',
-        'entityID' => null,
+        'entityID' => 'https://demo-sp.sram.surf.nl/saml/module.php/saml/sp/metadata.php/test',
         'certificate' => "saml.pem",
         'privatekey' => "saml.key",
         'idp' => "https://proxy.acc.sram.eduteams.org/proxy",
@@ -20,7 +20,7 @@ $config['test'] = array(
 
 $config['acc'] = array(
         'saml:SP',
-        'entityID' => null,
+        'entityID' => 'https://demo-sp.sram.surf.nl/saml/module.php/saml/sp/metadata.php/acc',
         'certificate' => "saml.pem",
         'privatekey' => "saml.key",
         'idp' => "https://proxy.acc.sram.eduteams.org/proxy",
@@ -30,7 +30,7 @@ $config['acc'] = array(
 
 $config['prd'] = array(
         'saml:SP',
-        'entityID' => null,
+        'entityID' => 'https://demo-sp.sram.surf.nl/saml/module.php/saml/sp/metadata.php/prd',
         'certificate' => "saml.pem",
         'privatekey' => "saml.key",
         'idp' => "https://proxy.sram.surf.nl/proxy",

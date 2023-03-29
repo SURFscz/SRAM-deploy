@@ -141,7 +141,7 @@
     - { role: oidc-op,              tags: ['client','oidc-op'      ] }
 
 - name: "demo clients"
-  hosts: "bhr13"
+  hosts: bhr13
   tasks:
     - { import_tasks: "tasks/versions.yml", tags: ['common'] }
   roles:

@@ -70,8 +70,8 @@
   file:
     path: "{{ simplesaml_project_dir }}/simplesamlphp-{{ simplesaml_version }}/log"
     state: directory
-    owner: sram-ssphp
-    group: sram-ssphp
+    owner: "{{simplesaml_user}}"
+    group: "{{simplesaml_user}}"
     mode: '0755'
 
 - name: Link simplesaml
