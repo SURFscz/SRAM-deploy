@@ -62,8 +62,16 @@ $metadata['https://idp.ci-runner.sram.surf.nl/saml/saml2/idp/metadata.php'] = [
 
     'attributes.NameFormat' => 'urn:oasis:names:tc:SAML:2.0:attrname-format:uri',
     'authproc' => [
+        // Generate Persistent NameID
+        10 => [
+            'class' => 'saml:PersistentNameID',
+            'identifyingAttribute' => 'eduPersonPrincipalName',
+        ],
         // Convert LDAP names to oids.
-        100 => ['class' => 'core:AttributeMap', 'name2oid'],
+        100 => [
+            'class' => 'core:AttributeMap',
+            'name2oid',
+        ],
     ],
 
 ];
