@@ -62,12 +62,14 @@ sbs_send_js_exceptions: False
 sbs_second_factor_authentication_required: True
 sbs_totp_token_name: "SRAM"
 sbs_notifications_enabled: True
-sbs_delete_orphaned: True
 sbs_scim_sweep: False
 sbs_impersonation_allowed: False
 sbs_admin_platform_backdoor_totp: False
 sbs_past_dates_allowed: False
 sbs_mock_scim_enabled: False
+
+sbs_delete_orphaned: True
+sbs_suspension_inactive_days: 365
 
 sbs_oidc_config_url: "http://localhost/.well-known/openid-configuration"
 sbs_oidc_authz_endpoint: "http://localhost/OIDC/authorization"
