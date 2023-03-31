@@ -56,6 +56,12 @@ entitlement_group_namespace: "{{ sbs_urn_namespace }}"
 eppn_scope: " {{ sbs_eppn_scope }}"
 collaboration_creation_allowed_entitlement: "urn:mace:surf.nl:sram:allow-create-co"
 
+{% if environment_name == "prd" %}
+environment_disclaimer: ""
+{% else %}
+environment_disclaimer: "{{ sbs_disclaimer_label }}"
+{% endif %}
+
 # All services in the white list can be requested in the create-restricted-co API
 # The default organisation is a fallback for when the administrator has no schac_home_org
 restricted_co:
