@@ -78,8 +78,8 @@ if ($format=="raw") {
     exit();
 }
 
-if ($format=="data") {
-    print('<pre id="json">');
+if ($format=="json") {
+    print('<pre id="data">');
     print(json_encode($user_attr, JSON_PRETTY_PRINT));
     print('</pre>');
     exit();
