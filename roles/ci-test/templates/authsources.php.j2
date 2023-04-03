@@ -1,6 +1,18 @@
 <?php
 
 $config = [
+    /*
+     * When multiple authentication sources are defined, you can specify one to use by default
+     * in order to authenticate users. In order to do that, you just need to name it "default"
+     * here. That authentication source will be used by default then when a user reaches the
+     * SimpleSAMLphp installation from the web browser, without passing through the API.
+     *
+     * If you already have named your auth source with a different name, you don't need to change
+     * it in order to use it as a default. Just create an alias by the end of this file:
+     *
+     * $config['default'] = &$config['your_auth_source'];
+     */
+
     // This is a authentication source which handles admin authentication.
     'admin' => [
         // The default is to use core:AdminPassword, but it can be replaced with
@@ -10,14 +22,12 @@ $config = [
     ],
 
 
-    // An authentication source which can authenticate against both SAML 2.0
-    // and Shibboleth 1.3 IdPs.
+    // An authentication source which can authenticate against SAML 2.0 IdPs.
     'default-sp' => [
         'saml:SP',
 
         // The entity ID of this SP.
-        // Can be NULL/unset, in which case an entity ID is generated based on the metadata URL.
-        'entityID' => null,
+        'entityID' => 'https://default-sp.org/',
 
         // The entity ID of the IdP this SP should contact.
         // Can be NULL/unset, in which case the user will be shown a list of available IdPs.
@@ -26,6 +36,14 @@ $config = [
         // The URL to the discovery service.
         // Can be NULL/unset, in which case a builtin discovery service will be used.
         'discoURL' => null,
+
+        /*
+         * If SP behind the SimpleSAMLphp in IdP/SP proxy mode requests
+         * AuthnContextClassRef, decide whether the AuthnContextClassRef will be
+         * processed by the IdP/SP proxy or if it will be passed to the original
+         * IdP in front of the IdP/SP proxy.
+         */
+        'proxymode.passAuthnContextClassRef' => false,
 
         /*
          * The attributes parameter must contain an array of desired attributes by the SP.
@@ -54,6 +72,7 @@ $config = [
         'admin:admin' => [
             'uid' => ['admin'],
             'displayName' => 'Admin',
+            'mail' => 'admin@ci-runner.sram.surf.nl',
             'eduPersonPrincipalName' => 'admin@ci-runner.sram.surf.nl',
             'eduPersonAffiliation' => ['member', 'affiliate'],
             'eduPersonScopedAffiliation' => ['member@ci-runner.sram.surf.nl', 'affiliate@ci-runner.sram.surf.nl' ],
@@ -63,18 +82,20 @@ $config = [
         'student:student' => [
             'uid' => ['student'],
             'displayName' => 'Student',
+            'mail' => 'student@ci-runner.sram.surf.nl',
             'eduPersonPrincipalName' => 'student@ci-runner.sram.surf.nl',
             'eduPersonAffiliation' => ['member', 'student'],
-            'eduPersonScopedffiliation' => ['member@ci-runner.sram.surf.nl', 'student@ci-runner.sram.surf.nl' ],
+            'eduPersonScopedAffiliation' => ['member@ci-runner.sram.surf.nl', 'student@ci-runner.sram.surf.nl' ],
             'schacHomeOrganization' => 'ci-runner.sram.surf.nl',
             'eduPersonAssurance' => ['http://idm.example.org/LOA2#sample'],
         ],
         'employee:employee' => [
             'uid' => ['employee'],
             'displayName' => 'Employee',
+            'mail' => 'employee@ci-runner.sram.surf.nl',
             'eduPersonPrincipalName' => 'employee@ci-runner.sram.surf.nl',
             'eduPersonAffiliation' => ['member', 'employee'],
-            'eduPersonScopedffiliation' => ['member@ci-runner.sram.surf.nl', 'employee@ci-runner.sram.surf.nl' ],
+            'eduPersonScopedAffiliation' => ['member@ci-runner.sram.surf.nl', 'employee@ci-runner.sram.surf.nl' ],
             'schacHomeOrganization' => 'ci-runner.sram.surf.nl',
             'eduPersonAssurance' => ['http://idm.example.org/LOA3#sample'],
         ],

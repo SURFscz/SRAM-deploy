@@ -1,85 +1,212 @@
 <?php
-$config = array(
-    'baseurlpath' => 'https://' . $_SERVER['HTTP_HOST'] . '/saml/',
-    'certdir' => '{{simplesaml_cert_dir}}',
+$httpUtils = new \SimpleSAML\Utils\HTTP();
+
+$config = [
+    /*******************************
+     | BASIC CONFIGURATION OPTIONS |
+     *******************************/
+    'baseurlpath' => 'saml/',
+    'application' => [
+        //'baseURL' => 'https://example.com',
+    ],
     'loggingdir' => 'log/',
     'datadir' => 'data/',
-
     'tempdir' => '{{simplesaml_tmp_dir}}',
-    'debug' => false,
-    'showerrors' => false,
-    'errorreporting' => false,
-    'debug.validatexml' => false,
-
-    'auth.adminpassword' => '{{ simplesaml_admin_passwd }}',
-    'admin.protectindexpage' => true,
-    'admin.protectmetadata' => false,
-
-    'secretsalt' => '{{ simplesaml_salt.content }}',
+    'certdir' => '{{simplesaml_cert_dir}}',
 
     'technicalcontact_name' => 'Administrator',
     'technicalcontact_email' => '{{ mail.admin_address }}',
+    'timezone' => null,
 
+    /**********************************
+     | SECURITY CONFIGURATION OPTIONS |
+     **********************************/
+    'secretsalt' => '{{ simplesaml_salt.content }}',
+    'auth.adminpassword' => '{{ simplesaml_admin_passwd }}',
+    'admin.protectmetadata' => false,
+    'admin.checkforupdates' => true,
+
+    'trusted.url.domains' => [],
+    'trusted.url.regex' => false,
+
+    'enable.http_post' => false,
+    'assertion.allowed_clock_skew' => 180,
+
+    /************************
+     | ERRORS AND DEBUGGING |
+     ************************/
+    'debug' => [
+        'saml' => false,
+        'backtraces' => false,
+        'validatexml' => false,
+    ],
+    'showerrors' => true,
+    'errorreporting' => true,
+
+    /**************************
+     | LOGGING AND STATISTICS |
+     **************************/
     'logging.level' => SimpleSAML\Logger::NOTICE,
     'logging.handler' => 'syslog',
     'logging.facility' => defined('LOG_LOCAL5') ? constant('LOG_LOCAL5') : LOG_USER,
     'logging.processname' => 'simplesamlphp',
-
-    'statistics.out' => array(),
-
-    'enable.saml20-idp' => true,
-    'enable.shib13-idp' => false,
-    'enable.adfs-idp' => false,
-    'enable.wsfed-sp' => false,
-    'enable.authmemcookie' => false,
-
-    'module.enable' => [
-        'exampleauth' => true,
+    'logging.logfile' => 'simplesamlphp.log',
+    'statistics.out' => [
     ],
 
+    /***********************
+     | PROXY CONFIGURATION |
+     ***********************/
+    'proxy' => null,
+
+    /**************************
+     | DATABASE CONFIGURATION |
+     **************************/
+    'database.dsn' => 'mysql:host=localhost;dbname=saml',
+    'database.username' => 'simplesamlphp',
+    'database.password' => 'secret',
+    'database.options' => [],
+    'database.prefix' => '',
+    'database.driver_options' => [],
+    'database.persistent' => false,
+    'database.secondaries' => [
+    ],
+
+    /*************
+     | PROTOCOLS |
+     *************/
+    'enable.saml20-idp' => true,
+    'enable.adfs-idp' => false,
+
+    /***********
+     | MODULES |
+     ***********/
+    'module.enable' => [
+        'exampleauth' => true,
+        'core' => true,
+        'admin' => true,
+        'saml' => true
+    ],
+
+    /*************************
+     | SESSION CONFIGURATION |
+     *************************/
     'session.duration' => 8 * (60 * 60), // 8 hours.
     'session.datastore.timeout' => (4 * 60 * 60), // 4 hours
     'session.state.timeout' => (60 * 60), // 1 hour
-    'session.cookie.name' => 'SRAM_demoSP_session',
-    'session.cookie.lifetime' => 0, // destroy cookie right away, disabling SSO
+    'session.cookie.name' => 'SimpleSAMLSessionID',
+    'session.cookie.lifetime' => 0,
     'session.cookie.path' => '/',
-    'session.cookie.domain' => null,
+    'session.cookie.domain' => '',
     'session.cookie.secure' => true,
-
-    'enable.http_post' => false,
-
+    'session.cookie.samesite' => $httpUtils->canSetSameSiteNone() ? 'None' : null,
     'session.phpsession.cookiename' => 'SimpleSAML',
     'session.phpsession.savepath' => null,
     'session.phpsession.httponly' => true,
     'session.authtoken.cookiename' => 'SimpleSAMLAuthToken',
-
     'session.rememberme.enable' => false,
     'session.rememberme.checked' => false,
     'session.rememberme.lifetime' => (14 * 86400),
 
-    'language.available' => array('en'),
-    'language.rtl' => array(),
+    /**************************
+     | MEMCACHE CONFIGURATION |
+     **************************/
+    'memcache_store.servers' => [
+        [
+            ['hostname' => 'localhost'],
+        ],
+    ],
+    'memcache_store.prefix' => '',
+    'memcache_store.expires' => 36 * (60 * 60), // 36 hours.
+
+    /*************************************
+     | LANGUAGE AND INTERNATIONALIZATION |
+     *************************************/
+    'language.available' => [
+        'en', 'nl',
+    ],
+    'language.rtl' => ['ar', 'dv', 'fa', 'ur', 'he'],
     'language.default' => 'en',
+    'language.parameter.name' => 'language',
+    'language.parameter.setcookie' => true,
+    'language.cookie.name' => 'language',
+    'language.cookie.domain' => '',
+    'language.cookie.path' => '/',
+    'language.cookie.secure' => true,
+    'language.cookie.httponly' => false,
+    'language.cookie.lifetime' => (60 * 60 * 24 * 900),
+    'language.cookie.samesite' => $httpUtils->canSetSameSiteNone() ? 'None' : null,
 
+    /**************
+     | APPEARANCE |
+     **************/
     'theme.use' => 'default',
+    'template.auto_reload' => false,
+    'production' => true,
+    'assets' => [
+        'caching' => [
+            'max_age' => 86400,
+            'etag' => false,
+        ],
+    ],
 
-    'idpdisco.enableremember' => false,
-    'idpdisco.rememberchecked' => false,
+    /*********************
+     | DISCOVERY SERVICE |
+     *********************/
+    'idpdisco.enableremember' => true,
+    'idpdisco.rememberchecked' => true,
     'idpdisco.validate' => true,
     'idpdisco.extDiscoveryStorage' => null,
-    'idpdisco.layout' => 'links',
-    'authproc.sp' => array(
-    ),
-    'metadata.sources' => array(
-        array('type' => 'flatfile' ),
-    ),
+    'idpdisco.layout' => 'dropdown',
 
-    'store.type' => 'phpsession',
+    /*************************************
+     | AUTHENTICATION PROCESSING FILTERS |
+     *************************************/
+    'authproc.idp' => [
+        30 => 'core:LanguageAdaptor',
+        45 => [
+            'class'         => 'core:StatisticsWithAttribute',
+            'attributename' => 'realm',
+            'type'          => 'saml20-idp-SSO',
+        ],
+        50 => 'core:AttributeLimit',
+        99 => 'core:LanguageAdaptor',
+    ],
+    'authproc.sp' => [
+        90 => 'core:LanguageAdaptor',
+    ],
 
+    /**************************
+     | METADATA CONFIGURATION |
+     **************************/
+    'metadatadir' => 'metadata',
+    'metadata.sources' => [
+        ['type' => 'flatfile'],
+    ],
     'metadata.sign.enable' => false,
     'metadata.sign.privatekey' => null,
     'metadata.sign.privatekey_pass' => null,
     'metadata.sign.certificate' => null,
 
-    'trusted.url.domains' => array(),
-);
+    /****************************
+     | DATA STORE CONFIGURATION |
+     ****************************/
+    'store.type'                    => 'phpsession',
+    'store.sql.dsn'                 => 'sqlite:/path/to/sqlitedatabase.sq3',
+    'store.sql.username' => null,
+    'store.sql.password' => null,
+    'store.sql.prefix' => 'SimpleSAMLphp',
+    'store.sql.options' => [],
+    'store.redis.host' => 'localhost',
+    'store.redis.port' => 6379,
+    'store.redis.username' => '',
+    'store.redis.password' => '',
+    'store.redis.prefix' => 'SimpleSAMLphp',
+    'store.redis.mastergroup' => 'mymaster',
+    'store.redis.sentinels' => [],
+
+    /*********************
+     | IdP/SP PROXY MODE |
+     *********************/
+    'proxymode.passAuthnContextClassRef' => false,
+];

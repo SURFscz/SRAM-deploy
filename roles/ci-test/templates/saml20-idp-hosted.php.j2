@@ -6,7 +6,7 @@
  * See: https://simplesamlphp.org/docs/stable/simplesamlphp-reference-idp-hosted
  */
 
-$metadata['__DYNAMIC:1__'] = [
+$metadata['https://idp.ci-runner.sram.surf.nl/saml/saml2/idp/metadata.php'] = [
     /*
      * The hostname of the server (VHOST) that will use this SAML entity.
      *
@@ -24,6 +24,12 @@ $metadata['__DYNAMIC:1__'] = [
     'OrganizationDisplayName' => [
         'en' => 'SRAM CI Runner Test IdP',
         'nl' => 'SRAM CI Runner Test IdP'
+    ],
+
+    'EntityAttributes' => [
+        '{urn:oasis:names:tc:SAML:2.0:attrname-format:uri}http://macedir.org/entity-category-support' => [
+            'http://refeds.org/category/research-and-scholarship'
+        ]
     ],
 
     'UIInfo' => [
@@ -56,8 +62,16 @@ $metadata['__DYNAMIC:1__'] = [
 
     'attributes.NameFormat' => 'urn:oasis:names:tc:SAML:2.0:attrname-format:uri',
     'authproc' => [
+        // Generate Persistent NameID
+        10 => [
+            'class' => 'saml:PersistentNameID',
+            'identifyingAttribute' => 'eduPersonPrincipalName',
+        ],
         // Convert LDAP names to oids.
-        100 => ['class' => 'core:AttributeMap', 'name2oid'],
+        100 => [
+            'class' => 'core:AttributeMap',
+            'name2oid',
+        ],
     ],
 
 ];

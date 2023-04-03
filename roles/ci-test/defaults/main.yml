@@ -4,7 +4,6 @@ ssphp_user: "sram-ssphp"
 ssphp_group: "sram-ssphp"
 ssphp_dir: "/opt/{{ssphp_name}}"
 ssphp_html_dir: "{{ssphp_dir}}/html"
-ssphp_admin_pass: "changethispassword"
 client_ssp_salt: "ThisIsNotASecretSalt,PleaseChangeMe!"
 
 rp_jumbojett_dir: /opt/jumbojett
