@@ -11,7 +11,7 @@ Feature: Test RP logins
 
   Examples:
         | user    | password | sub                                                            |
-        | student | student  | 2ec2d0ca006136e2e587a0073dd8fdf6200bbd82@acc.sram.eduteams.org |
+        | student | student  | 8e7811387bc200409b395a7a156826875a4248f9@acc.sram.eduteams.org |
         | admin   | admin    | 98d4d0ddd179f57c0cbbf06ae2d7094522b21eab@acc.sram.eduteams.org |
 
   @test2

@@ -1,6 +1,6 @@
 {   "id_token":
     {
-        "sub": "2ec2d0ca006136e2e587a0073dd8fdf6200bbd82@acc.sram.eduteams.org",
+        "sub": "8e7811387bc200409b395a7a156826875a4248f9@acc.sram.eduteams.org",
         "scope": [
             "openid",
             "profile",
@@ -35,11 +35,11 @@
             "APP-B1F3C5AA-5514-48A9-BBA1-EBC388540BF7"
         ],
         "client_id": "APP-B1F3C5AA-5514-48A9-BBA1-EBC388540BF7",
-        "sub": "2ec2d0ca006136e2e587a0073dd8fdf6200bbd82@acc.sram.eduteams.org",
-        "name": "Student student",
+        "sub": "8e7811387bc200409b395a7a156826875a4248f9@acc.sram.eduteams.org",
+        "name": "Student Student",
         "given_name": "Student",
-        "family_name": "student",
-        "email": "martin.vanes@surf.nl",
+        "family_name": "Student",
+        "email": "student@ci-runner.sram.surf.nl",
         "eduperson_scoped_affiliation": [
             "member@acc.sram.eduteams.org"
         ],
@@ -62,11 +62,11 @@
     },
     "user_info":
     {
-        "sub": "2ec2d0ca006136e2e587a0073dd8fdf6200bbd82@acc.sram.eduteams.org",
-        "name": "Student student",
+        "sub": "8e7811387bc200409b395a7a156826875a4248f9@acc.sram.eduteams.org",
+        "name": "Student Student",
         "given_name": "Student",
-        "family_name": "student",
-        "email": "martin.vanes@surf.nl",
+        "family_name": "Student",
+        "email": "student@ci-runner.sram.surf.nl",
         "eduperson_scoped_affiliation": [
             "member@acc.sram.eduteams.org"
         ],
