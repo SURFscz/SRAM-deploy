@@ -10,4 +10,4 @@ pam_clients_port: 8087
 
 # LDAP services monitor
 ldap_monitor_service: "https://cloud"
-ldaP_monitor_reference: "cloud_ref"
+ldap_monitor_reference: "cloud_ref"
