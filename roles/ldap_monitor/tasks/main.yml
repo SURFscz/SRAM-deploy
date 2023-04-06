@@ -31,7 +31,7 @@
     - ldapmonitor.sh
     - getmonitor.py
 
-- name: Copy scripts and reference
+- name: Copy scripts
   copy:
     src: "{{ item }}"
     dest: "{{ ldap_monitor_dir }}/{{ item }}"
@@ -39,7 +39,11 @@
   with_items:
     - ldifchecksum.py
     - ldifparser.py
-    - "{{ldaP_monitor_reference}}"
+
+- name: Copy reference
+  copy:
+    src: "{{environment_name}}/{{ldaP_monitor_reference}}"
+    dest: "{{ ldap_monitor_dir }}/{{ldaP_monitor_reference}}"
 
 - name: Copy monitor service files
   template:
