@@ -42,7 +42,7 @@
 
 - name: Copy reference
   copy:
-    src: "{{environment_name}}/{{ldap_monitor_reference}}"
+    src: "{{inventory_dir}}/files/{{ldap_monitor_reference}}"
     dest: "{{ ldap_monitor_dir }}/{{ldap_monitor_reference}}"
 
 - name: Copy monitor service files
