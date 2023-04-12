@@ -1,0 +1,323 @@
+cn=@all,ou=Groups,o=uva.research,dc=ordered,dc=https://cloud,dc=services,dc=vnet
+  businessCategory
+    uva.tag_uva
+  cn
+    @all
+  description
+    All CO members
+  displayName
+    All Members of UVA UCC research
+  member
+    uid=peter,ou=People,o=uva.research,dc=ordered,dc=https://cloud,dc=services,dc=vnet
+    uid=roger,ou=People,o=uva.research,dc=ordered,dc=https://cloud,dc=services,dc=vnet
+    uid=sarah,ou=People,o=uva.research,dc=ordered,dc=https://cloud,dc=services,dc=vnet
+  objectClass
+    extensibleObject
+    groupOfMembers
+  uniqueIdentifier
+    68983158-e314-4d49-98a5-f166285d7509
+cn=admin,dc=https://cloud,dc=services,dc=vnet
+  cn
+    admin
+  objectClass
+    organizationalRole
+    simpleSecurityObject
+  userPassword
+    changethispassword
+cn=mail-mail,ou=Groups,o=uva.research,dc=ordered,dc=https://cloud,dc=services,dc=vnet
+  cn
+    mail-mail
+  description
+    Provisioned by service Mail Services - Mail group
+  displayName
+    service_group_mail_name
+  objectClass
+    extensibleObject
+    groupOfMembers
+  uniqueIdentifier
+    9267f1e2-93bd-4911-b8ff-0733b662e7a3
+cn=science,ou=Groups,o=uva.research,dc=ordered,dc=https://cloud,dc=services,dc=vnet
+  cn
+    science
+  description
+    Science
+  displayName
+    Science
+  member
+    uid=roger,ou=People,o=uva.research,dc=ordered,dc=https://cloud,dc=services,dc=vnet
+  objectClass
+    extensibleObject
+    groupOfMembers
+  uniqueIdentifier
+    3dabb5b6-6076-4ac9-86cd-47a54cdcbbaa
+cn=uva.research.@all,ou=Groups,dc=flat,dc=https://cloud,dc=services,dc=vnet
+  businessCategory
+    uva.tag_uva
+  cn
+    uva.research.@all
+  description
+    All CO members
+  displayName
+    All Members of UVA UCC research
+  mail
+    sarah@uva.org
+  member
+    uid=peter,ou=People,dc=flat,dc=https://cloud,dc=services,dc=vnet
+    uid=roger,ou=People,dc=flat,dc=https://cloud,dc=services,dc=vnet
+    uid=sarah,ou=People,dc=flat,dc=https://cloud,dc=services,dc=vnet
+  objectClass
+    extensibleObject
+    groupOfMembers
+  uniqueIdentifier
+    68983158-e314-4d49-98a5-f166285d7509
+cn=uva.research.mail-mail,ou=Groups,dc=flat,dc=https://cloud,dc=services,dc=vnet
+  cn
+    uva.research.mail-mail
+  description
+    Provisioned by service Mail Services - Mail group
+  displayName
+    service_group_mail_name
+  mail
+    sarah@uva.org
+  objectClass
+    extensibleObject
+    groupOfMembers
+  uniqueIdentifier
+    9267f1e2-93bd-4911-b8ff-0733b662e7a3
+cn=uva.research.science,ou=Groups,dc=flat,dc=https://cloud,dc=services,dc=vnet
+  cn
+    uva.research.science
+  description
+    Science
+  displayName
+    Science
+  mail
+    sarah@uva.org
+  member
+    uid=roger,ou=People,dc=flat,dc=https://cloud,dc=services,dc=vnet
+  objectClass
+    extensibleObject
+    groupOfMembers
+  uniqueIdentifier
+    3dabb5b6-6076-4ac9-86cd-47a54cdcbbaa
+dc=flat,dc=https://cloud,dc=services,dc=vnet
+  dc
+    flat
+  objectClass
+    dcObject
+    organizationalUnit
+  ou
+    flat
+dc=https://cloud,dc=services,dc=vnet
+  dc
+    https://cloud
+  labeledURI
+    https://privacy.org pp
+  o
+    https://cloud
+  objectClass
+    dcObject
+    labeledURIObject
+    organization
+dc=ordered,dc=https://cloud,dc=services,dc=vnet
+  dc
+    ordered
+  objectClass
+    dcObject
+    organizationalUnit
+  ou
+    ordered
+o=uva.research,dc=ordered,dc=https://cloud,dc=services,dc=vnet
+  businessCategory
+    uva.tag_uva
+  description
+    University of Amsterdam Research - Urban Crowd Control
+  displayName
+    UVA UCC research
+  labeledURI
+    https://sbs.scz-vm.net/api/images/collaborations/e1881a37-4a70-4202-91d5-3acefbd223d6 logo
+    https://sbs.scz-vm.net/collaborations/2 sbs_url
+  mail
+    sarah@uva.org
+  o
+    uva.research
+  objectClass
+    extensibleObject
+    organization
+    top
+  uniqueIdentifier
+    68983158-e314-4d49-98a5-f166285d7509
+ou=Groups,dc=flat,dc=https://cloud,dc=services,dc=vnet
+  objectClass
+    organizationalUnit
+    top
+  ou
+    Groups
+ou=Groups,o=uva.research,dc=ordered,dc=https://cloud,dc=services,dc=vnet
+  objectClass
+    organizationalUnit
+    top
+  ou
+    Groups
+ou=People,dc=flat,dc=https://cloud,dc=services,dc=vnet
+  objectClass
+    organizationalUnit
+    top
+  ou
+    People
+ou=People,o=uva.research,dc=ordered,dc=https://cloud,dc=services,dc=vnet
+  objectClass
+    organizationalUnit
+    top
+  ou
+    People
+uid=peter,ou=People,dc=flat,dc=https://cloud,dc=services,dc=vnet
+  cn
+    urn:peter
+  displayName
+    Peter Doe
+  eduPersonScopedAffiliation
+    member@sram.surf.nl
+  eduPersonUniqueId
+    urn:peter
+  givenName
+    n/a
+  mail
+    peter@example.org
+  objectClass
+    eduPerson
+    inetOrgPerson
+    person
+    voPerson
+  sn
+    n/a
+  uid
+    peter
+  voPersonStatus
+    active
+uid=peter,ou=People,o=uva.research,dc=ordered,dc=https://cloud,dc=services,dc=vnet
+  cn
+    urn:peter
+  displayName
+    Peter Doe
+  eduPersonScopedAffiliation
+    member@sram.surf.nl
+  eduPersonUniqueId
+    urn:peter
+  givenName
+    n/a
+  mail
+    peter@example.org
+  objectClass
+    eduPerson
+    inetOrgPerson
+    person
+    voPerson
+  sn
+    n/a
+  uid
+    peter
+  voPersonStatus
+    active
+uid=roger,ou=People,dc=flat,dc=https://cloud,dc=services,dc=vnet
+  cn
+    urn:roger
+  displayName
+    Roger Doe
+  eduPersonScopedAffiliation
+    member@sram.surf.nl
+  eduPersonUniqueId
+    urn:roger
+  givenName
+    n/a
+  mail
+    roger@example.org
+  objectClass
+    eduPerson
+    inetOrgPerson
+    person
+    voPerson
+  sn
+    n/a
+  uid
+    roger
+  voPersonStatus
+    active
+uid=roger,ou=People,o=uva.research,dc=ordered,dc=https://cloud,dc=services,dc=vnet
+  cn
+    urn:roger
+  displayName
+    Roger Doe
+  eduPersonScopedAffiliation
+    member@sram.surf.nl
+  eduPersonUniqueId
+    urn:roger
+  givenName
+    n/a
+  mail
+    roger@example.org
+  objectClass
+    eduPerson
+    inetOrgPerson
+    person
+    voPerson
+  sn
+    n/a
+  uid
+    roger
+  voPersonStatus
+    active
+uid=sarah,ou=People,dc=flat,dc=https://cloud,dc=services,dc=vnet
+  cn
+    urn:sarah
+  displayName
+    Sarah Cross
+  eduPersonScopedAffiliation
+    member@sram.surf.nl
+  eduPersonUniqueId
+    urn:sarah
+  givenName
+    n/a
+  mail
+    sarah@uva.org
+  objectClass
+    eduPerson
+    inetOrgPerson
+    ldapPublicKey
+    person
+    voPerson
+  sn
+    n/a
+  sshPublicKey
+    some-lame-key
+  uid
+    sarah
+  voPersonStatus
+    active
+uid=sarah,ou=People,o=uva.research,dc=ordered,dc=https://cloud,dc=services,dc=vnet
+  cn
+    urn:sarah
+  displayName
+    Sarah Cross
+  eduPersonScopedAffiliation
+    member@sram.surf.nl
+  eduPersonUniqueId
+    urn:sarah
+  givenName
+    n/a
+  mail
+    sarah@uva.org
+  objectClass
+    eduPerson
+    inetOrgPerson
+    ldapPublicKey
+    person
+    voPerson
+  sn
+    n/a
+  sshPublicKey
+    some-lame-key
+  uid
+    sarah
+  voPersonStatus
+    active
