@@ -21,6 +21,7 @@ mysqldump --host="{{ db_host }}" \
           --single-transaction \
           --set-charset --create-options \
           --routines --add-drop-table \
+          --no-tablespaces \
           --disable-keys --extended-insert \
           --databases "{{ sbs_db_name }}" \
     > "${BACKUP_FILE}"
