@@ -54,7 +54,10 @@ To get started, do the following:
 
 - Install required ansible modules
 
-    `ansible-galaxy install -r requirements.yml`
+    ```
+    ansible-galaxy install -r requirements.yml
+    ansible-galaxy collection install -r requirements.yml
+    ```
 
 - Set up the containers and start the deploy:
 
