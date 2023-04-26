@@ -34,4 +34,3 @@
       rm -rf alternatives.log* daemon.log* debug* \
              mail* messages* slapd.log* user.log* \
              private
-    warn: false
