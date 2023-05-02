@@ -8,6 +8,8 @@ server {
     root /opt/sbs/sbs/client/build;
 
     add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; frame-ancestors 'none'; form-action 'self'; style-src 'self' 'unsafe-inline' fonts.googleapis.com fonts.gstatic.com; font-src 'self' 'unsafe-inline' fonts.googleapis.com fonts.gstatic.com; img-src 'self' data:; block-all-mixed-content";
+    # workaround for CVE-2023-30861
+    add_header Vary "Cookie";
 
     gzip  on;
     gzip_min_length 1000;
