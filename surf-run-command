@@ -2,6 +2,9 @@
 # run command on all specified hosts
 set -e
 
+DIR=$(dirname $0)
+cd $DIR
+
 ARG=${1#--}
 if [ "$ARG" = "bhr" -o "$ARG" = "beheer" ]
 then
@@ -25,10 +28,11 @@ else
 fi
 shift
 
-if [ "$#" -lt 2 ]
+yes=0
+if [ "$1" = "-y" ]
 then
-	echo "Please specify a host selector (i.e., 'all') and a command"
-	exit 1
+	yes=1
+	shift
 fi
 
 root=
@@ -38,19 +42,28 @@ then
 	shift
 fi
 
+if [ "$#" -lt 2 ]
+then
+	echo "Please specify a host selector (i.e., 'all') and a command"
+	exit 1
+fi
+
 host=$1
 cmd=$2
 
-echo -n "Will run '$cmd' on host '$ENV/$host'"
-if [ -n "$root" ]
+if [ "$yes" == "0" ]
 then
-	echo -n " as root"
+    echo -n "Will run '$cmd' on host '$ENV/$host'" >&2
+    if [ -n "$root" ]
+    then
+        echo -n " as root" >&2
+    fi
+    echo >&2
+    echo -n "Press enter to continue"  >&2
+    read
+    echo
 fi
-echo
-echo -n "Press enter to continue"
-read
-echo
 
-ansible -v -i $CONFDIR $root "$host" -m command -a "$cmd"
+ansible -v -i ${CONFDIR}/inventory $root "$host" -m command -a "$cmd"
 
 exit 0
