@@ -2,6 +2,7 @@
 import sys
 import os
 import json
+import yaml
 
 import ansible.constants
 import ansible.cli
@@ -47,6 +48,9 @@ data = loader.load_from_file(filename)
 # and print
 if variable is None:
     print(json.dumps(dict(data), indent=4, cls=AnsibleVaultEncoder))
+elif isinstance(data[variable], dict):
+    decoded_data = json.loads(json.dumps(data[variable], indent=4, cls=AnsibleVaultEncoder))
+    print(yaml.dump(decoded_data, default_style='|'))
 else:
     print(data[variable])
 

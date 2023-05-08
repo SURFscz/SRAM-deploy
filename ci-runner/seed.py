@@ -10,6 +10,7 @@ from flask import Flask
 from flask_migrate import Migrate
 from secrets import token_urlsafe
 from sqlalchemy import text
+from sqlalchemy.exc import OperationalError
 from munch import munchify
 
 if "/opt/sbs/sbs" not in sys.path:
@@ -17,7 +18,7 @@ if "/opt/sbs/sbs" not in sys.path:
 
 from server.db.audit_mixin import metadata
 from server.db.db import db, db_migrations
-from server.db.domain import User, Organisation, OrganisationMembership, Service, Collaboration,     CollaborationMembership, SshKey, Aup, SchacHomeOrganisation
+from server.db.domain import User, Organisation, OrganisationMembership, Service, Collaboration, CollaborationMembership, SshKey, Aup, SchacHomeOrganisation
 from server.tools import read_file
 
 config_file_location = os.environ.get("CONFIG", "config/config.yml")
@@ -36,7 +37,8 @@ result = None
 with app.app_context():
     while result is None:
         try:
-            result = db.engine.execute(text("SELECT 1"))
+            with db.engine.connect() as conn:
+                result = conn.execute(text("SELECT 1"))
         except OperationalError:
             logger.info("Waiting for the database...")
             time.sleep(1)

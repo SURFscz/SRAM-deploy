@@ -7,3 +7,7 @@ firewall_v4_incoming:
 
 pam_host: "0.0.0.0"
 pam_clients_port: 8087
+
+# LDAP services monitor
+ldap_monitor_service: "https://cloud"
+ldap_monitor_reference: "cloud_ref"

@@ -6,24 +6,12 @@
     force: yes
   register: apt_sources
 
-- name: set default release
-  template:
-    src: 00-scz-release.j2
-    dest: /etc/apt/apt.conf.d/00-scz-release
-  register: apt_default_release
-
-- name: remove backports sources.list
-  file:
-    path: "/etc/apt/sources.list.d/backports.list"
-    state: "absent"
-
 # we need to do this manually, because ansible's apt module doesn't handle the default-release
 # setting correctly
 - name: Update cache
   command:
     cmd: apt-get update
-    warn: false
-  when: apt_default_release.changed or apt_sources.changed
+  when: apt_sources.changed
 
 - name: regularly update package lists
   copy:
@@ -66,6 +54,7 @@
       - "net-tools"
       - "netcat"
       - "parted"
+      - "python3"
       - "python3-apt"
       - "python3-venv"
       - "rsyslog"

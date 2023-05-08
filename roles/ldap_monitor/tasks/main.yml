@@ -40,6 +40,11 @@
     - ldifchecksum.py
     - ldifparser.py
 
+- name: Copy reference
+  copy:
+    src: "{{inventory_dir}}/files/{{ldap_monitor_reference}}"
+    dest: "{{ ldap_monitor_dir }}/{{ldap_monitor_reference}}"
+
 - name: Copy monitor service files
   template:
     src: "{{item}}.j2"

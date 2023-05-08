@@ -53,6 +53,12 @@ jobs:
           git clone https://github.com/dw/mitogen.git ~/mitogen
           cat docker/hosts | sudo tee -a /etc/hosts
 
+      # Useful for debugging
+      - name: Show versions
+        run: |
+          python3 --version
+          ansible --version
+
       # apparmor is by default enabled for binaries _in_ the containers and is restricting
       # mysql from reading tls keys
       - name: Disable apparmor

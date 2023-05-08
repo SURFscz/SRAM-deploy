@@ -1,39 +1,5 @@
 ---
 
-# TODO: remove this in v16
-- name: "Remove node repository"
-  apt_repository:
-    repo: "deb https://deb.nodesource.com/node_12.x buster main"
-    state: "absent"
-
-- name: "Remove node repository key"
-  apt_key:
-    id: "9FD3B784BC1C6FC31A8A0A1C1655A0AB68576280"
-    state: "absent"
-
-- name: "Remove Apache config"
-  file:
-    path: "/etc/apache2/sites-enabled/sbs.conf"
-    state: "absent"
-
-- name: "Remove Apache"
-  apt:
-    state: "absent"
-    purge: True
-    name:
-      - libapache2-mod-auth-openidc
-      - libapache2-mod-wsgi-py3
-      - apache2
-      - apache2-bin
-      - apache2-data
-      - apache2-utils
-
-- name: "Remove SBS wsgi file"
-  file:
-    path: "{{ sbs_work_dir }}/sbs-api.wsgi"
-    state: "absent"
-
-
 - name: "Install required packages"
   apt:
     state: "latest"
