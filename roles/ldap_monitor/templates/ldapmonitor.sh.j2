@@ -30,8 +30,8 @@ ldapsearch -Y EXTERNAL -Q -H ldapi://%2frun%2fslapd%2fldapi -LLL -o ldif-wrap=no
     >> $TMPFILE
 
 # LDIF
-ldapsearch -Y EXTERNAL -Q -H ldapi://%2frun%2fslapd%2fldapi -LLL -o ldif-wrap=no -b "dc=${SERVICE},dc=services,dc=vnet" \
-    -D "cn=admin,dc=${SERVICE},dc=services,dc=vnet" -w ${PASSWD} -s sub '(objectclass=*)' '*' \
+ldapsearch -H ldapi://%2frun%2fslapd%2fldapi -LLL -o ldif-wrap=no -b "dc=${SERVICE},{{services_ldap.basedn}}" \
+    -D "cn=admin,dc=${SERVICE},{{services_ldap.basedn}}" -w ${PASSWD} -s sub '(objectclass=*)' '*' \
     | {{ ldap_monitor_dir }}/ldifparser.py \
     > $LDIFTMP
 echo $(diff -y --suppress-common-lines $REFERENCE $LDIFTMP | wc -l) >> $TMPFILE
