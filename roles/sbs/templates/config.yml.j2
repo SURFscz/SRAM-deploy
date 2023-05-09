@@ -213,20 +213,10 @@ mfa_sso_time_in_minutes: {{sbs_mfa_sso_minutes}}
 mfa_fallback_enabled: {{sbs_mfa_fallback_enabled}}
 
 # Lower case entity ID's allowed skipping MFA
-# TODO: fix this
 mfa_idp_allowed: {{sbs_mfa_idp_allowed}}
-#{% for idp in sbs_mfa_idp_allowed %}
-#  - schac_home: "{{ idp.schac_home }}"
-#    entity_id: "{{ idp.entity_id }}"
-#{% endfor %}
 
 # Lower case schachome organisations / entity ID's where SURFSecure ID is used for step-up
-# TODO: fix this
 ssid_identity_providers: {{sbs_ssid_identity_providers}}
-#{% for idp in sbs_ssid_identity_providers %}
-#  - schac_home: "{{ idp.schac_home }}"
-#    entity_id: "{{ idp.entity_id }}"
-#{% endfor %}
 
 ssid_config_folder: saml
 
