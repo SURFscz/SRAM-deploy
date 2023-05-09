@@ -13,9 +13,9 @@ server {
     gzip_min_length 1000;
     gzip_proxied any;
     gzip_types
-      text/css
-      text/javascript
-      application/javascript;
+        text/css
+        text/javascript
+        application/javascript;
 
     location / {
         try_files $uri @index;
