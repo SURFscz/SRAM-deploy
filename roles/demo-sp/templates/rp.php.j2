@@ -1,4 +1,5 @@
 <?php
+session_set_cookie_params(["SameSite" => "None"]);
 require '{{ demosp_dir}}/vendor/autoload.php';
 use Jumbojett\OpenIDConnectClient;
 
