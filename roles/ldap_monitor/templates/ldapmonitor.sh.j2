@@ -26,7 +26,7 @@ ldapsearch -Y EXTERNAL -Q -H ldapi://%2frun%2fslapd%2fldapi -LLL -o ldif-wrap=no
 
 # contextCSN
 ldapsearch -Y EXTERNAL -Q -H ldapi://%2frun%2fslapd%2fldapi -LLL -o ldif-wrap=no -b "{{services_ldap.basedn}}" \
-    -s base 'contextCSN' | grep '^contextCSN' \
+    -s base 'contextCSN' | grep '^contextCSN: .*#000#' \
     >> $TMPFILE
 
 # LDIF
