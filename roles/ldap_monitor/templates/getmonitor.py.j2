@@ -10,7 +10,9 @@ def get(command):
             time = f.readline()
             hash = f.readline()
             csn = f.readline()
-            ldif = f.readline()
+            while ldif := f.readline():
+                if "contextCSN" not in ldif:
+                    break
             if command == 'time':
                 return time.strip()
             elif command == 'hash':
