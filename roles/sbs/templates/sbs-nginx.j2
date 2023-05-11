@@ -21,6 +21,10 @@ server {
         try_files $uri @index;
     }
 
+    location /static {
+        add_header Cache-Control "max-age=3600, public";
+    }
+
     location @index {
         rewrite ^ /index.html;
     }
