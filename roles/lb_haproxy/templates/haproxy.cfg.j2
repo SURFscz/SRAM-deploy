@@ -34,7 +34,8 @@ global
 defaults
     log     global
     option  dontlognull
-    timeout connect 4s
+    timeout connect 1s
+    timeout check 1s
     timeout client  {{haproxy_timeout_client}}
     timeout server  {{haproxy_timeout_server}}
     timeout tunnel  18h # websocket; timeout should > sbs session timeout
