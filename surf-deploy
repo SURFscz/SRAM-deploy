@@ -150,6 +150,7 @@ echo "Deploying to SURfscz $ENV..."
 echo "Log file: $LOG"
 echo "Will execute: $CMD"
 
+export ANSIBLE_FORCE_COLOR=True
 stdbuf --output=0 --error=0 $CMD 2>&1 | tee -a "$LOG"
 
 exit 0

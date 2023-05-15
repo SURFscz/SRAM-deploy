@@ -123,7 +123,7 @@ $metadata['https://proxy.acc.sram.eduteams.org/metadata/backend.xml'] = [
             'en' => 'https://www.surf.nl/en/surf-research-access-management-collaborating-easily-and-securely-in-research-services',
         ],
         'PrivacyStatementURL' => [
-            'en' => 'https://wiki.surfnet.nl/display/SRAM/Privacy+Policy',
+            'en' => 'https://edu.nl/fcgbd',
         ],
         'Logo' => [
             [
@@ -221,7 +221,7 @@ $metadata['https://proxy.sram.surf.nl/metadata/backend.xml'] = [
             'en' => 'https://www.surf.nl/en/surf-research-access-management-collaborating-easily-and-securely-in-research-services',
         ],
         'PrivacyStatementURL' => [
-            'en' => 'https://wiki.surfnet.nl/display/SRAM/Privacy+Policy',
+            'en' => 'https://edu.nl/fcgbd',
         ],
         'Logo' => [
             [
