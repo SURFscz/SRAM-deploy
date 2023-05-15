@@ -133,13 +133,12 @@ backend {{host.name}}
     option {{option}} {{value}}
 {% endfor %}
 {% endif %}
-    cookie SERVERID insert indirect maxidle 60m secure httponly attr "SameSite=None"
     {% for be_server in host.backend_hosts -%}
     {% set colour = "blue"  if "blue"  in groups and be_server in groups["blue"]  else
                     "green" if "green" in groups and be_server in groups["green"] else
                     "server" -%}
     {% set server_name = "{}-{}".format(colour, loop.index) -%}
-    server {{server_name}} {{be_server}}:{{host.backend_port}} ssl check cookie {{be_server}}
+    server {{server_name}} {{be_server}}:{{host.backend_port}} ssl check
     {% endfor %}
 
 {% endfor %}
