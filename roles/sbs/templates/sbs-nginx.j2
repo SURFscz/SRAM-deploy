@@ -30,6 +30,7 @@ server {
     }
 
     location ~ /(api|pam-weblogin|flasgger_static|swagger|health|config|info) {
+        add_header Cache-Control "nocache, private";
         include proxy_params;
         proxy_pass http://127.0.0.1:8080;
     }
