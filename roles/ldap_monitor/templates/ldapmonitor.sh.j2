@@ -21,7 +21,7 @@ date --utc +"%s" >> $TMPFILE
 
 # checksum
 ldapsearch -Y EXTERNAL -Q -H ldapi://%2frun%2fslapd%2fldapi -LLL -o ldif-wrap=no -b "{{services_ldap.basedn}}" \
-    -s sub '(objectclass=*)' '*' '+' | {{ ldap_monitor_dir }}/ldifchecksum.py \
+    -s sub '(objectclass=*)' '*' '+' | grep -v '^modifiersName:' | {{ ldap_monitor_dir }}/ldifchecksum.py \
     >> $TMPFILE
 
 # last contextCSN #000#
