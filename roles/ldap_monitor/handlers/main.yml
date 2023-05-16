@@ -3,7 +3,7 @@
   systemd:
     name: "sram-ldapmonitor.timer"
     enabled: true
-    state: "started"
+    state: "restarted"
     daemon_reload: true
 
 - name: "restart zabbix-agent"
