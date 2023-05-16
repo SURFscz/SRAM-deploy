@@ -2,8 +2,7 @@
 Description=LDAP Monitor timer
 
 [Timer]
-OnBootSec=30
-OnUnitActiveSec=30
+OnCalendar=*-*-* *:*/5:00
 
 [Install]
 WantedBy=multi-user.target
