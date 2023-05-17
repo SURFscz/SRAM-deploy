@@ -15,4 +15,3 @@ collections:
 
 roles:
   - name: "monolithprojects.github_actions_runner"
-    version: ">=1.18.0,<2.0"
