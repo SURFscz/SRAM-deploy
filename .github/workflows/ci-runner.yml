@@ -60,7 +60,7 @@ jobs:
         run: >
           ansible -v -i ./environments/ci/inventory --become "all" -m command -a "/bin/sh -c '
             echo ====journal===;
-            journalctl -n100;
+            journalctl -n1000;
             if [ -e /var/log/apache2/error.log ]; then
               echo ===apache errorlog===;
               cat /var/log/apache2/error.log;
@@ -69,8 +69,8 @@ jobs:
               echo ===sbs log===;
               cat /opt/sbs/log/sbs_debug.log
             fi;
-            echo ===apt log===; cat /var/log/apt/term.log
-            echo ===netstat===; netstat -lnp
+            echo ===apt log===; cat /var/log/apt/term.log;
+            echo ===netstat===; netstat -lnp;
           '"
         if: failure()
 
