@@ -98,12 +98,20 @@ jobs:
           SKIP_ANSIBLE: 1
         run: "./start-vm"
 
+      # Clean  up old docker cruft
+      - name: Clean  up old docker cruft
+        run: |
+          docker system prune --all -f
+          docker image  prune --all -f
+          docker volume prune --all -f
+
       # Get scz-base ImageID
       - name: Get scz-base ImageID
         id: scz-base-id
         run: >
           ID=$(docker image list scz-base -q) &&
           echo "ID=$ID" >> $GITHUB_OUTPUT
+
 
       # Save docker cache
       - name: Save docker cache
