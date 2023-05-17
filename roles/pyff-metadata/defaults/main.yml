@@ -39,6 +39,12 @@ metadata_idps_source_dir: "/opt/metadata-src"
 metadata_idps_feed: "{{ metadata_basedir }}/idps_feed.fd"
 metadata_idps_file: "idps.xml"
 
+metadata_edugain_source: "https://metadata.surfconext.nl/edugain-downstream-idp.xml"
+metadata_edugain_cert: "{{metadata_idps_cert}}"
+metadata_edugain_xrd: "{{metadata_basedir}}/certs/edugain.xrd"
+metadata_edugain_feed: "{{ metadata_basedir }}/edugain_feed.fd"
+metadata_edugain_file: "edugain.xml"
+
 metadata_proxy_frontend_source: "https://satosa.local/frontend.xml"
 metadata_proxy_frontend_feed: "{{ metadata_basedir }}/frontend_feed.fd"
 metadata_proxy_frontend_file: "proxy_idp.xml"

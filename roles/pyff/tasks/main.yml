@@ -27,7 +27,7 @@
   with_items:
     - { path: "{{pyff_project_dir}}",  group: "root",           mode: "0755" }
     - { path: "{{pyff_metadata_dir}}", group: "{{pyff_group}}", mode: "0775" }
-    - { path: "{{pyff_cert_dir}}",     group: "{{pyff_group}}", mode: "0750" }
+    - { path: "{{pyff_cert_dir}}",     group: "{{pyff_group}}", mode: "0755" }
 
 # requirements.txt can be generated from virtualenv/bin/pip freeze
 - name: Generate requirements.txt.j2 from template

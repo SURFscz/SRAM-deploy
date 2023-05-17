@@ -20,6 +20,9 @@
         </xsl:copy>
     </xsl:template>
 
+    <!-- Remove all SPSSODescriptor -->
+    <xsl:template match="md:SPSSODescriptor"/>
+
 {% if metadata_registration_authority is defined %}
     <!-- Add RegistrationInfo -->
     <xsl:template match="md:Extensions">

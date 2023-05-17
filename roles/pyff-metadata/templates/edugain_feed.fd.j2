@@ -1,0 +1,14 @@
+- load:
+   - {{metadata_edugain_xrd}}
+   - {{metadata_idps_source_dir}}
+- select:
+- xslt:
+    stylesheet: "{{metadata_basedir}}/transform.xslt"
+- finalize:
+    cacheDuration: P7D
+    validUntil: P14D
+- sign:
+    key: "{{pyff_cert_dir}}/signing.key"
+    cert: "{{pyff_cert_dir}}/signing.crt"
+- publish: "{{metadata_target_dir}}/{{metadata_edugain_file}}.new"
+- stats

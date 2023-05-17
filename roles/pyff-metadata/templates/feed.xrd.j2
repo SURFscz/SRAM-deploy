@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <XRDS xmlns="http://docs.oasis-open.org/ns/xri/xrd-1.0">
     <XRD>
-        <Subject>{{metadata_idps_source}}</Subject>
-        <Link rel="urn:oasis:names:tc:SAML:2.0:metadata" href="{{metadata_idps_source}}">
+        <Subject>{{item.source}}</Subject>
+        <Link rel="urn:oasis:names:tc:SAML:2.0:metadata" href="{{item.source}}">
             <Title>SURFconext</Title>
             <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
                 <ds:X509Data>
-                    <ds:X509Certificate>{{ metadata_idps_cert | barepem }}</ds:X509Certificate>
+                    <ds:X509Certificate>{{ item.cert | barepem }}</ds:X509Certificate>
                 </ds:X509Data>
           </ds:KeyInfo>
         </Link>
