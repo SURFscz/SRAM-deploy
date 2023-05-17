@@ -101,9 +101,9 @@ jobs:
       # Clean  up old docker cruft
       - name: Clean  up old docker cruft
         run: |
-          docker system prune --all -f
-          docker image  prune --all -f
-          docker volume prune --all -f
+          docker system prune -f --all
+          docker image  prune -f --all
+          docker volume prune -f
 
       # Get scz-base ImageID
       - name: Get scz-base ImageID
