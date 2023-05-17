@@ -118,7 +118,7 @@ feature:
   mock_scim_enabled: {{ sbs_mock_scim_enabled }}
 
 metadata:
-  idp_url: "https://meta.{{base_domain}}/metadata/edugain.xml"
+  idp_url: "{{sbs_idp_metadata_url}}"
   parse_at_startup: True
 
 service_bus:
