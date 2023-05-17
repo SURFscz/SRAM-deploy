@@ -160,6 +160,8 @@ then
 else
     ansible-galaxy install -r requirements.yml
     echo "Starting ansible"
+
+    export ANSIBLE_FORCE_COLOR=True
     time \
     ansible-playbook provision.yml \
         -i $ENV_DIR/inventory \
