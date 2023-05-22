@@ -12,6 +12,7 @@
     <xsl:template match="@cacheDuration"/>
     <xsl:template match="@xml:base"/>
     <xsl:template match="ds:Signature"/>
+    <xsl:template match="md:Extensions/mdrpi:RegistrationInfo"/>
 
     <!-- Identity transform -->
     <xsl:template match="@* | node()">
@@ -21,12 +22,25 @@
     </xsl:template>
 
 {% if metadata_registration_authority is defined %}
-    <!-- Add RegistrationInfo -->
-    <xsl:template match="md:Extensions">
-      <xsl:copy>
-        <xsl:copy-of select="@* | node()"/>
-           <mdrpi:RegistrationInfo xmlns:mdrpi="urn:oasis:names:tc:SAML:metadata:rpi" registrationAuthority="{{metadata_registration_authority}}"/>
-      </xsl:copy>
+    <!-- add <md:Extensions> if not present -->
+    <xsl:template match="md:EntityDescriptor[not(md:Extensions)]">
+        <xsl:copy>
+            <xsl:copy-of select="@*"/>
+            <md:Extensions>
+                <mdrpi:RegistrationInfo xmlns:mdrpi="urn:oasis:names:tc:SAML:metadata:rpi" registrationAuthority="{{metadata_registration_authority}}"/>
+            </md:Extensions>
+            <xsl:apply-templates/>
+        </xsl:copy>
+    </xsl:template>
+
+    <!-- add Registrationinfo to the existing md:Extensions element directly under the EntityDescriptor -->
+    <xsl:template match="md:EntityDescriptor/md:Extensions">
+        <xsl:copy>
+            <xsl:copy-of select="@*"/>
+            <mdrpi:RegistrationInfo xmlns:mdrpi="urn:oasis:names:tc:SAML:metadata:rpi" registrationAuthority="{{metadata_registration_authority}}"/>
+            <xsl:apply-templates/>
+        </xsl:copy>
     </xsl:template>
 {% endif %}
+
 </xsl:stylesheet>
