@@ -5,3 +5,7 @@ testidp_group: "sram-testidp"
 testidp_dir: "/opt/{{testidp_name}}"
 testidp_html_dir: "{{testidp_dir}}/html"
 testidp_ip_allow: ["all"]
+
+testidp_employee_passwd: "employee"
+testidp_student_passwd: "student"
+testidp_extra_users: []

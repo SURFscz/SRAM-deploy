@@ -31,8 +31,8 @@
     mode: "0775"
 
 - name: Copy configuration files
-  ansible.builtin.copy:
-    src: "{{inventory_dir}}/files/monitoring-{{item}}"
+  ansible.builtin.template:
+    src: "{{inventory_dir}}/files/monitoring-{{item}}.j2"
     dest: "{{sram_monitor_dir}}/{{item}}"
   with_items:
     - acc.yml
