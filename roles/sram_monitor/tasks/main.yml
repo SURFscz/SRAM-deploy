@@ -20,7 +20,7 @@
   import_role:
     name: "python-venv"
   vars:
-    python_venv_dir: "{{ sram_monitor_dir }}"
+    python_venv_dir: "{{ sram_monitor_dir }}/venv"
     python_venv_requirements: "{{ sram_monitor_dir }}/requirements.txt"
 
 - name: "Ensure that sram_monitor_status_dir exist"
