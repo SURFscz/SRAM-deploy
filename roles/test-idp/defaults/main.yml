@@ -4,3 +4,4 @@ testidp_user: "sram-testidp"
 testidp_group: "sram-testidp"
 testidp_dir: "/opt/{{testidp_name}}"
 testidp_html_dir: "{{testidp_dir}}/html"
+testidp_ip_allow: ["all"]
