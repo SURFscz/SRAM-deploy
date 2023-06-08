@@ -1,5 +1,5 @@
-- load:
-  - "{{metadata_proxy_backend_source}}"
+- load fail_on_error True:
+    - "{{metadata_proxy_backend_source}}"
 - select
 - xslt:
     stylesheet: "{{metadata_basedir}}/transform_proxy.xslt"
