@@ -18,7 +18,7 @@ Environment="CONFIG=config/config.yml"
 Environment="REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt"
 
 Type=simple
-ExecStart={{sbs_env_dir}}/bin/gunicorn --worker-class eventlet -w 1 -b127.0.0.1:8080 server.__main__:app
+ExecStart={{sbs_env_dir}}/bin/python -m server
 
 Restart=on-failure
 RestartSec=10

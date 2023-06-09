@@ -31,6 +31,11 @@ $metadata['https://test-idp.sram.surf.nl/saml/saml2/idp/metadata.php'] = [
             'class' => 'saml:PersistentNameID',
             'identifyingAttribute' => 'eduPersonPrincipalName',
         ],
+        11 => [
+            'class' => 'saml:SubjectID',
+            'identifyingAttribute' => 'uid',
+            'scopeAttribute' => 'schacHomeOrganization',
+        ],
         100 => [
             'class' => 'core:AttributeMap',
             'name2urn', 'name2oid', '%duplicate'

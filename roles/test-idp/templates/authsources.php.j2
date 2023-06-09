@@ -23,7 +23,7 @@ $config['example-userpass'] = [
         //'remember.username.enabled' => false,
         //'remember.username.checked' => false,
 
-        'student:student' => [
+        'student:{{testidp_student_passwd}}' => [
             'uid' => ['student'],
             'eduPersonPrincipalName' => 'student@test-idp.sram.surf.nl',
             'givenName' => 'Student',
@@ -36,7 +36,7 @@ $config['example-userpass'] = [
             'eduPersonScopedAffiliation' => ['member@test-idp.sram.surf.nl', 'student@test-idp.sram.surf.nl'],
             'eduPersonEntitlement' => ['urn:disk:100'],
         ],
-        'employee:employee' => [
+        'employee:{{testidp_employee_passwd}}' => [
             'uid' => ['employee'],
             'eduPersonPrincipalName' => 'employee@test-idp.sram.surf.nl',
             'givenName' => 'Employee',
@@ -49,4 +49,11 @@ $config['example-userpass'] = [
             'eduPersonScopedAffiliation' => ['member@test-idp.sram.surf.nl', 'employee@test-idp.sram.surf.nl'],
             'eduPersonEntitlement' => ['urn:disk:200'],
         ],
+{% for user in testidp_extra_users %}
+        '{{user.name}}:{{user.passwd}}' => [
+            {% for attr, val in user.attributes.items() %}
+                '{{attr}}' => {%if val is string%}'{{val}}'{%else%}{{val}}{%endif%},
+            {% endfor %}
+        ]
+{% endfor %}
     ];
