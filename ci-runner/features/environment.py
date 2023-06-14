@@ -19,11 +19,9 @@ def selenium_browser_chrome(context):
     options.add_argument("--disable-gpu")
     options.add_argument("start-maximized")
     options.add_argument("disable-infobars")
+    options.set_capability('goog:loggingPrefs', { 'browser':'ALL' })
 
-    caps = DesiredCapabilities.CHROME.copy()
-    caps['goog:loggingPrefs'] = { 'browser':'ALL' }
-
-    context.browser = Chrome(options=options, desired_capabilities=caps)
+    context.browser = Chrome(options=options)
     context.browser.implicitly_wait(3)
     context.wait = WebDriverWait(context.browser, timeout=3)
     send_command = ('POST', '/session/$sessionId/chromium/send_command')
