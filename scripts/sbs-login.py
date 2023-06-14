@@ -3,7 +3,7 @@
 import time
 import json
 import traceback
-from selenium.webdriver import Chrome, DesiredCapabilities
+from selenium.webdriver import Chrome
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support.expected_conditions import staleness_of, presence_of_element_located
@@ -19,11 +19,9 @@ class CustomChrome(Chrome):
 options = Options()
 options.add_argument('--headless')
 options.add_argument('ignore-certificate-errors')
+options.set_capability('goog:loggingPrefs', {'browser': 'ALL'})
 
-caps = DesiredCapabilities.CHROME.copy()
-caps['goog:loggingPrefs'] = {'browser': 'ALL'}
-
-browser = CustomChrome(options=options, desired_capabilities=caps)
+browser = CustomChrome(options=options)
 wait = WebDriverWait(browser, timeout=3)
 
 send_command = ('POST', '/session/$sessionId/chromium/send_command')
@@ -89,7 +87,7 @@ try:
     attributes = browser.find_elements(By.XPATH, "//table[@class='my-attributes']/*/*/*")
     # for a in attributes:
     #     print(f"a.text: {a.text}")
-    assert('SCZ Admin' in [a.text for a in attributes]), "No valid admin profile found"
+    assert ('SCZ Admin' in [a.text for a in attributes]), "No valid admin profile found"
     print(" - profile ok")
 
     # Clear all cookies
@@ -134,7 +132,7 @@ try:
     print(" - reached next page")
 
     # Assert 2fa page
-    # assert("2fa" in browser.current_url), "Error loading 2FA URL"
+    # assert ("2fa" in browser.current_url), "Error loading 2FA URL"
     # print(" - reached 2FA page")
 
     # Close browser
