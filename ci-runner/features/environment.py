@@ -1,8 +1,9 @@
 from behave import fixture, use_fixture
 
-from selenium.webdriver import Chrome, DesiredCapabilities
+from selenium.webdriver import Chrome
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.wait import WebDriverWait
+
 
 @fixture
 def selenium_browser_chrome(context):
@@ -19,11 +20,9 @@ def selenium_browser_chrome(context):
     options.add_argument("--disable-gpu")
     options.add_argument("start-maximized")
     options.add_argument("disable-infobars")
+    options.set_capability('goog:loggingPrefs', {'browser': 'ALL'})
 
-    caps = DesiredCapabilities.CHROME.copy()
-    caps['goog:loggingPrefs'] = { 'browser':'ALL' }
-
-    context.browser = Chrome(options=options, desired_capabilities=caps)
+    context.browser = Chrome(options=options)
     context.browser.implicitly_wait(3)
     context.wait = WebDriverWait(context.browser, timeout=3)
     send_command = ('POST', '/session/$sessionId/chromium/send_command')
@@ -34,11 +33,14 @@ def selenium_browser_chrome(context):
     # -- CLEANUP-FIXTURE PART:
     context.browser.quit()
 
+
 def before_feature(context, feature):
     use_fixture(selenium_browser_chrome, context)
 
+
 def before_scenario(context, scenario):
     context.browser.execute('SEND_COMMAND', dict(cmd='Network.clearBrowserCookies', params={}))
+
 
 def after_step(context, step):
     if step.status == "failed":
