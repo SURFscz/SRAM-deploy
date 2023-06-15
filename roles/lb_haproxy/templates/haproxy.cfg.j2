@@ -11,6 +11,7 @@ global
 
     # default is 16k, but increase because we have very large headers (feature-policy etc)
     tune.bufsize 65535
+    tune.maxrewrite 4096
 
     # Default SSL material locations
     ca-base /etc/ssl/certs
