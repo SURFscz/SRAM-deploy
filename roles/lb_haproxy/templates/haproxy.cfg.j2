@@ -85,7 +85,7 @@ frontend fe_https
 
     # insert strict CSP if none was set
     acl has_csp_header res.hdr(Content-Security-Policy) -m found
-    http-response set-header Content-Security-Policy "default-src 'self'; frame-src 'none'; form-action 'self' https://*.{{base_domain}}; frame-ancestors 'none'; block-all-mixed-content;" if !has_csp_header
+    http-response set-header Content-Security-Policy "default-src 'self'; base-uri 'self'; frame-src 'none'; form-action 'self' https://*.{{base_domain}}; frame-ancestors 'none'; block-all-mixed-content;" if !has_csp_header
 
     # insert strict Feature-Policy if none was set
     acl has_fp_header res.hdr(Permissions-Policy) -m found
