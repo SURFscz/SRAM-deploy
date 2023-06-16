@@ -7,7 +7,7 @@ server {
 
     root /opt/sbs/sbs/client/build;
 
-    add_header Content-Security-Policy "default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; frame-src 'none'; frame-ancestors 'none'; form-action 'self' http://*.test.sram.surf.nl; block-all-mixed-content";
+    add_header Content-Security-Policy "default-src 'self'; frame-src 'none'; form-action 'self' https://*.{{base_domain}}; frame-ancestors 'none'; block-all-mixed-content;";
 
     gzip  on;
     gzip_min_length 1000;
