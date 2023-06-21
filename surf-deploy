@@ -31,6 +31,13 @@ then
     ENV=prd
     CONFDIR=./environments/aws_prd/
     EXTRA="${EXTRA} --ask-vault-pass"
+    echo -n 'Are you sure you want to deploy to production?  Type "prod" to confirm: '
+    read confirm
+    if [ "$confirm" != "prod" ]
+    then
+        echo "Ok, exiting..."
+        exit 1
+    fi
     shift
 elif [ "$ARG" = "acc" ]
 then
