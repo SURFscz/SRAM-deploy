@@ -28,6 +28,14 @@ server {
     add_header Strict-Transport-Security "max-age=31536000";
 
     location ^~ /saml {
+        # only allow from trusted ips
+        allow 127.0.0.1;
+        allow ::1;
+{% for h in testidp_ip_allow %}
+        allow {{ h }};
+{% endfor %}
+        deny all;
+
         alias /opt/sram-testidp/simplesaml/public;
         index index.php;
 

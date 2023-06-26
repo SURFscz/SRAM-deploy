@@ -1,9 +1,9 @@
-- load:
-   - {{metadata_idps_xrd}}
-   - {{metadata_idps_source_dir}}
+- load fail_on_error True:
+    - {{metadata_idps_xrd}}
+    - {{metadata_idps_source_dir}}
 - select:
 {% for f in metadata_idps_filters %}
-  - "{{ f }}"
+    - "{{ f }}"
 {% endfor %}
 - xslt:
     stylesheet: "{{metadata_basedir}}/transform.xslt"
