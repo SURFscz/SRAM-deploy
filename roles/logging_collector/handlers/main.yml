@@ -5,16 +5,16 @@
 
 - name: restart journal-remote
   systemd:
-    name: "sram-remotejournal-{{item.key}}.service"
+    name: "sram-remotejournal-{{item.name}}.service"
     state: "restarted"
-  with_dict: "{{journal_upload_ports}}"
+  loop: "{{journal_remote_types}}"
 
 - name: restart journal-remote-socket
   systemd:
-    name: "sram-remotejournal-{{item.key}}.socket"
+    name: "sram-remotejournal-{{item.name}}.socket"
     state: "restarted"
     enabled: true
-  with_dict: "{{journal_upload_ports}}"
+  loop: "{{journal_remote_types}}"
 
 - name: enable vacuum job
   systemd:

@@ -5,6 +5,6 @@ Description=Vacuum Remote SRAM journals
 User=systemd-journal-remote
 Group=systemd-journal-remote
 Type=oneshot
-{% for name, _ in journal_upload_ports.items() %}
-ExecStart=/usr/bin/journalctl --vacuum-time={{ journal_keep_time }} -D /var/log/journal/{{ name }}
+{% for log in journal_remote_types %}
+ExecStart=/usr/bin/journalctl --vacuum-time={{ log.keep_time }} -D /var/log/journal/{{ log.name }}
 {% endfor %}
