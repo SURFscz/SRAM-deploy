@@ -1,12 +1,12 @@
 [Unit]
 Description=Journal Remote Sink Service
 Documentation=man:systemd-journal-remote(8) man:journal-remote.conf(5)
-Requires=sram-remotejournal-{{item.key}}.socket
+Requires=sram-remotejournal-{{item.name}}.socket
 
 [Service]
-ExecStart=/lib/systemd/systemd-journal-remote --listen-https=-3 --output={{journal_remote_dir}}/{{item.key}}/
+ExecStart=/lib/systemd/systemd-journal-remote --listen-https=-3 --output={{journal_remote_dir}}/{{item.name}}/
 LockPersonality=yes
-LogsDirectory=journal/{{item.key}}
+LogsDirectory=journal/{{item.name}}
 MemoryDenyWriteExecute=yes
 NoNewPrivileges=yes
 PrivateDevices=yes
@@ -35,4 +35,4 @@ StartLimitIntervalSec=60s
 LimitNOFILE=524288
 
 [Install]
-Also=sram-remotejournal-{{item.key}}.socket
+Also=sram-remotejournal-{{item.name}}.socket

@@ -10,7 +10,7 @@
     state: "stopped"
     enabled: false
     masked: true
-  with_items:
+  loop:
     - "socket"
     - "service"
 
@@ -27,7 +27,7 @@
     group: "{{journal_remote_group}}"
     mode: "{{item.mode}}"
   no_log: "{{sram_ansible_nolog}}"
-  with_items:
+  loop:
     - { name: "journal-ca.crt",     mode: "0644", content: "{{journal_ca.pub}}"    }
     - { name: "journal-server.crt", mode: "0644", content: "{{journal_server.pub}}"  }
     - { name: "journal-server.key", mode: "0640", content: "{{journal_server.priv}}" }
@@ -41,18 +41,18 @@
 
 - name: create journal dir
   file:
-    path: "{{journal_remote_dir}}/{{item.key}}"
+    path: "{{journal_remote_dir}}/{{item.name}}"
     state: "directory"
     owner: "systemd-journal-remote"
     group: "systemd-journal-remote"
     mode: "755"
-  with_dict: "{{journal_remote_types}}"
+  loop: "{{journal_remote_types}}"
 
 - name: install socket file
   template:
     src: "sram-remotejournal.socket.j2"
-    dest: "/etc/systemd/system/sram-remotejournal-{{item.key}}.socket"
-  with_dict: "{{journal_remote_types}}"
+    dest: "/etc/systemd/system/sram-remotejournal-{{item.name}}.socket"
+  loop: "{{journal_remote_types}}"
   notify:
     - "systemd daemon-reload"
     - "restart journal-remote-socket"
@@ -60,8 +60,8 @@
 - name: install service file
   template:
     src: "sram-remotejournal.service.j2"
-    dest: "/etc/systemd/system/sram-remotejournal-{{item.key}}.service"
-  with_dict: "{{journal_remote_types}}"
+    dest: "/etc/systemd/system/sram-remotejournal-{{item.name}}.service"
+  loop: "{{journal_remote_types}}"
   notify:
     - "systemd daemon-reload"
     - "restart journal-remote"
@@ -70,7 +70,7 @@
   template:
     src: "{{item}}.j2"
     dest: "/etc/systemd/system/{{item}}"
-  with_items:
+  loop:
     - sram-vacuum-journal.service
     - sram-vacuum-journal.timer
   notify:
