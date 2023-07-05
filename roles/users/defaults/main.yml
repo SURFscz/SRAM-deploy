@@ -1,0 +1,16 @@
+---
+role_to_groups:
+  admin:
+    - "systemd-journal"
+    - "adm"
+
+users:
+  - name: "Ms Default"
+    uid: "default"
+    roles:
+      - "admin"
+    groups:
+      - "sram"
+    pw_hash: "$6$rounds=656000$21qmPx9N/oLkywfs$ntLnyynoia6OnvZgYY0CH/ArRUaKTXD1Wu2dgfa7ccvgI7M4Fia\
+              Kq.JEfm3mfHZXsYsnjwtX3crRKAL1ilmbv/"
+    sshkey: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH0ld0NRKX01ajdjUgxW1/n63t92gjvO+CmUMhZDhEpx test"

@@ -31,8 +31,8 @@
   group:
     name: "{{item}}"
     state: present
-  with_items:
-    - "{{users|map(attribute='groups')|flatten|uniq}}"
+  loop: >
+    {{ (users|map(attribute='groups') + role_to_groups.values()|list) | flatten | unique }}
 
 - name: remove users
   user:
@@ -40,12 +40,15 @@
     state: absent
   with_items: "{{removed_users}}"
 
+# create a user with the following groups:
+# - the groups specified in the group files in the users variable
+# - for each role in the roles field, the groups specified in the role_to_groups variable
 - name: create users
   user:
     name: "{{item.uid}}"
     state: present
     group: "{{item.groups[0]}}"
-    groups: "{{item.groups}}"
+    groups: "{{ (item.groups + item.roles | map('extract', role_to_groups)) | flatten | unique }}"
     password: "{{item.pw_hash}}"
     shell: "/bin/bash"
     comment: "{{item.name}}"
