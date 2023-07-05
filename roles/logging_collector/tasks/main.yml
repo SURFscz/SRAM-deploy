@@ -19,6 +19,14 @@
     name: "{{journal_remote_group}}"
     state: "present"
 
+- name: install permissions for remote journals
+  template:
+    src: "remotejournal-permissions.conf.j2"
+    dest: "/etc/tmpfiles.d/sram-remote-journal.conf"
+  notify:
+    - "reset journal-remote permissions"
+    - "restart journal-remote"
+
 - name: install journal certs
   copy:
     dest: "{{ssl_certs_dir}}/{{item.name}}"

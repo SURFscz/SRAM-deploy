@@ -1,0 +1,11 @@
+# set correct permissions for journal
+{% for env, groups in journal_log_groups.items() %}
+{% for g in groups %}
+a+ /var/log/journal/{{env}}             - - - -  d:group:{{g}}:r-x,group:{{g}}:r-x
+a+ /var/log/journal/{{env}}/*.journal*  - - - -  group:{{g}}:r--
+{% endfor %}
+a+ /var/log/journal/{{env}}             - - - -  d:other::---
+a+ /var/log/journal/{{env}}/*.journal*  - - - -  r--,other::---
+
+{% endfor %}
+
