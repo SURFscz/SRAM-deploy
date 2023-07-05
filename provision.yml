@@ -56,10 +56,10 @@
     - { role: basic,          tags: ['common','basic']                               }
     - { role: certificates,   tags: ['common','cert']                                }
     - { role: apt,            tags: ['common','apt']                                 }
+    - { role: users,          tags: ['common','users']                               }
     - { role: logging,        tags: ['common','logging']                             }
     - { role: firewall,       tags: ['common','firewall'],     when: "not is_docker" }
     - { role: ntp,            tags: ['common','ntp']                                 }
-    - { role: users,          tags: ['common','users']                               }
     - { role: aws-cleanup,    tags: ['common','clean']                               }
     - { role: mail,           tags: ['common','mail']                                }
     - { role: backups,        tags: ['common','backups']                             }

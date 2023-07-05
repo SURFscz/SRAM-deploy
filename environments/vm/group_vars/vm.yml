@@ -1,6 +1,8 @@
 ---
 sudo_groups:
-  - sudo_test
+  - "sudo_test"
+log_groups:
+  - "log_reader"
 
 ldap_admins: ldap_vm
 

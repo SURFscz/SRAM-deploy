@@ -1,0 +1,6 @@
+# set correct permissions for journal
+{% for g in log_groups %}
+a+ /var/log/journal                - - - -  d:group::r-x,d:group:{{g}}:r-x,group::r-x,group:{{g}}:r-x
+a+ /var/log/journal/%m             - - - -  d:group:{{g}}:r-x,group:{{g}}:r-x
+a+ /var/log/journal/%m/*.journal*  - - - -  group:{{g}}:r--
+{% endfor %}

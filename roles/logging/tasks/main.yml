@@ -7,6 +7,14 @@
     - "restart journald"
     - "reset journal permissions"
 
+- name: install permissions for journal
+  template:
+    src: "journal-permissions.conf.j2"
+    dest: "/etc/tmpfiles.d/sram-journal.conf"
+  notify:
+    - "restart journald"
+    - "reset journal permissions"
+
 - name: install required packages
   apt:
     state: "present"
