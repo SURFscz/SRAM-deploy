@@ -1,0 +1,120 @@
+#!/bin/bash
+set -e
+
+# helper script to show remote sram logs
+# usage: sram-logs.sh <environment> [-f] [-S <date>] [-T <date>] [-u <unit>] [-H <host>] [-h] [-v]
+
+# parse command line argument with:
+# - first argument is the sram-environment
+ENV=$1
+shift
+
+# env can only be one of the following:
+# - tst/test --> normalize to tst
+# - acc/acceptance --> normalize to acc
+# - prd/prod --> normalize to prd
+# - bhr --> normalize to bhr
+case $ENV in
+    tst|test)
+        ENV=tst
+        ;;
+    acc|acceptance)
+        ENV=acc
+        ;;
+    prd|prod)
+        ENV=prd
+        ;;
+    bhr)
+        ENV=bhr
+        ;;
+    *)
+        echo "Invalid environment: $ENV" >&2
+        exit 1
+        ;;
+esac
+
+
+# - optional flag -f for follow
+# - optional flag -S <date>
+# - optional flag -T <date>
+# - optional flag -u <unit>
+# - optional flag -H <host>
+# - optional flag -n <num>
+# - optional flag -h for help
+# - optional flag -v for verbose
+while getopts ":fS:T:n:u:H:hv" opt
+do
+    case $opt in
+        f)
+            FOLLOW=true
+            ;;
+        S)
+            SINCE=$OPTARG
+            ;;
+        T)
+            UNTIL=$OPTARG
+            ;;
+        u)
+            UNIT=$OPTARG
+            ;;
+        H)
+            HOST=$OPTARG
+            ;;
+        n)
+            NUM=$OPTARG
+            ;;
+        h)
+            HELP=true
+            ;;
+        v)
+            VERBOSE=true
+            ;;
+        \?)
+            echo "Invalid option: -$OPTARG" >&2
+            ;;
+    esac
+done
+
+# show help if requested or if ENV is not specified
+if [ "$HELP" = true ] || [ -z "$ENV" ]; then
+    echo "Usage: sram-logs.sh <environment> [-f] [-S <date>] [-T <date>] [-u <unit>] [-H <host>] [-h] [-v]"
+    echo "  -f: follow logs"
+    echo "  -n: show last n lines"
+    echo "  -S: show logs since date"
+    echo "  -T: show logs until date"
+    echo "  -u: show logs for unit"
+    echo "  -H: show logs for host"
+    echo "  -h: show this help"
+    echo "  -v: show verbose output"
+    exit 1
+fi
+
+
+args="-q --no-pager"
+if [ -n "$FOLLOW" ]; then
+    args="$args -f"
+    if [ -n "$NUM" ]; then
+        args="$args -n ${NUM}"
+    fi
+else
+    args="$args -n ${NUM:-100}"
+fi
+if [ -n "$SINCE" ]; then
+    args="$args --since $SINCE"
+fi
+if [ -n "$UNTIL" ]; then
+    args="$args --until $UNTIL"
+fi
+if [ -n "$UNIT" ]; then
+    args="$args -u $UNIT"
+fi
+if [ -n "$HOST" ]; then
+    args="$args _HOSTNAME=$HOST"
+fi
+
+echo Opening logs for $ENV >&2
+
+if [ -n "$VERBOSE" ]; then
+    echo Executing: /usr/bin/journalctl -D /var/log/journal/$ENV $args >&2
+fi
+exec /usr/bin/journalctl -D /var/log/journal/$ENV $args

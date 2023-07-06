@@ -105,6 +105,13 @@
       | wc -l
   notify: "restart zabbix-agent"
 
+# install sram-logs.sh to /usr/local/bin
+- name: install sram-logs.sh
+  template:
+    src: "sram-logs.sh.j2"
+    dest: "/usr/local/bin/sram-logs"
+    mode: "0755"
+
 # todo fix this: create proper groups per env which are allowed to read logs
 #                put regular users and zabbix there
 - name: adding user zabbix-agent to journal group
