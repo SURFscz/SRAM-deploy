@@ -157,7 +157,17 @@ echo "Deploying to SURfscz $ENV..."
 echo "Log file: $LOG"
 echo "Will execute: $CMD"
 
-export ANSIBLE_FORCE_COLOR=True
-stdbuf --output=0 --error=0 $CMD 2>&1 | tee -a "$LOG"
+if command -v stdbuf &> /dev/null
+then
+    export ANSIBLE_FORCE_COLOR=True
+    stdbuf --output=0 --error=0 $CMD 2>&1 | tee -a "$LOG"
+else
+    echo "stdbuf command not found, not storing output in log file" >&2
+    if [ "$(uname)" = "Darwin" ]
+    then
+        echo "You can install stdbuf with 'brew install coreutils'" >&2
+    fi
+    $CMD
+fi
 
 exit 0
