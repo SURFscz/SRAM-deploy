@@ -40,7 +40,7 @@ def main():
         usage()
         sys.exit(2)
 
-    method: str = "sha512_crypt"
+    method: str = "bcrypt"
     salt: Optional[bytes] = None
     rounds: Optional[int] = None
     echo: bool = False
