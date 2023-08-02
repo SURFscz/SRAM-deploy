@@ -61,7 +61,7 @@ $_SESSION['claims'] = $request_claims;
 if (isset($_GET['response_type'])) {
   $response_type = [$_GET['response_type']];
 } else {
-  $response_type = array('token id_token');
+  $response_type = array('id_token token');
 }
 
 if (isset($_GET['idp_hint'])) {
