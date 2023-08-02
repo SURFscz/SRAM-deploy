@@ -63,7 +63,7 @@
     - { role: aws-cleanup,    tags: ['common','clean']                               }
     - { role: mail,           tags: ['common','mail']                                }
     - { role: backups,        tags: ['common','backups']                             }
-#    - { role: zabbix-agent,   tags: ['common','zabbix-agent'],                       }
+    - { role: zabbix-agent,   tags: ['common','zabbix-agent'],                       }
 
 - name: "bhr2"
   hosts: "bhr2"
