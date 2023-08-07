@@ -31,6 +31,8 @@ server {
     }
 
     location ~ /(api|pam-weblogin|flasgger_static|swagger|health|config|info) {
+        add_header Content-Security-Policy "default-src 'self'; base-uri 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; frame-src 'none'; form-action 'self' https://*.{{base_domain}}; frame-ancestors 'none'; block-all-mixed-content;";
+        add_header Permissions-Policy      "accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(), cross-origin-isolated=(), display-capture=(), document-domain=(), encrypted-media=(), execution-while-not-rendered=(), execution-while-out-of-viewport=(), fullscreen=(), geolocation=(), gyroscope=(), keyboard-map=(), magnetometer=(), microphone=(), midi=(), navigation-override=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), sync-xhr=(), usb=(), web-share=(), xr-spatial-tracking=(), clipboard-read=(), clipboard-write=(self), gamepad=(), speaker-selection=(), conversion-measurement=(), focus-without-user-activation=(), hid=(), idle-detection=(), interest-cohort=(), serial=(), sync-script=(), trust-token-redemption=(), window-placement=(), vertical-scroll=()";
         add_header Cache-Control "nocache, private";
         include proxy_params;
         proxy_pass http://127.0.0.1:8080;
