@@ -22,60 +22,60 @@ $CLAIMS = [
 
 $reset = false;
 if (isset($_POST['reset'])) {
-  $reset = true;
+    $reset = true;
 }
 
 $rp = $CLIENT_ID;
 if (isset($_GET['client_id'])) {
-  $rp = $_GET['client_id'];
+    $rp = $_GET['client_id'];
 }
 
 if ($_POST['id_token']) {
-  $jwt = $_POST['id_token'];
-  $parts = explode('.', $jwt);
-  $payload = json_decode(base64_decode($parts[1]));
-  $rp = $payload->aud[0];
+    $jwt = $_POST['id_token'];
+    $parts = explode('.', $jwt);
+    $payload = json_decode(base64_decode($parts[1]));
+    $rp = $payload->aud[0];
 }
 
 if (isset($_GET['scope'])) {
-  $scope =  $_GET['scope'];
-  $_SESSION['scope'] = $scope;
-  $reset = true;
+    $scope =  $_GET['scope'];
+    $_SESSION['scope'] = $scope;
+    $reset = true;
 } else {
-  $scope = @$_SESSION['scope'] ? $_SESSION['scope'] : $SCOPES;
+    $scope = @$_SESSION['scope'] ? $_SESSION['scope'] : $SCOPES;
 }
 
 if (isset($_GET['redirect_uri'])) {
-  $redirect_uri = $_GET['redirect_uri'];
+    $redirect_uri = $_GET['redirect_uri'];
 } else {
-  $redirect_uri = 'https://rp.ci-runner.sram.surf.nl/resume.html';
+    $redirect_uri = 'https://rp.ci-runner.sram.surf.nl/resume.html';
 }
 
 if (isset($_GET['claims'])) {
-  $request_claims = @$_GET['claims'];
+    $request_claims = @$_GET['claims'];
 } else {
-  $request_claims = $CLAIMS;
+    $request_claims = $CLAIMS;
 }
 $_SESSION['claims'] = $request_claims;
 
 if (isset($_GET['response_type'])) {
-  $response_type = [$_GET['response_type']];
+    $response_type = [$_GET['response_type']];
 } else {
-  $response_type = array('id_token token');
+    $response_type = array('id_token token');
 }
 
 if (isset($_GET['idp_hint'])) {
-  $idp_hint = urldecode($_GET['idp_hint']);
-  $_SESSION['idp_hint'] = $idp_hint;
-  $reset = true;
+    $idp_hint = urldecode($_GET['idp_hint']);
+    $_SESSION['idp_hint'] = $idp_hint;
+    $reset = true;
 } else {
-  $idp_hint = @$_SESSION['idp_hint'];
+    $idp_hint = @$_SESSION['idp_hint'];
 }
 
 if ($reset) {
-  unset($_SESSION['authenticated']);
-  unset($_SESSION['claims']);
-  unset($_SESSION['scope']);
+    unset($_SESSION['authenticated']);
+    unset($_SESSION['claims']);
+    unset($_SESSION['scope']);
 }
 
 $oidc = new OpenIDConnectClient('https://proxy.acc.sram.eduteams.org/',
@@ -92,22 +92,22 @@ $oidc->setRedirectURL($redirect_uri);
 #$oidc->addAuthParam(array('response_mode' => 'form_post'));
 
 if ($request_claims) {
-  $oidc->addAuthParam(array('claims' => json_encode($request_claims)));
+    $oidc->addAuthParam(array('claims' => json_encode($request_claims)));
 }
 
 $authenticated = @$_SESSION['authenticated'];
 
 if (!$authenticated) {
-  try {
-    $oidc->authenticate();
-  } catch (Exception $e) {
-    echo "<pre id=result>" . json_encode($e->getMessage(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)  . "</pre>\n";
-    exit();
-  }
-  $_SESSION['authenticated'] = true;
-  $_SESSION['id_token'] = $oidc->getVerifiedClaims();
-  $_SESSION['access_token'] = $oidc->getAccessTokenPayload();
-  $_SESSION['userinfo'] = $oidc->requestUserInfo();
+    try {
+        $oidc->authenticate();
+    } catch (Exception $e) {
+        echo "<pre id=result>" . json_encode($e->getMessage(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)  . "</pre>\n";
+        exit();
+    }
+    $_SESSION['authenticated'] = true;
+    $_SESSION['id_token'] = $oidc->getVerifiedClaims();
+    $_SESSION['access_token'] = $oidc->getAccessTokenPayload();
+    $_SESSION['userinfo'] = $oidc->requestUserInfo();
 }
 
 $id_token = $_SESSION['id_token'];
@@ -116,7 +116,7 @@ $userinfo = $_SESSION['userinfo'];
 $request_claims = $_SESSION['claims'];
 
 if (isset($_POST['scope'])) {
-  $resultant_scope = $_POST['scope'];
+    $resultant_scope = $_POST['scope'];
 }
 
 $meta->requested_scope = $scope;
@@ -130,4 +130,3 @@ echo "META\n<pre id=meta>" . json_encode($meta, JSON_PRETTY_PRINT | JSON_UNESCAP
 ?>
 <form method="POST"><input type="submit" name="reset"  value="Reset"></form>
 </body></html>
-
