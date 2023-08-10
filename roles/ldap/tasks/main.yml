@@ -10,6 +10,14 @@
     install_recommends: false
   notify: "restart LDAP"
 
+- name: remove obsolete logging config
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - "/etc/rsyslog.d/slapd.conf"
+    - "/etc/logrotate.d/slapd"
+
 - name: make sure slapd can read ssl keys
   user:
     name: "openldap"
