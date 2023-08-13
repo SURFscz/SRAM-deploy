@@ -33,6 +33,7 @@ done
 if [ $ENCRYPT -eq 1 ]
 then
     echo -n "$pw" | ansible-vault encrypt_string --stdin-name password
+    echo
 else
     echo "$pw"
 fi
