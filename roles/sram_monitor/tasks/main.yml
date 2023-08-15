@@ -34,6 +34,8 @@
   ansible.builtin.template:
     src: "{{inventory_dir}}/files/monitoring-{{item}}.j2"
     dest: "{{sram_monitor_dir}}/{{item}}"
+    owner: "{{sram_monitor_user}}"
+    mode: "0400"
   with_items:
     - acc.yml
     - prd.yml
