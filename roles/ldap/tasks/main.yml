@@ -266,14 +266,6 @@
   when: inventory_hostname in groups['ldap_primary']
 
 # Remove LDAP non-admins
-- name: Show LDAP Admins
-  debug:
-    msg: "{{ldap_admins}}:  {{item.uid}} - {{item.groups}}"
-  when: >
-    inventory_hostname in groups['ldap_primary']
-  with_items: "{{ users }}"
-
-# Remove LDAP non-admins
 - name: Initialize admins (I)
   community.general.ldap_entry:
     dn: "cn={{ item.uid }},{{ services_ldap.basedn }}"
