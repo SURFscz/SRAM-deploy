@@ -26,7 +26,9 @@
   template:
     src: "{{ item }}.j2"
     dest: "{{ ldap_monitor_dir }}/{{ item }}"
-    mode: "0755"
+    owner: "root"
+    group: "{{ldap_monitor_group}}"
+    mode: "0750"
   with_items:
     - ldapmonitor.sh
     - getmonitor.py
