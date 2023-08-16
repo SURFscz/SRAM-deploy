@@ -11,6 +11,7 @@ SupplementaryGroups={{sbs_group}}
 WorkingDirectory={{sbs_git_dir}}
 ReadWritePaths={{sbs_log_dir}}
 NoNewPrivileges=true
+PrivateTmp=true
 
 Environment="CONFIG=config/config.yml"
 Environment="PROFILE=log_to_stdout"
@@ -18,11 +19,14 @@ Environment="PROFILE=log_to_stdout"
 # we'll just take the OS-provided CAs, thankyouverymuch
 Environment="REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt"
 
-Type=simple
-ExecStart={{sbs_env_dir}}/bin/gunicorn --worker-class eventlet --workers 8 --log-level debug --bind 127.0.0.1:8080 server.__main__:app
+Type=notify
+ExecStart={{sbs_env_dir}}/bin/gunicorn --worker-class eventlet --workers 8 --bind 127.0.0.1:8080 server.__main__:app
 
 Restart=on-failure
 RestartSec=10
+
+KillMode=mixed
+TimeoutStopSec=5
 
 [Install]
 WantedBy=multi-user.target
