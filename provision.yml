@@ -156,7 +156,7 @@
     - { import_tasks: "tasks/versions.yml", tags: ['common'] }
   roles:
 #    - { role: pam_websso,         tags: ['client','pam-websso'], when: experimental_features }
-   - { role: scim_monitor,         tags: ['client','scim-monitor'] }
+    - { role: scim_monitor,         tags: ['client','scim-monitor'] }
 
 # CI test docker
 - name: "test"
