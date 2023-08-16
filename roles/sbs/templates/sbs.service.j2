@@ -19,7 +19,7 @@ Environment="PROFILE=log_to_stdout"
 Environment="REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt"
 
 Type=simple
-ExecStart={{sbs_env_dir}}/bin/gunicorn --worker-class eventlet -w 1 -b127.0.0.1:8080 server.__main__:app
+ExecStart={{sbs_env_dir}}/bin/gunicorn --worker-class eventlet --workers 8 --preload --log-level debug --bind 127.0.0.1:8080 server.__main__:app
 
 Restart=on-failure
 RestartSec=10
