@@ -1,0 +1,11 @@
+---
+scim_server_repo_url: "https://github.com/SURFscz/SCIM-server.git"
+scim_server_version: "main"
+scim_monitor_dir: "/opt/scimmonitor"
+scim_monitor_env_dir: "{{scim_monitor_dir}}/venv"
+scim_monitor_data_dir: "{{scim_monitor_dir}}/data"
+scim_monitor_group: "zabbix"
+scim_server_key: changethispassword
+scim_server_reference: scim_reference
+scim_service_token: changethispassword
+scim_service_url: "https://sbs.scz-vm.net/api/scim/v2/sweep"

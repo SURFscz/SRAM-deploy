@@ -1,0 +1,57 @@
+---
+- name: "Create scim monitor group"
+  group:
+    name: "{{scim_monitor_group}}"
+
+- name: fetch SCIM Server from {{ scim_server_repo_url }}, version {{ scim_server_version }}
+  git:
+    repo: "{{ scim_server_repo_url }}"
+    dest: "{{ scim_monitor_dir }}"
+    version: "{{ scim_server_version }}"
+    accept_hostkey: "yes"
+    force: "yes"
+
+- name: Ensure that scim_monitor_data_dir exist
+  file:
+    path: "{{scim_monitor_data_dir}}"
+    state: "directory"
+    owner: "root"
+    group: "{{scim_monitor_group}}"
+    mode: "0775"
+
+- name: Create python3 virtualenv
+  import_role:
+    name: "python-venv"
+  vars:
+    python_venv_dir: "{{ scim_monitor_env_dir }}"
+    python_venv_requirements: "{{ scim_monitor_dir }}/requirements.txt"
+
+- name: Create monitoring scripts
+  template:
+    src: "{{ item }}.j2"
+    dest: "{{ scim_monitor_dir }}/{{ item }}"
+    mode: "0755"
+  with_items:
+    - scimmonitor.sh
+
+- name: Copy reference
+  copy:
+    src: "{{inventory_dir}}/files/{{scim_server_reference}}"
+    dest: "{{ scim_monitor_dir }}/{{scim_server_reference}}"
+
+- name: Copy monitor service files
+  template:
+    src: "{{item}}.j2"
+    dest: "/etc/systemd/system/{{item}}"
+  with_items:
+    - sram-scimserver.service
+  notify:
+    - "enable scimserver job"
+
+- name: Copy zabbix agent scimmonitor key
+  template:
+    src: "{{item}}.j2"
+    dest: "/etc/zabbix/zabbix_agent2.d/{{item}}"
+  with_items:
+    - sram-scimmonitor.conf
+  notify: "restart zabbix-agent"

@@ -1,0 +1,36 @@
+[Unit]
+Description=SCIM Server
+After=network.target
+
+[Service]
+WorkingDirectory={{scim_monitor_dir}}
+ReadWritePaths={{scim_monitor_dir}}
+NoNewPrivileges=true
+
+Type=simple
+ExecStart={{scim_monitor_env_dir}}/bin/python {{scim_monitor_dir}}/server.py --host 0.0.0.0 --port 8000 -k {{scim_server_key}} -p {{scim_monitor_data_dir}}
+
+Restart=on-failure
+RestartSec=10
+
+SystemCallArchitectures=native
+NoNewPrivileges=true
+ProtectProc=invisible
+ProcSubset=pid
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths={{scim_monitor_data_dir}}
+InaccessiblePaths=/boot /home /root /srv/ /var
+PrivateTmp=true
+PrivateDevices=true
+PrivateUsers=true
+ProtectClock=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectKernelLogs=true
+ProtectControlGroups=true
+RestrictAddressFamilies=AF_INET AF_UNIX
+LockPersonality=true
+RestrictRealtime=yes
+RestrictSUIDSGID=yes
+RemoveIPC=true

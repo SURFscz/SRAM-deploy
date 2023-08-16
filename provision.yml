@@ -154,8 +154,9 @@
   hosts: sandbox1
   tasks:
     - { import_tasks: "tasks/versions.yml", tags: ['common'] }
-#  roles:
+  roles:
 #    - { role: pam_websso,         tags: ['client','pam-websso'], when: experimental_features }
+   - { role: scim_monitor,         tags: ['client','scim-monitor'] }
 
 # CI test docker
 - name: "test"

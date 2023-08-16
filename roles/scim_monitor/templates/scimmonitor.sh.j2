@@ -1,0 +1,10 @@
+#!/bin/bash
+SCIMTMP=$(mktemp)
+function finish {
+  rm -rf "$SCIMTMP"
+}
+trap finish EXIT
+curl -s -X PUT "{{scim_service_url}}" -H "accept: application/json" -H "Authorization: Bearer {{scim_service_token}}" > /dev/null
+jq -r .displayName {{scim_monitor_data_dir}}/*/* | sort > $SCIMTMP
+DIFF=$(diff -y --suppress-common-lines $SCIMTMP {{scim_monitor_dir}}/{{scim_server_reference}} | wc -l)
+echo $DIFF
