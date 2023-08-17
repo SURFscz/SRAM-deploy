@@ -22,16 +22,17 @@
     group: "{{ldap_monitor_group}}"
     mode: "0775"
 
-- name: "Create monitoring scripts"
+- name: "Create monitoring script"
   template:
-    src: "{{ item }}.j2"
-    dest: "{{ ldap_monitor_dir }}/{{ item }}"
+    src: "{{ item.file }}.j2"
+    dest: "{{ ldap_monitor_dir }}/{{ item.file }}"
     owner: "root"
     group: "{{ldap_monitor_group}}"
-    mode: "0750"
+    mode: "{{ item.perm }}"
   with_items:
-    - ldapmonitor.sh
-    - getmonitor.py
+    - { file: "ldapmonitor.sh", perm: "0750" }
+    - { file: "getmonitor.py",  perm: "0755" }
+
 
 - name: Copy scripts
   copy:
