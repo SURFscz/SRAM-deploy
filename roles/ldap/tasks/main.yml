@@ -10,6 +10,14 @@
     install_recommends: false
   notify: "restart LDAP"
 
+- name: remove obsolete logging config
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - "/etc/rsyslog.d/slapd.conf"
+    - "/etc/logrotate.d/slapd"
+
 - name: make sure slapd can read ssl keys
   user:
     name: "openldap"
@@ -257,63 +265,10 @@
       o: "{{ services_ldap.o }}"
   when: inventory_hostname in groups['ldap_primary']
 
-- name: Initialize DIT admin
-  community.general.ldap_entry:
-    dn: "{{ services_ldap.binddn }}"
-    objectClass: organizationalRole
-    attributes:
-      cn: "{{ services_ldap.binddn | regex_replace('^cn=([^,]+).*', '\\1') }}"
-  when: inventory_hostname in groups['ldap_primary']
-
-# Remove LDAP non-admins
-- name: Initialize admins (I)
-  community.general.ldap_entry:
-    dn: "cn={{ item.uid }},{{ services_ldap.basedn }}"
-    state: absent
+- name: Add ldap admins
+  include_tasks: "admins.yml"
   when: >
-    inventory_hostname in groups['ldap_primary']
-    and ldap_admins not in item.groups
-    and item.uid != 'admin'
-  with_items: "{{ users }}"
-
-# Insert LDAP admins
-- name: Initialize admins (II)
-  community.general.ldap_entry:
-    dn: "cn={{ item.uid }},{{ services_ldap.basedn }}"
-    objectClass:
-      - simpleSecurityObject
-      - organizationalRole
-    attributes:
-      description: An LDAP administrator
-      userPassword: "{CRYPT}{{ item.pw_hash }}"
-  when: >
-    inventory_hostname in groups['ldap_primary']
-    and ldap_admins in item.groups
-    and item.uid != 'admin'
-  with_items: "{{ users }}"
-
-# Make sure passwords are updated for existing admins
-- name: Initialize admins (III)
-  community.general.ldap_attrs:
-    dn: "cn={{ item.uid }},{{ services_ldap.basedn }}"
-    attributes:
-      userPassword: "{CRYPT}{{ item.pw_hash }}"
-  when: >
-    inventory_hostname in groups['ldap_primary']
-    and ldap_admins in item.groups
-    and item.uid != 'admin'
-  with_items: "{{ users }}"
-
-- name: Redirect slapd log to /var/log/slapd.log
-  copy:
-    src: "rsyslog_slapd.conf"
-    dest: "/etc/rsyslog.d/slapd.conf"
-  notify: "restart rsyslog"
-
-- name: Rotate conf for slapd log file
-  copy:
-    src: "logrotate_slapd"
-    dest: "/etc/logrotate.d/slapd"
+      inventory_hostname in groups['ldap_primary']
 
 - name: Install backup script
   template:
