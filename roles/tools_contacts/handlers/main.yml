@@ -1,0 +1,7 @@
+---
+- name: enable sram_contacts job
+  systemd:
+    name: "sram_contacts.timer"
+    enabled: true
+    state: "restarted"
+    daemon_reload: true

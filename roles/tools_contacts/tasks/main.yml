@@ -1,0 +1,48 @@
+---
+- name: Make sure contacts directory exists
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+  loop:
+    - "{{ contacts_dir }}"
+    - "{{ contacts_dir }}/output"
+
+- name: Install plsc
+  git:
+    repo: "{{ plsc_repo_url }}"
+    dest: "{{ contacts_dir }}/plsc"
+    version: "{{ plsc_version }}"
+
+- name: create group for contacts config file
+  group:
+    name: "{{ contacts_group }}"
+    state: "present"
+    system: True
+
+- name: Create config file
+  template:
+    src: "contacts.yml.j2"
+    dest: "{{ contacts_dir }}/contacts_{{ item.value.env }}.yml"
+    group: "{{ contacts_group }}"
+    mode: "0640"
+  no_log: "{{ sram_ansible_nolog }}"
+  loop: "{{ tools_contacts_environments }}"
+
+- name: Create python3 virtualenv
+  import_role:
+    name: "python-venv"
+  vars:
+    python_venv_dir: "{{ contacts_dir }}/venv"
+    python_venv_requirements: "{{ contacts_dir }}/plsc/requirements.txt"
+
+- name: Copy contacts service files
+  template:
+    src: "{{ item }}.j2"
+    dest: "/etc/systemd/system/{{ item }}"
+  with_items:
+    - "sram_contacts.service"
+    - "sram_contacts.timer"
+  notify:
+    - "enable sram_contacts job"
+

@@ -1,0 +1,12 @@
+---
+plsc_repo_url: "https://github.com/SURFscz/plsc.git"
+plsc_version: "main"
+
+contacts_dir: "/opt/aclsync"
+contacts_interval: "1h"
+
+tools_contacts_environments:
+  vm:
+    sbs_url: "https://sbs.scz-vm.net/"
+    sbs_password: "{{ tools_contacts_password }}"
+    output: "contacts_vm.csv"

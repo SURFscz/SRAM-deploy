@@ -22,3 +22,10 @@
 
 - include_tasks:
     file: "rapportage.yml"
+
+- name: Install SBS contacts export
+  import_role:
+    name: "tools_contacts"
+  vars:
+    env: "tst"
+    passwd: "{{tools_contacts_password_tst}}"

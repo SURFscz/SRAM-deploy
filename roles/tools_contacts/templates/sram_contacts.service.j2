@@ -1,0 +1,18 @@
+[Unit]
+Description=SRAM HAproxy contacts syncer
+
+[Service]
+DynamicUser=true
+User=sram_contacts
+Group=sram_contacts
+SupplementaryGroups=
+
+ReadWritePaths={{ contacts_file }}
+
+Type=oneshot
+Environment="REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt"
+WorkingDirectory={{ contacts_dir }}
+{% for key, value in tools_contacts_environments.items() %}
+ExecStart={{ contacts_dir }}/venv/bin/python ./plsc/emails.py --sbs ./contacts_{{ key }}.yml > ./output/{{ value["output"] }}
+{% endfor %}
+
