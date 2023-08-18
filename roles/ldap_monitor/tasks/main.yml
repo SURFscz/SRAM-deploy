@@ -58,7 +58,7 @@
     - "enable monitor job"
 
 - name: Copy zabbix agent ldapmonitor key
-  copy:
-    src: sram-ldapmonitor.conf
+  template:
+    src: sram-ldapmonitor.conf.j2
     dest: "/etc/zabbix/zabbix_agent2.d/sram-ldapmonitor.conf"
   notify: "restart zabbix-agent"
