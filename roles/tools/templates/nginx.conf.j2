@@ -19,6 +19,9 @@ server {
 
     ssl_certificate        {{ ssl_certs_dir }}/tools_https.crt;
     ssl_certificate_key    {{ ssl_certs_dir }}/tools_https.key;
+    add_header Strict-Transport-Security "max-age=31536000";
+
+    include security_headers;
 
     location / {
 {% for ip in iprange.vpn.values() %}

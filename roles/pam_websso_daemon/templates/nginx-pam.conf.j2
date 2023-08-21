@@ -1,12 +1,14 @@
 server {
 	listen {{pam_host}}:{{pam_backend_port}} default_server ssl;
+	server_name _;
 
     ssl_certificate     {{ ssl_certs_dir }}/{{ internal_base_domain }}.crt;
     ssl_certificate_key {{ ssl_certs_dir }}/{{ internal_base_domain }}.key;
     ssl_protocols       TLSv1.3;
     ssl_ciphers         HIGH:!aNULL:!MD5;
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
 
-	server_name _;
+    include security_headers;
 
 	location / {
 		proxy_pass         http://0.0.0.0:{{pam_clients_port}};

@@ -4,8 +4,9 @@ server {
 
     ssl_certificate        {{ ssl_certs_dir }}/{{ internal_base_domain }}.crt;
     ssl_certificate_key    {{ ssl_certs_dir }}/{{ internal_base_domain }}.key;
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
 
-    add_header Strict-Transport-Security "max-age=31536000";
+    include security_headers;
 
     location / {
         root             {{ rp_docroot_dir }};
@@ -30,8 +31,9 @@ server {
 
     ssl_certificate        {{ ssl_certs_dir }}/{{ internal_base_domain }}.crt;
     ssl_certificate_key    {{ ssl_certs_dir }}/{{ internal_base_domain }}.key;
-
     add_header Strict-Transport-Security "max-age=31536000";
+
+    include security_headers;
 
     location ^~ /saml {
         index index.php
