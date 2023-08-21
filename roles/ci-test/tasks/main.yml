@@ -84,7 +84,7 @@
 
 - name: Create RP resume.html
   copy:
-    src: resume.html
+    src: "{{ item }}"
     dest: "{{ rp_docroot_dir }}/{{ item }}"
     mode: "0644"
   loop:
