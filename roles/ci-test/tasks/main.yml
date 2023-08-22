@@ -56,8 +56,8 @@
 - name: Ensure that packages are installed
   apt:
     name:
-      - composer
-    state: present
+      - "composer"
+    state: "present"
 
 - name: Create directories
   file:
@@ -70,23 +70,26 @@
 
 - name: Install JumboJett OIDC PHP module
   community.general.composer:
-    command: require
-    arguments: jumbojett/openid-connect-php
+    command: "require"
+    arguments: "jumbojett/openid-connect-php"
     working_dir: "{{ rp_jumbojett_dir}}"
   notify: "restart php-fpm"
 
-- name: Create RP index.php
+- name: Create RP files
   template:
-    src: index.php.j2
+    src: "index.php.j2"
     dest: "{{ rp_docroot_dir }}/index.php"
-    mode: 0644
+    mode: "0644"
   notify: "restart php-fpm"
 
 - name: Create RP resume.html
   copy:
-    src: resume.html
-    dest: "{{ rp_docroot_dir }}/resume.html"
-    mode: 0644
+    src: "{{ item }}"
+    dest: "{{ rp_docroot_dir }}/{{ item }}"
+    mode: "0644"
+  loop:
+    - "resume.html"
+    - "resume.js"
   notify: "restart php-fpm"
 
 
