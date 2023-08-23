@@ -24,17 +24,17 @@
     src: "index.html.j2"
     dest: "{{ sram_tools_wwwroot }}/index.html"
 
-- name: Install links to contacts files
+- name: Install links to contacts csv files
   file:
     src: "{{ contacts_dir }}/output/contacts_{{ item }}.csv"
     dest: "{{ sram_tools_wwwroot }}/contacts_{{ item }}.csv"
     state: "link"
   loop: "{{ tools_contacts_environments.keys() }}"
 
-- name: Install links to contacts files
+- name: Install links to contacts xlsx files
   file:
-    src: "{{ contacts_dir }}/output/contacts_{{ item }}.csv"
-    dest: "{{ sram_tools_wwwroot }}/contacts_{{ item }}.csv"
+    src: "{{ contacts_dir }}/output/contacts_{{ item }}.xlsx"
+    dest: "{{ sram_tools_wwwroot }}/contacts_{{ item }}.xlsx"
     state: "link"
   loop: "{{ tools_contacts_environments.keys() }}"
 
