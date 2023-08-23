@@ -43,6 +43,8 @@
     verify_ssl: "{{ false if item.key=='vm' else true }}"
   no_log: "{{ sram_ansible_nolog }}"
   loop: "{{ tools_contacts_environments | dict2items }}"
+  notify:
+    - "Run sram_contacts job"
 
 - name: Create python3 virtualenv
   import_role:
@@ -62,7 +64,8 @@
     output_file: "contacts_{{ item }}.csv"
   loop: "{{ tools_contacts_environments.keys() }}"
   notify:
-    - "enable sram_contacts job"
+    - "Enable sram_contacts job"
+    - "Run sram_contacts job"
 
 - name: Copy contacts service files
   template:
@@ -70,4 +73,5 @@
     dest: "/etc/systemd/system/sram-contacts-{{ item }}.timer"
   loop: "{{ tools_contacts_environments.keys() }}"
   notify:
-    - "enable sram_contacts job"
+    - "Enable sram_contacts job"
+    - "Run sram_contacts job"
