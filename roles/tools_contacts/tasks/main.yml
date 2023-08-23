@@ -40,7 +40,7 @@
     group: "{{ contacts_group }}"
     mode: "0640"
   vars:
-    verify_ssl: "{{ false if item.key=='vm' else true }}"
+    verify_ssl: "{{ false if item.key == 'vm' else true }}"
   no_log: "{{ sram_ansible_nolog }}"
   loop: "{{ tools_contacts_environments | dict2items }}"
   notify:
@@ -61,7 +61,7 @@
     env: "{{ item }}"
     config_file: "{{ contacts_dir }}/contacts_{{ item }}.yml"
     output_dir: "{{ contacts_dir }}/output/"
-    output_file: "contacts_{{ item }}.csv"
+    output_file: "contacts_{{ item }}"
   loop: "{{ tools_contacts_environments.keys() }}"
   notify:
     - "Enable sram_contacts job"

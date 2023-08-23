@@ -14,4 +14,3 @@ tools_contacts_environments:
     sbs_url: "https://sbs.scz-vm.net/"
     sbs_user: "tools_contacts"
     sbs_password: "{{ sbs_tools_contacts_password }}"
-    output: "contacts_vm.csv"

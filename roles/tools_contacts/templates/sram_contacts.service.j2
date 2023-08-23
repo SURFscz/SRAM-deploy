@@ -14,6 +14,9 @@ ReadWritePaths={{ output_dir }}
 Type=oneshot
 Environment="REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt"
 WorkingDirectory={{ contacts_dir }}
-ExecStart={{ contacts_dir }}/venv/bin/python ./plsc/emails.py --sbs {{ config_file }}  --output {{ output_dir }}/{{ output_file }}.tmp
-ExecStartPost=/bin/mv {{ output_dir }}/{{ output_file }}.tmp {{ output_dir }}/{{ output_file }}
-ExecStopPost=/bin/rm -f {{ output_dir }}/{{ output_file }}.tmp
+ExecStart={{ contacts_dir }}/venv/bin/python ./plsc/emails.py --sbs {{ config_file }}  --output {{ output_dir }}/{{ output_file }}.csv.tmp
+ExecStart={{ contacts_dir }}/venv/bin/python ./plsc/emails.py --sbs {{ config_file }}  --output {{ output_dir }}/{{ output_file }}.xlsx.tmp
+ExecStartPost=/bin/mv {{ output_dir }}/{{ output_file }}.csv.tmp {{ output_dir }}/{{ output_file }}.csv
+ExecStartPost=/bin/mv {{ output_dir }}/{{ output_file }}.xlsx.tmp {{ output_dir }}/{{ output_file }}.xlsx
+ExecStopPost=/bin/rm -f {{ output_dir }}/{{ output_file }}.csv.tmp
+ExecStopPost=/bin/rm -f {{ output_dir }}/{{ output_file }}.xlsx.tmp

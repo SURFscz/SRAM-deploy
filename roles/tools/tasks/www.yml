@@ -2,29 +2,36 @@
 - include_role:
     name: "nginx"
 
-- name: write tools private key
+- name: Write tools private key
   copy:
-    content: "{{tools_https_cert.priv}}"
+    content: "{{ tools_https_cert.priv }}"
     dest: "{{ ssl_certs_dir }}/tools_https.key"
     owner: "root"
     group: "ssl-cert"
     mode: "0640"
   no_log: "{{sram_ansible_nolog}}"
 
-- name: write tools certificate
+- name: Write tools certificate
   copy:
-    content: "{{tools_https_cert.pub}}"
+    content: "{{ tools_https_cert.pub }}"
     dest: "{{ ssl_certs_dir }}/tools_https.crt"
     owner: "root"
     group: "root"
     mode: 0644
 
-- name: install index page
+- name: Install index page
   template:
     src: "index.html.j2"
-    dest: "{{sram_tools_wwwroot}}/index.html"
+    dest: "{{ sram_tools_wwwroot }}/index.html"
 
-- name: install links to contacts files
+- name: Install links to contacts files
+  file:
+    src: "{{ contacts_dir }}/output/contacts_{{ item }}.csv"
+    dest: "{{ sram_tools_wwwroot }}/contacts_{{ item }}.csv"
+    state: "link"
+  loop: "{{ tools_contacts_environments.keys() }}"
+
+- name: Install links to contacts files
   file:
     src: "{{ contacts_dir }}/output/contacts_{{ item }}.csv"
     dest: "{{ sram_tools_wwwroot }}/contacts_{{ item }}.csv"
