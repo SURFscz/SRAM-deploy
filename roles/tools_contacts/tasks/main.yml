@@ -1,0 +1,80 @@
+---
+- name: Make sure contacts directory exists
+  file:
+    path: "{{ item.dir }}"
+    state: "directory"
+    owner: "root"
+    group: "{{ item.group }}"
+    mode: "{{ item.mode }}"
+  loop:
+    - { dir: "{{ contacts_dir }}",        group: "root",                 mode: "0755" }
+    - { dir: "{{ contacts_dir }}/output", group: "{{ contacts_group }}", mode: "0775" }
+
+- name: Install plsc
+  git:
+    repo: "{{ plsc_repo_url }}"
+    dest: "{{ contacts_dir }}/plsc"
+    version: "{{ plsc_version }}"
+
+- name: Install required packages for plsc
+  apt:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - "python3-pip"
+    - "python3-venv"
+    - "python3-dev"
+    - "libldap-dev"
+    - "libsasl2-dev"
+
+- name: Create group for contacts config file
+  group:
+    name: "{{ contacts_group }}"
+    state: "present"
+    system: True
+
+- name: Create config file
+  template:
+    src: "contacts.yml.j2"
+    dest: "{{ contacts_dir }}/contacts_{{ item.key }}.yml"
+    group: "{{ contacts_group }}"
+    mode: "0640"
+  vars:
+    verify_ssl: "{{ false if item.key == 'vm' else true }}"
+  no_log: "{{ sram_ansible_nolog }}"
+  loop: "{{ tools_contacts_environments | dict2items }}"
+  notify:
+    - "Run sram_contacts job"
+
+- name: Create python3 virtualenv
+  import_role:
+    name: "python-venv"
+  vars:
+    python_venv_dir: "{{ contacts_dir }}/venv"
+    python_venv_requirements: "{{ contacts_dir }}/plsc/requirements.txt"
+
+- name: Copy contacts service files
+  template:
+    src: "sram_contacts.service.j2"
+    dest: "/etc/systemd/system/sram-contacts-{{ item }}.service"
+    owner: "root"
+    group: "root"
+    mode: "0600"
+  vars:
+    env: "{{ item }}"
+    config_file: "{{ contacts_dir }}/contacts_{{ item }}.yml"
+    output_dir: "{{ contacts_dir }}/output/"
+    output_file: "contacts_{{ item }}"
+  loop: "{{ tools_contacts_environments.keys() }}"
+  notify:
+    - "Enable sram_contacts job"
+    - "Run sram_contacts job"
+
+- name: Copy contacts service files
+  template:
+    src: "sram_contacts.timer.j2"
+    dest: "/etc/systemd/system/sram-contacts-{{ item }}.timer"
+  loop: "{{ tools_contacts_environments.keys() }}"
+  notify:
+    - "Enable sram_contacts job"
+    - "Run sram_contacts job"

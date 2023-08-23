@@ -1,6 +1,7 @@
 .ansible/
 .vagrant/
 .mypy_cache/
+.vscode/
 vagrant.log
 provision.retry
 provision_status.json
