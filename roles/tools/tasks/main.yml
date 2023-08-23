@@ -16,15 +16,16 @@
     - "{{sram_tools_basedir}}/bin"
     - "{{sram_tools_wwwroot}}"
 
-- include_tasks:
-    file: "www.yml"
-
-- include_tasks:
-    file: "rapportage.yml"
-
 - name: Install SBS contacts export
   import_role:
     name: "tools_contacts"
   vars:
     env: "tst"
     passwd: "{{tools_contacts_password_tst}}"
+
+- include_tasks:
+    file: "www.yml"
+
+- include_tasks:
+    file: "rapportage.yml"
+
