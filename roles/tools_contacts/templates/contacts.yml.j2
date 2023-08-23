@@ -2,6 +2,6 @@
 sbs:
   src:
     host: "{{ item.value.sbs_url }}"
-    user: "tools_contacts"
+    user: "{{ item.value.sbs_user }}"
     passwd: "{{ item.value.sbs_password }}"
     verify_ssl: {{ verify_ssl }}

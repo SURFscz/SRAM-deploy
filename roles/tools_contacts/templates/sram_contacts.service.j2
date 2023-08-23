@@ -15,4 +15,5 @@ Type=oneshot
 Environment="REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt"
 WorkingDirectory={{ contacts_dir }}
 ExecStart={{ contacts_dir }}/venv/bin/python ./plsc/emails.py --sbs {{ config_file }}  --output {{ output_dir }}/{{ output_file }}.tmp
-ExecStartPost=mv {{ output_dir }}/{{ output_file }}.tmp {{ output_dir }}/{{ output_file }}
+ExecStartPost=/bin/mv {{ output_dir }}/{{ output_file }}.tmp {{ output_dir }}/{{ output_file }}
+ExecStopPost=/bin/rm -f{{ output_dir }}/{{ output_file }}.tmp

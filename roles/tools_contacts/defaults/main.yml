@@ -7,8 +7,11 @@ contacts_group: "sram_contacts"
 contacts_dir: "/opt/sram-contacts/"
 contacts_interval_seconds: "8h"
 
+sbs_tools_contacts_password: "secret"
+
 tools_contacts_environments:
   vm:
     sbs_url: "https://sbs.scz-vm.net/"
-    sbs_password: "{{ tools_contacts_password }}"
+    sbs_user: "tools_contacts"
+    sbs_password: "{{ sbs_tools_contacts_password }}"
     output: "contacts_vm.csv"
