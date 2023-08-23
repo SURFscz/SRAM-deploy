@@ -18,5 +18,8 @@ ExecStart={{ contacts_dir }}/venv/bin/python ./plsc/emails.py --sbs {{ config_fi
 ExecStart={{ contacts_dir }}/venv/bin/python ./plsc/emails.py --sbs {{ config_file }} --format=xlsx --output {{ output_dir }}/{{ output_file }}.xlsx.tmp
 ExecStartPost=/bin/mv {{ output_dir }}/{{ output_file }}.csv.tmp {{ output_dir }}/{{ output_file }}.csv
 ExecStartPost=/bin/mv {{ output_dir }}/{{ output_file }}.xlsx.tmp {{ output_dir }}/{{ output_file }}.xlsx
+{% if tools_contacts_surfdrive_url is defined %}
+ExecStartPost=/bin/curl --silent --user {{ tools_contacts_surfdrive_user }}:{{ tools_contacts_surfdrive_passwd }} --upload-file {{ output_dir }}/{{ output_file }}.csv {{ tools_contacts_surfdrive_url }}/{{ output_file }}.csv
+{% endif %}
 ExecStopPost=/bin/rm -f {{ output_dir }}/{{ output_file }}.csv.tmp
 ExecStopPost=/bin/rm -f {{ output_dir }}/{{ output_file }}.xlsx.tmp

@@ -7,8 +7,8 @@
     group: "{{ item.group }}"
     mode: "{{ item.mode }}"
   loop:
-    - { dir: "{{ contacts_dir }}",        group: "root",               mode: "0755" }
-    - { dir: "{{ contacts_dir }}/output", group: "{{contacts_group}}", mode: "0775" }
+    - { dir: "{{ contacts_dir }}",        group: "root",                 mode: "0755" }
+    - { dir: "{{ contacts_dir }}/output", group: "{{ contacts_group }}", mode: "0775" }
 
 - name: Install plsc
   git:
@@ -57,6 +57,9 @@
   template:
     src: "sram_contacts.service.j2"
     dest: "/etc/systemd/system/sram-contacts-{{ item }}.service"
+    owner: "root"
+    group: "root"
+    mode: "0600"
   vars:
     env: "{{ item }}"
     config_file: "{{ contacts_dir }}/contacts_{{ item }}.yml"
