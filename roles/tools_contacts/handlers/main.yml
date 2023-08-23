@@ -6,7 +6,7 @@
     state: "restarted"
     daemon_reload: true
   loop: "{{ tools_contacts_environments.keys() }}"
-  notify: "run sram_contacts job"
+  notify: "Run sram_contacts job"
 
 - name: Run sram_contacts job
   systemd:
