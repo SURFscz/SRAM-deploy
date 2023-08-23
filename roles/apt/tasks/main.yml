@@ -52,7 +52,7 @@
       - "lsof"
       - "needrestart"
       - "net-tools"
-      - "netcat"
+      - "netcat-openbsd"
       - "parted"
       - "python3"
       - "python3-apt"

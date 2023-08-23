@@ -139,7 +139,6 @@
     src: "{{item}}"
     dest: "/etc/systemd/system/haproxy.service.d/"
   with_items:
-    - "haproxy-log-bindmount.conf"
     - "haproxy-state.conf"
   notify:
     - "systemd daemon-reload"

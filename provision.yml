@@ -130,8 +130,8 @@
   tasks:
     - { import_tasks: "tasks/versions.yml", tags: ['common'] }
   roles:
-    - { role: pyff-metadata, tags: ['meta','pyff-metadata']}
-    - { role: metadata,      tags: ['meta','metadata']     }
+    # - { role: pyff-metadata, tags: ['meta','pyff-metadata']}
+    # - { role: metadata,      tags: ['meta','metadata']     }
 
 - name: "client"
   hosts: client

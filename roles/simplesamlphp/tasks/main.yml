@@ -113,7 +113,7 @@
 - name: Install fpm pool config
   template:
     src: "fpm-pool.j2"
-    dest: "/etc/php/7.4/fpm/pool.d/{{simplesaml_name}}.conf"
+    dest: "/etc/php/8.2/fpm/pool.d/{{simplesaml_name}}.conf"
   notify: "restart php-fpm"
 
 - name: Find php version

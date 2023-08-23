@@ -107,12 +107,6 @@
       =mCOI
       -----END PGP PUBLIC KEY BLOCK-----
 
-- name: Install mariadb repo
-  apt_repository:
-    filename: "mariadb"
-    repo: "deb https://mirror.rackspace.com/mariadb/repo/10.5/debian bullseye main"
-    update_cache: true
-
 - name: Create mariadb.service.d directory
   file:
     path: /etc/systemd/system/mariadb.service.d

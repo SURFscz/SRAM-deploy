@@ -1,4 +1,4 @@
-FROM debian:bullseye AS scz-base
+FROM debian:bookworm AS scz-base
 LABEL org.opencontainers.image.authors="SRAM team <sram-beheer@surf.nl>"
 
 ARG DEBIAN_FRONTEND=noninteractive
@@ -25,7 +25,7 @@ RUN apt-get update -y                && \
         locales-all                     \
         logrotate                       \
         net-tools                       \
-        netcat                          \
+        netcat-openbsd                  \
         nullmailer                      \
         openssh-server                  \
         parted                          \
@@ -39,17 +39,21 @@ RUN apt-get update -y                && \
         vim                             \
         wget                            \
         xz-utils                     && \
-    apt-get purge -y isc-dhcp-client && \
+    apt-get purge -y                    \
+        isc-dhcp-client                 \
+        systemd-timesyncd            && \
     apt-get clean -y                 && \
     apt-get autoremove --purge -y    && \
     rm -rf /var/lib/apt/lists/*      && \
     rm -rf /tmp/* /var/tmp/*
 
-RUN update-locale
-
 RUN systemctl enable ssh.service                 && \
-    systemctl disable systemd-timesyncd.service  && \
     echo "exit 0" > /usr/sbin/policy-rc.d
+
+RUN systemctl disable getty@  && \
+    systemctl disable getty.target  && \
+    rm /lib/systemd/system/multi-user.target.wants/getty.target  && \
+    rm /lib/systemd/system/getty.target.wants/getty-static.service
 
 RUN useradd --create-home --shell /bin/bash --groups adm ansible        && \
     install -d -o ansible -m 0700 /home/ansible/.ssh  && \
