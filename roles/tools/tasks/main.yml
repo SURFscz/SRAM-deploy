@@ -11,7 +11,6 @@
     mode: "0775"
     owner: "root"
     group: "{{sram_tools_group}}"
-    recurse: true
   with_items:
     - "{{sram_tools_basedir}}"
     - "{{sram_tools_basedir}}/bin"

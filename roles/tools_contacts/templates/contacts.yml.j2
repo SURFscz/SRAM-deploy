@@ -1,6 +1,7 @@
 ---
 sbs:
-  host: "{{ item.value.sbs_url }}"
-  user: "tools_contacts"
-  passwd: "{{ item.value.sbs_password }}"
-  verify_ssl: {{ false if item.value.env=='vm' else true }}
+  src:
+    host: "{{ item.value.sbs_url }}"
+    user: "tools_contacts"
+    passwd: "{{ item.value.sbs_password }}"
+    verify_ssl: {{ verify_ssl }}

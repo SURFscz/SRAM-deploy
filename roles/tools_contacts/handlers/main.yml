@@ -1,7 +1,9 @@
 ---
 - name: enable sram_contacts job
   systemd:
-    name: "sram_contacts.timer"
+    name: "sram-contacts-{{ item }}.timer"
     enabled: true
     state: "restarted"
     daemon_reload: true
+  loop: "{{ tools_contacts_environments.keys() }}"
+

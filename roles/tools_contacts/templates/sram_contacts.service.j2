@@ -1,18 +1,18 @@
 [Unit]
-Description=SRAM HAproxy contacts syncer
+Description=SRAM contacts update {{ env }}
 
 [Service]
 DynamicUser=true
-User=sram_contacts
-Group=sram_contacts
+User=sram_contacts_{{ env }}
+Group={{ contacts_group }}
 SupplementaryGroups=
 
-ReadWritePaths={{ contacts_file }}
+ReadOnlyPaths={{ contacts_dir }}
+ReadWritePaths={{ output_dir }}
+
 
 Type=oneshot
 Environment="REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt"
 WorkingDirectory={{ contacts_dir }}
-{% for key, value in tools_contacts_environments.items() %}
-ExecStart={{ contacts_dir }}/venv/bin/python ./plsc/emails.py --sbs ./contacts_{{ key }}.yml > ./output/{{ value["output"] }}
-{% endfor %}
-
+ExecStart={{ contacts_dir }}/venv/bin/python ./plsc/emails.py --sbs {{ config_file }}  --output {{ output_dir }}/{{ output_file }}.tmp
+ExecStartPost=mv {{ output_dir }}/{{ output_file }}.tmp {{ output_dir }}/{{ output_file }}

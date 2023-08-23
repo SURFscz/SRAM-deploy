@@ -2,8 +2,10 @@
 plsc_repo_url: "https://github.com/SURFscz/plsc.git"
 plsc_version: "main"
 
-contacts_dir: "/opt/aclsync"
-contacts_interval: "1h"
+contacts_group: "sram_contacts"
+
+contacts_dir: "/opt/sram-contacts/"
+contacts_interval_seconds: "8h"
 
 tools_contacts_environments:
   vm:
