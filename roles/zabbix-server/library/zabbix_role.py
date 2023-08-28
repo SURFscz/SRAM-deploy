@@ -133,6 +133,7 @@ def run_module():
         server_url=dict(type='str', required=True),
         login_user=dict(type='str', required=True),
         login_password=dict(type='str', required=True, no_log=True),
+        validate_certs=dict(type='bool', required=False, default=True),
         state=dict(type='str', required=False, default='present'),
         name=dict(type='str', required=True),
         type=dict(type='int', required=False, default=1),
@@ -152,6 +153,7 @@ def run_module():
     server_url = module.params['server_url']
     login_user = module.params['login_user']
     login_password = module.params['login_password']
+    validate_certs = module.params['validate_certs']
     state = module.params['state']
     name = module.params['name']
     type = module.params['type']
@@ -161,7 +163,7 @@ def run_module():
     # raise Exception(rules)
 
     # the Zabbix api object
-    zapi = ZabbixAPI(server_url)
+    zapi = ZabbixAPI(server_url, validate_certs=validate_certs)
     zapi.login(user=login_user, password=login_password)
 
     msg = zapi.role.get({
