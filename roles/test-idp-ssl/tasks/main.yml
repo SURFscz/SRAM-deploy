@@ -73,7 +73,9 @@
 
 - name: Add RemoteUserSSL repo to composer.json
   ansible.builtin.command:
-    cmd: "composer config repositories.remoteuserssl vcs https://github.com/SURFscz/remoteuserssl.git"
+    cmd: >-
+      composer config repositories.remoteuserssl
+      vcs https://github.com/SURFscz/remoteuserssl.git
     chdir: "{{ simplesaml_project_dir }}/simplesaml"
   environment:
     COMPOSER_ALLOW_SUPERUSER: 1
