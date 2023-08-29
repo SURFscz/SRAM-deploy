@@ -1,4 +1,5 @@
 ---
+
 - name: "Zabbix repo: install gpg key"
   apt_key:
     id: "A1848F5352D022B9471D83D0082AB56BA14FE591"
@@ -87,6 +88,8 @@
         link_templates: "{{ zabbix_templates_default|list + zabbix_templates_extra|list }}"
         tls_accept: "2"
         tls_connect: "2"
+        tls_psk_identity: "{{inventory_hostname}}"
+        tls_psk: "{{zabbix_agent_psk}}"
         status: "enabled"
         state: "present"
         interfaces:
@@ -111,4 +114,4 @@
       become: false
       when: "psk_file_write.changed"
 
-  when: "not is_docker"
+#  when: "not is_docker"

@@ -1,9 +1,10 @@
 ---
 
 # generic
-zabbix_server_version: "5.4"
-zabbix_web_version: "5.4"
+zabbix_server_version: "6.4"
+zabbix_web_version: "6.4"
 zabbix_repo: "zabbix"
+zabbix_server_package_state: "latest"
 
 zabbix_service_state: "started"
 zabbix_service_enabled: true

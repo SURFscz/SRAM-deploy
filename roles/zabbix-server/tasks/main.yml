@@ -121,7 +121,7 @@
     login_user: "Admin"
     login_password: "{{zabbix_admin_password}}"
     name: "Host registration"
-    gui_access: "disable"
+    gui_access: "default"
     validate_certs: "{{zabbix_validate_certs}}"
 
 - name: Create Zabbix role
