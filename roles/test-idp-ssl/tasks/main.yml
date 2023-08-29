@@ -64,17 +64,26 @@
 #########################################################
 ## Install RemoteUserSSL module
 #########################################################
+- name: Find RemoteUserSSL repository
+  ansible.builtin.command:
+    cmd: jq .repositories.remoteuserssl composer.json
+    chdir: "{{ simplesaml_project_dir }}/simplesaml"
+  register: repo
+  changed_when: false
+
 - name: Add RemoteUserSSL repo to composer.json
   ansible.builtin.command:
     cmd: "composer config repositories.remoteuserssl vcs https://github.com/SURFscz/remoteuserssl.git"
     chdir: "{{ simplesaml_project_dir }}/simplesaml"
   environment:
     COMPOSER_ALLOW_SUPERUSER: 1
+  when: "repo.stdout == 'null'"
 
 - name: Require RemoteUserSSL module
   ansible.builtin.command:
     cmd: "composer require local/simplesamlphp-module-remoteuserssl @dev"
     chdir: "{{ simplesaml_project_dir }}/simplesaml"
+    creates: "{{ simplesaml_project_dir }}/simplesaml/modules/remoteuserssl"
   environment:
     COMPOSER_ALLOW_SUPERUSER: 1
 
