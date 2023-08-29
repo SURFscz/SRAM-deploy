@@ -1,0 +1,6 @@
+---
+testidp_ssl_name: "sram-testidp-ssl"
+testidp_ssl_user: "sram-testidp-ssl"
+testidp_ssl_group: "sram-testidp-ssl"
+testidp_ssl_dir: "/opt/{{testidp_ssl_name}}"
+testidp_ssl_html_dir: "{{testidp_ssl_dir}}/html"

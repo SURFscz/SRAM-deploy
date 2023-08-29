@@ -147,6 +147,7 @@
   roles:
     - { role: demo-sp,              tags: ['bhr13','demo-sp']        }
     - { role: test-idp,             tags: ['bhr13','test-idp']       }
+    - { role: test-idp-ssl,         tags: ['bhr13','test-idp-ssl']   }
     - { role: tools,                tags: ['bhr13','tools']          }
     - { role: sram_monitor,         tags: ['bhr13','sram-monitor']   }
 

@@ -11,6 +11,8 @@
       - "php-sqlite3"
       - "php-zip"
       - "php-fpm"
+      - "php-intl"
+      - "php-ldap"
     state: "present"
 
 - name: Create simplesaml group

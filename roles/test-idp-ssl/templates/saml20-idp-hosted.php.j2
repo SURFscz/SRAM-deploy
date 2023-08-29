@@ -1,0 +1,44 @@
+<?php
+
+/**
+ * SAML 2.0 IdP configuration for SimpleSAMLphp.
+ *
+ * See: https://simplesamlphp.org/docs/stable/simplesamlphp-reference-idp-hosted
+ */
+
+$metadata['test-idp.lab.surf.nl'] = array(
+    'host' => 'test-idp.lab.surf.nl',
+    'OrganizationName' => 'SCZ Test IdP',
+    'OrganizationDisplayName' => 'SCZ Test IdP',
+    'OrganizationURL' => 'https://test-idp.lab.surf.nl/',
+    'RegistrationInfo' => array(
+        'authority' => 'urn:mace:idp.foo.bar'
+        //'authority' => 'https://incommon.org'
+    ),
+    'UIInfo' => array(
+        'DisplayName' => array(
+            'en' => 'SCZ Test IdP'
+        ),
+        'Description' => array(
+            'en' => 'SCZ Test IdP description'
+        ),
+        'Logo' => array(
+            array(
+                'url' => 'https://test-idp.lab.surf.nl/saml/resources/icons/ssplogo-fish-small.png',
+                'width' => 60,
+                'height' => 41
+            )
+        )
+    ),
+    'privatekey' => 'saml.key',
+    'certificate' => 'saml.crt',
+    'auth' => 'RemoteUserSSL',
+    'signature.algorithm' => 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256',
+    'authproc' => array(
+        // Persistent NameID
+        110 => array('class' => 'saml:AttributeNameID',
+            'attribute' => 'urn:mace:dir:attribute-def:eduPersonPrincipalName',
+            'Format' => 'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent',
+        ),
+    ),
+);

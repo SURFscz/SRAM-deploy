@@ -1,0 +1,78 @@
+server {
+    listen 80;
+    server_name test-idp.lab.surf.nl;
+
+    location /.well-known/acme-challenge {
+        alias /var/www/certbot/.well-known/acme-challenge;
+    }
+
+    location / {
+        rewrite ^(.*) https://test-idp.lab.surf.nl/$1 permanent;
+    }
+}
+
+
+server {
+    listen 443 ssl http2;
+    server_name test-idp.lab.surf.nl;
+
+    ssl_certificate        /etc/letsencrypt/test-idp.lab.surf.nl.fullchain.pem;
+    ssl_certificate_key    /etc/letsencrypt/test-idp.lab.surf.nl.privkey.pem;
+    ssl_protocols          TLSv1.3;
+    ssl_ciphers            EECDH+AESGCM:EDH+AESGCM;
+    ssl_stapling on;
+    ssl_stapling_verify on;
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
+
+    include security_headers;
+    ssl_verify_client optional_no_ca;
+
+    location ^~ /saml {
+        if ($ssl_access != 1) {
+            return 403;
+        }
+
+        # only allow from trusted ips
+        allow 127.0.0.1;
+        allow ::1;
+        allow 172.16.0.0/12;
+        allow 145.90.230.96/27;
+        allow 145.90.230.128/27;
+        allow 145.90.230.160/27;
+        allow 2001:610:450:58::/64;
+        allow 2001:610:450:59::/64;
+        allow 2001:610:450:5A::/64;
+        allow 145.90.232.0/23;
+        allow 2001:610:450:b0::/64;
+        allow 145.38.197.139/32;
+        allow 145.38.196.102/32;
+        deny all;
+
+        alias /opt/sram-testidp-ssl/simplesaml/public;
+        index index.php;
+
+        location ~ \.php(/|$) {
+            root             /opt/sram-testidp-ssl/simplesaml/public;
+            fastcgi_pass     unix:/run/php/sram-testidp-ssl.sock;
+            fastcgi_index    index.php;
+
+            include          fastcgi_params;
+
+            fastcgi_split_path_info       ^/saml/((?U).+\.php)(/?.+)?$;
+            fastcgi_param SCRIPT_FILENAME $document_root/$fastcgi_script_name;
+            fastcgi_param SCRIPT_NAME     /simplesaml/$fastcgi_script_name;
+            fastcgi_param PATH_INFO       $fastcgi_path_info;
+            fastcgi_param SSL_CLIENT_SUBJECT_DN  $ssl_client_s_dn;
+        }
+    }
+
+    root /opt/sram-testidp-ssl/html;
+
+}
+
+map $ssl_client_i_dn $ssl_access {
+    default 0;
+    "~^CN=TERENA Personal CA 3,O=.+,C=NL$" 1;
+    "~^CN=GEANT Personal CA 4,O=.+,C=NL$" 1;
+    "~^GEANT Personal ECC CA 4,O=.+,C=NL" 1;
+}
