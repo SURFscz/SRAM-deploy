@@ -100,7 +100,7 @@
     public: true
   vars:
     letsencrypt_staging: false
-    letsencrypt_hosts: [ "test-idp.lab.surf.nl" ]
+    letsencrypt_hosts: [ "{{testidp_ssl_hostname}}" ]
 
 - name: Install nginx config
   template:

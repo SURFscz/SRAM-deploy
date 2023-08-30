@@ -1,23 +1,23 @@
 server {
     listen 80;
-    server_name test-idp.lab.surf.nl;
+    server_name {{testidp_ssl_hostname}};
 
     location /.well-known/acme-challenge {
         alias /var/www/certbot/.well-known/acme-challenge;
     }
 
     location / {
-        rewrite ^(.*) https://test-idp.lab.surf.nl/$1 permanent;
+        rewrite ^(.*) https://{{testidp_ssl_hostname}}/$1 permanent;
     }
 }
 
 
 server {
     listen 443 ssl http2;
-    server_name test-idp.lab.surf.nl;
+    server_name {{testidp_ssl_hostname}};
 
-    ssl_certificate        /etc/letsencrypt/test-idp.lab.surf.nl.fullchain.pem;
-    ssl_certificate_key    /etc/letsencrypt/test-idp.lab.surf.nl.privkey.pem;
+    ssl_certificate        /etc/letsencrypt/{{testidp_ssl_hostname}}.fullchain.pem;
+    ssl_certificate_key    /etc/letsencrypt/{{testidp_ssl_hostname}}.privkey.pem;
     ssl_protocols          TLSv1.3;
     ssl_ciphers            EECDH+AESGCM:EDH+AESGCM;
     ssl_stapling on;
