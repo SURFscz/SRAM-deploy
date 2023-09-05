@@ -4,6 +4,8 @@ server {
 
     server_name _;
 
+    add_header X-Content-Type-Options "nosniff";
+
     location / {
         return 403;
     }
@@ -15,6 +17,8 @@ server {
     listen [::]:80;
 
     server_name {{ h }};
+
+    add_header X-Content-Type-Options "nosniff";
 
 {% if letsencrypt_challenge_dir is defined %}
     location /.well-known/acme-challenge {
