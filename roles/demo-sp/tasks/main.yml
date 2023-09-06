@@ -102,6 +102,8 @@
     - "auth.php"
     - "demosp.css"
     - "bootstrap.min.css"
+    - "Nunito-ExtraBold.woff2"
+    - "SourceSansPro-Regular.woff2"
   notify: "restart php-fpm"
 
 #########################################################
