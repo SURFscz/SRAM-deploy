@@ -130,5 +130,6 @@
     content: |
       session.cookie_httponly = 1
       session.cookie_secure = 1
+      session.cookie_samesite = "None"
     dest: "/etc/php/{{ php_version }}/fpm/conf.d/99-sram.ini"
   notify: "restart php-fpm"

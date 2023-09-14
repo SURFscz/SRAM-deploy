@@ -4,7 +4,9 @@ ldap_ldif_dir: "{{ ldap_dir }}/schema"
 ldap_certs_dir: "{{ ldap_dir }}/certs"
 ldap_backup_dir: "{{backup_base}}/ldap"
 
-ldap_user: openldap
-ldap_group: openldap
+ldap_user: "openldap"
+ldap_group: "openldap"
+
+ldap_admin_group: "ldap_admin"
 
 ldap_loglevel: "stats stats2 filter"

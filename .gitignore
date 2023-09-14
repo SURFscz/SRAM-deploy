@@ -1,6 +1,7 @@
 .ansible/
 .vagrant/
 .mypy_cache/
+.vscode/
 vagrant.log
 provision.retry
 provision_status.json
@@ -23,4 +24,6 @@ ci-runner/lib
 ci-runner/bin
 ci-runner/pyvenv.cfg
 screenshot.png
+page.html
+console.txt
 ignore.main.yml

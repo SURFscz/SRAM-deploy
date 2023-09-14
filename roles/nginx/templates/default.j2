@@ -4,6 +4,8 @@ server {
 
         root /var/www/html;
 
+        include security_headers;
+
         location / {
            return 403;
         }

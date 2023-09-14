@@ -85,8 +85,6 @@
           - tag: "sram-env"
             value: "{{environment_name}}"
         link_templates: "{{ zabbix_templates_default|list + zabbix_templates_extra|list }}"
-        tls_accept: "2"
-        tls_connect: "2"
         status: "enabled"
         state: "present"
         interfaces:
@@ -96,6 +94,7 @@
             ip: "{{ansible_default_ipv4.address}}"
             dns: ""
             port: "10050"
+      register: "zabbix_host"
       become: false
 
     - name: "Set PSK setting for host"
@@ -108,7 +107,9 @@
         host_name: "{{inventory_hostname}}"
         tls_psk_identity: "{{inventory_hostname}}"
         tls_psk: "{{zabbix_agent_psk}}"
+        tls_accept: "2"
+        tls_connect: "2"
       become: false
-      when: "psk_file_write.changed"
+      when: "psk_file_write.changed or zabbix_host.changed"
 
   when: "not is_docker"

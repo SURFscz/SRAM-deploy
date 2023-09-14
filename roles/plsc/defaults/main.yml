@@ -5,3 +5,4 @@ plsc_dir: "/opt/plsc"
 plsc_venv_dir: "{{plsc_dir}}/venv"
 
 plsc_interval_seconds: 120
+plsc_retry: 3

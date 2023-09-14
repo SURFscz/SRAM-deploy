@@ -127,6 +127,7 @@
 - name: Create Zabbix role
   zabbix_role:
     server_url: "{{zabbix_api_url}}"
+    validate_certs: "{{ not is_docker }}"
     login_user: "Admin"
     login_password: "{{zabbix_admin_password}}"
     state: "present"

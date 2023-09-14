@@ -4,7 +4,7 @@ sudo_groups:
 log_groups:
   - "log_reader"
 
-ldap_admins: ldap_vm
+ldap_admin_group: ldap_vm
 
 environment_name: vm
 environment_string: "SCZ VM"
