@@ -24,4 +24,6 @@ ci-runner/lib
 ci-runner/bin
 ci-runner/pyvenv.cfg
 screenshot.png
+page.html
+console.txt
 ignore.main.yml

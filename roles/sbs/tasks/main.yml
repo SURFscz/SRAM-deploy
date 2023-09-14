@@ -91,6 +91,7 @@
     dest: "{{sbs_work_dir}}/sbs.tar.xz"
     force: true
   register: "sbs_download"
+  # allow skipping the SBS download (for idempotency checks)
   when: "not (sbs_skip_download is defined and sbs_skip_download)"
 
 - name: "Check if SBS dir exists"
