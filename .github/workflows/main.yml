@@ -147,6 +147,7 @@ jobs:
           path: |
             screenshot.png
             page.html
+            console.txt
         if: failure()
 
       - name: Show journal output

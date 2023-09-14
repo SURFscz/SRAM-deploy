@@ -154,6 +154,12 @@ then
     ANSIBLE_VAULT_ARG="--vault-password-file=secret_vm"
 fi
 
+# skip SBS download on reentrant runs, do we don't accidentally fetch a new SBS version that was updated betweens runs
+if [ $REENTRANT ]
+then
+    EXTRA_VARS="--extra-vars=sbs_skip_download=true"
+fi
+
 if [ "$SKIP_ANSIBLE" ]
 then
     echo "Skipping ansible run"
@@ -167,6 +173,7 @@ else
         -i $ENV_DIR/inventory \
         $ANSIBLE_VAULT_ARG \
         --extra-vars="secrets_file=$ENV_DIR/secrets/all.yml" \
+        $EXTRA_VARS \
         $@
 fi
 

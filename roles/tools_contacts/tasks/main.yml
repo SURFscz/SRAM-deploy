@@ -53,6 +53,19 @@
     python_venv_dir: "{{ contacts_dir }}/venv"
     python_venv_requirements: "{{ contacts_dir }}/plsc/requirements.txt"
 
+- name: Copy contacts script
+  template:
+    src: "sram_contacts.sh.j2"
+    dest: "{{ contacts_dir }}/sram-contacts.sh"
+    owner: "root"
+    group: "{{ contacts_group }}"
+    mode: "0750"
+  vars:
+    env: "{{ item }}"
+    output_dir: "{{ contacts_dir }}/output/"
+  notify:
+    - "Run sram_contacts job"
+
 - name: Copy contacts service files
   template:
     src: "sram_contacts.service.j2"
@@ -70,7 +83,7 @@
     - "Enable sram_contacts job"
     - "Run sram_contacts job"
 
-- name: Copy contacts service files
+- name: Copy contacts timer files
   template:
     src: "sram_contacts.timer.j2"
     dest: "/etc/systemd/system/sram-contacts-{{ item }}.timer"

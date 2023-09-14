@@ -1,0 +1,54 @@
+#!/bin/sh
+
+ENV=$1
+if [ -z "${ENV}" ]
+then
+    echo "Usage: $0 <env>"
+    exit 1
+fi
+
+DIR="{{ contacts_dir }}"
+CONFIG="${DIR}/contacts_${ENV}.yml"
+OUTDIR="{{ output_dir }}"
+OUTFILE="{{ output_dir }}/contacts_${ENV}"
+{% if tools_contacts_surfdrive_url is defined %}
+UPLOAD=1
+UPLOAD_URL="{{ tools_contacts_surfdrive_url }}/contacts_${ENV}"
+UPLOAD_AUTH="{{ tools_contacts_surfdrive_user }}:{{ tools_contacts_surfdrive_passwd }}"
+{% else %}
+UPLOAD=0
+{% endif %}
+
+
+if ! [ -d "${DIR}"    ]; then echo "cannot find '${DIR}'"; exit; fi
+if ! [ -f "${CONFIG}" ]; then echo "cannot find '${CONFIG}'"; exit; fi
+if ! [ -d "${OUTDIR}" ]; then echo "cannot find '${OUTDIR}'"; exit; fi
+
+cd "${DIR}"
+
+# make sure group gets write access on generated files
+umask 002
+
+for FORMAT in csv xlsx
+do
+    echo "Generating ${FORMAT} for ${ENV}"
+    ./venv/bin/python ./plsc/emails.py \
+        --sbs "${CONFIG}" \
+        --format "${FORMAT}"  \
+        --output "${OUTFILE}.${FORMAT}.tmp"
+
+    if diff -q "${OUTFILE}.${FORMAT}.tmp" "${OUTFILE}.${FORMAT}" >/dev/null
+    then
+        echo "No changes for ${ENV}"
+        rm -f "${OUTFILE}.${FORMAT}.tmp"
+    else
+        echo "Changes detected in ${ENV}, updating ${OUTFILE}.${FORMAT} and uploading"
+        mv -f "${OUTFILE}.${FORMAT}.tmp" "${OUTFILE}.${FORMAT}"
+        if [ "${UPLOAD}" -ne 0 ]
+        then
+            curl --silent --fail --user "${UPLOAD_AUTH}" --upload-file "${OUTFILE}.${FORMAT}" "${UPLOAD_URL}.${FORMAT}"
+        fi
+    fi
+
+done
+
