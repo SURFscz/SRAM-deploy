@@ -31,6 +31,9 @@ health = 'https://sbs.scz-vm.net/health'
 start = 'https://sbs.scz-vm.net/landing'
 profile = 'https://sbs.scz-vm.net/profile'
 
+xpath_login_button = '//button[span[text()="Log in"]]'
+xpath_logo = '//a[@class="logo"]//span[text()="Research Access Management"]'
+
 try:
     # Wait for SBS health up
     status = ""
@@ -44,11 +47,11 @@ try:
     browser.get(start)
 
     # Wait for login button
-    wait.until(presence_of_element_located((By.XPATH, "//span[text()='Login']")),
+    wait.until(presence_of_element_located((By.XPATH, xpath_login_button)),
                'Timeout waiting for Login button')
 
     # Click login
-    login = browser.find_element(By.XPATH, "//button[span[text()='Login']]")
+    login = browser.find_element(By.XPATH, xpath_login_button)
     login.click()
     print(" - pressed login")
 
@@ -72,9 +75,11 @@ try:
     print(" - accepted AUP")
 
     # Wait for landing page
-    wait.until(presence_of_element_located((By.XPATH, "//a[@class='logo' and @href='/']")),
+    wait.until(presence_of_element_located((By.XPATH, xpath_logo)),
                'Timeout waiting for logo')
     print(" - landing page")
+
+    time.sleep(1)
 
     # Visit Profile
     browser.get(profile)
@@ -98,11 +103,11 @@ try:
     browser.get(start)
 
     # Wait for login button
-    wait.until(presence_of_element_located((By.XPATH, "//span[text()='Login']")),
+    wait.until(presence_of_element_located((By.XPATH, xpath_login_button)),
                'Timeout waiting for Login button')
 
     # Click login
-    login = browser.find_element(By.XPATH, "//button[span[text()='Login']]")
+    login = browser.find_element(By.XPATH, xpath_login_button)
     login.click()
     print(" - pressed login")
 
@@ -127,7 +132,7 @@ try:
 
     # Wait for next page
     wait.until(presence_of_element_located(
-        (By.XPATH, "//span[@class='sds--branding--textual'and text()='Research Access Management']")),
+        (By.XPATH, xpath_logo)),
         'Timeout waiting for 2FA')
     print(" - reached next page")
 
@@ -144,22 +149,17 @@ except Exception as e:
     print(f"url: {url}")
 
     tr = traceback.extract_tb(e.__traceback__)[0]
-    print(f"error {e.args[0]} on line {tr.lineno} of '{tr.filename}'")
+    print(f"error {type(e).__name__} on line {tr.lineno} of '{tr.filename}'")
     print("  ", tr.line)
 
     from bs4 import BeautifulSoup
     page = BeautifulSoup(browser.page_source, 'html.parser').prettify()
-    print("page source:")
-    print("------")
-    print(page)
     with open("page.html", "w") as f:
         f.write(page)
 
-    print("------")
-    print("console logs:")
-    print("------")
-    for entry in browser.get_log('browser'):
-        print(entry)
+    with open("console.txt", "w") as f:
+        for entry in browser.get_log('browser'):
+            f.write(str(entry) + "\n")
 
     browser.save_screenshot("screenshot.png")
     browser.close()

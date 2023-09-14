@@ -1,0 +1,9 @@
+[Unit]
+Description=SRAM contacts update
+
+[Timer]
+OnBootSec=30
+OnUnitActiveSec={{contacts_interval_seconds}}
+
+[Install]
+WantedBy=multi-user.target

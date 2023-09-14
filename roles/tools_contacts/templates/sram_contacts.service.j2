@@ -1,0 +1,15 @@
+[Unit]
+Description=SRAM contacts update {{ env }}
+
+[Service]
+DynamicUser=true
+User=sram_contacts_{{ env }}
+Group={{ contacts_group }}
+SupplementaryGroups=
+
+ReadOnlyPaths={{ contacts_dir }}
+ReadWritePaths={{ output_dir }}
+
+Type=oneshot
+WorkingDirectory={{ contacts_dir }}
+ExecStart={{ contacts_dir }}/sram-contacts.sh {{ env }}

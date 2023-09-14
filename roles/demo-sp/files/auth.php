@@ -13,23 +13,29 @@ session_start();
 $ENVS = array("test","acc","prd");
 $FORMATS = array("table", "json", "raw");
 
-$ATTRIBUTES = array(
-    'subject-id',
-    'eduPersonUniqueId',
-    'voPersonExternalID',
-    'uid',
-    'eduPersonPrincipalName',
+$SUPPORTED = array(
+    'cn',
     'displayName',
     'givenName',
     'sn',
     'mail',
+    'eduPersonUniqueId',
+    'subject-id',
+    'voPersonID',
+    'voPersonExternalID',
+    'uid',
+    'userid',
+    'eduPersonPrincipalName',
     'eduPersonScopedAffiliation',
     'voPersonExternalAffiliation',
     'eduPersonEntitlement',
     'sshPublicKey',
-    'voPersonStatus',
 );
 
+$UNSUPPORTED = array(
+    'eduPersonAssurance',
+    'schacHomeOrganization',
+);
 
 # sanitize user input
 $env = $_SERVER['PATH_INFO'];
@@ -89,7 +95,7 @@ print('<div id="known">');
 print('<h1>Known attributes</h1>');
 print('<table class="redTable">');
 print('<thead><tr><th>Attribute</th><th>Value</th></thead>'); print("\n");
-foreach ($ATTRIBUTES as $attr) {
+foreach ($SUPPORTED as $attr) {
     print('<tr>');
     print("<td>{$attr}</td>"); print("\n");
     print('<td>');
@@ -110,21 +116,23 @@ print('</table>');
 print('</div>');
 
 
-
-$unknown_attr = array_diff( array_keys($user_attr), $ATTRIBUTES);
-print('<div id="unknown">');
-print('<h1>Unknown attributes</h1>');
+print('<div id="unsupported">');
+print('<h1>Unsupported attributes</h1>');
 print('<table class="redTable">');
 print('<thead><tr><th>Attribute</th><th>Value</th></thead>'); print("\n");
-foreach ($unknown_attr as $attr) {
+foreach ($UNSUPPORTED as $attr) {
     print('<tr>');
     print("<td>{$attr}</td>"); print("\n");
     print('<td>');
-    foreach ($user_attr[$attr] as $val) {
+    if (array_key_exists($attr, $user_attr)) {
         sort($user_attr[$attr]);
-        print('<span class="attr_val">');
-        print($val);
-        print('</span>');
+        foreach ($user_attr[$attr] as $val) {
+            print('<div class="attr_val">');
+            print($val);
+            print('</div>');
+        }
+    } else {
+        print('<span class="not_found">not present</span>');
     }
     print('</td>'); print("\n");
     print('</tr>'); print("\n");
@@ -132,6 +140,35 @@ foreach ($unknown_attr as $attr) {
 print('</table>');
 print('</div>');
 
+$known_attr = array_merge(
+    $SUPPORTED,
+    $UNSUPPORTED,
+);
+
+$unknown_attr = array_diff( array_keys($user_attr), $known_attr );
+if ( !empty($unknown_attr) ) {
+    print('<div id="unknown">');
+    print('<h1>Unknown attributes</h1>');
+    print('<table class="redTable">');
+    print('<thead><tr><th>Attribute</th><th>Value</th></thead>'); print("\n");
+    foreach ($unknown_attr as $attr) {
+        print('<tr>');
+        print("<td>{$attr}</td>"); print("\n");
+        print('<td>');
+        foreach ($user_attr[$attr] as $val) {
+            sort($user_attr[$attr]);
+            print('<span class="attr_val">');
+            print($val);
+            print('</span>');
+        }
+        print('</td>'); print("\n");
+        print('</tr>'); print("\n");
+    }
+    print('</table>');
+    print('</div>');
+}
+
+echo("<br>\n");
 $url = $as->getLogoutURL("/");
 printf('<div><a href="%1$s">logout</a></div>', htmlspecialchars($url));
 
