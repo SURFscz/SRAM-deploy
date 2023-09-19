@@ -41,20 +41,16 @@
     saml20-idp-remote.php: "metadata"
     saml20-sp-remote.php: "metadata"
 
-- name: Generate a SAML signing certificate
-  command:
-    cmd: >
-      openssl req -x509 -newkey rsa:2048 -sha256 -days 36500 -nodes
-              -keyout saml.key -out saml.pem
-              -subj '/CN=simpelsamlphp/'
-    chdir: "{{simplesaml_cert_dir}}"
-    creates: "{{simplesaml_cert_dir}}/saml.pem"
-
-- name: Set permissions for keys
-  file:
-    path: "{{simplesaml_cert_dir}}/saml.key"
+- name: Install SAML signing certificate
+  copy:
+    content: "{{ item.contents }}"
+    dest: "{{ simplesaml_cert_dir }}/{{ item.file }}"
     mode: "0640"
+    owner: "root"
     group: "{{testidp_group}}"
+  loop:
+    - { file: "saml.key", contents: "{{ surfstar_idp_samlcert.key}}"  }
+    - { file: "saml.crt", contents: "{{ surfstar_idp_samlcert.cert}}" }
 
 #########################################################
 ## Install RemoteUserSSL module
