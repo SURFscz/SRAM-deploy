@@ -15,11 +15,6 @@
 - include_role:
     name: "simplesamlphp"
     public: true
-  vars:
-    simplesaml_name: "{{testidp_ssl_name}}"
-    simplesaml_user: "{{testidp_ssl_user}}"
-    simplesaml_group: "{{testidp_ssl_group}}"
-    simplesaml_project_dir: "{{testidp_ssl_dir}}"
 
 - name: SimpleSaml configuration (templates)
   template:

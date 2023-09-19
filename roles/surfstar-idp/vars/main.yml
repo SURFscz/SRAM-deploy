@@ -1,0 +1,5 @@
+---
+simplesaml_name: "{{surfstar_idp_name}}"
+simplesaml_user: "{{surfstar_idp_user}}"
+simplesaml_group: "{{surfstar_idp_group}}"
+simplesaml_project_dir: "{{surfstar_idp_dir}}"
