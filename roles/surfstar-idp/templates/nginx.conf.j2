@@ -62,7 +62,7 @@ server {
             fastcgi_param SCRIPT_FILENAME $document_root/$fastcgi_script_name;
             fastcgi_param SCRIPT_NAME     /simplesaml/$fastcgi_script_name;
             fastcgi_param PATH_INFO       $fastcgi_path_info;
-            fastcgi_param SSL_CLIENT_SUBJECT_DN  $ssl_client_s_dn;
+            fastcgi_param SSL_CLIENT_RAW_CERT    $ssl_client_raw_cert;
         }
     }
 
