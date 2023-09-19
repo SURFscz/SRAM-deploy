@@ -48,12 +48,12 @@ server {
         allow 145.38.196.102/32;
         deny all;
 
-        alias /opt/sram-testidp-ssl/simplesaml/public;
+        alias {{ simplesaml_project_dir }}/simplesaml/public;
         index index.php;
 
         location ~ \.php(/|$) {
-            root             /opt/sram-testidp-ssl/simplesaml/public;
-            fastcgi_pass     unix:/run/php/sram-testidp-ssl.sock;
+            root             {{ simplesaml_project_dir }}/simplesaml/public;
+            fastcgi_pass     unix:/run/php/{{ simplesaml_name }}.sock;
             fastcgi_index    index.php;
 
             include          fastcgi_params;
@@ -66,7 +66,7 @@ server {
         }
     }
 
-    root /opt/sram-testidp-ssl/html;
+    root {{ surfstar_idp_dir }}/html;
 
 }
 

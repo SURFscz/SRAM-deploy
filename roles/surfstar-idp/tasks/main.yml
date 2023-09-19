@@ -47,10 +47,17 @@
     dest: "{{ simplesaml_cert_dir }}/{{ item.file }}"
     mode: "0640"
     owner: "root"
-    group: "{{testidp_group}}"
+    group: "{{surfstar_idp_group}}"
   loop:
     - { file: "saml.key", contents: "{{ surfstar_idp_samlcert.key}}"  }
     - { file: "saml.crt", contents: "{{ surfstar_idp_samlcert.cert}}" }
+
+- name: Link SAML signing certificates
+  ansible.builtin.file:
+    path: "{{ simplesaml_project_dir }}/simplesaml/cert"
+    src: "{{ simplesaml_cert_dir }}"
+    state: "link"
+    force: true
 
 #########################################################
 ## Install RemoteUserSSL module
