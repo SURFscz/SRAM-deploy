@@ -67,6 +67,8 @@
     dest: "{{ simplesaml_project_dir }}"
     remote_src: true
   when: "ssp_download.changed or not ssp_destdir.stat.exists"
+  notify: "restart php-fpm"
+
 
 - name: Make sure the log directory exists
   file:
@@ -88,11 +90,14 @@
     dest: "{{ simplesaml_project_dir }}/config/salt"
     mode: "0600"
     force: false
+  notify: "restart php-fpm"
+
 
 - name: Read random salt
   slurp:
     src: "{{ simplesaml_project_dir }}/config/salt"
   register: "simplesaml_salt"
+  notify: "restart php-fpm"
 
 - name: SimpleSaml configuration
   template:
@@ -101,6 +106,7 @@
   with_items:
     - "config.php"
     - "authsources.php"
+  notify: "restart php-fpm"
 
 - name: Link SimpleSaml configuration
   file:
