@@ -10,3 +10,5 @@ surfstar_idp_entityid: "test-idp.lab.surf.nl"
 surfstar_idp_displayname: "SURF* Test IdP"
 surfstar_idp_descr: "SURF* Test IdP"
 surfstar_idp_orgname: "SURF"
+
+surfstar_idp_admin_passwd: "ssp_password"
