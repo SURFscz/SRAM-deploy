@@ -1,7 +1,7 @@
 ---
-testidp_ssl_name: "sram-testidp-ssl"
-testidp_ssl_user: "sram-testidp-ssl"
-testidp_ssl_group: "sram-testidp-ssl"
-testidp_ssl_dir: "/opt/{{testidp_ssl_name}}"
-testidp_ssl_html_dir: "{{testidp_ssl_dir}}/html"
-testidp_ssl_hostname: "test-idp.lab.surf.nl"
+surfstar_idp_name: "surfstar-idp"
+surfstar_idp_user: "surfstar-idp"
+surfstar_idp_group: "surfstar-idp"
+surfstar_idp_dir: "/opt/{{surfstar_idp_name}}"
+surfstar_idp_html_dir: "{{surfstar_idp_dir}}/html"
+surfstar_idp_hostname: "test-idp.lab.surf.nl"

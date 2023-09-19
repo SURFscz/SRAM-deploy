@@ -6,11 +6,11 @@
  * See: https://simplesamlphp.org/docs/stable/simplesamlphp-reference-idp-hosted
  */
 
-$metadata['{{testidp_ssl_hostname}}'] = array(
-    'host' => '{{testidp_ssl_hostname}}',
+$metadata['{{surfstar_idp_hostname}}'] = array(
+    'host' => '{{surfstar_idp_hostname}}',
     'OrganizationName' => 'SCZ Test IdP',
     'OrganizationDisplayName' => 'SCZ Test IdP',
-    'OrganizationURL' => 'https://{{testidp_ssl_hostname}}/',
+    'OrganizationURL' => 'https://{{surfstar_idp_hostname}}/',
     'RegistrationInfo' => array(
         'authority' => 'urn:mace:idp.foo.bar'
         //'authority' => 'https://incommon.org'
@@ -24,7 +24,7 @@ $metadata['{{testidp_ssl_hostname}}'] = array(
         ),
         'Logo' => array(
             array(
-                'url' => 'https://{{testidp_ssl_hostname}}/saml/resources/icons/ssplogo-fish-small.png',
+                'url' => 'https://{{surfstar_idp_hostname}}/saml/resources/icons/ssplogo-fish-small.png',
                 'width' => 60,
                 'height' => 41
             )

@@ -5,7 +5,7 @@
 #########################################################
 - name: Create html dir
   file:
-    path: "{{testidp_ssl_html_dir}}"
+    path: "{{surfstar_idp_html_dir}}"
     state: "directory"
     mode: "0755"
 
@@ -100,7 +100,7 @@
     public: true
   vars:
     letsencrypt_staging: false
-    letsencrypt_hosts: [ "{{testidp_ssl_hostname}}" ]
+    letsencrypt_hosts: [ "{{surfstar_idp_hostname}}" ]
 
 - name: Install nginx config
   template:
