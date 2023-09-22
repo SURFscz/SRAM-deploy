@@ -1,0 +1,35 @@
+##########################################
+# defines all hosts in this environment
+[lb]
+lb1.internal.sram.example.org
+lb2.internal.sram.example.org
+
+[sbs]
+sbs1.internal.sram.example.org
+sbs2.internal.sram.example.org
+
+[ldap]
+ldap1.internal.sram.example.org
+ldap2.internal.sram.example.org
+
+[meta]
+meta1.internal.sram.example.org
+meta2.internal.sram.example.org
+
+[ldap_primary]
+ldap1.internal.sram.example.org
+
+[ldap_secondary]
+ldap2.internal.sram.example.org
+
+[acc:children]
+lb
+sbs
+ldap
+meta
+
+##########################################
+# all
+[all:children]
+test_example
+```

@@ -1,0 +1,146 @@
+---
+# sbs should be accessible from the lb
+firewall_v4_incoming:
+  - { name: lb_sbs,           src: "{{iprange.lb}}",   dport: "{{sbs_port}}",           proto: tcp }
+
+
+# connection to database (defined in tst.yml)
+sbs_db_host: "{{db_host}}"
+sbs_db_name: "sbs"
+
+# connection to redis (defined in tst.yml)
+sbs_redis_host: "{{redis_host}}"
+sbs_redis_port: 6379
+sbs_redis_ssl: true
+
+# connection to smtp host
+sbs_mail_host: "127.0.0.1"
+sbs_mail_port: "25"
+
+# port to listen on; needs to correspond to port known by the haproxy
+sbs_backend_port: "{{sbs_port}}"
+
+# which scopes to use
+sbs_urn_namespace: "urn:example:sram-test"
+sbs_eppn_scope: "test.sram.example.org"
+
+# mail from
+sbs_mail_sender_email: "{{ mail.noreply_address }}"
+sbs_mail_sender_name: "SURF Research Access Management (test)"
+
+# addresses to show in interface
+sbs_support_email: "{{mail.support_address}}"
+# send administrative mails to
+sbs_admin_email: "{{mail.admin_address}}"
+# send debug mail to
+sbs_exceptions_mail: "sram-logs@surf.nl"
+# send user removal requests to
+sbs_eduteams_email: "{{mail.admin_address}}"
+
+sbs_session_lifetime: 1200  # in minutes
+
+# make sure the sessions are invalided when a new release is deployed by changing the secret key
+sbs_secret_key_suffix: "_{{sbs_version}}_{{local_time}}"
+
+# allow seeting expiry dates in the past (for testing)
+sbs_past_dates_allowed: True
+
+# allow moch SCIM endpoints (for testing)
+sbs_mock_scim_enabled: True
+
+# define API users (secrets defined in ../secrets/all.yml)
+sbs_api_users:
+  sysread:
+    password: "{{ sbs_sysread_password }}"
+    scopes: ["read"]
+  sysadmin:
+    password: "{{ sbs_sysadmin_password }}"
+    scopes: ["read", "write","system", "restricted_co"]
+  haproxy_acl:  # used by aclsync script
+    password: "{{ sbs_ipaddress_password }}"
+    scopes: ["ipaddress"]
+
+
+sbs_restricted_co_default_org: "example.org"
+
+# oid config (for upstream OP)
+sbs_uid_attribute: "sub"
+sbs_oidc_config_url: "https://your.op.com/.well-known/openid-configuration"
+sbs_oidc_authz_endpoint: "https://your.op.com/saml2sp/OIDC/authorization"
+sbs_oidc_token_endpoint: "https://your.op.com/OIDC/token"
+sbs_oidc_userinfo_endpoint: "https://your.op.com/OIDC/userinfo"
+sbs_oidc_jwks_endpoint: "https://{your.op.com/OIDC/jwks"
+sbs_oidc_redirect_uri: "https://{your.op.com/api/users/resume-session"
+sbs_oidc_sfo_endpoint: "https://your.op.com/sfo"
+sbs_eduteams_continue_endpoint: "https://your.op.com/"
+sbs_oidc_jwt_audience: "https://your.op.com"
+
+# ldap url (for display purposes in the UI)
+sbs_ldap_url: "ldaps://{{hostnames.ldap}}"
+# entity_id will be replaced run-time in the client
+sbs_ldap_bind_account: "cn=admin,dc=entity_id,{{ldap_basedn}}"
+
+# define admin users. The uid specified here correcsponds to the OIDC
+# claim defined in sbs_uid_attribute above
+sbs_admin_users:
+  - uid: "foo@example.org"
+
+# these accounts will never be suspended or deleted
+sbs_excluded_users:
+  - uid: "bar@example.org"
+
+# when to run cron jobs (make sure multiple instances don't run at the same time)
+sbs_cron_hour_of_day: "{{ 4 + groups['app'].index(inventory_hostname) }}"
+
+# allow reseeding from system menu (for testing)
+sbs_seed_allowed: True
+
+# feature toggles
+sbs_api_keys_enabled: True
+sbs_feedback_enabled: True
+sbs_audit_trail_notifications_enabled: True
+sbs_send_exceptions: False
+sbs_send_js_exceptions: False
+sbs_second_factor_authentication_required: True  # disable to never require 2FA
+sbs_totp_token_name: "TEST"
+sbs_notifications_enabled: False
+sbs_impersonation_allowed: True
+sbs_admin_platform_backdoor_totp: True  # admins can always use "000000" as TOTP (for testing)
+sbs_swagger_enabled: True  # enable /apidocs
+sbs_scim_sweep: True
+
+sbs_delete_orphaned: True  # delete orphaned users (i.e., new users without membership)
+sbs_suspension_inactive_days: 99999  # suspend idle users after this many days
+
+# users from these IdPs (as transmitted by the upstream proxy) to login
+# without extra 2FA questions (assumed to have happened at their idP already)
+sbs_mfa_idp_allowed:
+  - schac_home: "test-idp.example.com"
+    entity_id: "test-idp.example.cp,m"
+
+# users from these IdPs (as transmitted by the upstream proxy)
+# should do 2FA at a SAML Single Factor-only endpoint
+sbs_ssid_identity_providers:
+  - schac_home: "sfo.example.com"
+    entity_id: "https://sfo.exmaple.com"
+
+# define the 2FA single-factor-only endpoint (SAML)
+sbs_surf_secure_id:
+  environment: "foo.example.com"
+  sp_entity_id: "https://sbs.{{base_domain}}"
+  acs_url: "https://{{base_domain}}/api/users/acs"
+  sa_gw_environment: "sa-gw.test.example.com"
+  sa_idp_certificate: |
+    -----BEGIN CERTIFICATE-----
+    MIIE8jCCA1qgAwIBAgIUD4MpAowfeNTa8dEJpJtl2r6PRDwwDQYJKoZIhvcNAQELBQAwgYkxCzAJ
+    [...]
+    Dx2aub9LOcTC5on3519edw==
+    -----END CERTIFICATE-----
+  priv: "{{sbs_ssid_saml_key.priv}}"
+  pub: "{{sbs_ssid_saml_key.pub}}"
+
+# how often should a user be asked for 2FA
+sbs_mfa_sso_minutes: 1
+
+# ask users not in sbs_mfa_idp_allowed or in sbs_ssid_identity_providers for 2FA
+sbs_mfa_fallback_enabled: true

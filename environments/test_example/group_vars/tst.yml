@@ -1,0 +1,60 @@
+---
+# generic config for all hosts
+
+# how to connect
+ansible_ssh_common_args: '-o ProxyJump=your-jumphost.com'
+
+# where to read the secrets from
+secrets_file: "environments/aws_tst/secrets/all.yml"
+secrets_users_file: "environments/aws_tst/secrets/users.yml"
+
+# db hosts
+db_host: "sram-tst-sram-tst.cluster-cakj2x1agma0.eu-central-1.rds.amazonaws.com"
+redis_host: "master.sram-tst.ffqqpq.euc1.cache.amazonaws.com"
+
+# users in these unix groups should be allowed to sudo in the hosts
+sudo_groups:
+  - "sudo_tst"
+
+# user in this UNIX group will be allowed ldap access via their shell credentials
+ldap_admin_group: "ldap_tst"
+
+# name and domains
+environment_name: "test"
+environment_string: "Test"
+base_domain: "test.{{sram_domain}}"
+ldap_basedn: "dc=services,dc=sram-tst,dc=example,dc=org"
+
+metadata_mgnt_group: metadata_grp
+
+# externally visible!
+hostnames:
+  ldap:     "ldap.{{base_domain}}"
+  meta:     "meta.{{base_domain}}"
+  sbs:      "sbs.{{base_domain}}"
+
+# port numbers to use for different applications
+sbs_port: 89
+meta_port: 90
+ldap_port: 636
+
+# define hosts served by the loadbalancer; mostly populated from the inventory
+loadbalancer:
+  - name: 'sbs'
+    hostname: "{{base_domain}}"
+    protocol: http
+    backend_hosts: "{{groups['sbs']}}"
+    backend_port: "{{sbs_port}}"
+    options:
+      httpchk: "GET /health"
+  - name: 'meta'
+    hostname: "{{hostnames.meta}}"
+    protocol: http
+    backend_hosts: "{{groups['meta']}}"
+    backend_port: "{{meta_port}}"
+  - name: 'ldap'
+    hostname: "{{hostnames.ldap}}"
+    protocol: ldap
+    frontend_port: "{{ldap_port}}"
+    backend_hosts: "{{groups['ldap']}}"
+    backend_port: "{{ldap_port}}"

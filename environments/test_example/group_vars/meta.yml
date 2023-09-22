@@ -1,0 +1,74 @@
+---
+# config for meta hosts
+
+# note: most of this is not directly used internally by SBS
+# the metadaata defined ande generated here are meant to be used by
+# servicdes connecting to SRAM, or for our proxy to know whihc IdPs we cant to server
+
+# loadbalancer has http access
+firewall_v4_incoming:
+  - { name: lb_meta,          src: "{{iprange.lb}}",   dport: "{{meta_port}}",          proto: tcp }
+
+
+# where to store SAML metadata
+metadata_project_dir: "/opt/metadata"
+
+# sources of the SAML metadata of your proxy
+# fontend is SP-side, backend is IdP-side
+metadata_proxy_frontend_source: "https://your.proxy.com/metadata/frontend.xml"
+metadata_proxy_backend_source: "https://your.proxy.com/metadata/backend.xml"
+
+# metadata server processes upstream metadata and stores it in https://meta/idps.xml
+# there are two sources:
+# source of edugain metadata
+metadata_edugain_source: "https://mds.edugain.org/edugain-v2.xml"
+metadata_edugain_cert: |
+    -----BEGIN CERTIFICATE-----
+    MIIFSzCCAzOgAwIBAgIUY99qGOKOxV+iz/+tWfwixuh0CpowDQYJKoZIhvcNAQEL
+    BQAwNTEOMAwGA1UECgwFR0VBTlQxIzAhBgNVBAMMGmVkdUdBSU4gUlNBIFNpZ25l
+    ciBDQSAyMDIyMB4XDTIyMDMwODA5MjIzMloXDTQyMDMwODA5MjIzMlowNTEOMAwG
+    A1UECgwFR0VBTlQxIzAhBgNVBAMMGmVkdUdBSU4gUlNBIFNpZ25lciBDQSAyMDIy
+    MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEA1H2PdoPu4QLKqfcg7uC9
+    rzPA04tdUAdbdnByPddLFEeOfYUxkzbbmrEkUbvL65YAibbxJwEioIQTgSwrtoHL
+    nT/puQnux7T7en5qYRDLpX7qR2ssNN4TiXS8Z8qDmI+LQw9YnNpI35qHguHKBr2J
+    kbM7qdq6+8KQD0aK+7FyPcGsYDnOoLlJ8cfmIxY7mumfEbiAni/z/pP4Mo2g4rf4
+    GY8nhHudJea6qSvxIGLRy7GlL0VOY/PCnxl+EPYSRZYEJEc9jNXsepIzpSU5AM6r
+    kwO6Ue+5crYtJMey07b0IEaFNHc/Omt5KY+UO0ewYnjcdnKa5MWgTntxs+AzDiMp
+    dIXGemo2SKfcqmAPUW8bLNFABdwxq/Bhcsqb1K+e4C61dPyI2rDWpaM+NIRLvpLD
+    jDZsaMnhZK6/ezxKV4h94YKSF1fTunZsyEtaot53ztXjUgvALMFb/XqAes3V+o7D
+    WSQ1JYvifkk2agzjel+A9m+e7UgaBuuqfwpkClgMExrB8CJI1xBuAHI/yldoaITL
+    auPKWYb+bXpkPg8BznYhGIA9TSqTPNwd0WmH1SZ1lmINuN8ElKRmi+DKkKe9NRXf
+    /jS3PKg9NnrFS9fnhTeaI8ikVSh8qPDfsUYtuDF1SL7B+27yT3+7WKCD6gqu/J4P
+    8iYELM++C29VgApxlHnLdO8CAwEAAaNTMFEwHQYDVR0OBBYEFEgBijs8UaPzEW81
+    hco9oyNH27b3MB8GA1UdIwQYMBaAFEgBijs8UaPzEW81hco9oyNH27b3MA8GA1Ud
+    EwEB/wQFMAMBAf8wDQYJKoZIhvcNAQELBQADggIBAMTQKHe5mybVO4hlTHeha1xo
+    /OYREQsa0We4nR5Rbga6xDMHCjnDYdfZg6VqbgGUA97kOAymhlIFO0pNKGowlOdR
+    o9AjEhW2mq2itD7e4T4bDWqJ+6YAVc94DIVAjaY8BSJiet5BccXB8oles+W9nQ8k
+    k24X2uCa3lWTbUaNGootbN+DVKVvX85zt5p707++yRQJZH4AWSAgpglnnIxo/y2Z
+    rVUl8LvbwU4SuSQnyorfaiA0Q4NCnJPoZh1sEyfqvcVkH915RwP+0Vl7oXYgYKx0
+    52U+G6I3w5qm/PafUQ4K2hn2KIHYDCz4P8DV6pbUqzoZ15BvLPu/3eenzqvdtoGj
+    hD8/3VxowicLrV69gEWJZ89VMjjPTHp7XyrEvKq4n7uquLArS3dW3+mNrmeFRA99
+    Y59RFgtroEbIyk5Z/AQA0vuTfEATIMdn/jbeLC2juz57AAnuu6mE72KBdZY3OK2u
+    F1sQCop/lWfN/khleo5EBWucQ+a7nZnByd6J0sp70AxjSOBTP5I0TBcdZgaDXJpH
+    b4pOwX4EQeXUwlYTh2eYoZRP2thTdH0QrXKEEicynmBfvECz/4nAPwLPYk+yK9/a
+    bYYSBn/KbBhBie7chsknzJ+XXb4C9ROubuuAl26yPQxX5uI03lYkVExpj5SdHzts
+    /ULLKN5t9Us3gc9SQ3+6
+    -----END CERTIFICATE-----
+
+# and additional source (from own identity federation, will be added to edugain metadata)
+metadata_idps_source: "https://metadata.exampleconext.nl/idps-metadata.xml"
+metadata_idps_cert: |
+  -----BEGIN CERTIFICATE-----
+  MIIFbjCCA1agAwIBAgIQagXJvtKqIRRO8zD41OktRjANBgkqhkiG9w0BAQsFADB8
+  MQswCQYDVQQGEwJOTDEQMA4GA1UEBwwHVXRyZWNodDEQMA4GA1UECAwHVXRyZWNo
+  [...]
+  +SOHKRX5+q0KqJdnEC7GOX69hSDsCT905dpVnr8JgFKoUfXWSmbwTMj45190dw7R
+  Mzk=
+  -----END CERTIFICATE-----
+
+# whihc RegistrationAuthority to use when publishing metadata
+metadata_registration_authority: "http://sram.exampl.org/"
+
+# which IdPs to include in the metadata
+metadata_idps_filters:
+  - "http://mock-idp"

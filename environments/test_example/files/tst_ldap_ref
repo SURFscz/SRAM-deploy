@@ -1,0 +1,442 @@
+# this is an static ldap dump of the test environment
+# the monitoring script (role/ldap_monitor) uses it to verify that the ldap output of SBS is what it should be
+
+cn=@all,ou=Groups,o=uuc.uuc_teachers_short_name,dc=ordered,dc=https://ldap-monitor.example.org,dc=services,dc=sram-tst,dc=surf,dc=nl
+  cn
+    @all
+  description
+    All CO members
+  displayName
+    All Members of UUC Teachers
+  labeledURI
+    https://test.sram.surf.nl/api/images/collaborations/e051b1d1-02c8-4bf3-8b1d-622d2e9c4bf6 logo
+    https://test.sram.surf.nl/collaborations/033cbc91-45ed-4020-bf86-3cc323e1f1cf sbs_url
+  member
+    uid=betty,ou=People,o=uuc.uuc_teachers_short_name,dc=ordered,dc=https://ldap-monitor.example.org,dc=services,dc=sram-tst,dc=surf,dc=nl
+  objectClass
+    extensibleObject
+    groupOfMembers
+  uniqueIdentifier
+    033cbc91-45ed-4020-bf86-3cc323e1f1cf
+cn=@all,ou=Groups,o=uva.research,dc=ordered,dc=https://ldap-monitor.example.org,dc=services,dc=sram-tst,dc=surf,dc=nl
+  businessCategory
+    uva.tag_uva
+  cn
+    @all
+  description
+    All CO members
+  displayName
+    All Members of UVA UCC research
+  labeledURI
+    https://test.sram.surf.nl/api/images/collaborations/e3d09e5b-9962-473d-b277-dbd78167b100 logo
+    https://test.sram.surf.nl/collaborations/da706611-0afb-4a7a-819b-b0a9c63e9b67 sbs_url
+  member
+    uid=peter,ou=People,o=uva.research,dc=ordered,dc=https://ldap-monitor.example.org,dc=services,dc=sram-tst,dc=surf,dc=nl
+    uid=roger,ou=People,o=uva.research,dc=ordered,dc=https://ldap-monitor.example.org,dc=services,dc=sram-tst,dc=surf,dc=nl
+    uid=sarah,ou=People,o=uva.research,dc=ordered,dc=https://ldap-monitor.example.org,dc=services,dc=sram-tst,dc=surf,dc=nl
+  objectClass
+    extensibleObject
+    groupOfMembers
+  uniqueIdentifier
+    da706611-0afb-4a7a-819b-b0a9c63e9b67
+cn=admin,dc=https://ldap-monitor.example.org,dc=services,dc=sram-tst,dc=surf,dc=nl
+  cn
+    admin
+  objectClass
+    organizationalRole
+    simpleSecurityObject
+  userPassword
+    {CRYPT}$2b$12$GLjC5hK59aeDcEe.tHHJMO.SQQjFgIIpZ7VaKTIsBn05z/gE7JQny
+cn=mail-mail,ou=Groups,o=uva.research,dc=ordered,dc=https://ldap-monitor.example.org,dc=services,dc=sram-tst,dc=surf,dc=nl
+  cn
+    mail-mail
+  description
+    Provisioned by service Mail Services - Mail group
+  displayName
+    service_group_mail_name
+  objectClass
+    extensibleObject
+    groupOfMembers
+  uniqueIdentifier
+    9946ca40-2a53-40a8-bc63-fb0758e716e3
+cn=science,ou=Groups,o=uva.research,dc=ordered,dc=https://ldap-monitor.example.org,dc=services,dc=sram-tst,dc=surf,dc=nl
+  cn
+    science
+  description
+    Science
+  displayName
+    Science
+  member
+    uid=roger,ou=People,o=uva.research,dc=ordered,dc=https://ldap-monitor.example.org,dc=services,dc=sram-tst,dc=surf,dc=nl
+  objectClass
+    extensibleObject
+    groupOfMembers
+  uniqueIdentifier
+    e46e388c-9362-4aaa-b23f-a855bf559598
+cn=uuc.uuc_teachers_short_name.@all,ou=Groups,dc=flat,dc=https://ldap-monitor.example.org,dc=services,dc=sram-tst,dc=surf,dc=nl
+  cn
+    uuc.uuc_teachers_short_name.@all
+  description
+    All CO members
+  displayName
+    All Members of UUC Teachers
+  labeledURI
+    https://test.sram.surf.nl/api/images/collaborations/e051b1d1-02c8-4bf3-8b1d-622d2e9c4bf6 logo
+    https://test.sram.surf.nl/collaborations/033cbc91-45ed-4020-bf86-3cc323e1f1cf sbs_url
+  member
+    uid=betty,ou=People,dc=flat,dc=https://ldap-monitor.example.org,dc=services,dc=sram-tst,dc=surf,dc=nl
+  objectClass
+    extensibleObject
+    groupOfMembers
+  uniqueIdentifier
+    033cbc91-45ed-4020-bf86-3cc323e1f1cf
+cn=uva.research.@all,ou=Groups,dc=flat,dc=https://ldap-monitor.example.org,dc=services,dc=sram-tst,dc=surf,dc=nl
+  businessCategory
+    uva.tag_uva
+  cn
+    uva.research.@all
+  description
+    All CO members
+  displayName
+    All Members of UVA UCC research
+  labeledURI
+    https://test.sram.surf.nl/api/images/collaborations/e3d09e5b-9962-473d-b277-dbd78167b100 logo
+    https://test.sram.surf.nl/collaborations/da706611-0afb-4a7a-819b-b0a9c63e9b67 sbs_url
+  mail
+    sarah@uva.org
+  member
+    uid=peter,ou=People,dc=flat,dc=https://ldap-monitor.example.org,dc=services,dc=sram-tst,dc=surf,dc=nl
+    uid=roger,ou=People,dc=flat,dc=https://ldap-monitor.example.org,dc=services,dc=sram-tst,dc=surf,dc=nl
+    uid=sarah,ou=People,dc=flat,dc=https://ldap-monitor.example.org,dc=services,dc=sram-tst,dc=surf,dc=nl
+  objectClass
+    extensibleObject
+    groupOfMembers
+  uniqueIdentifier
+    da706611-0afb-4a7a-819b-b0a9c63e9b67
+cn=uva.research.mail-mail,ou=Groups,dc=flat,dc=https://ldap-monitor.example.org,dc=services,dc=sram-tst,dc=surf,dc=nl
+  cn
+    uva.research.mail-mail
+  description
+    Provisioned by service Mail Services - Mail group
+  displayName
+    service_group_mail_name
+  mail
+    sarah@uva.org
+  objectClass
+    extensibleObject
+    groupOfMembers
+  uniqueIdentifier
+    9946ca40-2a53-40a8-bc63-fb0758e716e3
+cn=uva.research.science,ou=Groups,dc=flat,dc=https://ldap-monitor.example.org,dc=services,dc=sram-tst,dc=surf,dc=nl
+  cn
+    uva.research.science
+  description
+    Science
+  displayName
+    Science
+  mail
+    sarah@uva.org
+  member
+    uid=roger,ou=People,dc=flat,dc=https://ldap-monitor.example.org,dc=services,dc=sram-tst,dc=surf,dc=nl
+  objectClass
+    extensibleObject
+    groupOfMembers
+  uniqueIdentifier
+    e46e388c-9362-4aaa-b23f-a855bf559598
+dc=flat,dc=https://ldap-monitor.example.org,dc=services,dc=sram-tst,dc=surf,dc=nl
+  dc
+    flat
+  objectClass
+    dcObject
+    organizationalUnit
+  ou
+    flat
+dc=https://ldap-monitor.example.org,dc=services,dc=sram-tst,dc=surf,dc=nl
+  dc
+    https://ldap-monitor.example.org
+  labeledURI
+    https://privacy.org pp
+  o
+    https://ldap-monitor.example.org
+  objectClass
+    dcObject
+    labeledURIObject
+    organization
+dc=ordered,dc=https://ldap-monitor.example.org,dc=services,dc=sram-tst,dc=surf,dc=nl
+  dc
+    ordered
+  objectClass
+    dcObject
+    organizationalUnit
+  ou
+    ordered
+o=uuc.uuc_teachers_short_name,dc=ordered,dc=https://ldap-monitor.example.org,dc=services,dc=sram-tst,dc=surf,dc=nl
+  description
+    UUC Teachers
+  displayName
+    UUC Teachers
+  labeledURI
+    https://test.sram.surf.nl/api/images/collaborations/e051b1d1-02c8-4bf3-8b1d-622d2e9c4bf6 logo
+    https://test.sram.surf.nl/collaborations/033cbc91-45ed-4020-bf86-3cc323e1f1cf sbs_url
+  o
+    uuc.uuc_teachers_short_name
+  objectClass
+    extensibleObject
+    organization
+    top
+  uniqueIdentifier
+    033cbc91-45ed-4020-bf86-3cc323e1f1cf
+o=uva.research,dc=ordered,dc=https://ldap-monitor.example.org,dc=services,dc=sram-tst,dc=surf,dc=nl
+  businessCategory
+    uva.tag_uva
+  description
+    University of Amsterdam Research - Urban Crowd Control
+  displayName
+    UVA UCC research
+  labeledURI
+    https://test.sram.surf.nl/api/images/collaborations/e3d09e5b-9962-473d-b277-dbd78167b100 logo
+    https://test.sram.surf.nl/collaborations/da706611-0afb-4a7a-819b-b0a9c63e9b67 sbs_url
+  mail
+    sarah@uva.org
+  o
+    uva.research
+  objectClass
+    extensibleObject
+    organization
+    top
+  uniqueIdentifier
+    da706611-0afb-4a7a-819b-b0a9c63e9b67
+ou=Groups,dc=flat,dc=https://ldap-monitor.example.org,dc=services,dc=sram-tst,dc=surf,dc=nl
+  objectClass
+    organizationalUnit
+    top
+  ou
+    Groups
+ou=Groups,o=uuc.uuc_teachers_short_name,dc=ordered,dc=https://ldap-monitor.example.org,dc=services,dc=sram-tst,dc=surf,dc=nl
+  objectClass
+    organizationalUnit
+    top
+  ou
+    Groups
+ou=Groups,o=uva.research,dc=ordered,dc=https://ldap-monitor.example.org,dc=services,dc=sram-tst,dc=surf,dc=nl
+  objectClass
+    organizationalUnit
+    top
+  ou
+    Groups
+ou=People,dc=flat,dc=https://ldap-monitor.example.org,dc=services,dc=sram-tst,dc=surf,dc=nl
+  objectClass
+    organizationalUnit
+    top
+  ou
+    People
+ou=People,o=uuc.uuc_teachers_short_name,dc=ordered,dc=https://ldap-monitor.example.org,dc=services,dc=sram-tst,dc=surf,dc=nl
+  objectClass
+    organizationalUnit
+    top
+  ou
+    People
+ou=People,o=uva.research,dc=ordered,dc=https://ldap-monitor.example.org,dc=services,dc=sram-tst,dc=surf,dc=nl
+  objectClass
+    organizationalUnit
+    top
+  ou
+    People
+uid=betty,ou=People,dc=flat,dc=https://ldap-monitor.example.org,dc=services,dc=sram-tst,dc=surf,dc=nl
+  cn
+    urn:betty
+  displayName
+    betty
+  eduPersonScopedAffiliation
+    member@sram.surf.nl
+  eduPersonUniqueId
+    urn:betty
+  givenName
+    n/a
+  mail
+    betty@uuc.org
+  objectClass
+    eduPerson
+    inetOrgPerson
+    person
+    voPerson
+  sn
+    n/a
+  uid
+    betty
+  voPersonStatus
+    active
+uid=betty,ou=People,o=uuc.uuc_teachers_short_name,dc=ordered,dc=https://ldap-monitor.example.org,dc=services,dc=sram-tst,dc=surf,dc=nl
+  cn
+    urn:betty
+  displayName
+    betty
+  eduPersonScopedAffiliation
+    member@sram.surf.nl
+  eduPersonUniqueId
+    urn:betty
+  givenName
+    n/a
+  mail
+    betty@uuc.org
+  objectClass
+    eduPerson
+    inetOrgPerson
+    person
+    voPerson
+  sn
+    n/a
+  uid
+    betty
+  voPersonStatus
+    active
+uid=peter,ou=People,dc=flat,dc=https://ldap-monitor.example.org,dc=services,dc=sram-tst,dc=surf,dc=nl
+  cn
+    urn:peter
+  displayName
+    Peter Doe
+  eduPersonScopedAffiliation
+    member@sram.surf.nl
+  eduPersonUniqueId
+    urn:peter
+  givenName
+    n/a
+  mail
+    peter@example.org
+  objectClass
+    eduPerson
+    inetOrgPerson
+    person
+    voPerson
+  sn
+    n/a
+  uid
+    peter
+  voPersonStatus
+    active
+uid=peter,ou=People,o=uva.research,dc=ordered,dc=https://ldap-monitor.example.org,dc=services,dc=sram-tst,dc=surf,dc=nl
+  cn
+    urn:peter
+  displayName
+    Peter Doe
+  eduPersonScopedAffiliation
+    member@sram.surf.nl
+  eduPersonUniqueId
+    urn:peter
+  givenName
+    n/a
+  mail
+    peter@example.org
+  objectClass
+    eduPerson
+    inetOrgPerson
+    person
+    voPerson
+  sn
+    n/a
+  uid
+    peter
+  voPersonStatus
+    active
+uid=roger,ou=People,dc=flat,dc=https://ldap-monitor.example.org,dc=services,dc=sram-tst,dc=surf,dc=nl
+  cn
+    urn:roger
+  displayName
+    Roger Doe
+  eduPersonScopedAffiliation
+    member@sram.surf.nl
+  eduPersonUniqueId
+    urn:roger
+  givenName
+    n/a
+  mail
+    roger@example.org
+  objectClass
+    eduPerson
+    inetOrgPerson
+    person
+    voPerson
+  sn
+    n/a
+  uid
+    roger
+  voPersonStatus
+    active
+uid=roger,ou=People,o=uva.research,dc=ordered,dc=https://ldap-monitor.example.org,dc=services,dc=sram-tst,dc=surf,dc=nl
+  cn
+    urn:roger
+  displayName
+    Roger Doe
+  eduPersonScopedAffiliation
+    member@sram.surf.nl
+  eduPersonUniqueId
+    urn:roger
+  givenName
+    n/a
+  mail
+    roger@example.org
+  objectClass
+    eduPerson
+    inetOrgPerson
+    person
+    voPerson
+  sn
+    n/a
+  uid
+    roger
+  voPersonStatus
+    active
+uid=sarah,ou=People,dc=flat,dc=https://ldap-monitor.example.org,dc=services,dc=sram-tst,dc=surf,dc=nl
+  cn
+    urn:sarah
+  displayName
+    Sarah Cross
+  eduPersonScopedAffiliation
+    member@sram.surf.nl
+  eduPersonUniqueId
+    urn:sarah
+  givenName
+    n/a
+  mail
+    sarah@uva.org
+  objectClass
+    eduPerson
+    inetOrgPerson
+    ldapPublicKey
+    person
+    voPerson
+  sn
+    n/a
+  sshPublicKey
+    some-lame-key
+  uid
+    sarah
+  voPersonStatus
+    active
+uid=sarah,ou=People,o=uva.research,dc=ordered,dc=https://ldap-monitor.example.org,dc=services,dc=sram-tst,dc=surf,dc=nl
+  cn
+    urn:sarah
+  displayName
+    Sarah Cross
+  eduPersonScopedAffiliation
+    member@sram.surf.nl
+  eduPersonUniqueId
+    urn:sarah
+  givenName
+    n/a
+  mail
+    sarah@uva.org
+  objectClass
+    eduPerson
+    inetOrgPerson
+    ldapPublicKey
+    person
+    voPerson
+  sn
+    n/a
+  sshPublicKey
+    some-lame-key
+  uid
+    sarah
+  voPersonStatus
+    active

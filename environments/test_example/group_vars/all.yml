@@ -1,0 +1,119 @@
+---
+# this fiel contains generic variables for all environments
+
+# replace this by the domains you want to use
+sram_domain: "sram.example.com"
+internal_base_domain: "internal.{{sram_domain}}"
+
+# if set to true, do not change some basic foles on the hosts
+# (/etc/resolv.conf etc), see roles/basic/tasks/main.yml
+is_aws: true
+
+# some OS-level switches
+servers:
+  search:
+    - "{{internal_base_domain}}"
+  ntp:
+    - "pool.ntp.org"
+
+# set to false to disabel ipv6 in the OS-level
+enable_ipv6: true
+
+# set to false to use letsencrypt; we haven't tested this very well,
+# so setting a fixed cert (see secrets/all.yml) is recommended
+use_fixed_cert: true
+
+# some basic ip addresses.
+iprange:
+  internal: "10.0.0.0/8"  # internal network, used to open up firewalls
+  bastion: "10.32.0.20"   # bastion host, used to open up ssh access
+  # load balancer, automatic from inventory
+  lb:   "{{groups['lb'] | map('extract', hostvars, ['ansible_default_ipv4','address']) | list}}"
+  # ldap servers, automatic from inventory
+  ldap: "{{groups['ldap'] | map('extract', hostvars, ['ansible_default_ipv4','address']) | list}}"
+
+
+# mail configuration, see roles/mail
+mail_relay: true  # whether to relay mail through a smarthost
+mail_relay_username: "smtp_user"    # smarthost username
+mail_relay_password: "smtp_passwd"  # smarthost password
+mail:
+  relay_to: "smtp.example.rg"  # smarthost hostname
+  relay_port: "587"
+  relay_for: []  # list of extra domains to relay for (apart from own mail), empty means none
+  domain: "{{sram_domain}}"  # domain to use for outgoing mail
+  admin_name: "Operations"
+  admin_address: "admin@example.com"  # mail address of operations team;
+                                      # used to send logs etc and exposed to users sometimes
+  support_address: "support@example.com"  # support address for users
+  debug_address: "logs@example.com"  # address to send debug logs to
+  noreply_address: "no-reply@example.com"  # from address for automated mails
+  eduteams_address: "support@example.com"  # address to send eduteams mails to
+                                           # (for some automations in SBS)
+
+# used in advances SAMl config of SBS (probably not needed)
+org:
+  name: "Example University"
+  url: "https://www.example.com/"
+
+# send all logs to this central host
+journal_remote_types:
+  - { name: "test", port: 19532, keep_time: "180day" }
+journal_upload_host: "loghost.internal.sram.example.com"  # send logs to this host
+journal_upload_port: 19532
+
+journal_log_groups:
+  tst: ["log_tst"]
+log_groups: "{{ journal_log_groups[environment_name] }}"
+
+# seed for the test-IdP in CI-runner, probably not needed
+admin:
+  fn: "B."
+  sn: "Baas"
+  eppn: "admin@{{base_domain}}"
+  email: "{{mail.admin_address}}"
+  sho: "{{base_domain}}"
+
+# versions to deploy; should match a github release (eg https://github.com/SURFscz/SBS/releases)
+sbs_version:  "branch+main"
+plsc_version: "main"
+
+# set root password for all machines
+root:
+  pw_hash: "{{password_root}}"
+
+# firewall rules that will be set on all hosts
+firewall_v4_incoming_global:
+  - { name: bastion,  src: "{{iprange.bastion}}", dport:    "22", proto: "tcp" }
+
+ssl_certs_dir: "/etc/ssl"
+
+# settings for backups; also allow to upload backups to a central host using ssh
+backup_base: "/opt/backups"
+backup_runparts: "{{backup_base}}/run.d"
+backup_upload_host: "bhr2.{{internal_base_domain}}"
+backup_upload_host_key: "ssh-ed25519 AAAAC3NzaC1lZDI[....]WKlK+lisMz8uvR4RKyLH"
+backup_upload_user: "sram-backup"
+
+# how to set up the ldap.  ldap_basedn is defined in test.yml
+services_ldap:
+  host:   "{{ groups['ldap'][0] }}"
+  basedn: "{{ ldap_basedn}}"
+  o:      "Services"
+  binddn: "cn=admin,{{ ldap_basedn }}"
+
+
+sbs_base_url: "https://{{base_domain}}"
+sbs_wiki_link: "https://edu.nl/vw3jx"  # link to documentation, shown to users
+
+# added to top right of the screen to distinguish different envs.
+sbs_disclaimer_label: "{{environment_string | capitalize}}"
+sbs_api_url: "https://{{ hostnames.sbs }}/"
+
+# from https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/UsingWithRDS.SSL.html
+sbs_db_tls_cert: "{{lookup('ansible.builtin.file', inventory_dir+'/files/aws_ca.pem')}}"
+
+# settings for zabbix-agents
+zabbix_api_url: "https://zabbix.example.org:443/"
+zabbix_api_user: "ansible_api"
+zabbix_server: "zabbix_vm.internal.example.org"

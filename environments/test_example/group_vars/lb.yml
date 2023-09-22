@@ -1,0 +1,39 @@
+---
+# entries specifiec for the loadbalancer host
+
+enable_ipv6: true
+
+# dir to store sram-specfic certs
+cert_dir: "/etc/ssl/sram"
+
+# define extra hosts for the loadbalancer to redirect
+haproxy_redirect_hosts:
+  # redirect https://sbs.example.org to https://example.org
+  - from: "{{hostnames.sbs}}"
+    to: "{{base_domain}}"
+    code: "301"
+
+# define specific urls to redirect directly on the loadbalancer (for all hosts)
+haproxy_redirect_urls:
+  - path: "/.well-known/security.txt"
+    to: "https://www.example.org"
+    code: "302"
+
+#define hosts to direct from http to https
+http_hosts:
+  - "{{base_domain}}"
+  - "sbs.{{base_domain}}"
+  - "meta.{{base_domain}}"
+
+# note: the actualy hosts being served on the loadbalancer are defined in tst.yml
+
+# allow public access to the loadbalancer; restrict access here if you need to
+firewall_v4_incoming:
+  - { name: public_http,                                     dport:  "80", proto: "tcp" }
+  - { name: public_https,                                    dport: "443", proto: "tcp" }
+  - { name: public_ldaps,                                    dport: "636", proto: "tcp" }
+
+firewall_v6_incoming:
+  - { name: public_http,                                     dport:  "80", proto: "tcp" }
+  - { name: public_https,                                    dport: "443", proto: "tcp" }
+  - { name: public_ldaps,                                    dport: "636", proto: "tcp" }

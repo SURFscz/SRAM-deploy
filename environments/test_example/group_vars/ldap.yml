@@ -1,0 +1,15 @@
+---
+# config for the ldap hosts
+
+# deifne loglevel for slapd
+ldap_loglevel: "none sync"
+
+# define the credentials for the ldap monitor (see roles/ldap_monitor)
+ldap_monitor_service: "https://ldap-monitor.example.org"
+ldap_monitor_password: "changethispassword"
+ldap_monitor_reference: "{{environment_name}}_ldap_ref"  # this is the filename in ../files
+
+# loadbalancer and outher ldap hosts have access
+firewall_v4_incoming:
+  - { name: lb_ldap,          src: "{{iprange.lb}}",   dport: "{{ldap_port}}",          proto: tcp }
+  - { name: ldap_syn,         src: "{{iprange.ldap}}", dport: "{{ldap_port}}",          proto: tcp }
