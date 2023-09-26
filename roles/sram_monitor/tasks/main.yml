@@ -2,7 +2,12 @@
 - name: "Create sram monitor user"
   ansible.builtin.user:
     name: "{{sram_monitor_user}}"
-    group: docker
+    group: "docker"
+    state: "present"
+    shell: "/usr/sbin/nologin"
+    home: "{{sram_monitor_dir}}"
+    createhome: false
+    password: "!"
 
 - name: "Ensure that sram_monitor_dir exist"
   file:
