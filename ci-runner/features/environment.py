@@ -9,9 +9,11 @@ from selenium.webdriver.support.wait import WebDriverWait
 def selenium_browser_chrome(context):
     # -- HINT: @behave.fixture is similar to @contextlib.contextmanager
     options = Options()
-    options.headless = True
+    #options.headless = True
+    options.binary_location = '/usr/bin/chromium'
     #options.add_argument('--ignore-certificate-errors')
     #options.add_argument('--user-data-dir=/tmp/chrome-data')
+    options.add_argument("--headless=new")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-setuid-sandbox")
     options.add_argument("--remote-debugging-port=9222")  # this
