@@ -9,6 +9,17 @@
     state: "directory"
     mode: "0755"
 
+- name: create user for composer.json
+  ansible.builtin.user:
+    name: "{{surfstar_idp_file_user}}"
+    state: "present"
+    shell: "/usr/sbin/nologin"
+    home: "{{surfstar_idp_dir}}"
+    createhome: false
+    system: true
+    password: "!"
+    umask: "002"
+
 #########################################################
 ## SAML IdP
 #########################################################
@@ -35,6 +46,7 @@
     src: "{{ simplesaml_project_dir }}/config/{{item.key}}"
     path: "{{ simplesaml_project_dir }}/simplesaml/{{item.value}}/{{item.key}}"
     state: "link"
+    follow: false
     force: true
   with_dict:
     saml20-idp-hosted.php: "metadata"
@@ -62,6 +74,27 @@
 #########################################################
 ## Install RemoteUserSSL module
 #########################################################
+- name: create cache dir for composer.json
+  ansible.builtin.file:
+    path: "{{ simplesaml_project_dir }}/.cache"
+    state: "directory"
+    mode: "0755"
+    owner: "{{surfstar_idp_file_user}}"
+    group: "root"
+
+- name: Set group permissions
+  ansible.builtin.file:
+    path: "{{simplesaml_project_dir}}/simplesaml/{{item}}"
+    group: "{{surfstar_idp_file_user}}"
+    mode: "g+rw"
+    follow: false
+    recurse: "{{ item is match('^.*/$') }}"
+  loop:
+    - "composer.json"
+    - "composer.lock"
+    - "vendor/"
+    - "modules/"
+
 - name: Find RemoteUserSSL repository
   ansible.builtin.command:
     cmd: jq .repositories.remoteuserssl composer.json
@@ -70,22 +103,46 @@
   changed_when: false
 
 - name: Add RemoteUserSSL repo to composer.json
-  ansible.builtin.command:
-    cmd: >-
-      composer config repositories.remoteuserssl
-      vcs https://github.com/SURFscz/remoteuserssl.git
-    chdir: "{{ simplesaml_project_dir }}/simplesaml"
+  community.general.composer:
+    command: "config"
+    arguments: "repositories.remoteuserssl vcs https://github.com/SURFscz/remoteuserssl.git"
+    working_dir: "{{ simplesaml_project_dir }}/simplesaml"
   environment:
-    COMPOSER_ALLOW_SUPERUSER: 1
+    COMPOSER_AUTH: "{{composer_auth | to_json}}"
+  become_user: "{{surfstar_idp_file_user}}"
   when: "repo.stdout == 'null'"
 
 - name: Require RemoteUserSSL module
-  ansible.builtin.command:
-    cmd: "composer require local/simplesamlphp-module-remoteuserssl @dev"
-    chdir: "{{ simplesaml_project_dir }}/simplesaml"
-    creates: "{{ simplesaml_project_dir }}/simplesaml/modules/remoteuserssl"
+  community.general.composer:
+    command: "require"
+    arguments: "local/simplesamlphp-module-remoteuserssl @dev"
+    working_dir: "{{ simplesaml_project_dir }}/simplesaml"
   environment:
-    COMPOSER_ALLOW_SUPERUSER: 1
+    COMPOSER_AUTH: "{{composer_auth | to_json}}"
+  become_user: "{{surfstar_idp_file_user}}"
+  when: "repo.stdout == 'null'"
+
+- name: Update RemoteUserSSL module
+  community.general.composer:
+    command: "update"
+    arguments: "local/simplesamlphp-module-remoteuserssl"
+    working_dir: "{{ simplesaml_project_dir }}/simplesaml"
+  environment:
+    COMPOSER_AUTH: "{{composer_auth | to_json}}"
+  become_user: "{{surfstar_idp_file_user}}"
+  register: composer_update
+  changed_when: "'Nothing to install, update or remove' not in composer_update.stdout"
+
+- name: Set group  for new files
+  ansible.builtin.file:
+    path: "{{simplesaml_project_dir}}/simplesaml/{{item}}"
+    group: "{{surfstar_idp_file_user}}"
+    mode: "g+rw"
+    follow: false
+    recurse: "{{ item is match('^.*/$') }}"
+  loop:
+    - "modules/"
+  when: "repo.stdout == 'null' or composer_update.changed"
 
 #########################################################
 ## nginx
