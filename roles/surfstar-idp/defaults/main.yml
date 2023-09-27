@@ -7,11 +7,11 @@ surfstar_idp_name: "surfstar-idp"
 
 surfstar_idp_dir: "/opt/{{surfstar_idp_name}}"
 surfstar_idp_html_dir: "{{surfstar_idp_dir}}/html"
-surfstar_idp_hostname: "surfstar-idp.lab.surf.nl"
-surfstar_idp_entityid: "test-idp.lab.surf.nl"
+surfstar_idp_hostname: "surfstar-idp.example.org"
+surfstar_idp_entityid: "https://{{surfstar_idp_hostname}}"
 
-surfstar_idp_displayname: "SURF* Test IdP"
-surfstar_idp_description: "SURF* Test IdP"
-surfstar_idp_orgname: "SURF"
+surfstar_idp_displayname: "X509 IdP for testing"
+surfstar_idp_description: "{{surfstar_idp_displayname}}"
+surfstar_idp_orgname: "ACME, inc"
 
 surfstar_idp_admin_passwd: "ssp_password"
