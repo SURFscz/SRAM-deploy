@@ -19,13 +19,13 @@ server {
     ssl_certificate        /etc/letsencrypt/live/{{surfstar_idp_hostname}}/fullchain.pem;
     ssl_certificate_key    /etc/letsencrypt/live/{{surfstar_idp_hostname}}/privkey.pem;
     ssl_protocols          TLSv1.3;
-    ssl_ciphers            EECDH+AESGCM:EDH+AESGCM;
     ssl_stapling on;
     ssl_stapling_verify on;
     add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
 
     include security_headers;
     ssl_verify_client optional_no_ca;
+    ssl_verify_depth 5;
 
     location ^~ /saml {
         if ($ssl_access != 1) {
