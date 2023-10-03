@@ -1,0 +1,175 @@
+---
+
+#########################################################
+## Demop app
+#########################################################
+- name: Create html dir
+  file:
+    path: "{{surfstar_idp_html_dir}}"
+    state: "directory"
+    mode: "0755"
+
+- name: create user for composer.json
+  ansible.builtin.user:
+    name: "{{surfstar_idp_file_user}}"
+    state: "present"
+    shell: "/usr/sbin/nologin"
+    home: "{{surfstar_idp_dir}}"
+    createhome: false
+    system: true
+    password: "!"
+    umask: "002"
+
+#########################################################
+## SAML IdP
+#########################################################
+- include_role:
+    name: "simplesamlphp"
+    public: true
+
+- name: SimpleSaml configuration (templates)
+  template:
+    src: "{{item}}.j2"
+    dest: "{{ simplesaml_project_dir }}/config/{{item}}"
+  with_items:
+    - "saml20-idp-hosted.php"
+
+- name: SimpleSaml configuration (copy)
+  copy:
+    src: "{{item}}"
+    dest: "{{ simplesaml_project_dir }}/config/{{item}}"
+  with_items:
+    - "saml20-sp-remote.php"
+
+- name: Link SimpleSaml configuration
+  file:
+    src: "{{ simplesaml_project_dir }}/config/{{item.key}}"
+    path: "{{ simplesaml_project_dir }}/simplesaml/{{item.value}}/{{item.key}}"
+    state: "link"
+    follow: false
+    force: true
+  with_dict:
+    saml20-idp-hosted.php: "metadata"
+    saml20-idp-remote.php: "metadata"
+    saml20-sp-remote.php: "metadata"
+
+- name: Install SAML signing certificate
+  copy:
+    content: "{{ item.contents }}"
+    dest: "{{ simplesaml_cert_dir }}/{{ item.file }}"
+    mode: "0640"
+    owner: "root"
+    group: "{{surfstar_idp_group}}"
+  loop:
+    - { file: "saml.key", contents: "{{ surfstar_idp_samlcert.key}}"  }
+    - { file: "saml.crt", contents: "{{ surfstar_idp_samlcert.cert}}" }
+
+- name: Link SAML signing certificates
+  ansible.builtin.file:
+    path: "{{ simplesaml_project_dir }}/simplesaml/cert"
+    src: "{{ simplesaml_cert_dir }}"
+    state: "link"
+    force: true
+
+#########################################################
+## Install RemoteUserSSL module
+#########################################################
+- name: create cache dir for composer.json
+  ansible.builtin.file:
+    path: "{{ simplesaml_project_dir }}/.cache"
+    state: "directory"
+    mode: "0755"
+    owner: "{{surfstar_idp_file_user}}"
+    group: "root"
+
+- name: Set group permissions
+  ansible.builtin.file:
+    path: "{{simplesaml_project_dir}}/simplesaml/{{item}}"
+    group: "{{surfstar_idp_file_user}}"
+    mode: "g+rw"
+    follow: false
+    recurse: "{{ item is match('^.*/$') }}"
+  loop:
+    - "composer.json"
+    - "composer.lock"
+    - "vendor/"
+    - "modules/"
+
+- name: Find RemoteUserSSL repository
+  ansible.builtin.command:
+    cmd: jq .repositories.remoteuserssl composer.json
+    chdir: "{{ simplesaml_project_dir }}/simplesaml"
+  register: repo
+  changed_when: false
+
+- name: Add RemoteUserSSL repo to composer.json
+  community.general.composer:
+    command: "config"
+    arguments: "repositories.remoteuserssl vcs https://github.com/SURFscz/remoteuserssl.git"
+    working_dir: "{{ simplesaml_project_dir }}/simplesaml"
+  environment:
+    COMPOSER_AUTH: "{{composer_auth | to_json}}"
+  become_user: "{{surfstar_idp_file_user}}"
+  when: "repo.stdout == 'null'"
+
+- name: Require RemoteUserSSL module
+  community.general.composer:
+    command: "require"
+    arguments: "local/simplesamlphp-module-remoteuserssl @dev"
+    working_dir: "{{ simplesaml_project_dir }}/simplesaml"
+  environment:
+    COMPOSER_AUTH: "{{composer_auth | to_json}}"
+  become_user: "{{surfstar_idp_file_user}}"
+  when: "repo.stdout == 'null'"
+
+- name: Update RemoteUserSSL module
+  community.general.composer:
+    command: "update"
+    arguments: "local/simplesamlphp-module-remoteuserssl"
+    working_dir: "{{ simplesaml_project_dir }}/simplesaml"
+  environment:
+    COMPOSER_AUTH: "{{composer_auth | to_json}}"
+  become_user: "{{surfstar_idp_file_user}}"
+  register: composer_update
+  changed_when: "'Nothing to install, update or remove' not in composer_update.stdout"
+
+- name: Set group  for new files
+  ansible.builtin.file:
+    path: "{{simplesaml_project_dir}}/simplesaml/{{item}}"
+    group: "{{surfstar_idp_file_user}}"
+    mode: "g+rw"
+    follow: false
+    recurse: "{{ item is match('^.*/$') }}"
+  loop:
+    - "modules/"
+  when: "repo.stdout == 'null' or composer_update.changed"
+
+#########################################################
+## nginx
+#########################################################
+- include_role:
+    name: "nginx"
+
+- include_role:
+    name: "letsencrypt"
+    public: true
+  vars:
+    letsencrypt_staging: false
+    letsencrypt_hosts: [ "{{surfstar_idp_hostname}}" ]
+
+- name: Install nginx config
+  template:
+    src: "nginx.conf.j2"
+    dest: "/etc/nginx/sites-enabled/01-surfstar-idp.conf"
+  notify: "restart nginx"
+
+- name: Restart nginx after certificate rollover
+  copy:
+    content: |
+      #!/bin/sh
+      echo "restarting nginx"
+      /usr/bin/systemctl reload nginx.service
+      exit 0
+    dest: "{{letsencrypt_hooks}}/sram-nginx.sh"
+    mode: "0755"
+

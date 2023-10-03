@@ -1,0 +1,78 @@
+server {
+    listen 80;
+    server_name {{surfstar_idp_hostname}};
+
+    location /.well-known/acme-challenge {
+        alias /var/www/certbot/.well-known/acme-challenge;
+    }
+
+    location / {
+        rewrite ^(.*) https://{{surfstar_idp_hostname}}/$1 permanent;
+    }
+}
+
+
+server {
+    listen 443 ssl http2;
+    server_name {{surfstar_idp_hostname}};
+
+    ssl_certificate        /etc/letsencrypt/live/{{surfstar_idp_hostname}}/fullchain.pem;
+    ssl_certificate_key    /etc/letsencrypt/live/{{surfstar_idp_hostname}}/privkey.pem;
+    ssl_protocols          TLSv1.3;
+    ssl_stapling on;
+    ssl_stapling_verify on;
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
+
+    include security_headers;
+    ssl_verify_client optional_no_ca;
+    ssl_verify_depth 5;
+
+    location ^~ /saml {
+        if ($ssl_access != 1) {
+            return 403;
+        }
+
+        # only allow from trusted ips
+        allow 127.0.0.1;
+        allow ::1;
+{% for ip in iprange.vpn.values() %}
+        allow {{ ip }};
+{% endfor %}
+{% for ip in iprange.vpn6.values() %}
+        allow {{ ip }};
+{% endfor %}
+{% for ip in iprange.vpn_mdw %}
+        allow {{ ip }};
+{% endfor %}
+        deny all;
+
+        alias {{ simplesaml_project_dir }}/simplesaml/public;
+        index index.php;
+
+        location ~ \.php(/|$) {
+            root             {{ simplesaml_project_dir }}/simplesaml/public;
+            fastcgi_pass     unix:/run/php/{{ simplesaml_name }}.sock;
+            fastcgi_index    index.php;
+
+            include          fastcgi_params;
+
+            fastcgi_split_path_info       ^/saml/((?U).+\.php)(/?.+)?$;
+            fastcgi_param SCRIPT_FILENAME $document_root/$fastcgi_script_name;
+            fastcgi_param SCRIPT_NAME     /simplesaml/$fastcgi_script_name;
+            fastcgi_param PATH_INFO       $fastcgi_path_info;
+            fastcgi_param SSL_CLIENT_RAW_CERT    $ssl_client_raw_cert;
+        }
+    }
+
+    root {{ surfstar_idp_dir }}/html;
+
+}
+
+map $ssl_client_i_dn $ssl_access {
+    default 0;
+    "~^CN=TERENA Personal CA 3,O=.+,C=NL$" 1;
+    "~^CN=GEANT Personal CA 4,O=.+,C=NL$" 1;
+    "~^CN=GEANT Personal ECC CA 4,O=.+,C=NL" 1;
+    "~^CN=GEANT TCS Authentication RSA CA 4B,O=.+,C=NL" 1;
+    "~^CN=GEANT TCS Authentication ECC CA 4B,O=.+,C=NL" 1;
+}
