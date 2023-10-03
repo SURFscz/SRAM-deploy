@@ -35,17 +35,15 @@ server {
         # only allow from trusted ips
         allow 127.0.0.1;
         allow ::1;
-        allow 172.16.0.0/12;
-        allow 145.90.230.96/27;
-        allow 145.90.230.128/27;
-        allow 145.90.230.160/27;
-        allow 2001:610:450:58::/64;
-        allow 2001:610:450:59::/64;
-        allow 2001:610:450:5A::/64;
-        allow 145.90.232.0/23;
-        allow 2001:610:450:b0::/64;
-        allow 145.38.197.139/32;
-        allow 145.38.196.102/32;
+{% for ip in iprange.vpn.values() %}
+        allow {{ ip }};
+{% endfor %}
+{% for ip in iprange.vpn6.values() %}
+        allow {{ ip }};
+{% endfor %}
+{% for ip in iprange.vpn_mdw %}
+        allow {{ ip }};
+{% endfor %}
         deny all;
 
         alias {{ simplesaml_project_dir }}/simplesaml/public;
