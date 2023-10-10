@@ -18,29 +18,23 @@ session_start();
 $ENVS = array("test","acc","prd");
 $FORMATS = array("table", "json", "raw");
 
-$SUPPORTED = array(
-    'cn',
+$ATTRIBUTES = array(
+    'subject-id',
+    'eduPersonUniqueId',
+    'voPersonExternalID',
+    'uid',
+    'eduPersonPrincipalName',
     'displayName',
     'givenName',
     'sn',
     'mail',
-    'eduPersonUniqueId',
-    'subject-id',
-    'voPersonID',
-    'voPersonExternalID',
-    'uid',
-    'userid',
-    'eduPersonPrincipalName',
     'eduPersonScopedAffiliation',
     'voPersonExternalAffiliation',
     'eduPersonEntitlement',
     'sshPublicKey',
+    'voPersonStatus',
 );
 
-$UNSUPPORTED = array(
-    'eduPersonAssurance',
-    'schacHomeOrganization',
-);
 
 # sanitize user input
 $env = $_SERVER['PATH_INFO'];
@@ -80,6 +74,11 @@ if(!$as->isAuthenticated()) {
 $user_attr = $as->getAttributes();
 
 if ($format=="raw") {
+    print('<pre id="data">');
+    print(json_encode($user_attr, JSON_PRETTY_PRINT));
+    print('</pre>');
+    print('</body></html>');
+    exit();
     print('<div id="raw">');
     print('<h1>Raw attributes</h1>');
     print('<code style="white-space: pre;">');
@@ -106,6 +105,8 @@ if ($format=="json") {
 <main>
 <div class="container">
 
+<a href="auth.php?format=json" class="btn button-primary">Get as JSON</a>
+
 <div class="card mt-4">
     <div class="card-header">Supported attributes</div>
     <div class="card-body d-flex flex-column">
@@ -114,7 +115,7 @@ if ($format=="json") {
 print('<div class="table-responsive">');
 print('<table class="table">');
 print('<thead><tr><th>Attribute</th><th>Value</th></thead>'); print("\n");
-foreach ($SUPPORTED as $attr) {
+foreach ($ATTRIBUTES as $attr) {
     print('<tr>');
     print("<th>{$attr}</th>"); print("\n");
     print('<td class="font-monospace text-nowrap">');
@@ -142,57 +143,26 @@ print('</div>');
     <div class="card-header">Unsupported attributes</div>
     <div class="card-body d-flex flex-column">
 <?php
-foreach ($UNSUPPORTED as $attr) {
+
+$unknown_attr = array_diff( array_keys($user_attr), $ATTRIBUTES);
+print('<div class="table-responsive">');
+print('<table class="table">');
+print('<thead><tr><th>Attribute</th><th>Value</th></thead>'); print("\n");
+foreach ($unknown_attr as $attr) {
     print('<tr>');
-    print("<td>{$attr}</td>"); print("\n");
-    print('<td>');
-    if (array_key_exists($attr, $user_attr)) {
+    print("<th>{$attr}</th>"); print("\n");
+    print('<td class="font-monospace text-nowrap">');
+    foreach ($user_attr[$attr] as $val) {
         sort($user_attr[$attr]);
-        foreach ($user_attr[$attr] as $val) {
-            print('<div class="attr_val">');
-            print($val);
-            print('</div>');
-        }
-    } else {
-        print('<span class="not_found">not present</span>');
+        print('<div class="attr_val">');
+        print($val);
+        print('</span>');
     }
     print('</td>'); print("\n");
     print('</tr>'); print("\n");
 }
 print('</table>');
 print('</div>');
-?>
-</div>
-</div>
-
-<div class="card mt-4">
-    <div class="card-header">Unknown attributes</div>
-    <div class="card-body d-flex flex-column">
-<?php
-
-$known_attr = array_merge($SUPPORTED, $UNSUPPORTED);
-$unknown_attr = array_diff( array_keys($user_attr), $known_attr );
-
-if ( !empty($unknown_attr) ) {
-    print('<div class="table-responsive" id="unknown">');
-    print('<table class="table">');
-    print('<thead><tr><th>Attribute</th><th>Value</th></thead>'); print("\n");
-    foreach ($unknown_attr as $attr) {
-        print('<tr>');
-    print("<th>{$attr}</th>"); print("\n");
-    print('<td class="font-monospace text-nowrap">');
-        foreach ($user_attr[$attr] as $val) {
-            sort($user_attr[$attr]);
-        print('<div class="attr_val">');
-            print($val);
-            print('</span>');
-        }
-        print('</td>'); print("\n");
-        print('</tr>'); print("\n");
-    }
-    print('</table>');
-    print('</div>');
-};
 ?>
 </div>
 </div>
