@@ -14,14 +14,14 @@
 - name: SimpleSaml configuration
   template:
     src: "{{item}}.j2"
-    dest: "{{ simplesaml_project_dir }}/config/{{item}}"
+    dest: "{{ demosp_dir }}/config/{{item}}"
   with_items:
     - "saml20-idp-remote.php"
 
 - name: Link SimpleSaml configuration
   file:
-    src: "{{ simplesaml_project_dir }}/config/{{item.key}}"
-    path: "{{ simplesaml_project_dir }}/simplesaml/{{item.value}}/{{item.key}}"
+    src: "{{ demosp_dir }}/config/{{item.key}}"
+    path: "{{ demosp_dir }}/simplesaml/{{item.value}}/{{item.key}}"
     state: "link"
     force: true
   with_dict:
@@ -33,19 +33,19 @@
       openssl req -x509 -newkey rsa:2048 -sha256 -days 36500 -nodes
               -keyout saml.key -out saml.pem
               -subj '/CN=simpelsamlphp/'
-    chdir: "{{simplesaml_cert_dir}}"
-    creates: "{{simplesaml_cert_dir}}/saml.pem"
+    chdir: "{{demosp_dir}}/cert"
+    creates: "{{demosp_dir}}/cert/saml.pem"
 
 - name: Set permissions for keys
   file:
-    path: "{{simplesaml_cert_dir}}/saml.key"
+    path: "{{demosp_dir}}/cert/saml.key"
     mode: "0640"
     group: "{{demosp_group}}"
 
 - name: Install EduTeams certs
   copy:
     src: "{{item}}"
-    dest: "{{simplesaml_cert_dir}}/{{item}}"
+    dest: "{{demosp_dir}}/cert/{{item}}"
   with_items:
     - "eduteams-prd.pem"
     - "eduteams-acc.pem"

@@ -28,11 +28,11 @@ server {
     include security_headers;
 
     location ^~ /saml {
-        alias {{simplesaml_project_dir}}/simplesaml/public;
+        alias {{demosp_dir}}/simplesaml/public;
         index index.php;
 
         location ~ \.php(/|$) {
-            root             {{simplesaml_project_dir}}/simplesaml/public;
+            root             {{demosp_dir}}/simplesaml/public;
             fastcgi_pass     unix:/run/php/{{demosp_name}}.sock;
             fastcgi_index    index.php;
 
