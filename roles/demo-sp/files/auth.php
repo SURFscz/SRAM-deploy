@@ -19,22 +19,23 @@ $ENVS = array("test","acc","prd");
 $FORMATS = array("table", "json", "raw");
 
 $ATTRIBUTES = array(
-    'subject-id',
-    'eduPersonUniqueId',
-    'voPersonExternalID',
-    'uid',
-    'eduPersonPrincipalName',
+    'cn',
     'displayName',
     'givenName',
     'sn',
     'mail',
+    'eduPersonUniqueId',
+    'subject-id',
+    'voPersonID',
+    'voPersonExternalID',
+    'uid',
+    'userid',
+    'eduPersonPrincipalName',
     'eduPersonScopedAffiliation',
     'voPersonExternalAffiliation',
     'eduPersonEntitlement',
     'sshPublicKey',
-    'voPersonStatus',
 );
-
 
 # sanitize user input
 $env = $_SERVER['PATH_INFO'];
