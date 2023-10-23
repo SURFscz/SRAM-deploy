@@ -179,7 +179,6 @@ ci_rp = Service(
     entity_id=ci_rp_eid,
     name=ci_rp_name,
     contact_email=admin.email,
-    public_visible=True,
     automatic_connection_allowed=True,
     logo=roadrunner,
     # If we add aup, the user will see the aup screen in SBS
