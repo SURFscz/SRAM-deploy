@@ -43,14 +43,14 @@ jobs:
         run: |
           ./start-vm --ci
 
+      - name: Output SBS version
+        run: |
+          curl -k https://sbs.ci-runner.sram.surf.nl/info
+
       - name: Bootstrap virtualenv in ci-runner
         run: |
           python3 -m virtualenv --python=python3 ci-runner
           ci-runner/bin/pip install -r ci-runner/requirements.txt
-
-      - name: Output SBS version
-        run: |
-          curl -k https://sbs.scz-vm.net/info
 
       - name: Seed SBS
         run: |
