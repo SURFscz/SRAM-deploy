@@ -48,6 +48,10 @@ jobs:
           python3 -m virtualenv --python=python3 ci-runner
           ci-runner/bin/pip install -r ci-runner/requirements.txt
 
+      - name: Output SBS version
+        run: |
+          curl -k https://sbs.scz-vm.net/info
+
       - name: Seed SBS
         run: |
           docker exec docker-sbs-1 /tmp/ci-runner/seed.py
