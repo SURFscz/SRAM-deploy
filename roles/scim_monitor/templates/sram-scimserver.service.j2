@@ -1,5 +1,5 @@
 [Unit]
-Description=SCIM Server
+Description=SCIM Server ({{name}})
 After=network.target
 
 [Service]
@@ -10,6 +10,8 @@ Group={{ scim_monitor_group }}
 
 WorkingDirectory={{ scim_monitor_dir }}
 ExecStart={{ scim_monitor_env_dir }}/bin/python {{scim_monitor_server_dir}}/server.py --host 0.0.0.0 --port {{scim_server_port}} -k {{scim_server_key}} -p {{scim_monitor_data_dir}}
+
+SyslogIdentifier=sram-scimserver-{{name}}
 
 Restart=on-failure
 RestartSec=10

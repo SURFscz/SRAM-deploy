@@ -7,13 +7,13 @@ function finish {
 }
 trap finish EXIT
 
-curl -s -X PUT "{{ scim_monitor_sbs_url }}" -H "accept: application/json" -H "Authorization: Bearer {{ scim_monitor_sbs_token }}"
+curl -s -X PUT "https://{{ scim_monitor_sbs_host }}/api/scim/v2/sweep" -H "accept: application/json" -H "Authorization: Bearer {{ scim_monitor_sbs_token }}"
 jq -r .displayName {{ scim_monitor_data_dir }}/*/* | sort > $SCIMTMP
 DIFF=$(
-    diff -y --suppress-common-lines $SCIMTMP "{{ scim_monitor_reference }}"
+    diff -y --suppress-common-lines $SCIMTMP "{{ scim_monitor_reference }}" || true
 )
 
-wc -l <<< "$DIFF"
-echo $DIFF
+echo "$DIFF" | wc -l
+echo "$DIFF"
 
 exit 0

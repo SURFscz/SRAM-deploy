@@ -3,6 +3,7 @@ scim_server_repo_url: "https://github.com/SURFscz/SCIM-server.git"
 scim_server_version: "main"
 
 scim_monitor_hostname: "scim-monitor.sram.surf.nl"
+scim_monitor_allowlist: []
 
 scim_monitor_dir: "/opt/sram-scim-monitor"
 scim_monitor_server_dir: "{{scim_monitor_dir}}/scim-server"

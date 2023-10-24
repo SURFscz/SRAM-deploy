@@ -7,6 +7,14 @@
     daemon_reload: true
   with_dict: "{{ scim_monitor_config }}"
 
+- name: "enable scimmonitor timer"
+  systemd:
+    name: "sram-scimmonitor-{{ item.key }}.timer"
+    enabled: true
+    state: "started"
+    daemon_reload: true
+  with_dict: "{{ scim_monitor_config }}"
+
 - name: "restart zabbix-agent"
   systemd:
     name: "zabbix-agent2.service"
