@@ -28,7 +28,19 @@
 - name: check for new certs to generate
   stat:
     path: "{{letsencrypt_cert_dir}}/{{item}}"
-  register: result
-  changed_when: "not result.stat.exists"
+  register: "no_cert_yet"
+  changed_when: "not no_cert_yet.stat.exists"
   with_items: "{{letsencrypt_hosts}}"
   notify: "renew letsencrypt certificates"
+
+- name: generate letsencrypt certificates
+  command:
+    cmd: >
+      /usr/bin/certbot certonly --noninteractive
+                                --keep-until-expiring
+                                --renew-with-new-domains
+                                --domains={{item}}
+  changed_when: "'Your certificate and chain have been saved' in result.stdout"
+  with_items: "{{ letsencrypt_hosts }}"
+  when: "no_cert_yet.changed"
+  notify: "renew letsencrypt certificates again"
