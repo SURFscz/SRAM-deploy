@@ -1,10 +1,19 @@
 #!/bin/bash
+set -e
+
 SCIMTMP=$(mktemp)
 function finish {
-  rm -rf "$SCIMTMP"
+    rm -rf "$SCIMTMP"
 }
 trap finish EXIT
-curl -s -X PUT "{{scim_service_url}}" -H "accept: application/json" -H "Authorization: Bearer {{scim_service_token}}" > /dev/null
-jq -r .displayName {{scim_monitor_data_dir}}/*/* | sort > $SCIMTMP
-DIFF=$(diff -y --suppress-common-lines $SCIMTMP {{scim_monitor_dir}}/{{scim_server_reference}} | wc -l)
+
+curl -s -X PUT "{{ scim_monitor_sbs_url }}" -H "accept: application/json" -H "Authorization: Bearer {{ scim_monitor_sbs_token }}"
+jq -r .displayName {{ scim_monitor_data_dir }}/*/* | sort > $SCIMTMP
+DIFF=$(
+    diff -y --suppress-common-lines $SCIMTMP "{{ scim_monitor_reference }}"
+)
+
+wc -l <<< "$DIFF"
 echo $DIFF
+
+exit 0
