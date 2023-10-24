@@ -1,10 +1,11 @@
 ---
 - name: "enable scimserver job"
   systemd:
-    name: "sram-scimserver.service"
+    name: "sram-scimserver-{{ item.key }}.service"
     enabled: true
     state: "restarted"
     daemon_reload: true
+  with_dict: "{{ scim_monitor_config }}"
 
 - name: "restart zabbix-agent"
   systemd:

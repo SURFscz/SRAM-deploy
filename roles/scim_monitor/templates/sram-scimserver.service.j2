@@ -3,15 +3,20 @@ Description=SCIM Server
 After=network.target
 
 [Service]
-WorkingDirectory={{scim_monitor_dir}}
-ReadWritePaths={{scim_monitor_dir}}
-NoNewPrivileges=true
-
 Type=simple
-ExecStart={{scim_monitor_env_dir}}/bin/python {{scim_monitor_dir}}/server.py --host 0.0.0.0 --port 8000 -k {{scim_server_key}} -p {{scim_monitor_data_dir}}
+
+DynamicUser=true
+Group={{ scim_monitor_group }}
+
+WorkingDirectory={{ scim_monitor_dir }}
+ExecStart={{ scim_monitor_env_dir }}/bin/python {{scim_monitor_server_dir}}/server.py --host 0.0.0.0 --port {{scim_server_port}} -k {{scim_server_key}} -p {{scim_monitor_data_dir}}
 
 Restart=on-failure
 RestartSec=10
+
+ReadOnlyPaths={{ scim_monitor_dir }}
+ReadWritePaths={{ scim_monitor_data_dir }}
+NoNewPrivileges=true
 
 SystemCallArchitectures=native
 NoNewPrivileges=true
@@ -19,7 +24,6 @@ ProtectProc=invisible
 ProcSubset=pid
 ProtectSystem=strict
 ProtectHome=true
-ReadWritePaths={{scim_monitor_data_dir}}
 InaccessiblePaths=/boot /home /root /srv/ /var
 PrivateTmp=true
 PrivateDevices=true
