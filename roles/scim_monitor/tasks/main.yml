@@ -21,11 +21,21 @@
 #########################################################
 - name: Ensure that scim_monitor_data_dir exist
   file:
-    path: "{{ item.value.data_dir }}"
+    path: "{{ scim_monitor_dir }}/{{ item.value.data_dir }}"
     state: "directory"
     owner: "root"
     group: "{{ scim_monitor_group }}"
-    mode: "0775"
+    mode: "2775"
+  with_dict: "{{ scim_monitor_config }}"
+
+- name: Set default permissions for the scim_monitor_data_dir
+  acl:
+    path: "{{ scim_monitor_dir }}/{{ item.value.data_dir }}"
+    etype: "group"
+    entity: "{{ scim_monitor_group }}"
+    permissions: "rwx"
+    default: true
+    state: "present"
   with_dict: "{{ scim_monitor_config }}"
 
 - name: fetch SCIM Server from {{ scim_server_repo_url }}, version {{ scim_server_version }}
@@ -48,7 +58,7 @@
     dest: "/etc/systemd/system/sram-scimserver-{{item.key}}.service"
     mode: "0644"
   vars:
-    name: "{{ item.key }}"
+    env_name: "{{ item.key }}"
     scim_server_port: "{{ item.value.server_port}}"
     scim_server_key: "{{ item.value.server_token }}"
     scim_monitor_data_dir: "{{ scim_monitor_dir }}/{{ item.value.data_dir }}"
@@ -99,6 +109,7 @@
     group: "{{ scim_monitor_group }}"
     mode: "0750"
   vars:
+    env_name: "{{ item.key }}"
     scim_monitor_sbs_host: "{{ item.value.sbs_host }}"
     scim_monitor_sbs_token: "{{ item.value.sbs_api_token }}"
     scim_monitor_data_dir: "{{ item.value.data_dir }}"
@@ -126,6 +137,8 @@
     src: "sram-scimmonitor.timer.j2"
     dest: "/etc/systemd/system/sram-scimmonitor-{{item}}.timer"
   loop: "{{ scim_monitor_config.keys() | list }}"
+  loop_control:
+    index_var: "extra_min"
   notify:
     - "enable scimmonitor timer"
 
@@ -136,6 +149,7 @@
   template:
     src: "{{item}}.j2"
     dest: "/etc/zabbix/zabbix_agent2.d/{{item}}"
+    mode: "0644"
   with_items:
     - sram-scimmonitor.conf
   notify: "restart zabbix-agent"

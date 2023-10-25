@@ -1,5 +1,5 @@
 [Unit]
-Description=SCIM Server ({{name}})
+Description=SCIM Server ({{env_name}})
 After=network.target
 
 [Service]
@@ -9,9 +9,12 @@ DynamicUser=true
 Group={{ scim_monitor_group }}
 
 WorkingDirectory={{ scim_monitor_dir }}
+
+# remove the state dirs, so we won't get permission problems with the dynamic user
+ExecStartPre=+rm -rf {{ scim_monitor_data_dir }}/Groups {{ scim_monitor_data_dir }}/Users
 ExecStart={{ scim_monitor_env_dir }}/bin/python {{scim_monitor_server_dir}}/server.py --host 0.0.0.0 --port {{scim_server_port}} -k {{scim_server_key}} -p {{scim_monitor_data_dir}}
 
-SyslogIdentifier=sram-scimserver-{{name}}
+SyslogIdentifier=sram-scimserver-{{env_name}}
 
 Restart=on-failure
 RestartSec=10

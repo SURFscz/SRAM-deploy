@@ -1,19 +1,30 @@
 #!/bin/bash
 set -e
 
-SCIMTMP=$(mktemp)
-function finish {
-    rm -rf "$SCIMTMP"
-}
-trap finish EXIT
+SCIMFILE={{ scim_monitor_status_dir }}/data-{{env_name}}.json
+STATUSFILE={{ scim_monitor_status_dir }}/status-{{env_name}}
 
-curl -s -X PUT "https://{{ scim_monitor_sbs_host }}/api/scim/v2/sweep" -H "accept: application/json" -H "Authorization: Bearer {{ scim_monitor_sbs_token }}"
-jq -r .displayName {{ scim_monitor_data_dir }}/*/* | sort > $SCIMTMP
+curl \
+    --silent --fail \
+    --header "Authorization: Bearer {{ scim_monitor_sbs_token }}" \
+    --header "accept: application/json"  \
+    --request PUT \
+    "https://{{ scim_monitor_sbs_host }}/api/scim/v2/sweep"
+jq --slurp --tab --sort-keys . {{ scim_monitor_data_dir }}/*/* > $SCIMFILE
 DIFF=$(
-    diff -y --suppress-common-lines $SCIMTMP "{{ scim_monitor_reference }}" || true
+    diff -y --suppress-common-lines $SCIMFILE "{{ scim_monitor_reference }}" || true
 )
 
-echo "$DIFF" | wc -l
-echo "$DIFF"
+date '+%s' > $STATUSFILE
+echo -n "$DIFF" | wc -l >> $STATUSFILE
+echo -n "$DIFF"         >> $STATUSFILE
+
+if [ -z "$DIFF" ]
+then
+    echo "OK: no difference between SCIM and reference for {{env_name}}"
+else
+    echo "FAIL: SCIM output differs from reference  for {{env_name}}"
+    echo "$DIFF"
+fi
 
 exit 0
