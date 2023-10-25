@@ -14,8 +14,8 @@ curl \
 # consolidate the separate SCIM files from the direcotry into a single file for easy comparision
 # remove the externalID and metadata as that is internal and transient for the SCIM server
 (
-    jq  '{(.id): del(.externalId,.meta)}' data_prd/Users/*  | jq -s '{"users": add}'  ;
-    jq  '{(.id): del(.externalId,.meta)}' data_prd/Groups/* | jq -s '{"groups": add}'
+    jq  '{(.externalId): del(.id,.meta)}' {{ scim_monitor_data_dir }}/Users/*                                    | jq -s '{"users": add}'  ;
+    jq  '{(.externalId): del(.id,.meta)}' {{ scim_monitor_data_dir }}/Groups/* | jq 'del(.[].members[].value) '  | jq -s '{"groups": add}'
 ) | jq --slurp --sort-keys --tab 'add' > $SCIMFILE
 
 # compare the SCIM data with our reference
