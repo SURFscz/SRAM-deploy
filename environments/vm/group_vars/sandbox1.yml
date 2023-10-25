@@ -1,3 +1,9 @@
 ---
 # pam_websso needs pam-based challenge-reponse enabled in sshd
 sshd_authn_CR: true
+
+#SCIM Monitor
+scim_server_key: "changethispassword"
+scim_server_reference: "scim_cloud_ref"
+scim_service_token: "changethispassword"
+scim_service_url: "https://sbs.scz-vm.net/api/scim/v2/sweep"

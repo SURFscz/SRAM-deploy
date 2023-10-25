@@ -1,0 +1,45 @@
+[Unit]
+Description=SCIM Server ({{env_name}})
+After=network.target
+
+[Service]
+Type=simple
+
+DynamicUser=true
+Group={{ scim_monitor_group }}
+
+WorkingDirectory={{ scim_monitor_dir }}
+
+# remove the state dirs, so we won't get permission problems with the dynamic user
+ExecStartPre=+rm -rf {{ scim_monitor_data_dir }}/Groups {{ scim_monitor_data_dir }}/Users
+ExecStart={{ scim_monitor_env_dir }}/bin/python {{scim_monitor_server_dir}}/server.py --host 0.0.0.0 --port {{scim_server_port}} -k {{scim_server_key}} -p {{scim_monitor_data_dir}}
+
+SyslogIdentifier=sram-scimserver-{{env_name}}
+
+Restart=on-failure
+RestartSec=10
+
+ReadOnlyPaths={{ scim_monitor_dir }}
+ReadWritePaths={{ scim_monitor_data_dir }}
+NoNewPrivileges=true
+
+SystemCallArchitectures=native
+NoNewPrivileges=true
+ProtectProc=invisible
+ProcSubset=pid
+ProtectSystem=strict
+ProtectHome=true
+InaccessiblePaths=/boot /home /root /srv/ /var
+PrivateTmp=true
+PrivateDevices=true
+PrivateUsers=true
+ProtectClock=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectKernelLogs=true
+ProtectControlGroups=true
+RestrictAddressFamilies=AF_INET AF_UNIX
+LockPersonality=true
+RestrictRealtime=yes
+RestrictSUIDSGID=yes
+RemoveIPC=true

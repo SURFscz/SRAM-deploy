@@ -150,12 +150,14 @@
     - { role: surfstar-idp,         tags: ['bhr13','surfstar-idp']   }
     - { role: tools,                tags: ['bhr13','tools']          }
     - { role: sram_monitor,         tags: ['bhr13','sram-monitor']   }
+    - { role: scim_monitor,         tags: ['bhr13','scim-monitor']   }
+
 
 - name: "sandbox"
   hosts: sandbox1
   tasks:
     - { import_tasks: "tasks/versions.yml", tags: ['common'] }
-#  roles:
+  roles:
 #    - { role: pam_websso,         tags: ['client','pam-websso'], when: experimental_features }
 
 # CI test docker
