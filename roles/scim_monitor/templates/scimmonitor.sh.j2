@@ -10,11 +10,20 @@ curl \
     --header "accept: application/json"  \
     --request PUT \
     "https://{{ scim_monitor_sbs_host }}/api/scim/v2/sweep"
-jq --slurp --tab --sort-keys . {{ scim_monitor_data_dir }}/*/* > $SCIMFILE
+
+# consolidate the separate SCIM files from the direcotry into a single file for easy comparision
+# remove the externalID and metadata as that is internal and transient for the SCIM server
+(
+    jq  '{(.id): del(.externalId,.meta)}' data_prd/Users/*  | jq -s '{"users": add}'  ;
+    jq  '{(.id): del(.externalId,.meta)}' data_prd/Groups/* | jq -s '{"groups": add}'
+) | jq --slurp --sort-keys --tab 'add' > $SCIMFILE
+
+# compare the SCIM data with our reference
 DIFF=$(
     diff -y --suppress-common-lines $SCIMFILE "{{ scim_monitor_reference }}" || true
 )
 
+# output to status file
 date '+%s' > $STATUSFILE
 echo -n "$DIFF" | wc -l >> $STATUSFILE
 echo -n "$DIFF"         >> $STATUSFILE
