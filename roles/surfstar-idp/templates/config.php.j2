@@ -1,0 +1,191 @@
+<?php
+
+/**
+ * The configuration of SimpleSAMLphp
+ */
+
+$httpUtils = new \SimpleSAML\Utils\HTTP();
+
+$config = [
+
+    /*******************************
+     | BASIC CONFIGURATION OPTIONS |
+     *******************************/
+    'baseurlpath' => 'saml/',
+   'application' => [
+        'baseURL' => 'https://' . $_SERVER['HTTP_HOST'],
+    ],
+    'loggingdir' => 'log/',
+    'datadir' => 'data/',
+    'tempdir' => '{{simplesaml_tmp_dir}}',
+    'certdir' => '{{simplesaml_cert_dir}}',
+
+    'technicalcontact_name' => 'Administrator',
+    'technicalcontact_email' => 'na@example.org',
+
+    'timezone' => 'GMT',
+
+    /**********************************
+     | SECURITY CONFIGURATION OPTIONS |
+     **********************************/
+    'secretsalt' => '{{ simplesaml_salt.content }}',
+    'auth.adminpassword' => '{{ surfstar_idp_admin_passwd }}',
+    'admin.protectmetadata' => false,
+    'admin.checkforupdates' => true,
+
+    'trusted.url.domains' => [],
+    'trusted.url.regex' => false,
+
+    'enable.http_post' => false,
+    'assertion.allowed_clock_skew' => 180,
+
+    /************************
+     | ERRORS AND DEBUGGING |
+     ************************/
+    'debug' => [
+        'saml' => false,
+        'backtraces' => true,
+        'validatexml' => false,
+    ],
+    'showerrors' => true,
+    'errorreporting' => true,
+
+    /**************************
+     | LOGGING AND STATISTICS |
+     **************************/
+    'logging.level' => SimpleSAML\Logger::NOTICE,
+    'logging.handler' => 'syslog',
+    'logging.facility' => defined('LOG_LOCAL5') ? constant('LOG_LOCAL5') : LOG_USER,
+    'logging.processname' => 'simplesamlphp',
+    'logging.logfile' => 'simplesamlphp.log',
+    'statistics.out' => [
+    ],
+
+    /***********************
+     | PROXY CONFIGURATION |
+     ***********************/
+    'proxy' => null,
+
+    /*************
+     | PROTOCOLS |
+     *************/
+    'enable.saml20-idp' => true,
+    'enable.adfs-idp' => false,
+
+    /***********
+     | MODULES |
+     ***********/
+    'module.enable' => [
+        'exampleauth' => false,
+        'core' => true,
+        'admin' => true,
+        'saml' => true,
+        'remoteuserssl' => true,
+    ],
+
+    /*************************
+     | SESSION CONFIGURATION |
+     *************************/
+    'session.duration' => 8 * (60 * 60), // 8 hours.
+    'session.datastore.timeout' => (4 * 60 * 60), // 4 hours
+    'session.state.timeout' => (60 * 60), // 1 hour
+    'session.cookie.name' => 'SimpleSAMLSessionID',
+    'session.cookie.lifetime' => 0,
+    'session.cookie.path' => '/',
+    'session.cookie.domain' => '',
+    'session.cookie.secure' => true,
+    'session.cookie.samesite' => $httpUtils->canSetSameSiteNone() ? 'None' : null,
+    'session.phpsession.cookiename' => 'SimpleSAML',
+    'session.phpsession.savepath' => null,
+    'session.phpsession.httponly' => true,
+    'session.authtoken.cookiename' => 'SimpleSAMLAuthToken',
+    'session.rememberme.enable' => false,
+    'session.rememberme.checked' => false,
+    'session.rememberme.lifetime' => (14 * 86400),
+
+    /*************************************
+     | LANGUAGE AND INTERNATIONALIZATION |
+     *************************************/
+
+    /*
+     * Languages available, RTL languages, and what language is the default.
+     */
+    'language.available' => [ 'en', 'nl' ],
+    'language.rtl' => ['ar', 'dv', 'fa', 'ur', 'he'],
+    'language.default' => 'en',
+    'language.parameter.name' => 'language',
+    'language.parameter.setcookie' => true,
+    'language.cookie.name' => 'language',
+    'language.cookie.domain' => '',
+    'language.cookie.path' => '/',
+    'language.cookie.secure' => true,
+    'language.cookie.httponly' => false,
+    'language.cookie.lifetime' => (60 * 60 * 24 * 900),
+    'language.cookie.samesite' => $httpUtils->canSetSameSiteNone() ? 'None' : null,
+
+   /**************
+     | APPEARANCE |
+     **************/
+    'theme.use' => 'default',
+    'template.auto_reload' => false,
+    'production' => true,
+    'assets' => [
+        'caching' => [
+            'max_age' => 86400,
+            'etag' => false,
+        ],
+    ],
+
+    /*********************
+     | DISCOVERY SERVICE |
+     *********************/
+    'idpdisco.enableremember' => true,
+    'idpdisco.rememberchecked' => true,
+    'idpdisco.validate' => true,
+    'idpdisco.extDiscoveryStorage' => null,
+    'idpdisco.layout' => 'dropdown',
+
+    /*************************************
+     | AUTHENTICATION PROCESSING FILTERS |
+     *************************************/
+    'authproc.idp' => [
+        30 => 'core:LanguageAdaptor',
+        45 => [
+            'class'         => 'core:StatisticsWithAttribute',
+            'attributename' => 'realm',
+            'type'          => 'saml20-idp-SSO',
+        ],
+        50 => 'core:AttributeLimit',
+        99 => 'core:LanguageAdaptor',
+    ],
+    'authproc.sp' => [
+        90 => 'core:LanguageAdaptor',
+    ],
+
+
+
+    /**************************
+     | METADATA CONFIGURATION |
+     **************************/
+    /**************************
+     | METADATA CONFIGURATION |
+     **************************/
+    'metadatadir' => 'metadata',
+    'metadata.sources' => [
+        ['type' => 'flatfile'],
+    ],
+    'metadata.sign.enable' => false,
+    'metadata.sign.privatekey' => null,
+    'metadata.sign.privatekey_pass' => null,
+    'metadata.sign.certificate' => null,
+
+    /****************************
+     | DATA STORE CONFIGURATION |
+     ****************************/
+    'store.type'                    => 'phpsession',
+
+    /*********************
+     | IdP/SP PROXY MODE |
+     *********************/
+    'proxymode.passAuthnContextClassRef' => false,
+];

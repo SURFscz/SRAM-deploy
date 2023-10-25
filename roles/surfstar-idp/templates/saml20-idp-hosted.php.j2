@@ -1,0 +1,43 @@
+<?php
+
+/**
+ * SAML 2.0 IdP configuration for SimpleSAMLphp.
+ *
+ * See: https://simplesamlphp.org/docs/stable/simplesamlphp-reference-idp-hosted
+ */
+
+$metadata['{{ surfstar_idp_entityid }}'] = array(
+    'host' => '{{surfstar_idp_hostname}}',
+    'OrganizationName' => '{{ surfstar_idp_orgname }}',
+    'OrganizationDisplayName' => '{{ surfstar_idp_orgname }}',
+    'OrganizationURL' => 'https://{{surfstar_idp_hostname}}/',
+    'RegistrationInfo' => array(
+        'authority' => 'urn:mace:idp.foo.bar'
+    ),
+    'UIInfo' => array(
+        'DisplayName' => array(
+            'en' => '{{ surfstar_idp_displayname }}'
+        ),
+        'Description' => array(
+            'en' => '{{ surfstar_idp_description }}'
+        ),
+        'Logo' => array(
+            array(
+                'url' => 'https://{{surfstar_idp_hostname}}/saml/resources/icons/ssplogo-fish-small.png',
+                'width' => 60,
+                'height' => 41
+            )
+        )
+    ),
+    'privatekey' => 'saml.key',
+    'certificate' => 'saml.crt',
+    'auth' => 'RemoteUserSSL',
+    'signature.algorithm' => 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256',
+    'authproc' => array(
+        // Persistent NameID
+        110 => array('class' => 'saml:AttributeNameID',
+            'identifyingAttribute' => 'urn:mace:dir:attribute-def:eduPersonPrincipalName',
+            'Format' => 'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent',
+        ),
+    ),
+);

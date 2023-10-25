@@ -29,6 +29,9 @@ parser.add_argument('filename', help='filename to process')
 parser.add_argument('variable', nargs='?', default=None, help='optional variable name to display')
 args = parser.parse_args()
 filename = args.filename
+if filename in ('bhr','tst','acc','prd'):
+    filename = f"environments/aws_{filename}/secrets/all.yml"
+
 variable = args.variable
 if not os.path.isfile(filename):
     print(f"Error: File '{filename}' does not exist.")
