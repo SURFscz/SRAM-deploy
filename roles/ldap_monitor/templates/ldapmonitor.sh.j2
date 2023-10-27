@@ -8,11 +8,9 @@ PASSWD="{{ldap_monitor_password}}"
 REFERENCE="{{ldap_monitor_reference}}"
 
 TMPFILE=$(mktemp "{{ldap_monitor_file}}_XXXXXX")
-LDIFTMP=$(mktemp)
-
+LDIFTMP={{ ldap_monitor_dir }}/status/current-ldif
 function finish {
     rm -rf "$TMPFILE"
-    rm -rf "$LDIFTMP"
 }
 trap finish EXIT
 
