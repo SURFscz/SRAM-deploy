@@ -15,6 +15,7 @@ if len(sys.argv) > 1 and sys.argv[1] == CI_OPTION:
 hosts = {
     'sbs':      27,
     'db':       28,
+    'docker':   31,
 }
 if ci_enabled:
     hosts.update({
@@ -36,7 +37,7 @@ logical_hosts = [
     'mdq',         'cm',        'comanage', 'ldap',
     'meta',        'oidc-test', 'sp-test',  'idp-test',
     'google-test', 'sbs',       'sandbox1', 'pam',
-    'oidc-op',
+    'oidc-op',     'docker'
 ]
 
 extra_options = {}
@@ -57,9 +58,9 @@ def host_config(num: int, name: str) -> Dict[str, Any]:
     data: Dict[str, Any] = dict()
     data['image'       ] = 'scz-base'
     data['hostname'    ] =  name
-    data['volumes'     ] = [ './ansible_key.pub:/tmp/authorized_keys', '/sys/fs/cgroup:/sys/fs/cgroup:ro' ]
+    data['volumes'     ] = [ './ansible_key.pub:/tmp/authorized_keys' ]
     data['tmpfs'       ] = [ '/run', '/run/lock', '/tmp' ]
-    data['privileged'  ] = False
+    data['privileged'  ] = True
     data['security_opt'] = [ 'seccomp:unconfined', 'apparmor:unconfined' ]
     data['cap_add'     ] = [ 'SYS_ADMIN', 'SYS_PTRACE' ]
     data['networks'    ] = {

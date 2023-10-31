@@ -87,6 +87,15 @@
     - { role: 'http_apache', tags: ['bhr12','ci-runner']}
     - { role: 'ci-runner',   tags: ['bhr12','ci-runner']}
 
+- name: "docker"
+  hosts: docker
+  tasks:
+    - { import_tasks: "tasks/versions.yml", tags: ['common']  }
+  roles:
+    - { role: docker,                       tags: ['docker'] }
+    - { role: docker_pyff,                  tags: ['meta', 'docker_pyff'] }
+    - { role: docker_metadata,              tags: ['meta', 'docker_metadata'] }
+
 - name: "lb"
   hosts: lb
   tasks:
@@ -129,9 +138,9 @@
   hosts: meta
   tasks:
     - { import_tasks: "tasks/versions.yml", tags: ['common'] }
-  roles:
-    - { role: pyff-metadata, tags: ['meta','pyff-metadata']}
-    - { role: metadata,      tags: ['meta','metadata']     }
+  # roles:
+    # - { role: pyff-metadata, tags: ['meta','pyff-metadata']}
+    # - { role: metadata,      tags: ['meta','metadata']     }
 
 - name: "client"
   hosts: client
@@ -165,3 +174,4 @@
     - { import_tasks: "tasks/versions.yml", tags: ['common']  }
   roles:
     - { role: ci-test,                      tags: ['ci-test'] }
+

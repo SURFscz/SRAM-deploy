@@ -1,0 +1,7 @@
+---
+# list of xsl files to copy
+xsl_files:
+  - "idps.xsl"
+  - "nologo.xsl"
+  - "nohide.xsl"
+  - "nosc.xsl"

@@ -1,0 +1,152 @@
+---
+- name: Create metadata directories
+  file:
+    path: "{{ item.value }}"
+    state: "directory"
+    mode: "0755"
+    owner: "root"
+  loop: "{{ lookup('ansible.builtin.dict', metadata_dirs) }}"
+
+- name: Copy source certificates
+  copy:
+    src: "{{ item }}"
+    dest: "{{ metadata_dirs.certs }}"
+  with_items:
+    - edugain.crt
+    - surfconext.crt
+
+- name: create self-signed Metadata Signing SSL certs
+  shell:
+    cmd: >
+      openssl genrsa -out "{{ metadata_dirs.certs }}/signing.key" 2048;
+      openssl req -new -nodes -x509 -subj "/C=NL/CN=signing"
+      -days 3650 -key "{{ metadata_dirs.certs }}/signing.key"
+      -out "{{ metadata_dirs.certs }}/signing.crt" -extensions v3_ca
+    creates: "{{ metadata_dirs.certs }}/signing.crt"
+  when: "metadata_signing_cert is not defined"
+
+- name: write fixed Metadata signing certificates
+  copy:
+    dest: "{{ metadata_dirs.certs }}/{{ item.file }}"
+    content: "{{item.contents}}"
+    mode: "{{item.mode}}"
+  with_items:
+    - { file: "signing.key", mode: "0640", contents: "{{metadata_signing_cert.priv}}" }
+    - { file: "signing.crt", mode: "0644", contents: "{{metadata_signing_cert.pub}}"  }
+  when: "metadata_signing_cert is defined"
+
+# - name: Write source metadata certificates
+#   template:
+#     src: "feed.xrd.j2"
+#     dest: "{{item.filename}}"
+#   loop:
+#     - filename: "{{metadata_idps_xrd}}"
+#       source: "{{metadata_idps_source}}"
+#       cert: "{{metadata_idps_cert}}"
+#     - filename: "{{metadata_edugain_xrd}}"
+#       source: "{{metadata_edugain_source}}"
+#       cert: "{{metadata_edugain_cert}}"
+#   notify: "run pyff-metadata job"
+#
+# - name: Create metadata source directory
+#   file:
+#     path: "{{ metadata_idps_source_dir }}"
+#     state: "directory"
+#     mode: "0755"
+#     owner: "root"
+#     group: "{{metadata_group}}"
+
+- name: install IdP metadata
+  copy:
+    content: "{{item.metadata}}"
+    dest: "{{ metadata_dirs.src }}/{{item.name}}.xml"
+    mode: "0644"
+    owner: "root"
+  with_items: "{{ metadata_idps_files }}"
+  # notify:
+  #   - "run pyff-metadata job"
+
+# - name: Remove old files
+#   file:
+#     path: "{{item}}"
+#     state: "absent"
+#   with_items:
+#     - "{{ pyff_env_dir }}/idp_feed.fd"
+
+- name: Copy pyFF feeds
+  copy:
+    src: "{{item}}"
+    dest: "{{metadata_dirs.feeds}}"
+  with_items:
+    - 01_idps.fd
+    - 02_backend.fd
+    - 03_frontend.fd
+    - 04_edugain.fd
+
+- name: Copy pyFF xslt transformations
+  copy:
+    src: "{{item}}"
+    dest: "{{metadata_dirs.xslt}}"
+  with_items:
+    - transform_edugain.xslt
+    - transform_proxy.xslt
+    - transform.xslt
+
+# - name: Create pyFF mdq configuration
+#   template:
+#     src: "{{item.path}}.j2"
+#     dest: "{{metadata_basedir}}/{{item.path}}"
+#     owner: "root"
+#     group: "root"
+#     mode: "{{item.mode}}"
+#   with_items:
+#     - { path: "idps_feed.fd",           mode: "0644" }
+#     - { path: "frontend_feed.fd",       mode: "0644" }
+#     - { path: "backend_feed.fd",        mode: "0644" }
+#     - { path: "edugain_feed.fd",        mode: "0644" }
+#     - { path: "feeds.sh",               mode: "0755" }
+#     - { path: "transform.xslt",         mode: "0644" }
+#     - { path: "transform_proxy.xslt",   mode: "0644" }
+#     - { path: "transform_edugain.xslt", mode: "0644" }
+#   notify: "run pyff-metadata job"
+
+# - name: Create pyFF systemd job timer
+#   template:
+#     src: "{{item}}.j2"
+#     dest: "/etc/systemd/system/{{item}}"
+#   with_items:
+#     - "pyff-metadata.service"
+#     - "pyff-metadata.timer"
+#   notify:
+#     - "enable pyff-metadata job"
+#     - "run pyff-metadata job"
+
+# - name: check if an obsolete directory is present
+#   stat:
+#     path: "/opt/pyff/pyff-env/idps_feed.fd"
+#   register: "old_dir"
+#   changed_when: false
+#
+# - name: remove old directory
+#   file:
+#     path: "/opt/pyff"
+#     state: "absent"
+#   when: "old_dir.stat.exists"
+
+- name: Create the pyFF container
+  docker_container:
+    name: metadata
+    image: sram-metadata
+    # restart_policy: "always"
+    # restart: true
+    state: started
+    # pull: true
+    volumes:
+      - "{{ metadata_dirs.feeds }}:/opt/pyff/feeds"
+      - "{{ metadata_dirs.src }}:/opt/pyff/src"
+      - "{{ metadata_dirs.certs }}:/opt/pyff/certs"
+      - "{{ metadata_dirs.xslt }}:/opt/pyff/xslt"
+      - "{{ metadata_dirs.web }}:/opt/pyff/web"
+    networks:
+      - name: "bridge"
+
