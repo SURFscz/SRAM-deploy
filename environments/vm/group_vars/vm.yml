@@ -26,7 +26,7 @@ hostnames:
 idp_test_port: 8444
 sp_test_port: 82
 oidc_test_port: 83
-metadata_backend_port: 88
+# metadata_backend_port: 443
 sbs_backend_port: 90
 tfa_test_port: 91
 pam_backend_port: 92
@@ -44,8 +44,8 @@ loadbalancer:
   - name: "meta"
     hostname: "{{hostnames.meta}}"
     protocol: http
-    backend_hosts: "{{groups['vm_meta']}}"
-    backend_port: "{{ metadata_backend_port }}"
+    backend_hosts: "{{groups['vm_docker']}}"
+    backend_port: 443
   - name: "client_oidc"
     hostname: "{{hostnames.oidc}}"
     protocol: http
