@@ -35,7 +35,7 @@
   with_items:
     - traefik.yml
 
-- name: Create Traefik backend key
+- name: Create wildcard backend key
   copy:
     content: "{{wildcard_backend_cert.priv}}"
     dest: "/opt/openconext/traefik/certs/backend.key"
@@ -44,7 +44,7 @@
     mode: "0640"
   no_log: "{{sram_ansible_nolog}}"
 
-- name: Create Traefik backend cert
+- name: Create wildcard backend cert
   copy:
     content: "{{wildcard_backend_cert.pub}}"
     dest: "/opt/openconext/traefik/certs/backend.crt"

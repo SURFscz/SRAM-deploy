@@ -95,6 +95,7 @@
     - { role: docker,                       tags: ['docker'] }
     - { role: docker_pyff,                  tags: ['meta', 'docker_pyff'] }
     - { role: docker_metadata,              tags: ['meta', 'docker_metadata'] }
+    - { role: docker_ldap,                  tags: ['ldap', 'docker_ldap'] }
 
 - name: "lb"
   hosts: lb
@@ -120,13 +121,13 @@
   roles:
     - { role: sbs,         tags: ['sbs']  }
 
-- name: "ldap"
-  hosts: ldap
-  tasks:
-    - { import_tasks: "tasks/versions.yml", tags: ['common'] }
-  roles:
-    - { role: ldap,               tags: ['ldap'                 ] }
-    - { role: ldap_monitor,       tags: ['ldap', 'ldap-monitor' ] }
+# - name: "ldap"
+#   hosts: ldap
+#   tasks:
+#     - { import_tasks: "tasks/versions.yml", tags: ['common'] }
+#   roles:
+#     - { role: ldap,               tags: ['ldap'                 ] }
+#     - { role: ldap_monitor,       tags: ['ldap', 'ldap-monitor' ] }
 #    - { role: pam_websso_daemon,  tags: ['client','websso-daemon'], when: experimental_features }
 
 - name: "first ldap"
@@ -134,10 +135,10 @@
   roles:
     - { role: plsc,               tags: ['plsc', 'ldap-plsc'     ] }
 
-- name: "meta"
-  hosts: meta
-  tasks:
-    - { import_tasks: "tasks/versions.yml", tags: ['common'] }
+# - name: "meta"
+#   hosts: meta
+#   tasks:
+#     - { import_tasks: "tasks/versions.yml", tags: ['common'] }
   # roles:
     # - { role: pyff-metadata, tags: ['meta','pyff-metadata']}
     # - { role: metadata,      tags: ['meta','metadata']     }
