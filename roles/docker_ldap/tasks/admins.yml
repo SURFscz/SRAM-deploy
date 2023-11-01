@@ -23,7 +23,7 @@
     attrs:
       - "cn"
     bind_dn: "{{ services_ldap.binddn }}"
-    bind_pw: adminpassword
+    bind_pw: "{{ services_ldap_password }}"
     server_uri: ldap:///
   register: "existing_ldap_admins_result"
 
@@ -43,7 +43,7 @@
     dn: "cn={{ item.cn }},{{ services_ldap.basedn }}"
     state: absent
     bind_dn: "{{ services_ldap.binddn }}"
-    bind_pw: adminpassword
+    bind_pw: "{{ services_ldap_password }}"
     server_uri: ldap:///
   when: >
     item.cn not in ldap_admins | map(attribute='uid')
@@ -61,7 +61,7 @@
       description: An LDAP administrator
       userPassword: "{CRYPT}{{ item.pw_hash }}"
     bind_dn: "{{ services_ldap.binddn }}"
-    bind_pw: adminpassword
+    bind_pw: "{{ services_ldap_password }}"
     server_uri: ldap:///
   loop: "{{ ldap_admins }}"
 
@@ -72,7 +72,7 @@
     attributes:
       userPassword: "{CRYPT}{{ item.pw_hash }}"
     bind_dn: "{{ services_ldap.binddn }}"
-    bind_pw: adminpassword
+    bind_pw: "{{ services_ldap_password }}"
     server_uri: ldap:///
   loop: "{{ ldap_admins }}"
 

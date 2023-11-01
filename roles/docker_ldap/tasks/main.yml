@@ -102,9 +102,9 @@
     env:
       LDAP_ROOT: "{{ services_ldap.basedn }}"
       LDAP_ADMIN_USERNAME: admin
-      LDAP_ADMIN_PASSWORD: adminpassword
-      LDAP_CONFIG_ADMIN_USERNAME: cadmin
-      LDAP_CONFIG_ADMIN_PASSWORD: cadminpassword
+      LDAP_ADMIN_PASSWORD: "{{ services_ldap_password }}"
+      LDAP_CONFIG_ADMIN_USERNAME: admin
+      LDAP_CONFIG_ADMIN_PASSWORD: "{{ services_ldap_password }}"
       LDAP_CONFIG_ADMIN_ENABLED: "yes"
       LDAP_CUSTOM_SCHEMA_DIR: "{{ ldap_ldif_dir }}"
       LDAP_SKIP_DEFAULT_TREE: "yes"
@@ -146,8 +146,8 @@
     attributes:
       olcDbIndex: "{{item}}"
     state: "present"
-    bind_dn: "cn=cadmin,cn=config"
-    bind_pw: cadminpassword
+    bind_dn: "cn=admin,cn=config"
+    bind_pw: "{{ services_ldap_password }}"
     server_uri: ldap:///
   with_items:
     - "entryUUID eq"
@@ -161,8 +161,8 @@
     state: "exact"
     attributes:
       olcSizeLimit: "unlimited"
-    bind_dn: "cn=cadmin,cn=config"
-    bind_pw: cadminpassword
+    bind_dn: "cn=admin,cn=config"
+    bind_pw: "{{ services_ldap_password }}"
     server_uri: ldap:///
 
 # - name: Set config olcTLSCipherSuite
@@ -171,8 +171,8 @@
 #     state: "exact"
 #     attributes:
 #       olcTLSCipherSuite: "ALL:!NULL"
-#     bind_dn: "cn=cadmin,cn=config"
-#     bind_pw: cadminpassword
+#     bind_dn: "cn=admin,cn=config"
+#     bind_pw: "{{ services_ldap_password }}"
 #     server_uri: ldap:///
 
 - name: Set config
@@ -190,8 +190,8 @@
       # olcTLSCertificateKeyFile: "{{ ldap_certs_dir }}/backend.key"
       # olcTLSCertificateFile: "{{ ldap_certs_dir }}/backend.crt"
       # olcTLSCACertificateFile: "{{ ldap_certs_dir }}/backend.crt"
-    bind_dn: "cn=cadmin,cn=config"
-    bind_pw: cadminpassword
+    bind_dn: "cn=admin,cn=config"
+    bind_pw: "{{ services_ldap_password }}"
     server_uri: ldap:///
 
 # - name: Ensure the schemas are added to LDAP
@@ -217,8 +217,8 @@
         - memberof
         - refint
         - dynlist
-    bind_dn: "cn=cadmin,cn=config"
-    bind_pw: cadminpassword
+    bind_dn: "cn=admin,cn=config"
+    bind_pw: "{{ services_ldap_password }}"
     server_uri: ldap:///
 
 # - name: Setup Monitor
@@ -240,8 +240,8 @@
       olcMemberOfGroupOC: groupOfMembers
       olcMemberOfMemberAD: member
       olcMemberOfMemberOfAD: memberOf
-    bind_dn: "cn=cadmin,cn=config"
-    bind_pw: cadminpassword
+    bind_dn: "cn=admin,cn=config"
+    bind_pw: "{{ services_ldap_password }}"
     server_uri: ldap:///
 
 - name: Setup MemberOf(2)
@@ -252,8 +252,8 @@
       - olcRefintConfig
     attributes:
       olcRefintAttribute: memberof member
-    bind_dn: "cn=cadmin,cn=config"
-    bind_pw: cadminpassword
+    bind_dn: "cn=admin,cn=config"
+    bind_pw: "{{ services_ldap_password }}"
     server_uri: ldap:///
 
 - name: Setup Dynlist
@@ -264,8 +264,8 @@
       - olcDynamicList
     attributes:
       olcDlAttrSet: "{0}organizationalRole labeledURI roleOccupant"
-    bind_dn: "cn=cadmin,cn=config"
-    bind_pw: cadminpassword
+    bind_dn: "cn=admin,cn=config"
+    bind_pw: "{{ services_ldap_password }}"
     server_uri: ldap:///
 
 - name: Setup Syncprov
@@ -277,8 +277,8 @@
     attributes:
       olcSpCheckpoint: 100 10
       olcSpSessionLog: 100
-    bind_dn: "cn=cadmin,cn=config"
-    bind_pw: cadminpassword
+    bind_dn: "cn=admin,cn=config"
+    bind_pw: "{{ services_ldap_password }}"
     server_uri: ldap:///
 
 # - name: Setup main database
@@ -303,8 +303,8 @@
 #           by dn.exact="{{ services_ldap.binddn }}" manage
 #           by * break
 #     state: exact
-#     bind_dn: "cn=cadmin,cn=config"
-#     bind_pw: cadminpassword
+#     bind_dn: "cn=admin,cn=config"
+#     bind_pw: "{{ services_ldap_password }}"
 #     server_uri: ldap:///
 #
 # - name: Setup Syncrepl
@@ -361,8 +361,8 @@
           by * break
     state: exact
     ordered: true
-    bind_dn: "cn=cadmin,cn=config"
-    bind_pw: cadminpassword
+    bind_dn: "cn=admin,cn=config"
+    bind_pw: "{{ services_ldap_password }}"
     server_uri: ldap:///
 
 - name: Initialize DIT
@@ -377,7 +377,7 @@
       dc: "{{ services_ldap.basedn | regex_replace('^dc=([^,]+).*', '\\1') }}"
       o: "{{ services_ldap.o }}"
     bind_dn: "{{ services_ldap.binddn }}"
-    bind_pw: adminpassword
+    bind_pw: "{{ services_ldap_password }}"
     server_uri: ldap:///
   when: >
       inventory_hostname in groups['ldap_primary']
