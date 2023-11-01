@@ -1,0 +1,8 @@
+---
+plsc_repo_url: "https://github.com/SURFscz/plsc.git"
+plsc_version: "main"
+plsc_dir: "/opt/plsc"
+plsc_venv_dir: "{{plsc_dir}}/venv"
+
+plsc_interval_seconds: 120
+plsc_retry: 3

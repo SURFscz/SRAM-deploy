@@ -1,0 +1,25 @@
+---
+ldap:
+  src:
+    uri: "ldaps://ldap:1636/"
+    basedn: "{{ services_ldap.basedn }}"
+    binddn: "{{ services_ldap.binddn }}"
+    passwd: "{{ services_ldap_password }}"
+    sizelimit: 500
+  dst:
+    uri: "ldaps://ldap:1636/"
+    basedn: "{{ services_ldap.basedn }}"
+    binddn: "{{ services_ldap.binddn }}"
+    passwd: "{{ services_ldap_password }}"
+    sizelimit: 500
+sbs:
+  src:
+    host: "{{ sbs_base_url }}"
+    user: "sysread"
+    passwd: "{{ sbs_sysread_password }}"
+    verify_ssl: {{ false if environment_name=='vm' else true }}
+    timeout: 60
+    retry: "{{ plsc_retry }}"
+pwd: "{CRYPT}!"
+uid: 1000
+gid: 1000

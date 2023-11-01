@@ -135,8 +135,8 @@
 
 - name: Create the pyFF container
   docker_container:
-    name: metadata
-    image: sram-metadata
+    name: pyff
+    image: sram-pyff
     # restart_policy: "always"
     # restart: true
     state: started

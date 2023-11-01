@@ -137,8 +137,8 @@
 
 - name: Create the metadata-server container
   docker_container:
-    name: metadataserver
-    image: sram-metadataserver
+    name: metadata
+    image: sram-metadata
     # restart_policy: "always"
     # restart: true
     state: started
@@ -148,6 +148,6 @@
     networks:
       - name: "traefik"
     labels:
-      traefik.http.routers.metadataserver.rule: "Host(`{{ hostnames.meta }}`)"
-      traefik.http.routers.metadataserver.tls: "true"
+      traefik.http.routers.metadata.rule: "Host(`{{ hostnames.meta }}`)"
+      traefik.http.routers.metadata.tls: "true"
       traefik.enable: "true"

@@ -96,6 +96,7 @@
     - { role: docker_pyff,                  tags: ['meta', 'docker_pyff'] }
     - { role: docker_metadata,              tags: ['meta', 'docker_metadata'] }
     - { role: docker_ldap,                  tags: ['ldap', 'docker_ldap'] }
+    - { role: docker_plsc,                  tags: ['plsc', 'docker_plsc'] }
 
 - name: "lb"
   hosts: lb
@@ -130,10 +131,10 @@
 #     - { role: ldap_monitor,       tags: ['ldap', 'ldap-monitor' ] }
 #    - { role: pam_websso_daemon,  tags: ['client','websso-daemon'], when: experimental_features }
 
-- name: "first ldap"
-  hosts: "ldap_primary"
-  roles:
-    - { role: plsc,               tags: ['plsc', 'ldap-plsc'     ] }
+# - name: "first ldap"
+#   hosts: "ldap_primary"
+#   roles:
+#     - { role: plsc,               tags: ['plsc', 'ldap-plsc'     ] }
 
 # - name: "meta"
 #   hosts: meta
