@@ -1,0 +1,5 @@
+---
+mariadb_dir: "/opt/mariadb"
+mariadb_conf_dir: "{{mariadb_dir}}/conf.d"
+mariadb_cert_dir: "{{mariadb_dir}}/cert"
+mariadb_data_dir: "{{mariadb_dir}}/data"
