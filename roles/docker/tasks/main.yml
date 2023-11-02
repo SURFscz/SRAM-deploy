@@ -1,4 +1,11 @@
 ---
+- name: "Install required packages"
+  apt:
+    state: "latest"
+    name:
+      - python3-pymysql
+    install_recommends: false
+
 - name: Add Docker GPG key.
   ansible.builtin.apt_key:
     url: "https://download.docker.com/linux/debian/gpg"

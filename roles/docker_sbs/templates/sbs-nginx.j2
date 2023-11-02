@@ -1,0 +1,49 @@
+server {
+    listen {{sbs_backend_port}} ssl http2;
+    server_name _        sbs.vm.scz-vm.net;
+
+    ssl_certificate     {{ ssl_certs_dir }}/{{ internal_base_domain }}.crt;
+    ssl_certificate_key {{ ssl_certs_dir }}/{{ internal_base_domain }}.key;
+
+    root /opt/sbs/sbs/client/build;
+
+    add_header Content-Security-Policy "default-src 'self'; base-uri 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; frame-src 'none'; form-action 'self' https://*.{{base_domain}}; frame-ancestors 'none'; block-all-mixed-content;";
+    add_header Permissions-Policy      "Permissions-Policy: accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(), cross-origin-isolated=(), display-capture=(), document-domain=(), encrypted-media=(), execution-while-not-rendered=(), execution-while-out-of-viewport=(), fullscreen=(), geolocation=(), gyroscope=(), keyboard-map=(), magnetometer=(), microphone=(), midi=(), navigation-override=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), sync-xhr=(), usb=(), web-share=(), xr-spatial-tracking=(), clipboard-read=(), clipboard-write=(self), gamepad=(), speaker-selection=()";
+
+    gzip  on;
+    gzip_min_length 1000;
+    gzip_proxied any;
+    gzip_types
+        text/css
+        text/javascript
+        application/javascript;
+
+    location / {
+        try_files $uri @index;
+    }
+
+    location /static {
+        add_header Cache-Control "max-age=3600, public";
+    }
+
+    location @index {
+        rewrite ^ /index.html;
+    }
+
+    location ~ /(api|pam-weblogin|flasgger_static|swagger|health|config|info) {
+        add_header Content-Security-Policy "default-src 'self'; base-uri 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; frame-src 'none'; form-action 'self' https://*.{{base_domain}}; frame-ancestors 'none'; block-all-mixed-content;";
+        add_header Permissions-Policy      "accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(), cross-origin-isolated=(), display-capture=(), document-domain=(), encrypted-media=(), execution-while-not-rendered=(), execution-while-out-of-viewport=(), fullscreen=(), geolocation=(), gyroscope=(), keyboard-map=(), magnetometer=(), microphone=(), midi=(), navigation-override=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), sync-xhr=(), usb=(), web-share=(), xr-spatial-tracking=(), clipboard-read=(), clipboard-write=(self), gamepad=(), speaker-selection=(), conversion-measurement=(), focus-without-user-activation=(), hid=(), idle-detection=(), interest-cohort=(), serial=(), sync-script=(), trust-token-redemption=(), window-placement=(), vertical-scroll=()";
+        add_header Cache-Control "nocache, private";
+        include proxy_params;
+        proxy_pass http://127.0.0.1:8080;
+    }
+
+    location /socket.io {
+        include proxy_params;
+        proxy_http_version 1.1;
+        proxy_buffering off;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "Upgrade";
+        proxy_pass http://127.0.0.1:8080/socket.io;
+    }
+}

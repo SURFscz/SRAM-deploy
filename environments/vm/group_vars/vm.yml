@@ -27,7 +27,7 @@ idp_test_port: 8444
 sp_test_port: 82
 oidc_test_port: 83
 # metadata_backend_port: 443
-sbs_backend_port: 90
+# sbs_backend_port: 90
 tfa_test_port: 91
 pam_backend_port: 92
 meta_port: 88
@@ -37,8 +37,8 @@ loadbalancer:
   - name: "sbs"
     hostname: "{{hostnames.sbs}}"
     protocol: http
-    backend_hosts: "{{groups['vm_sbs']}}"
-    backend_port: "{{ sbs_backend_port }}"
+    backend_hosts: "{{groups['vm_docker']}}"
+    backend_port: 443
     options:
       httpchk: "GET /health"
   - name: "meta"

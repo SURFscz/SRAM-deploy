@@ -1,0 +1,123 @@
+---
+sbs_openidc_timeout: 86400
+
+sbs_build_url: "https://github.com/SURFscz/SBS/releases/download/{{sbs_version}}/sbs.tar.xz"
+sbs_version: "branch+main"
+
+sbs_work_dir: "/opt/sbs"
+sbs_git_dir: "{{ sbs_work_dir }}/sbs"
+sbs_env_dir: "{{ sbs_work_dir }}/sbs-env"
+sbs_conf_dir: "{{ sbs_work_dir }}/config"
+sbs_log_dir: "{{ sbs_work_dir }}/log"
+sbs_cert_dir: "{{ sbs_work_dir }}/cert"
+
+sbs_db_host: "localhost"
+sbs_db_name: "sbs"
+sbs_db_user: "sbs"
+sbs_dbbackup_user: "sbs_backupper"
+
+sbs_migration_user: "sbs_migrater"
+
+sbs_redis_host: "localhost"
+sbs_redis_port: 6379
+sbs_redis_ssl: false
+
+sbs_mail_host: "{{ mail.relay_to }}"
+sbs_mail_port: "{{ mail.relay_port }}"
+
+sbs_file_owner: "root"
+sbs_group: "sram-sbs"
+
+sbs_session_lifetime: 1440
+sbs_secret_key_suffix: ""
+
+sbs_oidc_crypto_password: "CHANGEME"
+sbs_uid_attribute: "sub"
+
+sbs_disclaimer_color: "#a29c13"
+sbs_disclaimer_label: wsgi
+
+sbs_urn_namespace: "urn:example:sbs"
+sbs_eppn_scope: "env.sram.surf.nl"
+sbs_restricted_co_default_org: "example.org"
+
+sbs_mail_sender_name: "SURF"
+sbs_mail_sender_email: "no-reply@localhost"
+sbs_exceptions_mail: "root@localhost"
+
+sbs_support_email: "sram-support@localhost"
+sbs_admin_email: "sram-beheer@localhost"
+sbs_eduteams_email: "eduteams@localhost"
+
+sbs_wiki_link: "https://www.example.org/wiki"
+
+sbs_backend_port: 80
+
+sbs_cron_hour_of_day: 4
+sbs_seed_allowed: False
+sbs_api_keys_enabled: True
+sbs_feedback_enabled: True
+sbs_audit_trail_notifications_enabled: True
+sbs_send_exceptions: False
+sbs_send_js_exceptions: False
+sbs_second_factor_authentication_required: True
+sbs_totp_token_name: "SRAM"
+sbs_notifications_enabled: True
+sbs_scim_sweep: False
+sbs_impersonation_allowed: False
+sbs_admin_platform_backdoor_totp: False
+sbs_past_dates_allowed: False
+sbs_mock_scim_enabled: False
+
+sbs_delete_orphaned: True
+sbs_suspension_inactive_days: 365
+
+sbs_oidc_config_url: "http://localhost/.well-known/openid-configuration"
+sbs_oidc_authz_endpoint: "http://localhost/OIDC/authorization"
+sbs_oidc_token_endpoint: "http://localhost/OIDC/token"
+sbs_oidc_userinfo_endpoint: "http://localhost/OIDC/userinfo"
+sbs_oidc_jwks_endpoint: "http://localhost/OIDC/jwks.json"
+sbs_oidc_sfo_endpoint: "https://localhost/sfo"
+sbs_oidc_redirect_uri: "https://sbs.scz-vm.net/api/users/resume-session"
+sbs_mfa_idp_allowed: false
+sbs_eduteams_continue_endpoint: "https://localhost/continue"
+sbs_oidc_jwt_audience: "https://localhost"
+sbs_continue_eduteams_redirect_uri: "https://localhost/continue"
+
+sbs_idp_metadata_url: "https://meta.{{base_domain}}/metadata/edugain.xml"
+sbs_backup_dir: "{{backup_base}}/sbs"
+sbs_db_cert_path: "/etc/ssl/sbs_db_root_cert.pem"
+
+sbs_swagger_enabled: true
+
+sbs_ssid_identity_providers: []
+sbs_surf_secure_id:
+  environment: "unknown.example.org"
+  sp_entity_id: "https://sbs.{{base_domain}}"
+  acs_url: "https://{{base_domain}}/api/users/acs"
+  sa_gw_environment: "sa-gw.unknown.example.org"
+  sa_idp_certificate: |
+    -----BEGIN CERTIFICATE-----
+    12345
+    -----END CERTIFICATE-----
+  priv: |
+    -----BEGIN RSA PRIVATE KEY-----
+    abcde
+    -----END RSA PRIVATE KEY-----
+  pub: |
+    -----BEGIN CERTIFICATE-----
+    12345
+    -----END CERTIFICATE-----
+
+sbs_ssid_authncontext: "\
+  http://{{ sbs_surf_secure_id.environment }}/assurance/sfo-level2"
+sbs_ssid_entityid: "\
+  https://{{ sbs_surf_secure_id.sa_gw_environment }}/second-factor-only/metadata"
+sbs_ssid_sso_endpoint: "\
+  https://{{ sbs_surf_secure_id.sa_gw_environment }}/second-factor-only/single-sign-on"
+
+sbs_mfa_sso_minutes: 10
+sbs_mfa_fallback_enabled: true
+
+sbs_ldap_url: "ldap://ldap.example.com/dc=example,dc=com"
+sbs_ldap_bind_account: "cn=admin,dc=entity_id,dc=services,dc=sram-tst,dc=surf,dc=nl"

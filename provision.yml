@@ -98,6 +98,7 @@
     - { role: docker_ldap,                  tags: ['ldap', 'docker_ldap'] }
     - { role: docker_plsc,                  tags: ['plsc', 'docker_plsc'] }
     - { role: docker_db,                    tags: ['db', 'docker_db'] }
+    - { role: docker_sbs,                   tags: ['sbs', 'docker_sbs'] }
 
 - name: "lb"
   hosts: lb
@@ -116,12 +117,12 @@
 #   roles:
 #     - { role: db_server,        tags: ['db', 'db-server'] }
 
-- name: "sbs"
-  hosts: sbs
-  tasks:
-    - { import_tasks: "tasks/versions.yml", tags: ['common'] }
-  roles:
-    - { role: sbs,         tags: ['sbs']  }
+# - name: "sbs"
+#   hosts: sbs
+#   tasks:
+#     - { import_tasks: "tasks/versions.yml", tags: ['common'] }
+#   roles:
+#     - { role: sbs,         tags: ['sbs']  }
 
 # - name: "ldap"
 #   hosts: ldap
