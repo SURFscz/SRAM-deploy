@@ -238,6 +238,17 @@
 #   changed_when: "'[alembic.runtime.migration] Running upgrade' in result.stderr"
 #   notify: "restart sbs"
 
+- name: Create redis container
+  docker_container:
+    name: sbs-redis
+    image: redis:7
+    # restart_policy: "always"
+    # restart: true
+    state: started
+    # pull: true
+    networks:
+      - name: "traefik"
+
 # We need to remove sram-static so it gets repopulated
 # with new SBS image static content
 - name: Stop and remove sbs and sbs-nginx containers
