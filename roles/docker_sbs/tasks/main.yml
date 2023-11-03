@@ -78,7 +78,7 @@
     - { path: "{{sbs_conf_dir}}",            mode: "0755" }
     - { path: "{{sbs_conf_dir}}/saml",       mode: "0755" }
     - { path: "{{sbs_log_dir}}",             mode: "0775" }
-    - { path: "{{sbs_cert_dir}}",             mode: "0775" }
+    - { path: "{{sbs_cert_dir}}",            mode: "0775" }
 
 # - name: "Fix file permissions"
 #   file:
@@ -216,11 +216,10 @@
 # - include_role:
 #     name: "nginx"
 
-# - name: "install nginx config"
-#   template:
-#     src: "sbs-nginx.j2"
-#     dest: "/etc/nginx/sites-enabled/10-sbs.conf"
-#   notify: "restart nginx"
+- name: "install nginx config"
+  template:
+    src: "sbs-nginx.j2"
+    dest: "{{ sbs_nginx_conf }}"
 
 # - name: "Install database dump script"
 #   template:
@@ -239,6 +238,21 @@
 #   changed_when: "'[alembic.runtime.migration] Running upgrade' in result.stderr"
 #   notify: "restart sbs"
 
+# We need to remove sram-static so it gets repopulated
+# with new SBS image static content
+- name: Stop and remove sbs and sbs-nginx containers
+  docker_container:
+    name: "{{ item }}"
+    state: absent
+  with_items:
+    - sbs
+    - sbs-nginx
+
+- name: Remove sram-static volume
+  community.docker.docker_volume:
+    name: sram-static
+    state: absent
+
 - name: Create sbs container
   docker_container:
     name: sbs
@@ -251,6 +265,21 @@
       - "{{ sbs_conf_dir }}:{{ sbs_conf_dir }}"
       - "{{ sbs_cert_dir }}:{{ sbs_cert_dir }}"
       - "{{ sbs_log_dir }}:/opt/sbs/log"
+      - sbs_static:/opt/sbs/client/build
+    networks:
+      - name: "traefik"
+
+- name: Create nginx container
+  docker_container:
+    name: sbs-nginx
+    image: nginx:1
+    # restart_policy: "always"
+    # restart: true
+    state: started
+    # pull: true
+    volumes:
+      - "{{ sbs_nginx_conf }}:/etc/nginx/nginx.conf:ro"
+      - sbs_static:/var/www
     networks:
       - name: "traefik"
     labels:
