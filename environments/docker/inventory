@@ -35,6 +35,9 @@ db.vm.scz-vm.net ansible_host=172.20.1.28
 [vm_bhr]
 bhr.vm.scz-vm.net ansible_host=172.20.1.29
 
+[vm_docker]
+docker.vm.scz-vm.net ansible_host=172.20.1.31
+
 [vm:children]
 vm_lb
 vm_ldap
@@ -44,6 +47,7 @@ vm_sandbox1
 vm_sbs
 vm_db
 vm_bhr
+vm_docker
 
 ##########################################
 # role-based groups
@@ -55,6 +59,7 @@ vm_ldap
 
 [ldap_primary:children]
 vm_ldap1
+vm_docker
 
 [ldap_secondary:children]
 vm_ldap2
@@ -86,6 +91,8 @@ vm_bhr
 [bhr2:children]
 vm_bhr
 
+[docker:children]
+vm_docker
 ##########################################
 # all
 [all:children]

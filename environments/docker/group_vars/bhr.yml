@@ -1,0 +1,6 @@
+---
+zabbix_templates_extra:
+  - "Zabbix server health"
+
+firewall_v4_incoming:
+  - { name: zabbix,      src: "{{iprange.internal}}", dport:  "10051", proto: tcp }
