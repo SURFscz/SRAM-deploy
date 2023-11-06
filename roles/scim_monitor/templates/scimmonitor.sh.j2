@@ -20,7 +20,7 @@ curl \
 
 # compare the SCIM data with our reference
 DIFF=$(
-    diff -y --suppress-common-lines $SCIMFILE "{{ scim_monitor_reference }}" || true
+    diff -y -W180 --suppress-common-lines $SCIMFILE "{{ scim_monitor_reference }}" || true
 )
 
 # output to status file
