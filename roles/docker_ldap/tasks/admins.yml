@@ -24,7 +24,7 @@
       - "cn"
     bind_dn: "{{ services_ldap.binddn }}"
     bind_pw: "{{ services_ldap_password }}"
-    server_uri: ldap:///
+    server_uri: ldaps://docker.vm.scz-vm.net/
   register: "existing_ldap_admins_result"
 
 # ansible sucks like this: we need to extract the results from the result
@@ -44,7 +44,7 @@
     state: absent
     bind_dn: "{{ services_ldap.binddn }}"
     bind_pw: "{{ services_ldap_password }}"
-    server_uri: ldap:///
+    server_uri: ldaps://docker.vm.scz-vm.net/
   when: >
     item.cn not in ldap_admins | map(attribute='uid')
     and item.cn != 'admin'
@@ -62,7 +62,7 @@
       userPassword: "{CRYPT}{{ item.pw_hash }}"
     bind_dn: "{{ services_ldap.binddn }}"
     bind_pw: "{{ services_ldap_password }}"
-    server_uri: ldap:///
+    server_uri: ldaps://docker.vm.scz-vm.net/
   loop: "{{ ldap_admins }}"
 
 # Make sure passwords are updated for existing admins
@@ -73,6 +73,6 @@
       userPassword: "{CRYPT}{{ item.pw_hash }}"
     bind_dn: "{{ services_ldap.binddn }}"
     bind_pw: "{{ services_ldap_password }}"
-    server_uri: ldap:///
+    server_uri: ldaps://docker.vm.scz-vm.net/
   loop: "{{ ldap_admins }}"
 
