@@ -93,6 +93,7 @@
     - { import_tasks: "tasks/versions.yml", tags: ['common']  }
   roles:
     - { role: docker,                       tags: ['docker'] }
+    - { role: docker_images,                tags: ['images', 'docker_images'] }
     - { role: docker_pyff,                  tags: ['meta', 'docker_pyff'] }
     - { role: docker_metadata,              tags: ['meta', 'docker_metadata'] }
     - { role: docker_ldap,                  tags: ['ldap', 'docker_ldap'] }

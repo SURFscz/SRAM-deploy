@@ -1,0 +1,4 @@
+---
+sram_containers_repo_url: https://github.com/SURFscz/SRAM-containers.git
+sram_containers_version: main
+sram_containers_dir: "/opt/SRAM-Containers"
