@@ -195,7 +195,6 @@
       - 3306:3306
     env:
       MARIADB_ROOT_PASSWORD: "{{ db_admin_password }}"
-      MYSQL_ROOT_HOST: "%"
     mounts:
       - type: bind
         source: "{{ mariadb_conf_dir }}/sram.cnf"
@@ -204,4 +203,4 @@
       - "{{ mariadb_cert_dir }}:{{ mariadb_cert_dir }}"
       - "{{ mariadb_data_dir }}:/var/lib/mysql:Z"
     networks:
-      - name: "traefik"
+      - name: "internal"

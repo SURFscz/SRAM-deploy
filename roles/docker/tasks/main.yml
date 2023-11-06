@@ -59,6 +59,10 @@
     group: "root"
     mode: 0644
 
+- name: Create the internal network
+  community.docker.docker_network:
+    name: internal
+
 - name: Create the Traefik gateway network
   community.docker.docker_network:
     name: traefik

@@ -247,7 +247,7 @@
     state: started
     # pull: true
     networks:
-      - name: "traefik"
+      - name: "internal"
 
 # We need to remove sram-static so it gets repopulated
 # with new SBS image static content
@@ -278,7 +278,7 @@
       - "{{ sbs_log_dir }}:/opt/sbs/log"
       - sbs_static:/opt/sbs/client/build
     networks:
-      - name: "traefik"
+      - name: "internal"
 
 - name: Create nginx container
   docker_container:
@@ -293,6 +293,7 @@
       - sbs_static:/var/www
     networks:
       - name: "traefik"
+      - name: "internal"
     labels:
       traefik.http.routers.sbs.rule: "Host(`{{ hostnames.sbs }}`)"
       traefik.http.routers.sbs.tls: "true"
