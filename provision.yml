@@ -94,11 +94,11 @@
   roles:
     - { role: docker,                       tags: ['docker'] }
     - { role: docker_images,                tags: ['images', 'docker_images'] }
+    - { role: docker_db,                    tags: ['db', 'docker_db'] }
+    - { role: docker_ldap,                  tags: ['ldap', 'docker_ldap'] }
     - { role: docker_pyff,                  tags: ['meta', 'docker_pyff'] }
     - { role: docker_metadata,              tags: ['meta', 'docker_metadata'] }
-    - { role: docker_ldap,                  tags: ['ldap', 'docker_ldap'] }
     - { role: docker_plsc,                  tags: ['plsc', 'docker_plsc'] }
-    - { role: docker_db,                    tags: ['db', 'docker_db'] }
     - { role: docker_sbs,                   tags: ['sbs', 'docker_sbs'] }
 
 - name: "lb"

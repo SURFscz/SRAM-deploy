@@ -10,7 +10,7 @@ sbs_env_dir: "{{ sbs_work_dir }}/sbs-env"
 sbs_conf_dir: "{{ sbs_work_dir }}/config"
 sbs_log_dir: "{{ sbs_work_dir }}/log"
 sbs_cert_dir: "{{ sbs_work_dir }}/cert"
-sbs_nginx_conf: "{{ sbs_work_dir }}/nginx.conf"
+sbs_apache_conf: "{{ sbs_work_dir }}/sbs.conf"
 
 sbs_db_host: "localhost"
 sbs_db_name: "sbs"

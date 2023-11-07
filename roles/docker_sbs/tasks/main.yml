@@ -216,10 +216,10 @@
 # - include_role:
 #     name: "nginx"
 
-- name: "install nginx config"
+- name: "install apache config"
   template:
-    src: "sbs-nginx.j2"
-    dest: "{{ sbs_nginx_conf }}"
+    src: "sbs-apache.j2"
+    dest: "{{ sbs_apache_conf }}"
 
 # - name: "Install database dump script"
 #   template:
@@ -251,13 +251,13 @@
 
 # We need to remove sram-static so it gets repopulated
 # with new SBS image static content
-- name: Stop and remove sbs and sbs-nginx containers
+- name: Stop and remove sbs and sbs-server containers
   docker_container:
     name: "{{ item }}"
     state: absent
   with_items:
     - sbs
-    - sbs-nginx
+    - sbs-server
 
 - name: Remove sram-static volume
   community.docker.docker_volume:
@@ -280,17 +280,17 @@
     networks:
       - name: "internal"
 
-- name: Create nginx container
+- name: Create apache container
   docker_container:
-    name: sbs-nginx
-    image: nginx:1
+    name: sbs-server
+    image: sram-sbs-server
     # restart_policy: "always"
     # restart: true
     state: started
     # pull: true
     volumes:
-      - "{{ sbs_nginx_conf }}:/etc/nginx/nginx.conf:ro"
-      - sbs_static:/var/www
+      - "{{ sbs_apache_conf }}:/etc/apache2/sites-enabled/sbs.conf:ro"
+      - sbs_static:/var/www/html
     networks:
       - name: "traefik"
       - name: "internal"
