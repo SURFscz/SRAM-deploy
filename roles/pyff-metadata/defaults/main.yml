@@ -7,7 +7,7 @@ metadata_cert_dir: "{{metadata_basedir}}/certs"
 
 metadata_group: "pyff"
 
-metadata_idps_source: "https://metadata.surfconext.nl/signed/2023/edugain-downstream-idp.xml"
+metadata_idps_source: "https://metadata.surfconext.nl/signed/2023/idps-metadata.xml"
 metadata_idps_cert: |
   -----BEGIN CERTIFICATE-----
   MIIF3zCCA8egAwIBAgIUBs1ReJfhBJviad26BTre7J4Ym9UwDQYJKoZIhvcNAQEL
@@ -76,7 +76,7 @@ metadata_idps_source_dir: "/opt/metadata-src"
 metadata_idps_feed: "{{ metadata_basedir }}/idps_feed.fd"
 metadata_idps_file: "idps.xml"
 
-metadata_edugain_source: "https://metadata.surfconext.nl/edugain-downstream-idp.xml"
+metadata_edugain_source: "https://metadata.surfconext.nl/signed/2023/edugain-downstream-idp.xml"
 metadata_edugain_cert: "{{metadata_idps_cert}}"
 metadata_edugain_xrd: "{{metadata_basedir}}/certs/edugain.xrd"
 metadata_edugain_feed: "{{ metadata_basedir }}/edugain_feed.fd"
