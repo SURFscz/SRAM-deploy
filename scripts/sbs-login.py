@@ -85,7 +85,7 @@ try:
     browser.get(profile)
 
     # Wait for Profile to load
-    wait.until(presence_of_element_located((By.XPATH, "//h1[text()='Your profile']")),
+    wait.until(presence_of_element_located((By.XPATH, "//h2[text()='Your profile']")),
                'Timeout waiting for Profile')
 
     # Test admin attributes
