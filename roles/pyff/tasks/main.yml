@@ -76,3 +76,8 @@
   with_items:
     - { path: "signing.crt", mode: "0644" }
     - { path: "signing.key", mode: "0640" }
+
+
+- name: set vars so they are available outside tasks
+  set_fact:
+    pyff_env_dir: "{{pyff_env_dir}}"
