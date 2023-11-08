@@ -157,9 +157,13 @@ compose['services']['redis'] = redis_config(98, 'redis')
 if not ci_enabled:
     compose['services']['mail'] = mail_config(99, 'mail')
 
+# Add volume for docker '/var/lib/docker'
+compose.setdefault('volumes',{})['docker_volume'] = {'driver':'local'}
+compose['services']['docker'].setdefault('volumes',[]).append('docker_volume:/var/lib/docker')
 
 # dump the yaml
 print("---")
 print("# This file has been automatically generated.  DO NOT EDIT, CHANGES WILL BE LOST!")
 print("# yamllint disable")
 print(yaml.dump(compose))
+
