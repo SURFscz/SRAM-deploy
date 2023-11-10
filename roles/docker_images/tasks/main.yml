@@ -7,7 +7,8 @@
       - build-essential
     install_recommends: false
 
-- name: fetch SRAM Container from {{ sram_containers_repo_url }}, version {{ sram_containers_version }}
+- name: >
+    fetch SRAM Container from {{ sram_containers_repo_url }}, version {{ sram_containers_version }}
   git:
     repo: "{{ sram_containers_repo_url }}"
     dest: "{{ sram_containers_dir }}"

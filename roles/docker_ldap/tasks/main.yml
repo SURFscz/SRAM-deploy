@@ -183,13 +183,16 @@
       olcSizeLimit: "unlimited"
       olcLogLevel: "{{ ldap_loglevel }}"
       olcAttributeOptions: "time-"
-      # olcTLSCipherSuite: "SECURE256:-VERS-DTLS-ALL:-VERS-SSL3.0:-VERS-TLS1.0:-VERS-TLS1.1:-RSA:-DHE-RSA:-ECDHE-RSA"
-      # olcTLSCipherSuite: "HIGH:+SSLv3:+TLSv1:MEDIUM:+SSLv2:@STRENGTH:+SHA:+MD5:!NULL"
-      # olcTLSCipherSuite: "TLS_RSA_CAMELLIA_128_CBC_SHA1:TLS_RSA_CAMELLIA_256_CBC_SHA1:!NULL"
+# olcTLSCipherSuite: >
+#  "SECURE256:-VERS-DTLS-ALL:-VERS-SSL3.0:-VERS-TLS1.0:-VERS-TLS1.1:-RSA:-DHE-RSA:-ECDHE-RSA"
+# olcTLSCipherSuite: >
+#  "HIGH:+SSLv3:+TLSv1:MEDIUM:+SSLv2:@STRENGTH:+SHA:+MD5:!NULL"
+# olcTLSCipherSuite: >
+#  "TLS_RSA_CAMELLIA_128_CBC_SHA1:TLS_RSA_CAMELLIA_256_CBC_SHA1:!NULL"
       olcTLSCipherSuite: "ALL:!NULL"
-      # olcTLSCertificateKeyFile: "{{ ldap_certs_dir }}/backend.key"
-      # olcTLSCertificateFile: "{{ ldap_certs_dir }}/backend.crt"
-      # olcTLSCACertificateFile: "{{ ldap_certs_dir }}/backend.crt"
+# olcTLSCertificateKeyFile: "{{ ldap_certs_dir }}/backend.key"
+# olcTLSCertificateFile: "{{ ldap_certs_dir }}/backend.crt"
+# olcTLSCACertificateFile: "{{ ldap_certs_dir }}/backend.crt"
     bind_dn: "cn=admin,cn=config"
     bind_pw: "{{ services_ldap_password }}"
     server_uri: ldaps://docker.vm.scz-vm.net/

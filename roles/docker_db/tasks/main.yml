@@ -1,4 +1,4 @@
-# ---
+---
 # - name: Install mariadb repo key
 #   apt_key:
 #     data: |
