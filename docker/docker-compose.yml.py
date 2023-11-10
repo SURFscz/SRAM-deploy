@@ -15,7 +15,6 @@ if len(sys.argv) > 1 and sys.argv[1] == CI_OPTION:
 hosts = {
     'sbs':      27,
     'db':       28,
-    'docker':   31,
 }
 if ci_enabled:
     hosts.update({
@@ -30,6 +29,7 @@ else:
         'client':   25,
         'sandbox1': 26,
         'bhr':      29,
+        'docker':   31,
     })
 
 # these are the hostnames of virtual hosts on the loadbalancer
@@ -37,7 +37,7 @@ logical_hosts = [
     'mdq',         'cm',        'comanage', 'ldap',
     'meta',        'oidc-test', 'sp-test',  'idp-test',
     'google-test', 'sbs',       'sandbox1', 'pam',
-    'oidc-op',     'docker'
+    'oidc-op',
 ]
 
 extra_options = {}
