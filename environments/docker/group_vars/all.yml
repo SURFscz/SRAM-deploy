@@ -104,7 +104,6 @@ services_ldap:
   o:      "Services"
   binddn: "cn=admin,dc=services,dc=vnet"
 
-db_host: "db"
 sbs_db_name: "sbs"
 sbs_db_user: "sbs"
 

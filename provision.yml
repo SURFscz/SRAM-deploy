@@ -111,41 +111,41 @@
     - { role: tls_fixed_cert,  tags: ['lb','tls_fixedcert'],   when: use_fixed_cert     }
     - { role: lb_haproxy,      tags: ['lb','haproxy']                                   }
 
-# - name: "database"
-#   hosts: db
-#   tasks:
-#     - { import_tasks: "tasks/versions.yml", tags: ['common'] }
-#   roles:
-#     - { role: db_server,        tags: ['db', 'db-server'] }
+- name: "database"
+  hosts: db
+  tasks:
+    - { import_tasks: "tasks/versions.yml", tags: ['common'] }
+  roles:
+    - { role: db_server,        tags: ['db', 'db-server'] }
 
-# - name: "sbs"
-#   hosts: sbs
-#   tasks:
-#     - { import_tasks: "tasks/versions.yml", tags: ['common'] }
-#   roles:
-#     - { role: sbs,         tags: ['sbs']  }
+- name: "sbs"
+  hosts: sbs
+  tasks:
+    - { import_tasks: "tasks/versions.yml", tags: ['common'] }
+  roles:
+    - { role: sbs,         tags: ['sbs']  }
 
-# - name: "ldap"
-#   hosts: ldap
-#   tasks:
-#     - { import_tasks: "tasks/versions.yml", tags: ['common'] }
-#   roles:
-#     - { role: ldap,               tags: ['ldap'                 ] }
-#     - { role: ldap_monitor,       tags: ['ldap', 'ldap-monitor' ] }
-#    - { role: pam_websso_daemon,  tags: ['client','websso-daemon'], when: experimental_features }
+- name: "ldap"
+  hosts: ldap
+  tasks:
+    - { import_tasks: "tasks/versions.yml", tags: ['common'] }
+  roles:
+    - { role: ldap,               tags: ['ldap'                 ] }
+    - { role: ldap_monitor,       tags: ['ldap', 'ldap-monitor' ] }
+    # - { role: pam_websso_daemon,  tags: ['client','websso-daemon'], when: experimental_features }
 
-# - name: "first ldap"
-#   hosts: "ldap_primary"
-#   roles:
-#     - { role: plsc,               tags: ['plsc', 'ldap-plsc'     ] }
+- name: "first ldap"
+  hosts: "ldap_primary"
+  roles:
+    - { role: plsc,               tags: ['plsc', 'ldap-plsc'     ] }
 
-# - name: "meta"
-#   hosts: meta
-#   tasks:
-#     - { import_tasks: "tasks/versions.yml", tags: ['common'] }
-  # roles:
-    # - { role: pyff-metadata, tags: ['meta','pyff-metadata']}
-    # - { role: metadata,      tags: ['meta','metadata']     }
+- name: "meta"
+  hosts: meta
+  tasks:
+    - { import_tasks: "tasks/versions.yml", tags: ['common'] }
+  roles:
+    - { role: pyff-metadata, tags: ['meta','pyff-metadata']}
+    - { role: metadata,      tags: ['meta','metadata']     }
 
 - name: "client"
   hosts: client
@@ -165,10 +165,10 @@
     - { role: tools,                tags: ['bhr13','tools']          }
     - { role: sram_monitor,         tags: ['bhr13','sram-monitor']   }
 
-- name: "sandbox"
-  hosts: sandbox1
-  tasks:
-    - { import_tasks: "tasks/versions.yml", tags: ['common'] }
+# - name: "sandbox"
+#   hosts: sandbox1
+#   tasks:
+#     - { import_tasks: "tasks/versions.yml", tags: ['common'] }
 #  roles:
 #    - { role: pam_websso,         tags: ['client','pam-websso'], when: experimental_features }
 

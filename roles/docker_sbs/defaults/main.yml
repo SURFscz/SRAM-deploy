@@ -12,6 +12,7 @@ sbs_log_dir: "{{ sbs_work_dir }}/log"
 sbs_cert_dir: "{{ sbs_work_dir }}/cert"
 sbs_apache_conf: "{{ sbs_work_dir }}/sbs.conf"
 
+db_host: "db"
 sbs_db_host: "localhost"
 sbs_db_name: "sbs"
 sbs_db_user: "sbs"

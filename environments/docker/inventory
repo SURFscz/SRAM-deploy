@@ -59,7 +59,6 @@ vm_ldap
 
 [ldap_primary:children]
 vm_ldap1
-vm_docker
 
 [ldap_secondary:children]
 vm_ldap2
