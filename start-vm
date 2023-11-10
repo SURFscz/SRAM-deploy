@@ -28,7 +28,7 @@ while getopts -- '-:h' OPT; do
         ci )            CI="--ci"
                         ENV_DIR=./environments/ci
                         ;;
-        docker )        ENV_DIR=./environments/docker
+        container )     ENV_DIR=./environments/docker
                         ;;
         skip-ansible | \
         sa | no )       SKIP_ANSIBLE=1
