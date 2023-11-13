@@ -1,0 +1,51 @@
+---
+firewall_v4_incoming:
+  - name: loadbalancer
+    src: "{{lb_ip}}"
+    dport:  "{{sbs_server_port}}"
+    proto: tcp
+
+db_host: "db"
+sbs_redis_host: "sbs-redis"
+
+sbs_urn_namespace: "urn:mace:surf.nl:x-sram-vm"
+sbs_eppn_scope: "scz-vm.net"
+
+sbs_oidc_authz_endpoint: "https://{{ hostnames.oidc_op }}/authorization"
+sbs_oidc_token_endpoint: "https://{{ hostnames.oidc_op }}/token"
+sbs_oidc_userinfo_endpoint: "https://{{ hostnames.oidc_op }}/userinfo"
+sbs_oidc_jwks_endpoint: "https://{{ hostnames.oidc_op }}/jwks.json"
+sbs_oidc_redirect_uri: "https://{{ hostnames.sbs }}/api/users/resume-session"
+sbs_oidc_sfo_endpoint: "https://{{ hostnames.oidc_op }}/sfo"
+sbs_eduteams_continue_endpoint: "https://{{ hostnames.oidc_op }}/continue"
+sbs_oidc_jwt_audience: "https://{{ hostnames.oidc_op }}"
+
+sbs_ldap_url: "ldap://ldap.scz-vm.net/dc=services,dc=vnet"
+# entity_id will be replaced run-time in the client
+sbs_ldap_bind_account: "cn=admin,dc=entity_id,dc=services,dc=vnet"
+
+sbs_db_tls_cert: "{{wildcard_backend_cert.pub}}"
+
+sbs_cron_hour_of_day: "4"
+sbs_seed_allowed: True
+sbs_api_keys_enabled: True
+sbs_feedback_enabled: True
+sbs_audit_trail_notifications_enabled: True
+sbs_send_exceptions: False
+sbs_send_js_exceptions: False
+sbs_second_factor_authentication_required: True
+sbs_totp_token_name: "SRAM-VM"
+sbs_notifications_enabled: True
+sbs_impersonation_allowed: True
+sbs_admin_platform_backdoor_totp: True
+sbs_past_dates_allowed: True
+sbs_mock_scim_enabled: True
+sbs_swagger_enabled: True
+
+sbs_mfa_idp_allowed:
+  - schac_home: "ci-runner.sram.surf.nl"
+    entity_id: "https://idp.scz-vm.net/saml/saml2/idp/metadata.php"
+
+sbs_ssid_identity_providers:
+  - schac_home: "ssid.org"
+    entity_id: "https://ssid.org"

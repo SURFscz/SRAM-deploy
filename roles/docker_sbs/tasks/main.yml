@@ -131,10 +131,18 @@
 #   notify: "restart sbs"
 #   when: "sbs_download.changed or not sbs_git_dir_stat.stat.exists"
 
-- name: Create wildcard backend cert
+- name: Copy wildcard backend cert
   copy:
     content: "{{wildcard_backend_cert.pub}}"
     dest: "{{sbs_cert_dir}}/backend.crt"
+    owner: "root"
+    group: "root"
+    mode: 0644
+
+- name: Copy https cert
+  copy:
+    content: "{{https_cert.cert}}"
+    dest: "{{sbs_cert_dir}}/frontend.crt"
     owner: "root"
     group: "root"
     mode: 0644
@@ -221,6 +229,11 @@
     src: "sbs-apache.j2"
     dest: "{{ sbs_apache_conf }}"
 
+# - name: "install nginx config"
+#   template:
+#     src: "sbs-nginx.j2"
+#     dest: "{{ sbs_nginx_conf }}"
+
 # - name: "Install database dump script"
 #   template:
 #     src: "backup-database.sh.j2"
@@ -272,6 +285,8 @@
     # restart: true
     state: started
     # pull: true
+    env:
+      REQUESTS_CA_BUNDLE: /etc/ssl/certs/ca-certificates.crt
     volumes:
       - "{{ sbs_conf_dir }}:{{ sbs_conf_dir }}"
       - "{{ sbs_cert_dir }}:{{ sbs_cert_dir }}"
@@ -279,6 +294,8 @@
       - sbs_static:/opt/sbs/client/build
     networks:
       - name: "internal"
+    etc_hosts:
+      oidc-op.scz-vm.net: 172.20.1.24
 
 - name: Create apache container
   docker_container:
@@ -298,3 +315,22 @@
       traefik.http.routers.sbs.rule: "Host(`{{ hostnames.sbs }}`)"
       traefik.http.routers.sbs.tls: "true"
       traefik.enable: "true"
+
+# - name: Create nginx container
+#   docker_container:
+#     name: sbs-server
+#     image: nginx:1
+#     # restart_policy: "always"
+#     # restart: true
+#     state: started
+#     # pull: true
+#     volumes:
+#       - "{{ sbs_nginx_conf }}:/etc/nginx/nginx.conf:ro"
+#       - sbs_static:/var/www
+#     networks:
+#       - name: "traefik"
+#       - name: "internal"
+#     labels:
+#       traefik.http.routers.sbs.rule: "Host(`{{ hostnames.sbs }}`)"
+#       traefik.http.routers.sbs.tls: "true"
+#       traefik.enable: "true"

@@ -5,7 +5,7 @@ database:
 permanent_session_lifetime: 1440
 
 redis:
-  uri: "redis://@{{sbs_redis_host}}/"
+  uri: "redis://{{sbs_redis_host}}/"
 
 # add a per-release suffix here to invalidate sessions on new releases
 secret_key: {{ sbs_db_secret }}{{sbs_secret_key_suffix}}
