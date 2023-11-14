@@ -13,7 +13,7 @@ RewriteCond %{REQUEST_URI} !^/(api|pam-weblogin|flasgger_static|swagger|health|c
 RewriteCond %{DOCUMENT_ROOT}%{REQUEST_FILENAME} !-f
 RewriteRule ^/(.*)$ /index.html  [L]
 
-ProxyPassMatch ^/socket.io ws://sbs/ flushpackets=on
+ProxyPassMatch ^/socket.io ws://sbs/
 ProxyPassMatch ^/(api|pam-weblogin|flasgger_static|swagger|health|config|info) http://sbs/
 ProxyPassReverse / http://sbs/
 

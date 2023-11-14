@@ -20,8 +20,9 @@
   ansible.builtin.apt:
     name: docker-ce
     state: present
-  notify:
-    - "restart docker"
+  # Do not restart docker, this breaks SBS migrate
+  # notify:
+  #   - "restart docker"
 
 - name: Create the traefik configuration file directory
   ansible.builtin.file:

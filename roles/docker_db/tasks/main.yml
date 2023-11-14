@@ -187,8 +187,8 @@
   docker_container:
     name: db
     image: mariadb:11
-    # restart_policy: "always"
-    # restart: true
+    restart_policy: "always"
+    restart: true
     state: started
     # pull: true
     ports:
