@@ -382,13 +382,13 @@
     bind_dn: "{{ services_ldap.binddn }}"
     bind_pw: "{{ services_ldap_password }}"
     server_uri: ldaps://docker.vm.scz-vm.net/
-  when: >
-      inventory_hostname in groups['ldap_primary']
+  # when: >
+  #     inventory_hostname in groups['ldap_primary']
 
 - name: Add ldap admins
   include_tasks: "admins.yml"
-  when: >
-      inventory_hostname in groups['ldap_primary']
+  # when: >
+  #     inventory_hostname in groups['ldap_primary']
 #
 # - name: Install backup script
 #   template:
