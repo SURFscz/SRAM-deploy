@@ -1,16 +1,16 @@
 ---
 
-# - name: "Install required packages"
-#   apt:
-#     state: "latest"
-#     name:
-#       - nodejs
-#       - python3-pymysql
-#       - mariadb-client
-#       - libmariadb-dev-compat
-#       - libxmlsec1-dev  # for python xmlsec pkg
-#       - pkg-config      # for python xmlsec pkg
-#     install_recommends: false
+- name: "Install required packages"
+  apt:
+    state: "latest"
+    name:
+      # - nodejs
+      - python3-pymysql
+      # - mariadb-client
+      # - libmariadb-dev-compat
+      # - libxmlsec1-dev  # for python xmlsec pkg
+      # - pkg-config      # for python xmlsec pkg
+    install_recommends: false
 
 # - name: "Create SBS group"
 #   group:
