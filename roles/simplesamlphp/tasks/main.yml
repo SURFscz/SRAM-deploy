@@ -132,6 +132,8 @@
 
 - set_fact:
     php_version={{ php_output.stdout }}
+    simplesaml_project_dir={{simplesaml_project_dir}}
+    simplesaml_cert_dir={{simplesaml_cert_dir}}
 
 - name: Set php session cookie httponly
   ansible.builtin.copy:
