@@ -1,12 +1,15 @@
 ---
+traefik_network: traefik
+internal_network: sram
+
 ansible_ssh_common_args: >
   -o StrictHostKeyChecking=false
   -o UserKnownHostsFile={{playbook_dir}}/docker/known_hosts
 ansible_ssh_user: "ansible"
 ansible_ssh_private_key_file: "docker/ansible_key"
 
-secrets_file: "environments/vm/secrets/all.yml"
-secrets_users_file: "environments/vm/secrets/users.yml"
+secrets_file: "environments/docker/secrets/all.yml"
+secrets_users_file: "environments/docker/secrets/users.yml"
 
 admin_email: "admin@{{base_domain}}"
 

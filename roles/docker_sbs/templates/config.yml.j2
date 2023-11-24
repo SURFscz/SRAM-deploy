@@ -1,5 +1,9 @@
 database:
+{% if environment_name != 'tst2' %}
   uri: "mysql+mysqldb://{{ sbs_db_user }}:{{ sbs_db_password }}@{{ db_host }}/{{ sbs_db_name }}?ssl=true&ssl_ca={{sbs_cert_dir}}/backend.crt&charset=utf8mb4"
+{% else %}
+  uri: "mysql+mysqldb://{{ sbs_db_user }}:{{ sbs_db_password }}@{{ db_host }}/{{ sbs_db_name }}?ssl=true&charset=utf8mb4"
+{% endif %}
 
 # Lifetime of session in minutes (one day is 60 * 24)
 permanent_session_lifetime: 1440

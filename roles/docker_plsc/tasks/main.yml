@@ -71,6 +71,6 @@
     mounts:
       - type: bind
         source: "{{ plsc_dir }}/plsc.yml"
-        target: "{{ plsc_dir }}/plsc.yml"
+        target: "/opt/plsc/plsc.yml"
     networks:
-      - name: "internal"
+      - name: "{{internal_network}}"

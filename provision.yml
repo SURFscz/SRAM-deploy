@@ -49,7 +49,7 @@
       when: "debug | default('false') | bool"
 
 - name: "common"
-  hosts: all
+  hosts: sram
   tasks:
     - { import_tasks: "tasks/versions.yml", tags: "always"     }
   roles:
@@ -89,12 +89,15 @@
 
 - name: "docker"
   hosts: docker
+  vars_files:
+    - "{{ secrets_users_file }}"
+    - "{{ secrets_file }}"
   tasks:
     - { import_tasks: "tasks/versions.yml", tags: ['common']  }
   roles:
     - { role: docker,                       tags: ['docker'] }
     - { role: docker_images,                tags: ['images', 'docker_images'] }
-    - { role: docker_db,                    tags: ['db', 'docker_db'] }
+    # - { role: docker_db,                    tags: ['db', 'docker_db'] }
     - { role: docker_ldap,                  tags: ['ldap', 'docker_ldap'] }
     - { role: docker_pyff,                  tags: ['meta', 'docker_pyff'] }
     - { role: docker_metadata,              tags: ['meta', 'docker_metadata'] }
@@ -125,14 +128,14 @@
   roles:
     - { role: sbs,         tags: ['sbs']  }
 
-- name: "ldap"
-  hosts: ldap
-  tasks:
-    - { import_tasks: "tasks/versions.yml", tags: ['common'] }
-  roles:
-    - { role: ldap,               tags: ['ldap'                 ] }
-    - { role: ldap_monitor,       tags: ['ldap', 'ldap-monitor' ] }
-    # - { role: pam_websso_daemon,  tags: ['client','websso-daemon'], when: experimental_features }
+# - name: "ldap"
+#   hosts: ldap
+#   tasks:
+#     - { import_tasks: "tasks/versions.yml", tags: ['common'] }
+#   roles:
+#     - { role: ldap,               tags: ['ldap'                 ] }
+#     - { role: ldap_monitor,       tags: ['ldap', 'ldap-monitor' ] }
+#     # - { role: pam_websso_daemon,  tags: ['client','websso-daemon'], when: experimental_features }
 
 - name: "first ldap"
   hosts: "ldap_primary"

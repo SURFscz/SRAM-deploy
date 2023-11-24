@@ -146,7 +146,7 @@
     volumes:
       - "{{ metadata_dirs.web }}:/opt/web"
     networks:
-      - name: "traefik"
+      - name: "{{traefik_network}}"
     labels:
       traefik.http.routers.metadata.rule: "Host(`{{ hostnames.meta }}`)"
       traefik.http.routers.metadata.tls: "true"

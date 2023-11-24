@@ -25,25 +25,25 @@
 - name: "Initialialize database"
   throttle: 1
   block:
-    - name: "Add SBS database"
-      community.mysql.mysql_db:
-        # login_host: '{{ db_host }}'
-        login_host: 'docker.vm.scz-vm.net'
-        # login_port: '3306'
-        # login_user: '{{ db_admin_user }}'
-        # login_password: '{{ db_admin_password }}'
-        login_user: 'root'
-        login_password: 'changethispassword'
-        name: '{{ sbs_db_name }}'
-        encoding: 'utf8mb4'
-        collation: 'utf8mb4_unicode_ci'
-        ca_cert: "/etc/ssl/vm.scz-vm.net.crt"
-      # notify: "restart sbs"
+    # - name: "Add SBS database"
+    #   community.mysql.mysql_db:
+    #     # login_host: '{{ db_host }}'
+    #     login_host: 'docker.vm.scz-vm.net'
+    #     # login_port: '3306'
+    #     # login_user: '{{ db_admin_user }}'
+    #     # login_password: '{{ db_admin_password }}'
+    #     login_user: 'root'
+    #     login_password: 'changethispassword'
+    #     name: '{{ sbs_db_name }}'
+    #     encoding: 'utf8mb4'
+    #     collation: 'utf8mb4_unicode_ci'
+    #     ca_cert: "/etc/ssl/vm.scz-vm.net.crt"
+    #   # notify: "restart sbs"
 
     - name: "Add SBS user"
       community.mysql.mysql_user:
-        # login_host: '{{ db_host }}'
-        login_host: 'docker.vm.scz-vm.net'
+        login_host: '{{ db_host }}'
+        # login_host: 'docker.vm.scz-vm.net'
         login_port: '3306'
         login_user: 'root'
         login_password: 'changethispassword'
@@ -65,6 +65,7 @@
           priv: "SELECT"
       no_log: "{{sram_ansible_nolog}}"
       # notify: "restart sbs"
+  when: environment_name=='vm'
 
 - name: "Create directories"
   file:
@@ -260,7 +261,7 @@
     state: started
     # pull: true
     networks:
-      - name: "internal"
+      - name: "{{internal_network}}"
 
 # We need to remove sram-static so it gets repopulated
 # with new SBS image static content
@@ -281,19 +282,19 @@
   docker_container:
     name: sbs
     image: sram-sbs
-    # restart_policy: "always"
-    # restart: true
+    restart_policy: "always"
+    restart: true
     state: started
     # pull: true
     env:
       REQUESTS_CA_BUNDLE: /etc/ssl/certs/ca-certificates.crt
     volumes:
-      - "{{ sbs_conf_dir }}:{{ sbs_conf_dir }}"
-      - "{{ sbs_cert_dir }}:{{ sbs_cert_dir }}"
+      - "{{ sbs_conf_dir }}:/opt/sbs/config"
+      - "{{ sbs_cert_dir }}:/opt/sbs/cert"
       - "{{ sbs_log_dir }}:/opt/sbs/log"
-      - sbs_static:/opt/sbs/client/build
+      - "sbs_static:/opt/sbs/client/build"
     networks:
-      - name: "internal"
+      - name: "{{internal_network}}"
     etc_hosts:
       oidc-op.scz-vm.net: 172.20.1.24
 
@@ -309,8 +310,8 @@
       - "{{ sbs_apache_conf }}:/etc/apache2/sites-enabled/sbs.conf:ro"
       - sbs_static:/var/www/html
     networks:
-      - name: "traefik"
-      - name: "internal"
+      - name: "{{traefik_network}}"
+      - name: "{{internal_network}}"
     labels:
       traefik.http.routers.sbs.rule: "Host(`{{ hostnames.sbs }}`)"
       traefik.http.routers.sbs.tls: "true"
@@ -328,8 +329,8 @@
 #       - "{{ sbs_nginx_conf }}:/etc/nginx/nginx.conf:ro"
 #       - sbs_static:/var/www
 #     networks:
-#       - name: "traefik"
-#       - name: "internal"
+#       - name: "{{traefik_network}}"
+#       - name: "{{internal_network}}"
 #     labels:
 #       traefik.http.routers.sbs.rule: "Host(`{{ hostnames.sbs }}`)"
 #       traefik.http.routers.sbs.tls: "true"

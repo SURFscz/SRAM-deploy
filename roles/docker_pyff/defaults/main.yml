@@ -1,5 +1,5 @@
 ---
-metadata_basedir: "/opt/metadata"
+metadata_basedir: "{{sram_conf_dir}}/metadata"
 # metadata_target_dir: "{{metadata_basedir}}/metadata"
 metadata_dirs:
   web: "{{metadata_basedir}}/web"

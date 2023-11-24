@@ -1,7 +1,7 @@
 ---
 plsc_repo_url: "https://github.com/SURFscz/plsc.git"
 plsc_version: "main"
-plsc_dir: "/opt/plsc"
+plsc_dir: "{{sram_conf_dir}}/plsc"
 plsc_venv_dir: "{{plsc_dir}}/venv"
 
 plsc_interval_seconds: 120

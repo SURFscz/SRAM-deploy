@@ -203,4 +203,4 @@
       - "{{ mariadb_cert_dir }}:{{ mariadb_cert_dir }}"
       - "{{ mariadb_data_dir }}:/var/lib/mysql:Z"
     networks:
-      - name: "internal"
+      - name: "{{internal_network}}"

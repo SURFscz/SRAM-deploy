@@ -5,6 +5,14 @@ firewall_v4_incoming:
     dport:  "{{sbs_server_port}}"
     proto: tcp
 
+environment_name: tst2
+environment_string: "SRAM NG"
+base_domain: "test2.sram.surf.nl"
+internal_base_domain: "vm.scz-vm.net"
+
+ldap_uri: "ldap://localhost/"
+
+sram_conf_dir: "/opt/sram"
 db_host: "db"
 sbs_redis_host: "sbs-redis"
 

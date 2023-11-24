@@ -97,7 +97,7 @@
     state: started
     # pull: true
     ports:
-      # - 389:1389
+      - 389:1389
       - 636:1636
     env:
       LDAP_ROOT: "{{ services_ldap.basedn }}"
@@ -106,7 +106,8 @@
       LDAP_CONFIG_ADMIN_USERNAME: admin
       LDAP_CONFIG_ADMIN_PASSWORD: "{{ services_ldap_password }}"
       LDAP_CONFIG_ADMIN_ENABLED: "yes"
-      LDAP_CUSTOM_SCHEMA_DIR: "{{ ldap_ldif_dir }}"
+      LDAP_CUSTOM_SCHEMA_DIR: "/opt/ldap/schema"
+      #LDAP_EXTRA_SCHEMAS: "cosine,inetorgperson,nis,memberof"
       LDAP_SKIP_DEFAULT_TREE: "yes"
       # LDAP_USERS: ""
       # LDAP_PASSWORDS: ""
@@ -114,16 +115,16 @@
       LDAP_ENABLE_TLS: "yes"
       # LDAP_REQUIRE_TLS: "no"
       # LDAP_LDAPS_PORT_NUMBER: 1636
-      LDAP_TLS_CERT_FILE: "{{ ldap_certs_dir }}/backend.crt"
-      LDAP_TLS_KEY_FILE: "{{ ldap_certs_dir }}/backend.key"
-      LDAP_TLS_CA_FILE: "{{ ldap_certs_dir }}/backend.crt"
+      LDAP_TLS_CERT_FILE: "/opt/ldap/certs/backend.crt"
+      LDAP_TLS_KEY_FILE: "/opt/ldap/certs/backend.key"
+      LDAP_TLS_CA_FILE: "/opt/ldap/certs/backend.crt"
       # LDAP_TLS_DH_PARAMS_FILE: "{{ ldap_certs_dir }}/dh_params"
     volumes:
-      - "{{ ldap_ldif_dir }}:{{ ldap_ldif_dir }}"
-      - "{{ ldap_certs_dir }}:{{ ldap_certs_dir }}"
+      - "{{ ldap_ldif_dir }}:/opt/ldap/schema"
+      - "{{ ldap_certs_dir }}:/opt/ldap/certs"
       - "{{ ldap_data_dir }}:/bitnami/openldap"
     networks:
-      - name: "internal"
+      - name: "{{internal_network}}"
 
 - name: Generate ldap.conf
   template:
@@ -148,7 +149,7 @@
     state: "present"
     bind_dn: "cn=admin,cn=config"
     bind_pw: "{{ services_ldap_password }}"
-    server_uri: ldaps://docker.vm.scz-vm.net/
+    server_uri: "{{ ldap_uri }}"
   with_items:
     - "entryUUID eq"
     - "o eq"
@@ -163,7 +164,7 @@
       olcSizeLimit: "unlimited"
     bind_dn: "cn=admin,cn=config"
     bind_pw: "{{ services_ldap_password }}"
-    server_uri: ldaps://docker.vm.scz-vm.net/
+    server_uri: "{{ ldap_uri }}"
 
 # - name: Set config olcTLSCipherSuite
 #   community.general.ldap_attrs:
@@ -173,7 +174,7 @@
 #       olcTLSCipherSuite: "ALL:!NULL"
 #     bind_dn: "cn=admin,cn=config"
 #     bind_pw: "{{ services_ldap_password }}"
-#     server_uri: ldaps://docker.vm.scz-vm.net/
+#     server_uri: "{{ ldap_uri }}"
 
 - name: Set config
   community.general.ldap_attrs:
@@ -195,7 +196,7 @@
 # olcTLSCACertificateFile: "{{ ldap_certs_dir }}/backend.crt"
     bind_dn: "cn=admin,cn=config"
     bind_pw: "{{ services_ldap_password }}"
-    server_uri: ldaps://docker.vm.scz-vm.net/
+    server_uri: "{{ ldap_uri }}"
 
 # - name: Ensure the schemas are added to LDAP
 #   ansible.builtin.script: "scripts/ldap-add {{ ldap_ldif_dir }}/{{ item }}"
@@ -210,19 +211,20 @@
 #     - "eduMember.ldif"
 #     - "voPerson.ldif"
 #
+
 - name: Setup Modules
   community.general.ldap_attrs:
-    dn: cn=module{0},cn=config
+    dn: cn=module{1},cn=config
     attributes:
       olcModuleLoad:
         # - syncprov
         # - back_monitor
-        - memberof
-        - refint
-        - dynlist
+        - memberof.so
+        - refint.so
+        - dynlist.so
     bind_dn: "cn=admin,cn=config"
     bind_pw: "{{ services_ldap_password }}"
-    server_uri: ldaps://docker.vm.scz-vm.net/
+    server_uri: "{{ ldap_uri }}"
 
 # - name: Setup Monitor
 #   community.general.ldap_entry:
@@ -245,7 +247,7 @@
       olcMemberOfMemberOfAD: memberOf
     bind_dn: "cn=admin,cn=config"
     bind_pw: "{{ services_ldap_password }}"
-    server_uri: ldaps://docker.vm.scz-vm.net/
+    server_uri: "{{ ldap_uri }}"
 
 - name: Setup MemberOf(2)
   community.general.ldap_entry:
@@ -257,7 +259,7 @@
       olcRefintAttribute: memberof member
     bind_dn: "cn=admin,cn=config"
     bind_pw: "{{ services_ldap_password }}"
-    server_uri: ldaps://docker.vm.scz-vm.net/
+    server_uri: "{{ ldap_uri }}"
 
 - name: Setup Dynlist
   community.general.ldap_entry:
@@ -269,7 +271,7 @@
       olcDlAttrSet: "{0}organizationalRole labeledURI roleOccupant"
     bind_dn: "cn=admin,cn=config"
     bind_pw: "{{ services_ldap_password }}"
-    server_uri: ldaps://docker.vm.scz-vm.net/
+    server_uri: "{{ ldap_uri }}"
 
 - name: Setup Syncprov
   community.general.ldap_entry:
@@ -282,7 +284,7 @@
       olcSpSessionLog: 100
     bind_dn: "cn=admin,cn=config"
     bind_pw: "{{ services_ldap_password }}"
-    server_uri: ldaps://docker.vm.scz-vm.net/
+    server_uri: "{{ ldap_uri }}"
 
 # - name: Setup main database
 #   community.general.ldap_attrs:
@@ -308,7 +310,7 @@
 #     state: exact
 #     bind_dn: "cn=admin,cn=config"
 #     bind_pw: "{{ services_ldap_password }}"
-#     server_uri: ldaps://docker.vm.scz-vm.net/
+#     server_uri: "{{ ldap_uri }}"
 #
 # - name: Setup Syncrepl
 #   community.general.ldap_attrs:
@@ -366,7 +368,7 @@
     ordered: true
     bind_dn: "cn=admin,cn=config"
     bind_pw: "{{ services_ldap_password }}"
-    server_uri: ldaps://docker.vm.scz-vm.net/
+    server_uri: "{{ ldap_uri }}"
 
 - name: Initialize DIT
   community.general.ldap_entry:
@@ -381,7 +383,7 @@
       o: "{{ services_ldap.o }}"
     bind_dn: "{{ services_ldap.binddn }}"
     bind_pw: "{{ services_ldap_password }}"
-    server_uri: ldaps://docker.vm.scz-vm.net/
+    server_uri: "{{ ldap_uri }}"
   # when: >
   #     inventory_hostname in groups['ldap_primary']
 

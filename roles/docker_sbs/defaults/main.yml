@@ -4,7 +4,7 @@ sbs_openidc_timeout: 86400
 sbs_build_url: "https://github.com/SURFscz/SBS/releases/download/{{sbs_version}}/sbs.tar.xz"
 sbs_version: "branch+main"
 
-sbs_work_dir: "/opt/sbs"
+sbs_work_dir: "{{sram_conf_dir}}/sbs"
 sbs_git_dir: "{{ sbs_work_dir }}/sbs"
 sbs_env_dir: "{{ sbs_work_dir }}/sbs-env"
 sbs_conf_dir: "{{ sbs_work_dir }}/config"
@@ -14,7 +14,6 @@ sbs_apache_conf: "{{ sbs_work_dir }}/sbs.conf"
 sbs_nginx_conf: "{{ sbs_work_dir }}/nginx.conf"
 
 db_host: "db"
-sbs_db_host: "localhost"
 sbs_db_name: "sbs"
 sbs_db_user: "sbs"
 sbs_dbbackup_user: "sbs_backupper"

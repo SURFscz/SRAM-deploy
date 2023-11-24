@@ -1,6 +1,6 @@
 ---
 # meta_port: 80
-metadata_basedir: "/opt/metadata"
+metadata_basedir: "{{sram_conf_dir}}/metadata"
 metadata_dirs:
   web: "{{metadata_basedir}}/web"
 # metadata_documentroot: "/var/www/metadata"
