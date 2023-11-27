@@ -97,7 +97,8 @@
   roles:
     - { role: docker,                       tags: ['docker'] }
     - { role: docker_images,                tags: ['images', 'docker_images'] }
-    # - { role: docker_db,                    tags: ['db', 'docker_db'] }
+    - { role: docker_db,                    tags: ['db', 'docker_db'],
+        when: environment_name!='tst2' }
     - { role: docker_ldap,                  tags: ['ldap', 'docker_ldap'] }
     - { role: docker_pyff,                  tags: ['meta', 'docker_pyff'] }
     - { role: docker_metadata,              tags: ['meta', 'docker_metadata'] }
@@ -135,7 +136,8 @@
 #   roles:
 #     - { role: ldap,               tags: ['ldap'                 ] }
 #     - { role: ldap_monitor,       tags: ['ldap', 'ldap-monitor' ] }
-#   # - { role: pam_websso_daemon,  tags: ['client','websso-daemon'], when: experimental_features }
+#   # - { role: pam_websso_daemon,  tags: ['client','websso-daemon'],
+#         when: experimental_features }
 
 - name: "first ldap"
   hosts: "ldap_primary"

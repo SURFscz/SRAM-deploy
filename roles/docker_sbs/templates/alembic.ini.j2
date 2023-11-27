@@ -36,7 +36,7 @@ script_location = migrations
 # output_encoding = utf-8
 
 {% if environment_name != 'tst2' %}
-sqlalchemy.url = mysql+mysqldb://{{ sbs_migration_user }}:{{ sbs_migration_password | percent_escape }}@{{ sbs_db_host }}/{{ sbs_db_name }}?ssl=true&ssl_ca={{sbs_cert_dir}}/backend.crt&charset=utf8mb4
+sqlalchemy.url = mysql+mysqldb://{{ sbs_migration_user }}:{{ sbs_migration_password | percent_escape }}@{{ sbs_db_host }}/{{ sbs_db_name }}?ssl=true&ssl_ca=/opt/sbs/cert/backend.crt&charset=utf8mb4
 {% else %}
 sqlalchemy.url = mysql+mysqldb://{{ sbs_migration_user }}:{{ sbs_migration_password | percent_escape }}@{{ sbs_db_host }}/{{ sbs_db_name }}?ssl=true&charset=utf8mb4
 {% endif %}
