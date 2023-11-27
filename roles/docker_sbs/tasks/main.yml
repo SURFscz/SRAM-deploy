@@ -25,28 +25,29 @@
 - name: "Initialialize database"
   throttle: 1
   block:
-    # - name: "Add SBS database"
-    #   community.mysql.mysql_db:
-    #     # login_host: '{{ db_host }}'
-    #     login_host: 'docker.vm.scz-vm.net'
-    #     # login_port: '3306'
-    #     # login_user: '{{ db_admin_user }}'
-    #     # login_password: '{{ db_admin_password }}'
-    #     login_user: 'root'
-    #     login_password: 'changethispassword'
-    #     name: '{{ sbs_db_name }}'
-    #     encoding: 'utf8mb4'
-    #     collation: 'utf8mb4_unicode_ci'
-    #     ca_cert: "/etc/ssl/vm.scz-vm.net.crt"
-    #   # notify: "restart sbs"
+    - name: "Add SBS database"
+      community.mysql.mysql_db:
+        login_host: '{{ db_host }}'
+        # login_host: 'docker.vm.scz-vm.net'
+        login_port: '3306'
+        login_user: '{{ db_admin_user }}'
+        login_password: '{{ db_admin_password }}'
+        # login_user: 'root'
+        # login_password: 'changethispassword'
+        name: '{{ sbs_db_name }}'
+        encoding: 'utf8mb4'
+        collation: 'utf8mb4_unicode_ci'
+        ca_cert: "/etc/ssl/vm.scz-vm.net.crt"
+      # notify: "restart sbs"
+      when: environment_name!='tst2'
 
     - name: "Add SBS user"
       community.mysql.mysql_user:
         login_host: '{{ db_host }}'
         # login_host: 'docker.vm.scz-vm.net'
         login_port: '3306'
-        login_user: 'root'
-        login_password: 'changethispassword'
+        login_user: '{{ db_admin_user }}'
+        login_password: '{{ db_admin_password }}'
         name: '{{ item.user }}'
         # host: '{{ ansible_default_ipv4.address }}'
         host: '%'

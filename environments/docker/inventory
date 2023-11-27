@@ -92,7 +92,8 @@ vm_bhr
 
 [docker:children]
 vm_docker
+
 ##########################################
 # all
-[all:children]
+[sram:children]
 vm
