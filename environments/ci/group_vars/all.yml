@@ -106,6 +106,7 @@ services_ldap:
   binddn: "cn=admin,dc=services,dc=vnet"
 
 db_host: "{{ groups['db'][0] }}"
+sbs_db_host: "{{ db_host }}"
 sbs_db_name: "sbs"
 sbs_db_user: "sbs"
 sbs_migration_user: "sbs_migrater"

@@ -6,6 +6,7 @@ firewall_v4_incoming:
     proto: tcp
 
 db_host: "{{ groups['db'][0] }}"
+sbs_db_host: "{{ db_host }}"
 sbs_urn_namespace: "urn:mace:surf.nl:x-sram-vm"
 sbs_eppn_scope: "scz-vm.net"
 
