@@ -11,7 +11,6 @@ sram_conf_dir: "/opt/sram"
 
 db_host: "docker.vm.scz-vm.net"
 sbs_db_host: "db"
-sbs_redis_host: "sbs-redis"
 
 sbs_urn_namespace: "urn:mace:surf.nl:x-sram-vm"
 sbs_eppn_scope: "scz-vm.net"

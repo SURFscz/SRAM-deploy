@@ -114,7 +114,7 @@ sbs_client_id: sbs-server
 sbs_base_url: "https://{{hostnames.sbs}}"
 
 # Redis
-sbs_redis_host: "redis"
+sbs_redis_host: "sbs-redis"
 sbs_redis_port: 6379
 sbs_redis_ssl: false
 
