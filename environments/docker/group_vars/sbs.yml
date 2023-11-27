@@ -7,6 +7,8 @@ firewall_v4_incoming:
 
 db_host: "{{ groups['db'][0] }}"
 sbs_db_host: "{{ db_host }}"
+sbs_redis_host: "redis.vm.scz-vm.net"
+
 sbs_urn_namespace: "urn:mace:surf.nl:x-sram-vm"
 sbs_eppn_scope: "scz-vm.net"
 

@@ -1,20 +1,20 @@
 ---
 ldap:
   src:
-    uri: "ldaps://ldap:1636/"
+    uri: "ldaps://{{ containers.ldap }}:1636/"
     basedn: "{{ services_ldap.basedn }}"
     binddn: "{{ services_ldap.binddn }}"
     passwd: "{{ services_ldap_password }}"
     sizelimit: 500
   dst:
-    uri: "ldaps://ldap:1636/"
+    uri: "ldaps://{{ containers.ldap }}:1636/"
     basedn: "{{ services_ldap.basedn }}"
     binddn: "{{ services_ldap.binddn }}"
     passwd: "{{ services_ldap_password }}"
     sizelimit: 500
 sbs:
   src:
-    host: "{{ sbs_base_url }}"
+    host: "http://{{ containers.sbs }}"
     user: "sysread"
     passwd: "{{ sbs_sysread_password }}"
     verify_ssl: {{ false if environment_name=='vm' else true }}

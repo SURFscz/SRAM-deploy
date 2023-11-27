@@ -185,7 +185,7 @@
 
 - name: Create the database container
   docker_container:
-    name: db
+    name: "{{ containers.db }}"
     image: mariadb:11
     restart_policy: "always"
     restart: true

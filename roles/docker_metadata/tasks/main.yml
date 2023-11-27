@@ -137,7 +137,7 @@
 
 - name: Create the metadata-server container
   docker_container:
-    name: metadata
+    name: "{{ containers.metadata }}"
     image: sram-metadata
     restart_policy: "always"
     restart: true

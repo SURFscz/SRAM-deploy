@@ -135,7 +135,7 @@
 
 - name: Create the pyFF container
   docker_container:
-    name: pyff
+    name: "{{ containers.pyff }}"
     image: sram-pyff
     restart_policy: "always"
     restart: true

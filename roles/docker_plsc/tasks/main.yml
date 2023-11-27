@@ -60,7 +60,7 @@
 
 - name: Create the plsc container
   docker_container:
-    name: plsc
+    name: "{{ containers.plsc }}"
     image: sram-plsc
     restart_policy: "always"
     restart: true

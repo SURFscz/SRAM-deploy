@@ -255,7 +255,7 @@
 
 - name: Create redis container
   docker_container:
-    name: sbs-redis
+    name: "{{ containers.redis }}"
     image: redis:7
     # restart_policy: "always"
     # restart: true
@@ -271,8 +271,8 @@
     name: "{{ item }}"
     state: absent
   with_items:
-    - sbs
-    - sbs-server
+    - "{{ containers.sbs }}"
+    - "{{ containers.sbs_server }}"
 
 - name: Remove sram-static volume
   community.docker.docker_volume:
@@ -281,7 +281,7 @@
 
 - name: Create sbs container
   docker_container:
-    name: sbs
+    name: "{{ containers.sbs }}"
     image: sram-sbs
     restart_policy: "always"
     restart: true
@@ -301,7 +301,7 @@
 
 - name: Create apache container
   docker_container:
-    name: sbs-server
+    name: "{{ containers.sbs_server }}"
     image: sram-sbs-server
     restart_policy: "always"
     restart: true
