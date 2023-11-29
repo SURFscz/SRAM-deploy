@@ -33,6 +33,8 @@ db_host: "docker.vm.scz-vm.net"
 sbs_db_host: "{{ containers.db }}"
 sbs_redis_host: "{{ containers.redis }}"
 
+sbs_base_domain: "{{ hostnames.sbs }}"
+
 sbs_urn_namespace: "urn:mace:surf.nl:x-sram-vm"
 sbs_eppn_scope: "scz-vm.net"
 

@@ -314,7 +314,7 @@
       - name: "{{traefik_network}}"
       - name: "{{internal_network}}"
     labels:
-      traefik.http.routers.sbs.rule: "Host(`{{ base_domain }}`)"
+      traefik.http.routers.sbs.rule: "Host(`{{ sbs_base_domain }}`)"
       traefik.http.routers.sbs.tls: "true"
       traefik.enable: "true"
 
