@@ -256,7 +256,7 @@
 - name: Create redis container
   docker_container:
     name: "{{ containers.redis }}"
-    image: redis:7
+    image: "{{ images.redis }}"
     # restart_policy: "always"
     # restart: true
     state: started
@@ -282,7 +282,7 @@
 - name: Create sbs container
   docker_container:
     name: "{{ containers.sbs }}"
-    image: sram-sbs
+    image: "{{ images.sbs }}"
     restart_policy: "always"
     restart: true
     state: started
@@ -302,7 +302,7 @@
 - name: Create apache container
   docker_container:
     name: "{{ containers.sbs_server }}"
-    image: sram-sbs-server
+    image: "{{ images.sbs_server }}"
     restart_policy: "always"
     restart: true
     state: started

@@ -91,7 +91,7 @@
 - name: Create the ldap container
   docker_container:
     name: "{{ containers.ldap }}"
-    image: sram-ldap
+    image: "{{ images.ldap }}"
     restart_policy: "always"
     restart: true
     state: started

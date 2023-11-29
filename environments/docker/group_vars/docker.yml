@@ -6,10 +6,20 @@ firewall_v4_incoming:
     proto: tcp
 
 containers:
+  db: sram-db
+  redis: sram-redis
   sbs: sram-sbs
   sbs_server: sram-sbs-server
-  redis: sram-redis
-  db: sram-db
+  ldap: sram-ldap
+  metadata: sram-metadata
+  pyff: sram-pyff
+  plsc: sram-plsc
+
+images:
+  db: mariadb:11
+  redis: redis:7
+  sbs: sram-sbs
+  sbs_server: sram-sbs-server
   ldap: sram-ldap
   metadata: sram-metadata
   pyff: sram-pyff
