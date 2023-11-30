@@ -34,6 +34,8 @@ sbs_db_host: "{{ containers.db }}"
 sbs_redis_host: "{{ containers.redis }}"
 
 sbs_base_domain: "{{ hostnames.sbs }}"
+sbs_base_url: "https://{{sbs_base_domain}}"
+sbs_api_url: "https://{{sbs_base_domain}}/"
 
 sbs_urn_namespace: "urn:mace:surf.nl:x-sram-vm"
 sbs_eppn_scope: "scz-vm.net"
