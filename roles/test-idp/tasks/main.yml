@@ -28,8 +28,8 @@
     - "saml20-idp-hosted.php"
 
 - name: SimpleSaml configuration (copy)
-  copy:
-    src: "{{item}}"
+  template:
+    src: "{{item}}.j2"
     dest: "{{ simplesaml_project_dir }}/config/{{item}}"
   with_items:
     - "saml20-idp-remote.php"
@@ -72,13 +72,17 @@
     public: true
   vars:
     letsencrypt_staging: false
-    letsencrypt_hosts: [ "{{testidp_hostname}}" ]
+    # letsencrypt_hosts: [ "{{testidp_hostname}}" ]
+    letsencrypt_hosts: [ "{{testidp_hostname}}",  "{{testidp2_hostname}}" ]
 
 - name: Install nginx config
   template:
-    src: "nginx.conf.j2"
-    dest: "/etc/nginx/sites-enabled/01-sram-testidp.conf"
+    src: "{{ item.src }}"
+    dest: "/etc/nginx/sites-enabled/{{ item.dest }}"
   notify: "restart nginx"
+  with_items:
+    - { "src": "nginx1.conf.j2", "dest": "01-sram-testidp1.conf" }
+    - { "src": "nginx2.conf.j2", "dest": "01-sram-testidp2.conf" }
 
 - name: Restart nginx after certificate rollover
   copy:

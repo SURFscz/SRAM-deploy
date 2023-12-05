@@ -6,6 +6,7 @@ testidp_dir: "/opt/{{testidp_name}}"
 testidp_html_dir: "{{testidp_dir}}/html"
 testidp_ip_allow: ["all"]
 testidp_hostname: "test-idp.sram.surf.nl"
+testidp2_hostname: "test-idp-2.sram.surf.nl"
 
 testidp_employee_passwd: "employee"
 testidp_student_passwd: "student"
