@@ -16,7 +16,7 @@ export PYTHONWARNINGS=ignore
 mkdir -p $LOGDIR || true
 
 WARNING=0
-STRICT=0
+STRICT=1
 
 ARG=${1#--}
 if [ "$ARG" = "bhr" -o "$ARG" = "beheer" ]
