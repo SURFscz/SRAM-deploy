@@ -118,3 +118,11 @@ sbs_mfa_fallback_enabled: true
 
 sbs_ldap_url: "ldap://ldap.example.com/dc=example,dc=com"
 sbs_ldap_bind_account: "cn=admin,dc=entity_id,dc=services,dc=sram-tst,dc=surf,dc=nl"
+
+sbs_csp_style_hashes:
+  - 'sha256-0+ANsgYUJdh56RK8gGvTF2vnriYqvFHfWqtA8xXa+bA='
+  - 'sha256-3SnfHQolDHbZMbDAPmhrZf1keHiXfj/KJyh2phhFAAY='
+  - 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU='
+  - 'sha256-Ng6y+QCkPChG4Q49SIfXB5ToIDcDhITtQNFkDBPpCTw='
+  - 'sha256-orBPipbqpMvkNi+Z+m6qEn0XS6ymmAQE6+FwCNs1FbQ='
+  - 'sha256-vFt3L2qLqpJmRpcXGbYr2UVSmgSp9VCUzz2lnqWIATw='
