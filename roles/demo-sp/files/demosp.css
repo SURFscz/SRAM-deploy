@@ -18,6 +18,10 @@ a.navbar-brand {
   background-color: #ffa640!important;
 }
 
+.not_found {
+    color: red;
+}
+
 div.card-header {
   font-weight: bold;
 }
