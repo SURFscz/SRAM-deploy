@@ -1,0 +1,155 @@
+---
+
+- name: "Create scim monitor group"
+  group:
+    name: "{{ scim_monitor_group }}"
+
+- name: Create directories
+  file:
+    path: "{{ item.dir }}"
+    state: "directory"
+    owner: "root"
+    group: "{{ scim_monitor_group }}"
+    mode: "{{ item.mode }}"
+  loop:
+    - { dir: "{{scim_monitor_dir}}",        mode: "0755" }
+    - { dir: "{{scim_monitor_status_dir}}", mode: "0775" }
+
+
+#########################################################
+## server
+#########################################################
+- name: Ensure that scim_monitor_data_dir exist
+  file:
+    path: "{{ scim_monitor_dir }}/{{ item.value.data_dir }}"
+    state: "directory"
+    owner: "root"
+    group: "{{ scim_monitor_group }}"
+    mode: "2775"
+  with_dict: "{{ scim_monitor_config }}"
+
+- name: Set default permissions for the scim_monitor_data_dir
+  acl:
+    path: "{{ scim_monitor_dir }}/{{ item.value.data_dir }}"
+    etype: "group"
+    entity: "{{ scim_monitor_group }}"
+    permissions: "rwx"
+    default: true
+    state: "present"
+  with_dict: "{{ scim_monitor_config }}"
+
+- name: fetch SCIM Server from {{ scim_server_repo_url }}, version {{ scim_server_version }}
+  git:
+    repo: "{{ scim_server_repo_url }}"
+    dest: "{{ scim_monitor_server_dir }}"
+    version: "{{ scim_server_version }}"
+    force: "yes"
+
+- name: Create python3 virtualenv
+  import_role:
+    name: "python-venv"
+  vars:
+    python_venv_dir: "{{ scim_monitor_env_dir }}"
+    python_venv_requirements: "{{ scim_monitor_server_dir }}/requirements.txt"
+
+- name: Copy SCIM server service files
+  template:
+    src: "sram-scimserver.service.j2"
+    dest: "/etc/systemd/system/sram-scimserver-{{item.key}}.service"
+    mode: "0644"
+  vars:
+    env_name: "{{ item.key }}"
+    scim_server_port: "{{ item.value.server_port}}"
+    scim_server_key: "{{ item.value.server_token }}"
+    scim_monitor_data_dir: "{{ scim_monitor_dir }}/{{ item.value.data_dir }}"
+    scim_monitor_reference: "{{ scim_monitor_dir }}/{{ item.value.reference }}"
+  with_dict: "{{scim_monitor_config}}"
+  notify:
+    - "enable scimserver job"
+
+
+#########################################################
+## nginx
+#########################################################
+- include_role:
+    name: "nginx"
+
+- include_role:
+    name: "letsencrypt"
+    public: true
+  vars:
+    letsencrypt_staging: false
+    letsencrypt_hosts:
+      - "{{ scim_monitor_hostname }}"
+
+- name: Install nginx config
+  template:
+    src: "nginx.conf.j2"
+    dest: "/etc/nginx/sites-enabled/01-sram-scim-server.conf"
+  notify: "restart nginx"
+
+- name: Restart nginx after certificate rollover
+  copy:
+    content: |
+      #!/bin/sh
+      echo "restarting nginx"
+      /usr/bin/systemctl reload nginx.service
+      exit 0
+    dest: "{{letsencrypt_hooks}}/sram-nginx.sh"
+    mode: "0755"
+
+
+#########################################################
+## monitor
+#########################################################
+- name: Create monitoring scripts
+  template:
+    src: "scimmonitor.sh.j2"
+    dest: "{{ scim_monitor_dir }}/scimmonitor-{{ item.key }}.sh"
+    group: "{{ scim_monitor_group }}"
+    mode: "0750"
+  vars:
+    env_name: "{{ item.key }}"
+    scim_monitor_sbs_host: "{{ item.value.sbs_host }}"
+    scim_monitor_sbs_token: "{{ item.value.sbs_api_token }}"
+    scim_monitor_data_dir: "{{ item.value.data_dir }}"
+    scim_monitor_reference: "{{ scim_monitor_dir }}/{{ item.value.reference }}"
+  with_dict: "{{scim_monitor_config}}"
+
+- name: Copy reference
+  copy:
+    src: "{{ inventory_dir }}/files/{{ item.value.reference }}"
+    dest: "{{ scim_monitor_dir }}"
+  with_dict: "{{scim_monitor_config}}"
+
+- name: Copy monitor service files
+  template:
+    src: "sram-scimmonitor.service.j2"
+    dest: "/etc/systemd/system/sram-scimmonitor-{{env}}.service"
+  vars:
+    env: "{{item}}"
+  loop: "{{ scim_monitor_config.keys() | list }}"
+  notify:
+    - "enable scimmonitor timer"
+
+- name: Copy monitor timer files
+  template:
+    src: "sram-scimmonitor.timer.j2"
+    dest: "/etc/systemd/system/sram-scimmonitor-{{item}}.timer"
+  loop: "{{ scim_monitor_config.keys() | list }}"
+  loop_control:
+    index_var: "extra_min"
+  notify:
+    - "enable scimmonitor timer"
+
+#########################################################
+## zabbix
+#########################################################
+- name: Copy zabbix agent scimmonitor key
+  template:
+    src: "{{item}}.j2"
+    dest: "/etc/zabbix/zabbix_agent2.d/{{item}}"
+    mode: "0644"
+  with_items:
+    - sram-scimmonitor.conf
+  notify: "restart zabbix-agent"

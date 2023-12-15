@@ -24,7 +24,8 @@ server {
     add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
 
     include security_headers;
-    ssl_verify_client optional_no_ca;
+    ssl_client_certificate /etc/ssl/certs/ca-certificates.crt;
+    ssl_verify_client on;
     ssl_verify_depth 5;
 
     location ^~ /saml {

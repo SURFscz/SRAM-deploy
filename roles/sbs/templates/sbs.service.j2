@@ -13,6 +13,12 @@ ReadWritePaths={{sbs_log_dir}}
 NoNewPrivileges=true
 PrivateTmp=true
 
+{%if sbs_memory_max_MB is defined %}
+MemoryAccounting=true
+MemoryHigh={{ sbs_memory_max_MB * 0.875 }}M
+MemoryMax={{ sbs_memory_max_MB }}M
+{%endif%}
+
 Environment="CONFIG=config/config.yml"
 Environment="PROFILE=log_to_stdout"
 # the python requests module uses the CAs provided by the certifi package by default

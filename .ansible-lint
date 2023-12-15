@@ -1,0 +1,7 @@
+# vim:ft=yaml
+---
+
+skip_list:
+  - "name[casing]"
+  - "fqcn"
+  - "jinja[spacing]"

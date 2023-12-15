@@ -7,32 +7,41 @@ metadata_cert_dir: "{{metadata_basedir}}/certs"
 
 metadata_group: "pyff"
 
-metadata_idps_source: "https://metadata.surfconext.nl/idps-metadata.xml"
+metadata_idps_source: "https://metadata.surfconext.nl/signed/2023/idps-metadata.xml"
 metadata_idps_cert: |
   -----BEGIN CERTIFICATE-----
-  MIIEKjCCAhICEG12w6QqayYAWntxDN59dU0wDQYJKoZIhvcNAQELBQAwPDELMAkG
-  A1UEBhMCTkwxEDAOBgNVBAoMB1NVUkZuZXQxGzAZBgNVBAMMElNVUkZjb25leHQg
-  Um9vdCBDQTAeFw0xOTAxMTQxNjM5MDVaFw0yNDAxMTgxNjM5MDVaMGsxCzAJBgNV
-  BAYTAk5MMRAwDgYDVQQIDAdVdHJlY2h0MRAwDgYDVQQKDAdTVVJGbmV0MRMwEQYD
-  VQQLDApTVVJGY29uZXh0MSMwIQYDVQQDDBpTVVJGY29uZXh0IG1ldGFkYXRhIHNp
-  Z25lcjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMckFyqXzW7dbMt4
-  wDdSLaAjFAbNziUgQaivu4dl9Uf/cZ4f36a9DfQBUSraNoIR76ruwK3TPfFalemp
-  xmWTsoVSQpb3AOsWbU+i0YKS1cmcqMUC1fef2j1IbuK4B4nEu9S5saGNVGNvUJ+Y
-  jDUpC5vyyp7boW9E1md2jIBI6Mw+ZhlmkPucqaphxurWnm0KbxTZrYLOBZ1IXj6r
-  yrRoFwwtjEH+CW8cRn8OATK0q4yb0BVr2gY2tp/lTpASHZ3WVWBK0prwK0KkusY6
-  ck+/vvlk46IdEr803NB0Dm3ECh3i65mfCaWzVTtd/md874paK+65f1JeVyd5I5al
-  M2KEpvkCAwEAATANBgkqhkiG9w0BAQsFAAOCAgEAjvJXXkxOqh3K0k2NdDG5EOTy
-  bA+koRbAqhdY/qJoSnqTzwBxJc6aPs+L4q2PIoLo0gNJj1Nm1taLusaaK+CBx3ar
-  1kxEika5FM0dqFjD3i7Y5U0FMeDB5cReo8TNdo31VGoY7CbRjtqHLRTuKzNmIfEm
-  ahLnHIBtarE82b7Mpg0aLxjrRR+t8wSCriy+e9AEPzC5bWxtPJA+OhU8U9hMuOs5
-  SzKmHwYue4WY3q1rRaDpK3fqgXRDRfznNn9/RDDbBos7CRMSAPEmAO28qLKBW/1z
-  a2TKQLddZ3uoCurFNbToSTueKYVEnveQNO2P5X6uy4rcYkjeSiwbmHo7jYuHAxx4
-  uGzHMpoqoGNx+2iYjtUo3dJUXzcZai3X+RuuMKXXvqGzrxJsoKayNVAE1dWoUHJl
-  RouPhDLTdZq/pblORhFS8r10rKhSScgrNuN9LTTV7EPFeVr8trocNwl8IruH+eNL
-  6/7b5Y7fb7rvpxeHjWrTz8a9BXAIAv+bgyrg4OHGRcNIQb0XF438HD9r8Zb92B6Z
-  VCR3aVS5496+1td+8aN/Blzo59LhKPiHyGZCPHFV/oBqG7nxp603kcWmJOcG+AgB
-  9bFiAimF5LLk/LnMfplK9w0vvxWVcdQkDgVPYvEGNtttj0QC7/jM4ZeihGb6Oyzy
-  DZA6aeg73/ygOATQ13A=
+  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
+  64X9NZkdNh13Q0fVPEoxUDgCBw==
   -----END CERTIFICATE-----
 metadata_idps_filters: []
 
@@ -67,7 +76,7 @@ metadata_idps_source_dir: "/opt/metadata-src"
 metadata_idps_feed: "{{ metadata_basedir }}/idps_feed.fd"
 metadata_idps_file: "idps.xml"
 
-metadata_edugain_source: "https://metadata.surfconext.nl/edugain-downstream-idp.xml"
+metadata_edugain_source: "https://metadata.surfconext.nl/signed/2023/edugain-downstream-idp.xml"
 metadata_edugain_cert: "{{metadata_idps_cert}}"
 metadata_edugain_xrd: "{{metadata_basedir}}/certs/edugain.xrd"
 metadata_edugain_feed: "{{ metadata_basedir }}/edugain_feed.fd"

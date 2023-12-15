@@ -1,0 +1,21 @@
+---
+scim_server_repo_url: "https://github.com/SURFscz/SCIM-server.git"
+scim_server_version: "main"
+
+scim_monitor_hostname: "scim-monitor.sram.surf.nl"
+scim_monitor_allowlist: []
+
+scim_monitor_dir: "/opt/sram-scim-monitor"
+scim_monitor_server_dir: "{{scim_monitor_dir}}/scim-server"
+scim_monitor_status_dir: "{{scim_monitor_dir}}/status"
+scim_monitor_env_dir: "{{scim_monitor_dir}}/venv"
+scim_monitor_group: "sram-scim-monitor"
+
+scim_monitor_config:
+  tst:
+    sbs_host: "test.sram.surf.nl"
+    sbs_api_token: "changethispassword"
+    data_dir: "data_tst"
+    reference: "tst_scim_ref"
+    server_port: "8080"
+    server_token: "changethispassword"
