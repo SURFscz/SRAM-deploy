@@ -2,12 +2,18 @@
 import sys
 import ldif
 from collections import OrderedDict
-import json
+
+
+def kcmp(item):
+  (key, v) = item
+  parts = key.split(',')[::-1]
+  new_key = ','.join(parts)
+  return (new_key, v)
 
 
 def freeze(o):
   if isinstance(o, dict):
-    return OrderedDict({k: freeze(v) for k, v in sorted(o.items())}.items())
+    return OrderedDict({k: freeze(v) for k, v in sorted(o.items(), key=kcmp)}.items())
   if isinstance(o, list):
     return sorted([freeze(v) for v in o])
   return o.decode('utf-8')
