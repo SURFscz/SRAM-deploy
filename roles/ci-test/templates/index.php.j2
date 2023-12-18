@@ -81,7 +81,7 @@ if ($reset) {
 $oidc = new OpenIDConnectClient('https://proxy.acc.sram.eduteams.org/',
                                 $rp,
                                 $CLIENT_SECRET);
-$oidc->addScope($scope);
+$oidc->addScope(explode(" ", $scope));
 #$oidc->addAuthParam(array('idp_hint' => $idp_hint));
 error_log("===");
 error_log("http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]");
