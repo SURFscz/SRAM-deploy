@@ -7,30 +7,12 @@
 [vm_lb]
 lb.vm.scz-vm.net ansible_host=172.20.1.24
 
-[vm_ldap1]
-ldap1.vm.scz-vm.net ansible_host=172.20.1.20
-
-[vm_ldap2]
-ldap2.vm.scz-vm.net ansible_host=172.20.1.21
-
-[vm_ldap:children]
-vm_ldap1
-vm_ldap2
-
-[vm_meta]
-meta.vm.scz-vm.net ansible_host=172.20.1.23
-
 [vm_client]
 client.vm.scz-vm.net ansible_host=172.20.1.25
 
 [vm_sandbox1]
-sandbox1.vm.scz-vm.net ansible_host=172.20.1.26
-
-[vm_sbs]
-sbs.vm.scz-vm.net ansible_host=172.20.1.27
 
 [vm_db]
-db.vm.scz-vm.net ansible_host=172.20.1.28
 
 [vm_bhr]
 bhr.vm.scz-vm.net ansible_host=172.20.1.29
@@ -40,14 +22,9 @@ docker.vm.scz-vm.net ansible_host=172.20.1.31
 
 [vm:children]
 vm_lb
-vm_ldap
-vm_meta
-vm_client
-vm_sandbox1
-vm_sbs
-vm_db
-vm_bhr
 vm_docker
+vm_client
+vm_bhr
 
 ##########################################
 # role-based groups
@@ -55,31 +32,23 @@ vm_docker
 vm_lb
 
 [ldap:children]
-vm_ldap
 
 [ldap_primary:children]
-vm_ldap1
 
 [ldap_secondary:children]
-vm_ldap2
 
 [meta:children]
-vm_meta
 
 [client:children]
 vm_client
 
 [test:children]
-vm_client
 
 [sandbox1:children]
-vm_sandbox1
 
 [sbs:children]
-vm_sbs
 
 [db:children]
-vm_db
 
 [bhr:children]
 vm_bhr

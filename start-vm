@@ -3,6 +3,9 @@ set -e
 export TERM=xterm-256color
 ENV_DIR=./environments/vm
 
+
+
+
 # argument parsing from https://stackoverflow.com/a/28466267
 die() { echo "$*" >&2; exit 2; }  # complain to STDERR and exit with error
 needs_arg() { if [ -z "$OPTARG" ]; then die "No arg for --$OPT option"; fi; }
@@ -26,9 +29,10 @@ while getopts -- '-:h' OPT; do
                         exit 0
                         ;;
         ci )            CI="--ci"
-                        ENV_DIR=./environments/ci
+                        ENV_DIR="./environments/ci"
                         ;;
-        container )     ENV_DIR=./environments/docker
+        container )     CONTAINER="--container"
+                        ENV_DIR="./environments/docker"
                         ;;
         skip-ansible | \
         sa | no )       SKIP_ANSIBLE=1
@@ -69,7 +73,7 @@ else
 
     # Bring up the VMs if they're not running
     echo "Bringing docker containers up"
-    ./docker/docker-compose.yml.py $CI > ./docker/docker-compose.yml
+    ./docker/docker-compose.yml.py $CI $CONTAINER> ./docker/docker-compose.yml
     time docker compose -f docker/docker-compose.yml up --no-recreate -d --remove-orphans
 
     echo "Waiting until containers have booted"
