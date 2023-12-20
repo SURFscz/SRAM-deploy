@@ -5,6 +5,8 @@ firewall_v4_incoming:
     dport:  "{{sbs_server_port}}"
     proto: tcp
 
+sbs_num_workers: 2
+
 db_host: "{{ groups['db'][0] }}"
 sbs_db_host: "{{ db_host }}"
 sbs_redis_host: "redis.vm.scz-vm.net"
