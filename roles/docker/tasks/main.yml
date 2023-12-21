@@ -3,7 +3,7 @@
   apt:
     state: "latest"
     name:
-      - python3-pymysql
+      - "python3-pymysql"
     install_recommends: false
 
 - name: Install docker
@@ -11,12 +11,13 @@
     - name: Add Docker GPG key.
       ansible.builtin.apt_key:
         url: "https://download.docker.com/linux/debian/gpg"
-        state: present
+        state: "present"
 
     - name: Add Docker repository.
       ansible.builtin.apt_repository:
-        repo: deb [arch=amd64] https://download.docker.com/linux/debian bullseye stable
-        state: present
+        repo: "deb [arch=amd64] https://download.docker.com/linux/debian bullseye stable"
+        state: "present"
+
     - name: Create docker config directory
       ansible.builtin.file:
         path: "/etc/docker"
@@ -34,23 +35,23 @@
             }
           }
         dest: "/etc/docker/daemon.json"
-        owner: root
-        group: root
-        mode: 0644
+        owner: "root"
+        group: "root"
+        mode: "0644"
 
     - name: Install docker
       ansible.builtin.apt:
-        name: docker-ce
-        state: present
+        name: "docker-ce"
+        state: "present"
       notify:
         - "start docker"
 
     - name: Add ansible user to docker group
       ansible.builtin.user:
-        name: ansible
-        groups: docker
+        name: "ansible"
+        groups: "docker"
         append: true
-  when: environment_name=='vm'
+  when: "environment_name=='vm'"
 
 - name: Create the internal network
   community.docker.docker_network:
@@ -60,13 +61,13 @@
   block:
     - name: Create the traefik configuration file directory
       ansible.builtin.file:
-        state: directory
+        state: "directory"
         path: "/opt/openconext/traefik/{{ item }}"
-        owner: root
+        owner: "root"
         mode: "0755"
       with_items:
-        - config
-        - certs
+        - "config"
+        - "certs"
 
     - name: Copy the (dynamic) configuration
       ansible.builtin.copy:
@@ -75,7 +76,7 @@
         owner: root
         mode: "0640"
       with_items:
-        - traefik.yml
+        - "traefik.yml"
 
     - name: Create wildcard backend key
       copy:
@@ -92,7 +93,7 @@
         dest: "/opt/openconext/traefik/certs/backend.crt"
         owner: "root"
         group: "root"
-        mode: 0644
+        mode: "0644"
 
     - name: Create the Traefik gateway network
       community.docker.docker_network:
@@ -100,8 +101,8 @@
 
     - name: Create the Traefik gateway
       community.docker.docker_container:
-        name: traefik
-        image: traefik:latest
+        name: "traefik"
+        image: "traefik:latest"
         published_ports:
           - "0.0.0.0:443:443"
         pull: true
@@ -110,10 +111,10 @@
           - name: "{{traefik_network}}"
         command: "--configFile=/config/config/traefik.yml"
         volumes:
-          - /var/run/docker.sock:/var/run/docker.sock
-          - /opt/openconext/traefik/:/config/
+          - "/var/run/docker.sock:/var/run/docker.sock"
+          - "/opt/openconext/traefik/:/config/"
         comparisons:
-          published_ports: strict
-          networks: strict
-  when: environment_name=='vm'
+          published_ports: "strict"
+          networks: "strict"
+  when: "environment_name=='vm'"
 
