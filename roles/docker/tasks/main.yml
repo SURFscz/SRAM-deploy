@@ -18,13 +18,25 @@
         repo: deb [arch=amd64] https://download.docker.com/linux/debian bullseye stable
         state: present
 
+    - name: Install docker config
+      ansible.builtin.copy:
+        content: |
+          {
+            "log-driver": "journald",
+            "log-opts": {
+            }
+          }
+        dest: "/etc/docker/daemon.json"
+        owner: root
+        group: root
+        mode: 0644
+
     - name: Install docker
       ansible.builtin.apt:
         name: docker-ce
         state: present
-      # Do not restart docker, this breaks SBS migrate
-      # notify:
-      #   - "restart docker"
+      notify:
+        - "start docker"
 
     - name: Add ansible user to docker group
       ansible.builtin.user:
