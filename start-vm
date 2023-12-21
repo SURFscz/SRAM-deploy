@@ -31,7 +31,7 @@ while getopts -- '-:h' OPT; do
         ci )            CI="--ci"
                         ENV_DIR="./environments/ci"
                         ;;
-        container )     CONTAINER="--container"
+        container )     IN_CONTAINER="--container"
                         ENV_DIR="./environments/docker"
                         ;;
         skip-ansible | \
@@ -73,7 +73,8 @@ else
 
     # Bring up the VMs if they're not running
     echo "Bringing docker containers up"
-    ./docker/docker-compose.yml.py $CI $CONTAINER> ./docker/docker-compose.yml
+    echo ./docker/docker-compose.yml.py $CI $IN_CONTAINER > ./docker/docker-compose.yml
+    ./docker/docker-compose.yml.py $CI $IN_CONTAINER > ./docker/docker-compose.yml
     time docker compose -f docker/docker-compose.yml up --no-recreate -d --remove-orphans
 
     echo "Waiting until containers have booted"
