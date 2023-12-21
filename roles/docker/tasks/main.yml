@@ -6,7 +6,7 @@
       - python3-pymysql
     install_recommends: false
 
-- name: Install Traefik
+- name: Install docker
   block:
     - name: Add Docker GPG key.
       ansible.builtin.apt_key:
@@ -26,6 +26,19 @@
       # notify:
       #   - "restart docker"
 
+    - name: Add ansible user to docker group
+      ansible.builtin.user:
+        name: ansible
+        groups: docker
+        append: true
+  when: environment_name=='vm'
+
+- name: Create the internal network
+  community.docker.docker_network:
+    name: "{{internal_network}}"
+
+- name: Install Traefik
+  block:
     - name: Create the traefik configuration file directory
       ansible.builtin.file:
         state: directory
@@ -85,6 +98,3 @@
           networks: strict
   when: environment_name=='vm'
 
-- name: Create the internal network
-  community.docker.docker_network:
-    name: "{{internal_network}}"
