@@ -100,7 +100,6 @@ backup_runparts: "{{backup_base}}/run.d"
 ssl_certs_dir: "/etc/ssl"
 
 services_ldap:
-  host:   "{{ groups['ldap'][0] }}"
   basedn: "dc=services,dc=vnet"
   o:      "Services"
   binddn: "cn=admin,dc=services,dc=vnet"
