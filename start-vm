@@ -1,7 +1,6 @@
 #!/bin/bash
 set -e
-set -x
-export TERM=xterm-256color
+\export TERM=xterm-256color
 ENV_DIR=./environments/vm
 
 
@@ -29,7 +28,7 @@ while getopts -- '-:h' OPT; do
                         echo "  --skip-vm : skip bringing up VMs, only run Ansible"
                         exit 0
                         ;;
-        ci )            CI="--ci"
+        ci )            CI_OPTION="--ci"
                         ENV_DIR="./environments/ci"
                         ;;
         container )     IN_CONTAINER="--container"
@@ -74,8 +73,8 @@ else
 
     # Bring up the VMs if they're not running
     echo "Bringing docker containers up"
-    echo ./docker/docker-compose.yml.py $CI $IN_CONTAINER ./docker/docker-compose.yml
-    ./docker/docker-compose.yml.py $CI $IN_CONTAINER > ./docker/docker-compose.yml
+    echo ./docker/docker-compose.yml.py $CI_OPTION $IN_CONTAINER ./docker/docker-compose.yml
+    ./docker/docker-compose.yml.py $CI_OPTION $IN_CONTAINER > ./docker/docker-compose.yml
     time docker compose -f docker/docker-compose.yml up --no-recreate -d --remove-orphans
 
     echo "Waiting until containers have booted"
