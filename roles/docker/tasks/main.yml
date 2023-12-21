@@ -17,6 +17,13 @@
       ansible.builtin.apt_repository:
         repo: deb [arch=amd64] https://download.docker.com/linux/debian bullseye stable
         state: present
+    - name: Create docker config directory
+      ansible.builtin.file:
+        path: "/etc/docker"
+        state: "directory"
+        owner: "root"
+        group: "root"
+        mode: "0755"
 
     - name: Install docker config
       ansible.builtin.copy:
