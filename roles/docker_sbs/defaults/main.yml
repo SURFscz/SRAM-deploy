@@ -42,7 +42,7 @@ sbs_disclaimer_color: "#a29c13"
 sbs_disclaimer_label: wsgi
 
 sbs_urn_namespace: "urn:example:sbs"
-sbs_eppn_scope: "env.sram.surf.nl"
+sbs_eppn_scope: "sbs.example.edu"
 sbs_restricted_co_default_org: "example.org"
 
 sbs_mail_sender_name: "SURF"
@@ -58,20 +58,20 @@ sbs_wiki_link: "https://www.example.org/wiki"
 sbs_backend_port: 80
 
 sbs_cron_hour_of_day: 4
-sbs_seed_allowed: False
+sbs_seed_allowed: True
 sbs_api_keys_enabled: True
 sbs_feedback_enabled: True
 sbs_audit_trail_notifications_enabled: True
 sbs_send_exceptions: False
 sbs_send_js_exceptions: False
 sbs_second_factor_authentication_required: True
-sbs_totp_token_name: "SRAM"
+sbs_totp_token_name: "SRAM-example"
 sbs_notifications_enabled: True
 sbs_scim_sweep: False
-sbs_impersonation_allowed: False
-sbs_admin_platform_backdoor_totp: False
-sbs_past_dates_allowed: False
-sbs_mock_scim_enabled: False
+sbs_impersonation_allowed: True
+sbs_admin_platform_backdoor_totp: True
+sbs_past_dates_allowed: True
+sbs_mock_scim_enabled: True
 
 sbs_delete_orphaned: True
 sbs_suspension_inactive_days: 365

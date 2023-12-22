@@ -29,6 +29,13 @@ ldap_uri: "ldap://localhost/"
 
 sram_conf_dir: "/opt/sram"
 
+traefik_network: traefik
+internal_network: sram
+
+
+####################################################
+## SBS
+####################################################
 db_host: "docker.vm.scz-vm.net"
 sbs_db_host: "{{ containers.db }}"
 sbs_redis_host: "{{ containers.redis }}"
@@ -36,9 +43,6 @@ sbs_redis_host: "{{ containers.redis }}"
 sbs_base_domain: "{{ hostnames.sbs }}"
 sbs_base_url: "https://{{sbs_base_domain}}"
 sbs_api_url: "https://{{sbs_base_domain}}/"
-
-sbs_urn_namespace: "urn:mace:surf.nl:x-sram-vm"
-sbs_eppn_scope: "scz-vm.net"
 
 sbs_oidc_authz_endpoint: "https://{{ hostnames.oidc_op }}/authorization"
 sbs_oidc_token_endpoint: "https://{{ hostnames.oidc_op }}/token"
@@ -54,22 +58,6 @@ sbs_ldap_url: "ldap://ldap.scz-vm.net/dc=services,dc=vnet"
 sbs_ldap_bind_account: "cn=admin,dc=entity_id,dc=services,dc=vnet"
 
 sbs_db_tls_cert: "{{wildcard_backend_cert.pub}}"
-
-sbs_cron_hour_of_day: "4"
-sbs_seed_allowed: True
-sbs_api_keys_enabled: True
-sbs_feedback_enabled: True
-sbs_audit_trail_notifications_enabled: True
-sbs_send_exceptions: False
-sbs_send_js_exceptions: False
-sbs_second_factor_authentication_required: True
-sbs_totp_token_name: "SRAM-VM"
-sbs_notifications_enabled: True
-sbs_impersonation_allowed: True
-sbs_admin_platform_backdoor_totp: True
-sbs_past_dates_allowed: True
-sbs_mock_scim_enabled: True
-sbs_swagger_enabled: True
 
 sbs_mfa_idp_allowed:
   - schac_home: "ci-runner.sram.surf.nl"

@@ -4,32 +4,32 @@
 
 ##########################################
 # VM environment
-[vm_lb]
+[container_lb]
 lb.vm.scz-vm.net ansible_host=172.20.1.24
 
-[vm_client]
+[container_client]
 client.vm.scz-vm.net ansible_host=172.20.1.25
 
-[vm_sandbox1]
+[container_sandbox1]
 
-[vm_db]
+[container_db]
 
-[vm_bhr]
+[container_bhr]
 bhr.vm.scz-vm.net ansible_host=172.20.1.29
 
-[vm_docker]
+[container_docker]
 docker.vm.scz-vm.net ansible_host=172.20.1.31
 
-[vm:children]
-vm_lb
-vm_docker
-vm_client
-vm_bhr
+[container:children]
+container_lb
+container_docker
+container_client
+container_bhr
 
 ##########################################
 # role-based groups
 [lb:children]
-vm_lb
+container_lb
 
 [ldap:children]
 
@@ -40,7 +40,7 @@ vm_lb
 [meta:children]
 
 [client:children]
-vm_client
+container_client
 
 [test:children]
 
@@ -51,18 +51,21 @@ vm_client
 [db:children]
 
 [bhr:children]
-vm_bhr
+container_bhr
 
 [zabbix:children]
-vm_bhr
+container_bhr
 
 [bhr2:children]
-vm_bhr
+container_bhr
 
 [docker:children]
-vm_docker
+container_docker
 
 ##########################################
 # all
 [sram:children]
-vm
+container
+
+[all:children]
+container

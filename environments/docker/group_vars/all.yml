@@ -1,6 +1,4 @@
 ---
-traefik_network: traefik
-internal_network: sram
 
 ansible_ssh_common_args: >
   -o StrictHostKeyChecking=false

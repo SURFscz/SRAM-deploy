@@ -1,84 +1,67 @@
 ---
 sudo_groups:
-  - "sudo_test"
+  - "sudo_cont"
 log_groups:
   - "log_reader"
 
 ldap_admin_group: ldap_vm
 
 environment_name: vm
-environment_string: "SCZ VM"
+environment_string: "SCZ Container"
 base_domain: "scz-vm.net"
 internal_base_domain: "vm.scz-vm.net"
 
 # externally visible!
 hostnames:
-  ldap:     ldap.{{base_domain}}
-  meta:     meta.{{base_domain}}
   sbs:      sbs.{{base_domain}}
+  meta:     meta.{{base_domain}}
+  ldap:     ldap.{{base_domain}}
   oidc:     oidc-test.{{base_domain}}
   sp:       sp-test.{{base_domain}}
   idp:      idp-test.{{base_domain}}
-  tfa:      2fa-test.{{base_domain}}
-  pam:      pam.{{base_domain}}
   oidc_op:  oidc-op.{{base_domain}}
 
 idp_test_port: 8444
 sp_test_port: 82
 oidc_test_port: 83
-# metadata_backend_port: 443
-# sbs_backend_port: 90
-tfa_test_port: 91
-pam_backend_port: 92
-meta_port: 88
 oidc_op_port: 93
 
 loadbalancer:
   - name: "sbs"
     hostname: "{{hostnames.sbs}}"
     protocol: http
-    backend_hosts: "{{groups['vm_docker']}}"
+    backend_hosts: "{{groups['docker']}}"
     backend_port: 443
     options:
       httpchk: "GET /health"
   - name: "meta"
     hostname: "{{hostnames.meta}}"
     protocol: http
-    backend_hosts: "{{groups['vm_docker']}}"
+    backend_hosts: "{{groups['docker']}}"
     backend_port: 443
   - name: "client_oidc"
     hostname: "{{hostnames.oidc}}"
     protocol: http
-    backend_hosts: "{{groups['vm_client']}}"
+    backend_hosts: "{{groups['client']}}"
     backend_port: "{{oidc_test_port}}"
   - name: "client_sp"
     hostname: "{{hostnames.sp}}"
     protocol: http
-    backend_hosts: "{{groups['vm_client']}}"
+    backend_hosts: "{{groups['client']}}"
     backend_port: "{{sp_test_port}}"
   - name: "client_idp"
     hostname: "{{hostnames.idp}}"
     protocol: http
-    backend_hosts: "{{groups['vm_client']}}"
+    backend_hosts: "{{groups['client']}}"
     backend_port: "{{idp_test_port}}"
-  - name: "client_2fa"
-    hostname: "{{hostnames.tfa}}"
-    protocol: http
-    backend_hosts: "{{groups['vm_client']}}"
-    backend_port: "{{tfa_test_port}}"
   - name: "client_oidc_op"
     hostname: "{{hostnames.oidc_op}}"
     protocol: http
-    backend_hosts: "{{groups['vm_client']}}"
+    backend_hosts: "{{groups['client']}}"
     backend_port: "{{oidc_op_port}}"
-  - name: "client_pam"
-    hostname: "{{hostnames.pam}}"
-    protocol: http
-    backend_hosts: "{{groups['vm_ldap']}}"
-    backend_port: "{{pam_backend_port}}"
   - name: "client_ldap"
     hostname: "{{hostnames.ldap}}"
     protocol: ldap
     frontend_port: 636
-    backend_hosts: "{{groups['vm_docker']}}"
+    backend_hosts: "{{groups['docker']}}"
     backend_port: 636
