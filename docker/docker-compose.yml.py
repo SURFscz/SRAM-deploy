@@ -115,10 +115,8 @@ def host_config(num: int, name: str) -> Dict[str, Any]:
 
     if args.ci:
         if name == 'sbs':
-            data.update({
-                'depends_on': ['db', 'redis', 'test'],
-                'volumes': ['../ci-runner:/tmp/ci-runner'],
-            })
+            data['depends_on'] = ['db', 'redis', 'test']
+            data['volumes'] += ['../ci-runner:/tmp/ci-runner']
 
     return data
 
