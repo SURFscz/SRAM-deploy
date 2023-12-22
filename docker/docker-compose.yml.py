@@ -11,33 +11,63 @@ import argparse
 # --ci: this generates a docker-compose.yml file for CI
 # --container: this generates a docker-compose.yml file for SCZ
 parser = argparse.ArgumentParser(description='Generate a docker-compose.yml file for SCZ or CI')
-parser.add_argument('--ci', action='store_true', help='generate a docker-compose.yml file for CI')
-parser.add_argument('--container', action='store_true', help='generate a docker-compose.yml file for SCZ')
+group = parser.add_mutually_exclusive_group()
+group.add_argument('--ci', action='store_true', help='generate a docker-compose.yml file for CI')
+group.add_argument('--container', action='store_true', help='generate a docker-compose.yml file for SCZ')
 args = parser.parse_args()
+
+ip_lookup = {
+    'ldap1': 20,
+    'ldap2': 21,
+    'meta': 23,
+    'lb': 24,
+    'client': 25,
+    'sandbox1': 26,
+    'sbs': 27,
+    'db': 28,
+    'bhr': 29,
+    'test': 30,
+    'docker': 31,
+    'redis': 98,
+    'mail': 99,
+}
+
+if args.ci and args.container:
+    raise ValueError("Cannot generate a docker-compose.yml file for both CI and SCZ")
+elif args.ci and not args.container:
+    hosts = ['db', 'redis', 'sbs', 'test']
+elif not args.ci and args.container:
+    hosts = ['bhr', 'client', 'mail', 'lb', 'docker']
+else:  # classic, non-ci, non-containerized setup
+    hosts = ['bhr', 'client', 'lb', 'redis', 'mail', 'sandbox1', 'db', 'sbs', 'ldap1', 'ldap2', 'meta']
+
+hosts_ip = {h: ip_lookup[h] for h in hosts}
 
 # these are the Docker containers that need to be spun up
 hosts = {
-    'lb': 24,
-    'client': 25,
     'bhr': 29,
     'docker': 31,
 }
 
 # the old non-containerized setup needs more hosts
-if not args.container:
-    hosts.update({
-        'ldap1': 20,
-        'ldap2': 21,
-        'meta': 23,
-        'sandbox1': 26,
-        'sbs': 27,
-        'db': 28,
-    })
-
 if args.ci:
     hosts.update({
         'test': 30,
     })
+else:
+    hosts.update({
+        'lb': 24,
+        'client': 25,
+    })
+    if not args.container:
+        hosts.update({
+            'ldap1': 20,
+            'ldap2': 21,
+            'meta': 23,
+            'sandbox1': 26,
+            'sbs': 27,
+            'db': 28,
+        })
 
 # these are the hostnames of virtual hosts on the load balancer
 logical_hosts = [
@@ -139,19 +169,21 @@ def create_compose() -> Dict[str, Any]:
             'driver_opts': {"com.docker.network.bridge.name": "br-sram"}
         }
     }
-    compose['services'] = {h: host_config(ip, h) for h, ip in hosts.items()}
+    compose['services'] = dict()
+    for h, ip in hosts_ip.items():
+        if h=='mail':
+            compose['services'][h] = mail_config(ip, h)
+        elif h=='redis':
+            compose['services'][h] = redis_config(ip, h)
+        else:
+            compose['services'][h] = host_config(ip, h)
 
-    # Add redis host on .98
-    if not args.container:
-        compose['services']['redis'] = redis_config(98, 'redis')
-
-    # Add mail test host on .99
-    if not args.ci:
-        compose['services']['mail'] = mail_config(99, 'mail')
+    if args.container:
         # Add volume for docker '/var/lib/docker'
         compose.setdefault('volumes', {})['docker_volume'] = {'driver': 'local'}
         compose['services']['docker'].setdefault('volumes', []).append('docker_volume:/var/lib/docker')
 
+    # Add mail test host on .99
     return compose
 
 
