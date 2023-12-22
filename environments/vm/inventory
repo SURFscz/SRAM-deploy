@@ -88,5 +88,5 @@ vm_bhr
 
 ##########################################
 # all
-[all:children]
+[sram:children]
 vm

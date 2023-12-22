@@ -1,0 +1,10 @@
+---
+# meta_port: 80
+metadata_basedir: "{{sram_conf_dir}}/metadata"
+metadata_dirs:
+  web: "{{metadata_basedir}}/web"
+# metadata_documentroot: "/var/www/metadata"
+# mdparser_repo_url: "https://github.com/SURFscz/mdparser.git"
+# mdparser_version: "master"
+# mdparser_dir: "/opt/mdparser"
+# mdparser_venv_dir: "{{mdparser_dir}}/venv"

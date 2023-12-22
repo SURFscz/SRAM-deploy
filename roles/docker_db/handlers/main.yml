@@ -1,0 +1,7 @@
+---
+- name: restart MariaDB
+  systemd:
+    daemon_reload: true
+    name: "mariadb"
+    state: "restarted"
+    enabled: true

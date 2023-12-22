@@ -1,0 +1,71 @@
+##########################################
+# no managment machines for the VM
+[mgnt:children]
+
+##########################################
+# VM environment
+[container_lb]
+lb.vm.scz-vm.net ansible_host=172.20.1.24
+
+[container_client]
+client.vm.scz-vm.net ansible_host=172.20.1.25
+
+[container_sandbox1]
+
+[container_db]
+
+[container_bhr]
+bhr.vm.scz-vm.net ansible_host=172.20.1.29
+
+[container_docker]
+docker.vm.scz-vm.net ansible_host=172.20.1.31
+
+[container:children]
+container_lb
+container_docker
+container_client
+container_bhr
+
+##########################################
+# role-based groups
+[lb:children]
+container_lb
+
+[ldap:children]
+
+[ldap_primary:children]
+
+[ldap_secondary:children]
+
+[meta:children]
+
+[client:children]
+container_client
+
+[test:children]
+
+[sandbox1:children]
+
+[sbs:children]
+
+[db:children]
+
+[bhr:children]
+container_bhr
+
+[zabbix:children]
+container_bhr
+
+[bhr2:children]
+container_bhr
+
+[docker:children]
+container_docker
+
+##########################################
+# all
+[sram:children]
+container
+
+[all:children]
+container

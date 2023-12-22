@@ -1,0 +1,13 @@
+server {
+        listen {{ meta_port }} default_server ssl;
+        listen [::]:{{ meta_port }} default_server ssl;
+
+        ssl_certificate     {{ ssl_certs_dir }}/{{ internal_base_domain }}.crt;
+        ssl_certificate_key {{ ssl_certs_dir }}/{{ internal_base_domain }}.key;
+
+        root {{ metadata_documentroot }};
+
+        location / {
+                autoindex off;
+        }
+}

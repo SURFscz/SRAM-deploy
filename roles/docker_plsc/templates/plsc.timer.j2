@@ -1,0 +1,9 @@
+[Unit]
+Description=PLSC timer
+
+[Timer]
+OnBootSec=30
+OnUnitInactiveSec={{plsc_interval_seconds}}
+
+[Install]
+WantedBy=multi-user.target

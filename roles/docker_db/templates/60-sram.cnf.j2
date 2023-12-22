@@ -1,0 +1,6 @@
+[mysqld]
+bind-address            = 0.0.0.0
+
+ssl-cert = {{ mariadb_cert_dir }}/backend.crt
+ssl-key = {{ mariadb_cert_dir }}/backend.key
+require_secure_transport = ON

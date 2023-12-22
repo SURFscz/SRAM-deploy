@@ -10,3 +10,6 @@ metadata_registration_authority: "http://federatie.example.org/"
 
 metadata_proxy_frontend_source: "https://proxy.sram.surf.nl/metadata/frontend.xml"
 metadata_proxy_backend_source: "https://proxy.sram.surf.nl/metadata/backend.xml"
+
+# don't parse all of edugain, takes waaaay to much space
+metadata_edugain_source: "https://metadata.surfconext.nl/idps-metadata.xml"

@@ -8,6 +8,8 @@ collections:
     version: ">=1.7,<2.0"
   - name: "community.zabbix"
     version: "<2.0"
+  - name: "community.docker"
+    version: ">=3.4"
   - name: "ansible.posix"
     version: ">=1.3.0,<1.4"
   - name: "ansible.utils"

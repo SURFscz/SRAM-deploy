@@ -1,0 +1,153 @@
+---
+# - include_role:
+#     name: "nginx"
+#
+# - name: Ensure that packages are installed
+#   apt:
+#     name:
+#       - xalan
+#       - wget
+#       - xmlsec1
+#     state: present
+
+# - name: Create directories
+  # file:
+    # path: "{{item.path}}"
+    # state: "directory"
+    # mode: "{{item.mode}}"
+    # owner: "root"
+    # group: "{{item.group}}"
+  # with_items:
+    # - { path: "{{metadata_documentroot}}",          group: "root",               mode: "0755" }
+    # - { path: "{{metadata_documentroot}}/metadata", group: "{{metadata_group}}", mode: "0775" }
+
+- name: Create metadata directories
+  file:
+    path: "{{ item.value }}"
+    state: "directory"
+    mode: "0755"
+    owner: "root"
+  loop: "{{ lookup('ansible.builtin.dict', metadata_dirs, wantlist=True) }}"
+
+# - name: Check if obsolete job exists
+#   command:
+#     cmd: "systemctl list-timers --all --output=json"
+#   register: "systemd_timers"
+#   changed_when: false
+
+# - name: Disable obsolete systemd job
+#   systemd:
+#     name: "metadata.timer"
+#     state: "stopped"
+#     enabled: false
+#   when: '"\"metadata.timer\"" in systemd_timers.stdout'
+
+# - name: Remove obsolete files
+#   file:
+#     path: "{{item}}"
+#     state: "absent"
+#   with_items:
+#     - "/opt/metadata/create_metadata"
+#     - "/opt/metadata/edugain.crt"
+#     - "/opt/metadata/idps.xsl"
+#     - "/opt/metadata/nohide.xsl"
+#     - "/opt/metadata/nologo.xsl"
+#     - "/opt/metadata/nosc.xsl"
+#     - "/etc/systemd/system/metadata.service"
+#     - "/etc/systemd/system/metadata.timer"
+#   notify: "systemd daemon-reload"
+
+# - name: Copy metadata nginx configuration
+#   template:
+#     src: metadata.nginx.j2
+#     dest: "/etc/nginx/sites-available/metadata"
+#     mode: 0644
+#   notify: restart nginx
+#
+# - name: Create symlink to metadata in /etc/nginx/sites-enabled
+#   file:
+#     src: "/etc/nginx/sites-available/metadata"
+#     dest: "/etc/nginx/sites-enabled/00-metadata"
+#     state: link
+#   notify: restart nginx
+
+- name: Install index page
+  template:
+    src: "index.html.j2"
+    # dest: "{{metadata_documentroot}}/index.html"
+    dest: "{{metadata_dirs.web}}/index.html"
+    mode: 0644
+
+- name: Install logo
+  copy:
+    src: "{{item}}"
+    # dest: "{{metadata_documentroot}}/"
+    dest: "{{metadata_dirs.web}}/"
+    mode: "0644"
+  with_items:
+    - "surf.svg"
+    - "surf.png"
+    - "surf_bimi.svg"
+
+# - name: Install symlinks
+#   file:
+#     path: "{{metadata_documentroot}}/{{item}}"
+#     src: "metadata/{{item}}"
+#     state: "link"
+#     force: true
+#   with_items:
+#     - "idps.xml"
+#     - "proxy_idp.xml"
+#     - "proxy_sp.xml"
+
+# - name: Remove obsolete files
+#   file:
+#     path: "{{metadata_documentroot}}/{{item}}"
+#     state: "absent"
+#   with_items:
+#     - "Light-Bulb_icon_by_Till_Teenck.svg"
+#     - "Light-Bulb_icon_by_Till_Teenck_1000px.png"
+#     - "Light-Bulb_icon_by_Till_Teenck_200px.png"
+#     - "sc_edugain.xml"
+#     - "sc_edugain_idps.xml"
+#     - "sc_edugain_idps_nologo.xml"
+#     - "sc_edugain_idps_nologo_nohide.xml"
+#     - "sc_edugain_idps_nologo_nohide_nosc.xml"
+
+# - name: Fetch mdparser from {{ mdparser_repo_url }}, version {{ mdparser_version }}
+#   git:
+#     repo: "{{ mdparser_repo_url }}"
+#     dest: "{{ mdparser_dir }}"
+#     version: "{{ mdparser_version }}"
+#     accept_hostkey: "yes"
+#     force: "yes"
+
+# - name: Create python3 virtualenv
+#   import_role:
+#     name: "python-venv"
+#   vars:
+#     python_venv_dir: "{{ mdparser_venv_dir }}"
+#     python_venv_requirements: "{{ mdparser_dir }}/requirements.txt"
+
+# - name: Copy zabbix agent mdparser key
+#   template:
+#     src: sram-mdparser.conf.j2
+#     dest: "/etc/zabbix/zabbix_agent2.d/sram-mdparser.conf"
+#   notify: "restart zabbix-agent"
+
+- name: Create the metadata-server container
+  docker_container:
+    name: "{{ containers.metadata }}"
+    image: "{{ images.metadata }}"
+    restart_policy: "always"
+    restart: true
+    state: started
+    # pull: true
+    volumes:
+      - "{{ metadata_dirs.web }}:/opt/web"
+    networks:
+      - name: "{{traefik_network}}"
+    labels:
+      traefik.http.routers.metadata.rule: "Host(`{{ hostnames.meta }}`)"
+      traefik.http.routers.metadata.tls: "true"
+      traefik.enable: "true"

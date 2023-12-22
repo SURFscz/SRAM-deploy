@@ -3,6 +3,9 @@ set -e
 export TERM=xterm-256color
 ENV_DIR=./environments/vm
 
+
+
+
 # argument parsing from https://stackoverflow.com/a/28466267
 die() { echo "$*" >&2; exit 2; }  # complain to STDERR and exit with error
 needs_arg() { if [ -z "$OPTARG" ]; then die "No arg for --$OPT option"; fi; }
@@ -25,8 +28,11 @@ while getopts -- '-:h' OPT; do
                         echo "  --skip-vm : skip bringing up VMs, only run Ansible"
                         exit 0
                         ;;
-        ci )            CI="--ci"
-                        ENV_DIR=./environments/ci
+        ci )            CI_OPTION="--ci"
+                        ENV_DIR="./environments/ci"
+                        ;;
+        container )     IN_CONTAINER="--container"
+                        ENV_DIR="./environments/docker"
                         ;;
         skip-ansible | \
         sa | no )       SKIP_ANSIBLE=1
@@ -36,6 +42,8 @@ while getopts -- '-:h' OPT; do
         skip-vm | \
         no-vm | \
         sd | sv | nd | nv )       SKIP_VM=1
+                        ;;
+        no-mitogen)     export NO_MITOGEN=1
                         ;;
         * )             OPTPROCESSED=$(( $OPTPROCESSED - 1 ))
                         ;;
@@ -67,12 +75,13 @@ else
 
     # Bring up the VMs if they're not running
     echo "Bringing docker containers up"
-    ./docker/docker-compose.yml.py $CI > ./docker/docker-compose.yml
-    time docker-compose -f docker/docker-compose.yml up --no-recreate -d --remove-orphans
+    echo ./docker/docker-compose.yml.py $CI_OPTION $IN_CONTAINER ./docker/docker-compose.yml
+    ./docker/docker-compose.yml.py $CI_OPTION $IN_CONTAINER > ./docker/docker-compose.yml
+    time docker compose -f docker/docker-compose.yml up --no-recreate -d --remove-orphans
 
     echo "Waiting until containers have booted"
     TIMEOUT=120
-    for c in $(docker-compose -f docker/docker-compose.yml ps -q)
+    for c in $(docker compose -f docker/docker-compose.yml ps -q)
     do
         host=$(docker inspect --format='{{.Config.Hostname}}'     $c)
         printf " - %-10s" $host
@@ -128,6 +137,7 @@ else
     done
 fi
 
+
 # try to find mitogen
 MITOGEN_PATH=
 MITOGEN_SUBPATH=ansible_mitogen/plugins/strategy
@@ -139,7 +149,7 @@ do
         break
     fi
 done
-if [ -n "$MITOGEN_PATH" ]
+if [ -n "$MITOGEN_PATH" -a "$NO_MITOGEN" != "1" ]
 then
     echo "Found Mitogen at $MITOGEN_PATH"
     export ANSIBLE_STRATEGY_PLUGINS=$MITOGEN_PATH/$MITOGEN_SUBPATH/
