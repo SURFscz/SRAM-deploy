@@ -51,6 +51,7 @@ sbs_eduteams_email: "eduteams@localhost"
 sbs_wiki_link: "https://www.example.org/wiki"
 
 sbs_backend_port: 80
+sbs_num_workers: 8
 
 sbs_cron_hour_of_day: 4
 sbs_seed_allowed: False
