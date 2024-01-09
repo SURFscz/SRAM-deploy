@@ -145,6 +145,17 @@
   when: "repo.stdout == 'null' or composer_update.changed"
 
 #########################################################
+## install CA
+#########################################################
+- name: Install Geant CAs
+  copy:
+    src: "geant_ca.pem"
+    dest: "{{surfstar_idp_cafile}}"
+    mode: "0644"
+    owner: "root"
+    group: "root"
+
+#########################################################
 ## nginx
 #########################################################
 - include_role:
