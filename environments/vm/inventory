@@ -90,3 +90,6 @@ vm_bhr
 # all
 [sram:children]
 vm
+
+[all:children]
+sram

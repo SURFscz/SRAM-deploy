@@ -61,3 +61,6 @@ ci_test
 # all
 [sram:children]
 ci
+
+[all:children]
+sram
