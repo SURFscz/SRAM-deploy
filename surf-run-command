@@ -23,6 +23,7 @@ then
     ENV=tst
     CONFDIR=./environments/aws_tst/
 else
+    echo "syntax: $0 <bhr|tst|acc|pord> [-r] <selector> <command>"
     echo "Please specify an environment to deploy (bhr, prod, acc, test)"
     exit 1
 fi
