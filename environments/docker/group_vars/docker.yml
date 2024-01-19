@@ -27,8 +27,6 @@ images:
 
 ldap_uri: "ldap://localhost/"
 
-sram_conf_dir: "/opt/sram"
-
 traefik_network: traefik
 internal_network: sram
 

@@ -1,0 +1,17 @@
+---
+- name: Install apache
+  apt:
+    state: present
+    name:
+      - apache2
+
+- name: Enable apache modules
+  apache2_module:
+    state: present
+    name: "{{ item }}"
+    ignore_configcheck: true
+  with_items:
+    - rewrite
+    - proxy_http
+    - headers
+  notify: "restart apache"

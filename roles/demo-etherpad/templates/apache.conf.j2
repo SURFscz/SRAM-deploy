@@ -1,0 +1,62 @@
+{% if environment_name !=  'vm' %}
+Listen 443
+<VirtualHost *:443>
+{% else %}
+<VirtualHost *:80>
+{% endif %}
+        ServerName {{demo_hosts.etherpad}}
+
+        ServerAdmin webmaster@localhost
+        DocumentRoot /var/www/html
+
+        ErrorLog ${APACHE_LOG_DIR}/error.log
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+{% if environment_name !=  'vm' %}
+        SSLEngine on
+        SSLCertificateFile    /etc/letsencrypt/live/{{demo_hosts.etherpad}}/fullchain.pem
+        SSLCertificateKeyFile /etc/letsencrypt/live/{{demo_hosts.etherpad}}/privkey.pem
+{% endif %}
+
+        # Authentication Header
+{% if environment_name !=  'vm' %}
+        # Remove OIDC option when using Basic Auth
+        OIDCProviderMetadataURL https://proxy.sram.surf.nl/.well-known/openid-configuration
+        OIDCClientID {{ client_id }}
+        OIDCClientSecret {{ client_secret }}
+        OIDCResponseType "code"
+        OIDCResponseMode "query"
+        OIDCScope "openid profile uid"
+
+        OIDCRedirectURI https://demo1.sram.surf.nl/redirect_uri
+        OIDCCryptoPassphrase randompassword
+
+        RequestHeader unset X-Authenticated-User
+        RequestHeader unset X-Authenticated-Name
+        RequestHeader set X-Authenticated-User expr=%{ENV:OIDC_CLAIM_uid}
+        RequestHeader set X-Authenticated-Name expr=%{ENV:OIDC_CLAIM_uid}
+
+        <Location />
+            Require valid-user
+            AuthType openid-connect
+        </Location>
+{% else %}
+        RequestHeader set X-Authenticated-User "martin"
+        RequestHeader set X-Authenticated-Name "Martin"
+{% endif %}
+
+        ProxyRequests On
+        ProxyPreserveHost on
+        RewriteEngine on
+
+        # Etherpad Reverse Proxy
+        RedirectMatch 301 /ep$ /ep/
+        <LocationMatch "^/ep/(.*)">
+            RewriteCond %{HTTP:Connection} =Upgrade       [NC]
+            RewriteCond %{HTTP:Upgrade} =websocket        [NC]
+            RewriteRule /ep/(.*) ws://localhost:9001/$1   [P,L]
+            RewriteCond %{HTTP:Connection} !=Upgrade      [NC]
+            RewriteCond %{HTTP:Upgrade} !=websocket       [NC]
+            RewriteRule /ep/(.*) http://localhost:9001/$1 [P,L]
+        </LocationMatch>
+</VirtualHost>
