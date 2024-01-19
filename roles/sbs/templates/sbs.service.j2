@@ -26,7 +26,7 @@ Environment="PROFILE=log_to_stdout"
 Environment="REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt"
 
 Type=notify
-ExecStart={{sbs_env_dir}}/bin/gunicorn --worker-class eventlet --workers {{sbs_num_workers}} --bind 127.0.0.1:8080 server.__main__:app
+ExecStart={{sbs_env_dir}}/bin/gunicorn --worker-class eventlet --workers {{sbs_num_workers}} --timeout {{sbs_backend_timeout}} --bind 127.0.0.1:8080 server.__main__:app
 
 Restart=on-failure
 RestartSec=10

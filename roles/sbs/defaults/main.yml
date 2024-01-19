@@ -27,6 +27,8 @@ sbs_mail_port: "{{ mail.relay_port }}"
 sbs_file_owner: "root"
 sbs_group: "sram-sbs"
 
+sbs_backend_timeout: 30
+
 sbs_session_lifetime: 1440
 sbs_secret_key_suffix: ""
 
