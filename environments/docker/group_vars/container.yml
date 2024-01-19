@@ -11,6 +11,8 @@ environment_string: "SCZ Container"
 base_domain: "scz-vm.net"
 internal_base_domain: "vm.scz-vm.net"
 
+sram_conf_dir: "/opt/sram"
+
 # externally visible!
 hostnames:
   sbs:      sbs.{{base_domain}}

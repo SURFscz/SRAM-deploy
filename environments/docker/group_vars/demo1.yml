@@ -1,0 +1,17 @@
+---
+internal_network: sram
+
+containers:
+  etherpad: sram-etherpad
+
+images:
+  etherpad: ghcr.io/surfscz/sram-etherpad:main
+
+demo_hosts:
+  etherpad: demo1.vm.scz-vm.net
+
+ports:
+  etherpad: 9001
+
+letsencrypt_hosts:
+  - "{{ hostsnames.etherpad }}"

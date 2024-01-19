@@ -1,0 +1,39 @@
+---
+- name: Create etherpad directory
+  file:
+    path: "{{ etherpad_basedir }}"
+    state: "directory"
+    mode: "0755"
+    owner: "root"
+
+- name: Copy settings.json
+  copy:
+    src: "{{ item }}"
+    dest: "{{ etherpad_basedir }}"
+  with_items:
+    - settings.json
+
+- name: Create the Etherpad container
+  docker_container:
+    name: "{{ containers.etherpad }}"
+    image: "{{ images.etherpad }}"
+    restart_policy: "always"
+    restart: true
+    state: started
+    # pull: true
+    env:
+      TRUST_PROXY: "true"
+      MINIFY: "false"
+    published_ports:
+      - 9001:9001
+    volumes:
+      - "{{ etherpad_basedir }}/settings.json:/opt/etherpad-lite/settings.json"
+    networks:
+      - name: "bridge"
+
+- name: copy apache proxy config
+  template:
+    src: apache.conf.j2
+    dest: /etc/apache2/sites-enabled/10-etherpad.conf
+    mode: 0644
+  notify: restart apache
