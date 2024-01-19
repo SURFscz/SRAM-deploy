@@ -274,9 +274,9 @@
     - "{{ containers.sbs }}"
     - "{{ containers.sbs_server }}"
 
-- name: Remove sram-static volume
+- name: Remove sbs_static volume
   community.docker.docker_volume:
-    name: sram-static
+    name: sbs_static
     state: absent
 
 - name: Create sbs container
