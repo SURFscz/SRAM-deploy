@@ -46,6 +46,7 @@ sbs_exceptions_mail: "root@localhost"
 
 sbs_support_email: "sram-support@localhost"
 sbs_admin_email: "sram-beheer@localhost"
+sbs_ticket_email: "sram-support@surf.nl"
 sbs_eduteams_email: "eduteams@localhost"
 
 sbs_wiki_link: "https://www.example.org/wiki"
