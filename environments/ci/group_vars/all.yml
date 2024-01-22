@@ -56,6 +56,7 @@ mail:
   domain: "{{base_domain}}"
   admin_name: "Root User"
   admin_address: "root@{{base_domain}}"
+  ticket_address: "root@{{base_domain}}"
   debug_address: "root@{{base_domain}}"
 
 org:
