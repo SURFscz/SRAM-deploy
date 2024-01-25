@@ -1,4 +1,11 @@
 ---
+# Ugly docker deploy hack
+environment_name: vm
+letsencrypt_enabled: false
+# letsencrypt_staging: false
+
+sram_conf_dir: "/opt/sram"
+
 internal_network: sram
 
 containers:
@@ -13,5 +20,10 @@ demo_hosts:
 ports:
   etherpad: 9001
 
-letsencrypt_hosts:
-  - "{{ hostsnames.etherpad }}"
+# oidc:
+#   etherpad:
+#     client_id: client
+#     client_secret: secret
+
+# letsencrypt_hosts:
+#   - "{{ hostsnames.etherpad }}"

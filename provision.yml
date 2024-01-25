@@ -184,7 +184,7 @@
     - { role: docker,               tags: ['demo1','demo-docker'] }
     - { role: demo-apache,          tags: ['demo1','demo-apache']  }
     - { role: letsencrypt,          tags: ['demo1','demo-letsencrypt'],
-        when: environment_name!='vm' }
+        when: letsencrypt_enabled }
     - { role: demo-etherpad,        tags: ['demo1','demo-etherpad']  }
     # - { role: demo-wordpress,       tags: ['demo1','demo-wordpress'] }
 

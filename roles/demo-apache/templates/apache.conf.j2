@@ -1,29 +1,30 @@
-{% if environment_name !=  'vm' %}
-Listen 443
+{% if letsencrypt_enabled %}
 <VirtualHost *:443>
 {% else %}
 <VirtualHost *:80>
 {% endif %}
-        ServerName {{demo_hosts.etherpad}}
+        ServerName {{ demo_hosts.etherpad }}
 
         ServerAdmin webmaster@localhost
         DocumentRoot /var/www/html
 
+        Alias /.well-known/acme-challenge/ /var/www/certbot/.well-known/acme-challenge/
+
         ErrorLog ${APACHE_LOG_DIR}/error.log
         CustomLog ${APACHE_LOG_DIR}/access.log combined
 
-{% if environment_name !=  'vm' %}
+{% if letsencrypt_enabled %}
         SSLEngine on
         SSLCertificateFile    /etc/letsencrypt/live/{{demo_hosts.etherpad}}/fullchain.pem
         SSLCertificateKeyFile /etc/letsencrypt/live/{{demo_hosts.etherpad}}/privkey.pem
 {% endif %}
 
         # Authentication Header
-{% if environment_name !=  'vm' %}
+{% if letsencrypt_enabled %}
         # Remove OIDC option when using Basic Auth
         OIDCProviderMetadataURL https://proxy.sram.surf.nl/.well-known/openid-configuration
-        OIDCClientID {{ client_id }}
-        OIDCClientSecret {{ client_secret }}
+        OIDCClientID {{ oidc.etherpad.client_id }}
+        OIDCClientSecret {{ oidc.etherpad.client_secret }}
         OIDCResponseType "code"
         OIDCResponseMode "query"
         OIDCScope "openid profile uid"
@@ -41,8 +42,8 @@ Listen 443
             AuthType openid-connect
         </Location>
 {% else %}
-        RequestHeader set X-Authenticated-User "martin"
-        RequestHeader set X-Authenticated-Name "Martin"
+        RequestHeader set X-Authenticated-User "demo1"
+        RequestHeader set X-Authenticated-Name "Demo1"
 {% endif %}
 
         ProxyRequests On
@@ -59,4 +60,9 @@ Listen 443
             RewriteCond %{HTTP:Upgrade} !=websocket       [NC]
             RewriteRule /ep/(.*) http://localhost:9001/$1 [P,L]
         </LocationMatch>
+</VirtualHost>
+
+# Letsencrypt fallback
+<VirtualHost *:80>
+        DocumentRoot /var/www/certbot
 </VirtualHost>

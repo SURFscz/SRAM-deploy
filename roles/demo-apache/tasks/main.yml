@@ -4,6 +4,7 @@
     state: present
     name:
       - apache2
+      - libapache2-mod-auth-openidc
 
 - name: Enable apache modules
   apache2_module:
@@ -14,4 +15,17 @@
     - rewrite
     - proxy_http
     - headers
+  notify: "restart apache"
+
+- name: Remove default apache config
+  file:
+    path: "/etc/apache2/sites-enabled/000-default.conf"
+    state: "absent"
+  notify: "restart apache"
+
+- name: copy apache proxy config
+  template:
+    src: apache.conf.j2
+    dest: /etc/apache2/sites-enabled/10-demo1.conf
+    mode: 0644
   notify: "restart apache"
