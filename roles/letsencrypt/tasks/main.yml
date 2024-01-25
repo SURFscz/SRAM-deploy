@@ -40,6 +40,7 @@
                                 --keep-until-expiring
                                 --renew-with-new-domains
                                 --domains={{item}}
+  register: result
   changed_when: "'Your certificate and chain have been saved' in result.stdout"
   with_items: "{{ letsencrypt_hosts }}"
   when: "no_cert_yet.changed"
