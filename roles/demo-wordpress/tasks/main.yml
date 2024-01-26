@@ -1,2 +1,102 @@
 ---
 
+- name: create directory {{item}}
+  file:
+    dest: "{{item}}"
+    state: directory
+    mode: '0777'
+  with_items:
+    - "{{wordpress_basedir}}"
+    - "{{wordpress_basedir}}/wp-content/plugins"
+
+- name: install wordpress jit-user plugin
+  copy:
+    src: "jit-user.php"
+    dest: "{{wordpress_basedir}}/wp-content/plugins"
+
+# - name: install additional wordpress plugins
+#   subversion:
+#     repo: "{{item.svn}}"
+#     dest: "{{wordpress_basedir}}/wp-plugins/{{item.name}}"
+#   with_items:
+#     - name: "disable-xml-rpc"
+#       svn: "https://plugins.svn.wordpress.org/disable-xml-rpc/tags/1.0.1/"
+#     - name: "disable-json-api"
+#       svn: "https://plugins.svn.wordpress.org/disable-json-api/tags/1.4.3/"
+
+- name: Create the Worpress DB container
+  docker_container:
+    name: "{{ containers.database }}"
+    image: "{{ images.database }}"
+    restart_policy: "always"
+    restart: true
+    state: started
+    # pull: true
+    env:
+      MARIADB_DATABASE: wordpress
+      MARIADB_ROOT_PASSWORD: somewordpress
+      MARIADB_USER: wordpress
+      MARIADB_PASSWORD: wordpress
+    volumes:
+      - "wordpress-db:/var/lib/mysql"
+    networks:
+      - name: "{{ internal_network }}"
+
+
+- name: Create the Worpress container
+  docker_container:
+    name: "{{ containers.wordpress }}"
+    image: "{{ images.wordpress }}"
+    restart_policy: "always"
+    restart: true
+    state: started
+    # pull: true
+    env:
+      WORDPRESS_DB_HOST: "{{ containers.database }}"
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_CONFIG_EXTRA: |
+        define( 'WP_HOME', '/wp' );
+        define( 'WP_SITEURL', '/wp' );
+        if (!empty($_SERVER['HTTP_X_FORWARDED_HOST'])) {
+          $_SERVER['HTTP_HOST'] = $_SERVER['HTTP_X_FORWARDED_HOST'];
+        }
+    published_ports:
+      - "{{ports.wordpress}}:80"
+    volumes:
+      - "{{ wordpress_basedir }}:/var/www/html"
+      # - "{{ wordpress_basedir }}/plugins:/var/www/html/wp-content/plugins/"
+    networks:
+      - name: "{{ internal_network }}"
+
+- name: Run command in the worpress container
+  docker_container:
+    name: "{{ containers.wordpress_cli }}"
+    image: "{{ images.wordpress_cli }}"
+    restart_policy: "no"
+    state: started
+    env:
+      WORDPRESS_DB_HOST: "{{ containers.database }}"
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_CONFIG_EXTRA: |
+        define( 'WP_HOME', '/wp' );
+        define( 'WP_SITEURL', '/wp' );
+        if (!empty($_SERVER['HTTP_X_FORWARDED_HOST'])) {
+          $_SERVER['HTTP_HOST'] = $_SERVER['HTTP_X_FORWARDED_HOST'];
+        }
+    entrypoint: sh
+    command: >
+      -c 'sleep 30;
+      wp core install \
+        --url="https://example.com" \
+        --title="Wordpress" \
+        --admin_name="admin" --admin_password="admin" \
+        --admin_email="admin@example.com";
+      wp plugin activate jit-user.php'
+    volumes:
+      - "{{ wordpress_basedir }}:/var/www/html"
+    networks:
+      - name: "{{ internal_network }}"

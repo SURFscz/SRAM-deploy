@@ -186,7 +186,7 @@
     - { role: letsencrypt,          tags: ['demo1','demo-letsencrypt'],
         when: letsencrypt_enabled }
     - { role: demo-etherpad,        tags: ['demo1','demo-etherpad']  }
-    # - { role: demo-wordpress,       tags: ['demo1','demo-wordpress'] }
+    - { role: demo-wordpress,       tags: ['demo1','demo-wordpress'] }
 
 # CI test docker
 - name: "test"

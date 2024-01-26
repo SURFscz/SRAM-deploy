@@ -10,20 +10,28 @@ internal_network: sram
 
 containers:
   etherpad: sram-etherpad
+  wordpress: sram-wordpress
+  wordpress_cli: sram-wordpress-cli
+  database: sram-db
 
 images:
   etherpad: ghcr.io/surfscz/sram-etherpad:main
+  wordpress: wordpress:6
+  wordpress_cli: wordpress:cli-2
+  # wordpress: bitnami/wordpress:6.4.2
+  database: mariadb:11
 
 demo_hosts:
-  etherpad: demo1.vm.scz-vm.net
+  demo1: demo1.vm.scz-vm.net
 
 ports:
   etherpad: 9001
+  wordpress: 9002
 
 # oidc:
-#   etherpad:
+#   demo1:
 #     client_id: client
 #     client_secret: secret
 
 # letsencrypt_hosts:
-#   - "{{ hostsnames.etherpad }}"
+#   - "{{ hostsnames.demo1 }}"

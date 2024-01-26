@@ -1,0 +1,14 @@
+[Unit]
+Description=Wordpress containers
+After=docker.service network-online.target
+Requires=docker.service network-online.target
+
+[Service]
+WorkingDirectory={{wordpress_dir}}
+Type=simple
+
+ExecStart=/usr/local/bin/docker-compose up
+SyslogIdentifier=wordpress
+
+[Install]
+WantedBy=multi-user.target
