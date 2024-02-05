@@ -29,7 +29,7 @@
         OIDCResponseMode "query"
         OIDCScope "openid profile uid"
 
-        OIDCRedirectURI https://demo1.sram.surf.nl/redirect_uri
+        OIDCRedirectURI /redirect_uri
         OIDCCryptoPassphrase randompassword
 
         RequestHeader unset X-Authenticated-User
@@ -37,7 +37,7 @@
         RequestHeader set X-Authenticated-User expr=%{ENV:OIDC_CLAIM_uid}
         RequestHeader set X-Authenticated-Name expr=%{ENV:OIDC_CLAIM_uid}
 
-        <LocationMatch ^/(ep/|wp/wp-admin)>
+        <LocationMatch ^/(redirect_uri|ep/|wp/wp-admin|wp/wp-login.php)>
             Require valid-user
             AuthType openid-connect
         </LocationMatch>
@@ -46,11 +46,15 @@
         RequestHeader set X-Authenticated-Name "Demo1"
 {% endif %}
 
-        RequestHeader set X-Forwarded-Host expr=%{HTTP_HOST}
+        ProxyPreserveHost on
+        #RequestHeader set X-Forwarded-Host expr=%{HTTP_HOST}
+        #RequestHeader set X-Forwarded-Proto expr=%{HTTPS}
+        #RequestHeader set X-Forwarded-Port "443"
+
         RewriteEngine on
 
         # Etherpad Reverse Proxy
-        # RedirectMatch 301 /ep$ /ep/
+        RedirectMatch 301 /ep$ /ep/
         <LocationMatch "^/ep/(.*)">
             RewriteCond %{HTTP:Connection} =Upgrade       [NC]
             RewriteCond %{HTTP:Upgrade} =websocket        [NC]
@@ -60,6 +64,8 @@
             RewriteRule /ep/(.*) http://localhost:9001/$1 [P,L]
         </LocationMatch>
 
+        # Wordpress Reverse Proxy
+        RedirectMatch 301 /wp$ /wp/
         <LocationMatch "^/wp/(.*)">
             ProxyPassMatch http://localhost:{{ports.wordpress}}/$1
             ProxyPassReverse http://localhost:{{ports.wordpress}}/$1

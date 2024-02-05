@@ -1,2 +1,3 @@
 ---
 wordpress_basedir: "{{sram_conf_dir}}/wordpress"
+wordpress_content: "{{wordpress_basedir}}/content"

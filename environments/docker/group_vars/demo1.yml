@@ -17,8 +17,7 @@ containers:
 images:
   etherpad: ghcr.io/surfscz/sram-etherpad:main
   wordpress: wordpress:6
-  wordpress_cli: wordpress:cli-2
-  # wordpress: bitnami/wordpress:6.4.2
+  wordpress_cli: wordpress:cli
   database: mariadb:11
 
 demo_hosts:

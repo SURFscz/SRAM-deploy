@@ -7,17 +7,24 @@
     mode: '0777'
   with_items:
     - "{{wordpress_basedir}}"
-    - "{{wordpress_basedir}}/wp-content/plugins"
+    - "{{wordpress_content}}"
+    - "{{wordpress_content}}/wp-content/plugins"
 
 - name: install wordpress jit-user plugin
   copy:
     src: "jit-user.php"
-    dest: "{{wordpress_basedir}}/wp-content/plugins"
+    dest: "{{wordpress_content}}/wp-content/plugins"
+
+- name: install wait-for-mysql.sh
+  copy:
+    src: "wait-for-mysql.sh"
+    dest: "{{wordpress_basedir}}/wait-for-mysql.sh"
+    mode: '0755'
 
 # - name: install additional wordpress plugins
 #   subversion:
 #     repo: "{{item.svn}}"
-#     dest: "{{wordpress_basedir}}/wp-plugins/{{item.name}}"
+#     dest: "{{wordpress_content}}/wp-plugins/{{item.name}}"
 #   with_items:
 #     - name: "disable-xml-rpc"
 #       svn: "https://plugins.svn.wordpress.org/disable-xml-rpc/tags/1.0.1/"
@@ -29,7 +36,7 @@
     name: "{{ containers.database }}"
     image: "{{ images.database }}"
     restart_policy: "always"
-    restart: true
+    # restart: true
     state: started
     # pull: true
     env:
@@ -48,25 +55,27 @@
     name: "{{ containers.wordpress }}"
     image: "{{ images.wordpress }}"
     restart_policy: "always"
-    restart: true
+    # restart: true
     state: started
     # pull: true
     env:
       WORDPRESS_DB_HOST: "{{ containers.database }}"
-      WORDPRESS_DB_USER: wordpress
-      WORDPRESS_DB_PASSWORD: wordpress
-      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_DB_USER: "wordpress"
+      WORDPRESS_DB_PASSWORD: "wordpress"
+      WORDPRESS_DB_NAME: "wordpress"
       WORDPRESS_CONFIG_EXTRA: |
         define( 'WP_HOME', '/wp' );
         define( 'WP_SITEURL', '/wp' );
         if (!empty($_SERVER['HTTP_X_FORWARDED_HOST'])) {
           $_SERVER['HTTP_HOST'] = $_SERVER['HTTP_X_FORWARDED_HOST'];
-        }
+        };
+        if (!empty($_SERVER['HTTP_X_FORWARDED_PROTO'])) {
+          $_SERVER['HTTPS'] = $_SERVER['HTTP_X_FORWARDED_PROTO'];
+        };
     published_ports:
       - "{{ports.wordpress}}:80"
     volumes:
-      - "{{ wordpress_basedir }}:/var/www/html"
-      # - "{{ wordpress_basedir }}/plugins:/var/www/html/wp-content/plugins/"
+      - "{{ wordpress_content }}:/var/www/html"
     networks:
       - name: "{{ internal_network }}"
 
@@ -74,29 +83,23 @@
   docker_container:
     name: "{{ containers.wordpress_cli }}"
     image: "{{ images.wordpress_cli }}"
-    restart_policy: "no"
+    restart_policy: no
     state: started
+    user: 33
     env:
       WORDPRESS_DB_HOST: "{{ containers.database }}"
-      WORDPRESS_DB_USER: wordpress
-      WORDPRESS_DB_PASSWORD: wordpress
-      WORDPRESS_DB_NAME: wordpress
-      WORDPRESS_CONFIG_EXTRA: |
-        define( 'WP_HOME', '/wp' );
-        define( 'WP_SITEURL', '/wp' );
-        if (!empty($_SERVER['HTTP_X_FORWARDED_HOST'])) {
-          $_SERVER['HTTP_HOST'] = $_SERVER['HTTP_X_FORWARDED_HOST'];
-        }
-    entrypoint: sh
-    command: >
-      -c 'sleep 30;
-      wp core install \
-        --url="https://example.com" \
-        --title="Wordpress" \
-        --admin_name="admin" --admin_password="admin" \
-        --admin_email="admin@example.com";
-      wp plugin activate jit-user.php'
+      WORDPRESS_DB_USER: "wordpress"
+      WORDPRESS_DB_PASSWORD: "wordpress"
+      WORDPRESS_DB_NAME: "wordpress"
+    command: >-
+      /bin/sh -c '
+      /wait-for-mysql.sh;
+      wp core install --url=https://{{ demo_hosts.demo1 }}/wp --title=Wordpress --admin_user=admin --admin_email=admin@example.com;
+      wp plugin activate jit-user.php;
+      '
+    volumes_from:
+      - "{{ containers.wordpress }}"
     volumes:
-      - "{{ wordpress_basedir }}:/var/www/html"
+      - "{{ wordpress_basedir }}/wait-for-mysql.sh:/wait-for-mysql.sh"
     networks:
       - name: "{{ internal_network }}"
