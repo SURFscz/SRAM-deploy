@@ -94,7 +94,8 @@
     command: >-
       /bin/sh -c '
       /wait-for-mysql.sh;
-      wp core install --url=https://{{ demo_hosts.demo1 }}/wp --title=Wordpress --admin_user=admin --admin_email=admin@example.com;
+      wp core install --url=https://{{ demo_hosts.demo1 }}/wp \
+        --title=Wordpress --admin_user=admin --admin_email=admin@example.com;
       wp plugin activate jit-user.php;
       '
     volumes_from:
