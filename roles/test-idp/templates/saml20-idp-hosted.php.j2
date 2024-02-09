@@ -45,3 +45,43 @@ $metadata['https://{{testidp_hostname}}/saml/saml2/idp/metadata.php'] = [
         'authority' => 'http://www.surfconext.nl/',
     ],
 ];
+
+$metadata['https://{{testidp2_hostname}}/saml/saml2/idp/metadata.php'] = [
+    'host' => '__DEFAULT__',
+    'OrganizationName' => [
+        'en' => 'SRAM Monitoring IdP',
+        'nl' => 'SRAM Monitoring IdP',
+    ],
+    'OrganizationDisplayName' => [
+        'en' => 'SRAM Monitoring IdP',
+        'nl' => 'SRAM Monitoring IdP',
+    ],
+    'OrganizationURL' => 'https://{{testidp2_hostname}}/',
+    'EntityAttributes' => [
+        '{urn:oasis:names:tc:SAML:2.0:attrname-format:uri}http://macedir.org/entity-category-support' => [
+            'http://refeds.org/category/research-and-scholarship'
+        ]
+    ],
+    'privatekey' => 'saml.key',
+    'certificate' => 'saml.pem',
+    'auth' => 'example-userpass',
+    'attributes.NameFormat' => 'urn:oasis:names:tc:SAML:2.0:attrname-format:uri',
+    'authproc' => [
+        10 => [
+            'class' => 'saml:PersistentNameID',
+            'identifyingAttribute' => 'eduPersonPrincipalName',
+        ],
+        11 => [
+            'class' => 'saml:SubjectID',
+            'identifyingAttribute' => 'uid',
+            'scopeAttribute' => 'schacHomeOrganization',
+        ],
+        100 => [
+            'class' => 'core:AttributeMap',
+            'name2urn', 'name2oid', '%duplicate'
+        ],
+    ],
+    'RegistrationInfo' => [
+        'authority' => 'http://www.surfconext.nl/',
+    ],
+];

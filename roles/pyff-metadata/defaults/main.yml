@@ -51,23 +51,47 @@ metadata_idps_files:
       <?xml version="1.0" encoding="utf-8"?>
       <md:EntityDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"
                            xmlns:mdattr="urn:oasis:names:tc:SAML:metadata:attribute"
-                          xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
-                          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                          xmlns:mdrpi="urn:oasis:names:tc:SAML:metadata:rpi"
-                          xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
-                          entityID="https://test-idp.sram.surf.nl/saml/saml2/idp/metadata.php">
+                           xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
+                           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                           xmlns:mdrpi="urn:oasis:names:tc:SAML:metadata:rpi"
+                           xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+                           entityID="https://test-idp.sram.surf.nl/saml/saml2/idp/metadata.php">
         <md:IDPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
-          <md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
-            Location="https://test-idp.sram.surf.nl/saml/module.php/saml/idp/singleSignOnService"/>
+        <md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
+        Location="https://test-idp.sram.surf.nl/saml/module.php/saml/idp/singleSignOnService"/>
         </md:IDPSSODescriptor>
         <md:Organization>
-          <md:OrganizationName xml:lang="en">SRAM VM Dummy IdP</md:OrganizationName>
-          <md:OrganizationDisplayName xml:lang="en">SRAM VM Dummy IdP</md:OrganizationDisplayName>
-          <md:OrganizationURL xml:lang="en">https://test-idp.sram.example.org/</md:OrganizationURL>
+        <md:OrganizationName xml:lang="en">SRAM VM Dummy IdP</md:OrganizationName>
+        <md:OrganizationDisplayName xml:lang="en">SRAM VM Dummy IdP</md:OrganizationDisplayName>
+        <md:OrganizationURL xml:lang="en">https://test-idp.sram.example.org/</md:OrganizationURL>
         </md:Organization>
         <md:ContactPerson contactType="technical">
-          <md:GivenName>Administrator</md:GivenName>
-          <md:EmailAddress>mailto:sinterklaas@example.nl</md:EmailAddress>
+        <md:GivenName>Administrator</md:GivenName>
+        <md:EmailAddress>mailto:sinterklaas@example.nl</md:EmailAddress>
+        </md:ContactPerson>
+      </md:EntityDescriptor>
+  - name: "test-idp-2"
+    metadata: |
+      <?xml version="1.0" encoding="utf-8"?>
+      <md:EntityDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"
+                           xmlns:mdattr="urn:oasis:names:tc:SAML:metadata:attribute"
+                           xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
+                           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                           xmlns:mdrpi="urn:oasis:names:tc:SAML:metadata:rpi"
+                           xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+                           entityID="https://test-idp-2.sram.surf.nl/saml/saml2/idp/metadata.php">
+        <md:IDPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+        <md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
+        Location="https://test-idp-2.sram.surf.nl/saml/module.php/saml/idp/singleSignOnService"/>
+        </md:IDPSSODescriptor>
+        <md:Organization>
+        <md:OrganizationName xml:lang="en">SRAM VM Dummy IdP</md:OrganizationName>
+        <md:OrganizationDisplayName xml:lang="en">SRAM VM Dummy IdP</md:OrganizationDisplayName>
+        <md:OrganizationURL xml:lang="en">https://test-idp-2.sram.example.org/</md:OrganizationURL>
+        </md:Organization>
+        <md:ContactPerson contactType="technical">
+        <md:GivenName>Administrator</md:GivenName>
+        <md:EmailAddress>mailto:sinterklaas@example.nl</md:EmailAddress>
         </md:ContactPerson>
       </md:EntityDescriptor>
 
