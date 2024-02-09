@@ -1,0 +1,12 @@
+#
+# Docker image woth wordpress and mod_mellon
+#
+
+FROM wordpress:4-apache
+
+RUN \
+	apt-get update; \
+	apt-get install -y libapache2-mod-auth-mellon; \
+	apt-get clean; \
+	rm -rf /var/lib/apt/lists/*
+

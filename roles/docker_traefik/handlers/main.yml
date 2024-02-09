@@ -1,0 +1,7 @@
+---
+# Do not restart docker, this breaks SBS migrate
+- name: "start docker"
+  ansible.builtin.systemd:
+    name: "docker"
+    state: "started"
+    enabled: true

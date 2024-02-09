@@ -1,0 +1,78 @@
+{% if letsencrypt_enabled %}
+<VirtualHost *:443>
+{% else %}
+<VirtualHost *:80>
+{% endif %}
+        ServerName {{ demo_hosts.demo1 }}
+
+        ServerAdmin webmaster@localhost
+        DocumentRoot /var/www/html
+
+        Alias /.well-known/acme-challenge/ /var/www/certbot/.well-known/acme-challenge/
+
+        ErrorLog ${APACHE_LOG_DIR}/error.log
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+{% if letsencrypt_enabled %}
+        SSLEngine on
+        SSLCertificateFile    /etc/letsencrypt/live/{{demo_hosts.demo1}}/fullchain.pem
+        SSLCertificateKeyFile /etc/letsencrypt/live/{{demo_hosts.demo1}}/privkey.pem
+{% endif %}
+
+        # Authentication Header
+{% if letsencrypt_enabled %}
+        # Remove OIDC option when using Basic Auth
+        OIDCProviderMetadataURL https://proxy.sram.surf.nl/.well-known/openid-configuration
+        OIDCClientID {{ oidc.demo1.client_id }}
+        OIDCClientSecret {{ oidc.demo1.client_secret }}
+        OIDCResponseType "code"
+        OIDCResponseMode "query"
+        OIDCScope "openid profile uid"
+
+        OIDCRedirectURI /redirect_uri
+        OIDCCryptoPassphrase randompassword
+
+        RequestHeader unset X-Authenticated-User
+        RequestHeader unset X-Authenticated-Name
+        RequestHeader set X-Authenticated-User expr=%{ENV:OIDC_CLAIM_uid}
+        RequestHeader set X-Authenticated-Name expr=%{ENV:OIDC_CLAIM_uid}
+
+        <LocationMatch ^/(redirect_uri|ep/|wp/wp-admin|wp/wp-login.php)>
+            Require valid-user
+            AuthType openid-connect
+        </LocationMatch>
+{% else %}
+        RequestHeader set X-Authenticated-User "demo1"
+        RequestHeader set X-Authenticated-Name "Demo1"
+{% endif %}
+
+        ProxyPreserveHost on
+        #RequestHeader set X-Forwarded-Host expr=%{HTTP_HOST}
+        #RequestHeader set X-Forwarded-Proto expr=%{HTTPS}
+        #RequestHeader set X-Forwarded-Port "443"
+
+        RewriteEngine on
+
+        # Etherpad Reverse Proxy
+        RedirectMatch 301 /ep$ /ep/
+        <LocationMatch "^/ep/(.*)">
+            RewriteCond %{HTTP:Connection} =Upgrade       [NC]
+            RewriteCond %{HTTP:Upgrade} =websocket        [NC]
+            RewriteRule /ep/(.*) ws://localhost:9001/$1   [P,L]
+            RewriteCond %{HTTP:Connection} !=Upgrade      [NC]
+            RewriteCond %{HTTP:Upgrade} !=websocket       [NC]
+            RewriteRule /ep/(.*) http://localhost:9001/$1 [P,L]
+        </LocationMatch>
+
+        # Wordpress Reverse Proxy
+        RedirectMatch 301 /wp$ /wp/
+        <LocationMatch "^/wp/(.*)">
+            ProxyPassMatch http://localhost:{{ports.wordpress}}/$1
+            ProxyPassReverse http://localhost:{{ports.wordpress}}/$1
+        </LocationMatch>
+</VirtualHost>
+
+# Letsencrypt fallback
+<VirtualHost *:80>
+        DocumentRoot /var/www/certbot
+</VirtualHost>

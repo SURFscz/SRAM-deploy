@@ -28,6 +28,7 @@ ip_lookup = {
     'bhr': 29,
     'test': 30,
     'docker': 31,
+    'demo1': 32,
     'redis': 98,
     'mail': 99,
 }
@@ -37,9 +38,9 @@ if args.ci and args.container:
 elif args.ci and not args.container:
     hosts = ['db', 'redis', 'sbs', 'test']
 elif not args.ci and args.container:
-    hosts = ['bhr', 'client', 'mail', 'lb', 'docker']
+    hosts = ['bhr', 'client', 'mail', 'lb', 'docker', 'demo1']
 else:  # classic, non-ci, non-containerized setup
-    hosts = ['bhr', 'client', 'lb', 'redis', 'mail', 'sandbox1', 'db', 'sbs', 'ldap1', 'ldap2', 'meta']
+    hosts = ['bhr', 'client', 'lb', 'redis', 'mail', 'sandbox1', 'db', 'sbs', 'ldap1', 'ldap2', 'meta', 'demo1']
 
 hosts_ip = {h: ip_lookup[h] for h in hosts}
 
@@ -47,6 +48,7 @@ hosts_ip = {h: ip_lookup[h] for h in hosts}
 hosts = {
     'bhr': 29,
     'docker': 31,
+    'demo1': 32,
 }
 
 # the old non-containerized setup needs more hosts
@@ -72,7 +74,8 @@ else:
 # these are the hostnames of virtual hosts on the load balancer
 logical_hosts = [
     'sbs', 'ldap', 'meta',
-    'oidc-op', 'sandbox1', 'pam'
+    'oidc-op', 'sandbox1', 'pam',
+    'demo1'
 ]
 
 subnet = '172.20.1'
@@ -169,9 +172,9 @@ def create_compose() -> Dict[str, Any]:
     }
     compose['services'] = dict()
     for h, ip in hosts_ip.items():
-        if h=='mail':
+        if h == 'mail':
             compose['services'][h] = mail_config(ip, h)
-        elif h=='redis':
+        elif h == 'redis':
             compose['services'][h] = redis_config(ip, h)
         else:
             compose['services'][h] = host_config(ip, h)

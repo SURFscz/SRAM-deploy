@@ -1,0 +1,35 @@
+# vim:ft=yaml
+---
+version: '3.3'
+
+services:
+  db:
+    image: mysql:5.7
+    volumes:
+      - db-data:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: somewordpress
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+
+  wordpress:
+    depends_on:
+      - db
+    build: .
+    ports:
+      - "{{wordpress_port}}:80"
+    restart: always
+    volumes:
+      - "wp-apache.conf:/etc/apache/sites-enabled/000-default.conf:ro"
+      - "wp-plugins:/var/www/html/wp-content/plugins:ro"
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+
+volumes:
+  db-data:
+  wp-apache.conf:
+  wp-plugins:

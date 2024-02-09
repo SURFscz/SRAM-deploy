@@ -1,0 +1,36 @@
+---
+# Ugly docker deploy hack
+environment_name: vm
+letsencrypt_enabled: false
+# letsencrypt_staging: false
+
+sram_conf_dir: "/opt/sram"
+
+internal_network: sram
+
+containers:
+  etherpad: sram-etherpad
+  wordpress: sram-wordpress
+  wordpress_cli: sram-wordpress-cli
+  database: sram-db
+
+images:
+  etherpad: ghcr.io/surfscz/sram-etherpad:main
+  wordpress: wordpress:6
+  wordpress_cli: wordpress:cli
+  database: mariadb:11
+
+demo_hosts:
+  demo1: demo1.vm.scz-vm.net
+
+ports:
+  etherpad: 9001
+  wordpress: 9002
+
+# oidc:
+#   demo1:
+#     client_id: client
+#     client_secret: secret
+
+# letsencrypt_hosts:
+#   - "{{ hostsnames.demo1 }}"

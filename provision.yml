@@ -53,24 +53,26 @@
   tasks:
     - { import_tasks: "tasks/versions.yml", tags: "always"     }
   roles:
-    - { role: basic,          tags: ['common','basic']                               }
-    - { role: certificates,   tags: ['common','cert']                                }
-    - { role: apt,            tags: ['common','apt']                                 }
-    - { role: users,          tags: ['common','users']                               }
-    - { role: logging,        tags: ['common','logging']                             }
-    - { role: firewall,       tags: ['common','firewall'],     when: "not is_docker" }
-    - { role: ntp,            tags: ['common','ntp']                                 }
-    - { role: aws-cleanup,    tags: ['common','clean']                               }
-    - { role: mail,           tags: ['common','mail']                                }
-    - { role: backups,        tags: ['common','backups']                             }
-    - { role: zabbix-agent,   tags: ['common','zabbix-agent'],                       }
+    - { role: basic,          tags: ['common','basic']         }
+    - { role: certificates,   tags: ['common','cert']          }
+    - { role: apt,            tags: ['common','apt']           }
+    - { role: users,          tags: ['common','users']         }
+    - { role: logging,        tags: ['common','logging']       }
+    - { role: firewall,       tags: ['common','firewall'],
+        when: "not is_docker" }
+    - { role: ntp,            tags: ['common','ntp']           }
+    - { role: aws-cleanup,    tags: ['common','clean']         }
+    - { role: mail,           tags: ['common','mail']          }
+    - { role: backups,        tags: ['common','backups']       }
+    - { role: zabbix-agent,   tags: ['common','zabbix-agent']  }
 
 - name: "bhr2"
   hosts: "bhr2"
   roles:
-    - { role: backup_collector,  tags: ['bhr2','backup_collector']                        }
-    - { role: logging_collector, tags: ['bhr2','logging_collector']                       }
-    - { role: zabbix-server,     tags: ['bhr2','zabbix-server'],    when: "not is_docker" }
+    - { role: backup_collector,  tags: ['bhr2','backup_collector']  }
+    - { role: logging_collector, tags: ['bhr2','logging_collector'] }
+    - { role: zabbix-server,     tags: ['bhr2','zabbix-server'],
+        when: "not is_docker" }
 
 - name: "bhr11"
   hosts: "bhr11"
@@ -96,6 +98,7 @@
     - { import_tasks: "tasks/versions.yml", tags: ['common']  }
   roles:
     - { role: docker,                       tags: ['docker'] }
+    - { role: docker_traefik,               tags: ['docker'] }
     - { role: docker_images,                tags: ['images', 'docker_images'] }
     - { role: docker_db,                    tags: ['db', 'docker_db'],
         when: environment_name!='tst2' }
@@ -110,10 +113,12 @@
   tasks:
     - { import_tasks: "tasks/versions.yml", tags: ['common'] }
   roles:
-    - { role: http_redirect,   tags: ['lb','http_redirect']                             }
-    - { role: tls_letsencrypt, tags: ['lb','tls_letsencrypt'], when: not use_fixed_cert }
-    - { role: tls_fixed_cert,  tags: ['lb','tls_fixedcert'],   when: use_fixed_cert     }
-    - { role: lb_haproxy,      tags: ['lb','haproxy']                                   }
+    - { role: http_redirect,   tags: ['lb','http_redirect']    }
+    - { role: tls_letsencrypt, tags: ['lb','tls_letsencrypt'],
+        when: not use_fixed_cert }
+    - { role: tls_fixed_cert,  tags: ['lb','tls_fixedcert'],
+        when: use_fixed_cert     }
+    - { role: lb_haproxy,      tags: ['lb','haproxy']          }
 
 - name: "database"
   hosts: db
@@ -159,7 +164,7 @@
   roles:
     - { role: oidc-op,              tags: ['client','oidc-op'      ] }
 
-- name: "demo clients"
+- name: "demo clients bhr13"
   hosts: bhr13
   tasks:
     - { import_tasks: "tasks/versions.yml", tags: ['common'] }
@@ -170,6 +175,18 @@
     - { role: tools,                tags: ['bhr13','tools']          }
     - { role: sram_monitor,         tags: ['bhr13','sram-monitor']   }
     - { role: scim_monitor,         tags: ['bhr13','scim-monitor']   }
+
+- name: "demo clients demo1"
+  hosts: demo1
+  tasks:
+    - { import_tasks: "tasks/versions.yml", tags: ['common'] }
+  roles:
+    - { role: docker,               tags: ['demo1','demo-docker'] }
+    - { role: demo-apache,          tags: ['demo1','demo-apache']  }
+    - { role: letsencrypt,          tags: ['demo1','demo-letsencrypt'],
+        when: letsencrypt_enabled }
+    - { role: demo-etherpad,        tags: ['demo1','demo-etherpad']  }
+    # - { role: demo-wordpress,       tags: ['demo1','demo-wordpress'] }
 
 # CI test docker
 - name: "test"
