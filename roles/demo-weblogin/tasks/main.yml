@@ -1,0 +1,26 @@
+---
+
+- name: Create weblogin directory
+  file:
+    path: "{{ weblogin_basedir }}/home"
+    state: "directory"
+    mode: "0755"
+    owner: "root"
+
+- name: Create the Weblogin container
+  docker_container:
+    name: "{{ containers.weblogin }}"
+    image: "{{ images.weblogin }}"
+    restart_policy: "always"
+    restart: true
+    state: started
+    # pull: true
+    env:
+      URL: "{{ demo1_weblogin_url }}"
+      TOKEN: "{{ demo1_weblogin_token }}"
+    published_ports:
+      - "{{ ports.weblogin }}:22"
+    volumes:
+      - "{{ weblogin_basedir }}/home:/home"
+    networks:
+      - name: "{{ internal_network }}"
