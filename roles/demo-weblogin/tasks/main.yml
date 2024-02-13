@@ -24,3 +24,14 @@
       - "{{ weblogin_basedir }}/home:/home"
     networks:
       - name: "{{ internal_network }}"
+
+- name: Create weblogin-cleanup job timer
+  template:
+    src: "{{item}}.j2"
+    dest: "/etc/systemd/system/{{item}}"
+  with_items:
+    - "weblogin-cleanup.service"
+    - "weblogin-cleanup.timer"
+  notify:
+    - "enable weblogin-cleanup job"
+    - "run weblogin-cleanup job"
