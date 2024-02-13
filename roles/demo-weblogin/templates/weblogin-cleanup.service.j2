@@ -10,7 +10,7 @@ ExecStart=/usr/bin/docker rm {{ containers.weblogin }}
 ExecStart=+/bin/sh -c 'rm -rf {{weblogin_basedir}}/home/.??*'
 ExecStart=+/bin/sh -c 'rm -rf {{weblogin_basedir}}/home/*'
 ExecStart=/usr/bin/docker run -d \
-    -p 1022:22 \
+    -p {{ ports.weblogin }}:22 \
     -e URL={{ demo1_weblogin_url }} \
     -e TOKEN={{ demo1_weblogin_token }} \
     -v {{ weblogin_basedir }}/home:/home \
