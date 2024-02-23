@@ -74,7 +74,7 @@
     create: true
     line: "kernel.dmesg_restrict = 0"
     state: present
-  notify: reload sysctl settings
+  notify: "reload sysctl settings"
 
 - name: install sudo permissions
   template:
@@ -92,7 +92,7 @@
   with_items:
     - "/etc/ssh/ssh_host_ed25519_key"
   notify:
-    - restart sshd
+    - "restart sshd"
 
 # replace sshd config; we can't do it the easy way, because we're also editing it in the backup role
 # TODO: cansimplify this oncewe have openssh 8.1+, which support include directives.
@@ -107,7 +107,7 @@
   copy:
     content: ""
     dest: "/etc/ssh/sshd_config"
-  when: sshconfig_is_managed.rc > 0
+  when: "sshconfig_is_managed.rc > 0"
 
 - name: set up ssh config
   blockinfile:
@@ -119,8 +119,7 @@
       {{ lookup('file','sshd_config') }}
       ChallengeResponseAuthentication {% if sshd_authn_CR %}yes{% else %}no{% endif %}
   notify:
-    - restart sshd
-
+    - "restart sshd"
 
 - name: remove obsolete ssh host keys
   file:
@@ -134,4 +133,29 @@
     - "ecdsa_key"
     - "ecdsa_key.pub"
   notify:
-    - restart sshd
+    - "restart sshd"
+
+####################################
+## pam limits
+####################################
+- name: enable pam_access module
+  lineinfile:
+    path: "/etc/pam.d/sshd"
+    line: "account  required     pam_access.so"
+    regexp: "^#? *account +required +pam_access.so"
+    state: "present"
+  notify:
+    - "restart sshd"
+
+# install pam access configuration;
+# make sure to fall back to allowing eveyone if the group is not defined
+- name: install pam access configuration
+  copy:
+    content: |
+      +:{{ "({})".format(ssh_access_group) if ssh_access_group is defined else "ALL" }}:ALL
+      -:ALL:ALL
+    dest: "/etc/security/access.conf"
+    owner: "root"
+    group: "root"
+    mode: "0600"
+
