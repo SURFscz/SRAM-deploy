@@ -23,9 +23,11 @@ while getopts -- '-:h' OPT; do
     case "$OPT" in
         h | help )      echo "Start SRAM VMs for local testing"
                         echo "Options:"
-                        echo "  --ci : for use in CI runs"
-                        echo "  --skip-ansible : only bring up VMs, skip Ansible run"
-                        echo "  --skip-vm : skip bringing up VMs, only run Ansible"
+                        echo "  --ci: for use in CI runs"
+                        echo "  --skip-ansible: only bring up VMs, skip Ansible run"
+                        echo "  --skip-vm: skip bringing up VMs, only run Ansible"
+                        echo "  --container: Use container-in-container based deploy"
+                        echo "  --no-mitogen: Disable use of mitogen"
                         exit 0
                         ;;
         ci )            CI_OPTION="--ci"
