@@ -1,15 +1,16 @@
 database:
   uri: "mysql+mysqldb://{{ sbs_db_user }}:{{ sbs_db_password }}@{{ db_host }}/{{ sbs_db_name }}?ssl=true&ssl_ca={{sbs_db_cert_path}}&charset=utf8mb4"
 
-# Lifetime of session in minutes (one day is 60 * 24)
-permanent_session_lifetime: 1440
-
 redis:
   uri: "redis{% if sbs_redis_ssl %}s{% endif %}://:{{sbs_redis_password}}@{{sbs_redis_host}}:{{sbs_redis_port}}/"
 
 # add a per-release suffix here to invalidate sessions on new releases
 secret_key: {{ sbs_db_secret }}{{sbs_secret_key_suffix}}
+# Must be a base64 encoded key of 128, 192, or 256 bits.
+# Generate: base64.b64encode(os.urandom(256 // 8)).decode()
+encryption_key: {{ sbs_encryption_key  }}
 
+# Lifetime of session in minutes (one day is 60 * 24)
 permanent_session_lifetime: {{ sbs_session_lifetime }}
 
 # Valid scopes are "READ" and "WRITE"
