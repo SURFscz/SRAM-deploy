@@ -62,6 +62,7 @@
     - ldapPublicKey.ldif
     - eduMember.ldif
     - voPerson.ldif
+    - sramPerson.ldif
 
 # - name: Copy DH params
 #   copy:
@@ -210,6 +211,7 @@
 #     - "ldapPublicKey.ldif"
 #     - "eduMember.ldif"
 #     - "voPerson.ldif"
+#     - "sramPerson.ldif"
 #
 
 - name: Setup Modules

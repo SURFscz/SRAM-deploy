@@ -61,6 +61,7 @@
     - ldapPublicKey.ldif
     - eduMember.ldif
     - voPerson.ldif
+    - sramPerson.ldif
 
 - name: Generate ldap.conf
   template:
@@ -113,6 +114,7 @@
     - "ldapPublicKey.ldif"
     - "eduMember.ldif"
     - "voPerson.ldif"
+    - "sramPerson.ldif"
 
 - name: Setup Modules
   community.general.ldap_attrs:
