@@ -209,7 +209,7 @@
 #  "HIGH:+SSLv3:+TLSv1:MEDIUM:+SSLv2:@STRENGTH:+SHA:+MD5:!NULL"
 # olcTLSCipherSuite: >
 #  "TLS_RSA_CAMELLIA_128_CBC_SHA1:TLS_RSA_CAMELLIA_256_CBC_SHA1:!NULL"
-      olcTLSCipherSuite: "ALL:!NULL"
+# olcTLSCipherSuite: "ALL:!NULL"
 # olcTLSCertificateKeyFile: "{{ ldap_certs_dir }}/backend.key"
 # olcTLSCertificateFile: "{{ ldap_certs_dir }}/backend.crt"
 # olcTLSCACertificateFile: "{{ ldap_certs_dir }}/backend.crt"
