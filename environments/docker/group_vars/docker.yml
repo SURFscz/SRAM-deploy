@@ -18,12 +18,12 @@ containers:
 images:
   db: mariadb:11
   redis: redis:7
-  sbs: ghcr.io/surfscz/sram-sbs:ci-create-image
+  sbs: ghcr.io/surfscz/sram-sbs:main
   sbs_server: ghcr.io/surfscz/sram-sbs-server:main
   ldap: ghcr.io/surfscz/sram-ldap:main
   metadata: ghcr.io/surfscz/sram-metadata:main
   pyff: ghcr.io/surfscz/sram-pyff:main
-  plsc: ghcr.io/surfscz/sram-plsc:docker
+  plsc: ghcr.io/surfscz/sram-plsc:main
 
 ldap_uri: "ldap://localhost/"
 ldap_rids:
