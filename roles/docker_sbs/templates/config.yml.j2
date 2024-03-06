@@ -193,6 +193,11 @@ membership_expiration:
   # How many days before actual expiration do we mail the co admin and member
   expired_warning_mail_days_threshold: 10
 
+invitation_reminders:
+  enabled: false
+  cron_hour_of_day: 1
+  invitation_reminders_threshold: 5
+
 orphan_users:
   # Do we daily check for users that are orphans so they can be deleted?
   enabled:  {{ sbs_delete_orphaned }}
