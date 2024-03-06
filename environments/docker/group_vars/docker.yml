@@ -26,6 +26,12 @@ images:
   plsc: sram-plsc
 
 ldap_uri: "ldap://localhost/"
+ldap_rids:
+  101: ldaps://ldap1.scz-vm.net/
+  102: ldaps://ldap2.scz-vm.net/
+ldap_hosts:
+  ldap1.scz-vm.net: "{{ iprange.lb }}"
+  ldap2.scz-vm.net: "{{ iprange.lb }}"
 
 traefik_network: traefik
 internal_network: sram
@@ -34,7 +40,7 @@ internal_network: sram
 ####################################################
 ## SBS
 ####################################################
-db_host: "docker.vm.scz-vm.net"
+db_host: "docker1.vm.scz-vm.net"
 sbs_db_host: "{{ containers.db }}"
 sbs_redis_host: "{{ containers.redis }}"
 

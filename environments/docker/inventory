@@ -17,18 +17,22 @@ client.vm.scz-vm.net ansible_host=172.20.1.25
 [container_bhr]
 bhr.vm.scz-vm.net ansible_host=172.20.1.29
 
-[container_docker]
-docker.vm.scz-vm.net ansible_host=172.20.1.31
-
 [container_demo1]
-demo1.vm.scz-vm.net ansible_host=172.20.1.32
+demo1.vm.scz-vm.net ansible_host=172.20.1.31
+
+[container_docker1]
+docker1.vm.scz-vm.net ansible_host=172.20.1.32
+
+[container_docker2]
+docker2.vm.scz-vm.net ansible_host=172.20.1.33
 
 [container:children]
 container_lb
-container_docker
 container_client
 container_bhr
 container_demo1
+container_docker1
+container_docker2
 
 ##########################################
 # role-based groups
@@ -36,10 +40,14 @@ container_demo1
 container_lb
 
 [ldap:children]
+container_docker1
+container_docker2
 
 [ldap_primary:children]
+container_docker1
 
 [ldap_secondary:children]
+container_docker2
 
 [meta:children]
 
@@ -64,7 +72,8 @@ container_bhr
 container_bhr
 
 [docker:children]
-container_docker
+container_docker1
+container_docker2
 
 [demo1:children]
 container_demo1

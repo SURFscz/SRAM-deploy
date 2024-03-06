@@ -89,8 +89,8 @@
     - { role: 'http_apache', tags: ['bhr12','ci-runner']}
     - { role: 'ci-runner',   tags: ['bhr12','ci-runner']}
 
-- name: "docker"
-  hosts: docker
+- name: "docker1"
+  hosts: container_docker1
   vars_files:
     - "{{ secrets_users_file }}"
     - "{{ secrets_file }}"
@@ -107,6 +107,19 @@
     - { role: docker_metadata,              tags: ['meta', 'docker_metadata'] }
     - { role: docker_plsc,                  tags: ['plsc', 'docker_plsc'] }
     - { role: docker_sbs,                   tags: ['sbs', 'docker_sbs'] }
+
+- name: "docker2"
+  hosts: container_docker2
+  vars_files:
+    - "{{ secrets_users_file }}"
+    - "{{ secrets_file }}"
+  tasks:
+    - { import_tasks: "tasks/versions.yml", tags: ['common']  }
+  roles:
+    - { role: docker,                       tags: ['docker'] }
+    - { role: docker_traefik,               tags: ['docker'] }
+    - { role: docker_images,                tags: ['images', 'docker_images'] }
+    - { role: docker_ldap,                  tags: ['ldap', 'docker_ldap'] }
 
 - name: "lb"
   hosts: lb

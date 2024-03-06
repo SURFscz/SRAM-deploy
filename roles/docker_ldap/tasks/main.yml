@@ -88,6 +88,13 @@
     # group: "root"
     mode: "0644"
 
+- name: Copy wildcard frontend cert
+  copy:
+    src: /etc/ssl/certs/sram-https.pem
+    remote_src: true
+    dest: "{{ldap_certs_dir}}/frontend.crt"
+    mode: "0644"
+
 - name: Create the ldap container
   docker_container:
     name: "{{ containers.ldap }}"
@@ -116,9 +123,10 @@
       # LDAP_REQUIRE_TLS: "no"
       # LDAP_LDAPS_PORT_NUMBER: 1636
       LDAP_TLS_CERT_FILE: "/opt/ldap/certs/backend.crt"
-      LDAP_TLS_KEY_FILE: "/opt/ldap/certs/backend.key"
-      LDAP_TLS_CA_FILE: "/opt/ldap/certs/backend.crt"
+      LDAP_TLS_KEY_FILE:  "/opt/ldap/certs/backend.key"
+      LDAP_TLS_CA_FILE:   "/opt/ldap/certs/frontend.crt"
       # LDAP_TLS_DH_PARAMS_FILE: "{{ ldap_certs_dir }}/dh_params"
+    etc_hosts: "{{ ldap_hosts }}"
     volumes:
       - "{{ ldap_ldif_dir }}:/opt/ldap/schema"
       - "{{ ldap_certs_dir }}:/opt/ldap/certs"
@@ -181,6 +189,7 @@
     dn: "cn=config"
     state: "exact"
     attributes:
+      olcServerID: "{{ ldap_server_id }}"
       olcSizeLimit: "unlimited"
       olcLogLevel: "{{ ldap_loglevel }}"
       olcAttributeOptions: "time-"
@@ -312,22 +321,6 @@
 #     bind_pw: "{{ services_ldap_password }}"
 #     server_uri: "{{ ldap_uri }}"
 #
-# - name: Setup Syncrepl
-#   community.general.ldap_attrs:
-#     dn: olcDatabase={1}mdb,cn=config
-#     attributes:
-#       olcSyncrepl: >-
-#         rid=001
-#         provider="ldaps://{{ groups['ldap_primary'][0] }}/"
-#         searchbase="{{ services_ldap.basedn }}"
-#         type=refreshAndPersist
-#         bindmethod=simple
-#         binddn="{{ services_ldap.binddn }}"
-#         credentials={{ services_ldap_password }}
-#         retry="30 +"
-#         timeout=30
-#         network-timeout=5
-#   when: inventory_hostname in groups['ldap_secondary']
 #
 # - name: Get uid of openldap user
 #   ansible.builtin.getent:
@@ -340,6 +333,7 @@
 #     openldap_auth: "gidNumber={{ansible_facts.getent_passwd['openldap'][2]}}+\
 #                     uidNumber={{ansible_facts.getent_passwd['openldap'][1]}}"
 #
+
 - name: Set ACLs
   community.general.ldap_attrs:
     dn: "olcDatabase={2}mdb,cn=config"
@@ -369,6 +363,39 @@
     bind_dn: "cn=admin,cn=config"
     bind_pw: "{{ services_ldap_password }}"
     server_uri: "{{ ldap_uri }}"
+
+# ldap_rids:
+#   101: ldaps://ldap1.scz-vm.net/
+#   102: ldaps://ldap2.scz-vm.net/
+
+- name: Setup rids
+  vars:
+    rid: >-
+      rid={}
+      provider="{}"
+      searchbase="{{ services_ldap.basedn }}"
+      type=refreshAndPersist
+      bindmethod=simple
+      binddn="{{ services_ldap.binddn }}"
+      credentials={{ services_ldap_password }}
+      retry="30 +"
+      timeout=30
+      network-timeout=5
+    rids: []
+  set_fact:
+    rids: "{{ rids  + [ rid.format(item.key, item.value) ] }}"
+  with_dict: "{{ ldap_rids }}"
+
+- name: Setup Syncrepl
+  community.general.ldap_attrs:
+    dn: olcDatabase={2}mdb,cn=config
+    attributes:
+      olcSyncrepl: "{{ rids }}"
+      olcMirrorMode: "TRUE"
+    bind_dn: "cn=admin,cn=config"
+    bind_pw: "{{ services_ldap_password }}"
+    server_uri: "{{ ldap_uri }}"
+#  when: inventory_hostname in groups['ldap_secondary']
 
 - name: Initialize DIT
   community.general.ldap_entry:
