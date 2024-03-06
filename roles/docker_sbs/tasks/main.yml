@@ -314,9 +314,10 @@
       - name: "{{traefik_network}}"
       - name: "{{internal_network}}"
     labels:
+      traefik.enable: "true"
+      traefik.docker.network: "{{traefik_network}}"
       traefik.http.routers.sbs.rule: "Host(`{{ sbs_base_domain }}`)"
       traefik.http.routers.sbs.tls: "true"
-      traefik.enable: "true"
 
 # - name: Create nginx container
 #   docker_container:

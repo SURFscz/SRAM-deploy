@@ -4,6 +4,8 @@ log:
 entryPoints:
   websecure:
     address: ":443"
+  ldaps:
+    address: ":636"
 providers:
   file:
     filename: "/config/config/traefik.yml"
@@ -17,6 +19,8 @@ ping:
 http:
   routers:
     ping:
+      entryPoints:
+        - "websecure"
       rule: "PathPrefix(`/health`)"
       service: "ping@internal"
       tls: true

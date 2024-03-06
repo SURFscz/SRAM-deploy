@@ -105,7 +105,7 @@
     # pull: true
     ports:
       - 389:1389
-      - 636:1636
+    #   - 636:1636
     env:
       LDAP_ROOT: "{{ services_ldap.basedn }}"
       LDAP_ADMIN_USERNAME: admin
@@ -119,11 +119,12 @@
       # LDAP_USERS: ""
       # LDAP_PASSWORDS: ""
       LDAP_ENABLE_SYNCPROV: "yes"
-      LDAP_ENABLE_TLS: "yes"
+      # LDAP_ENABLE_TLS: "yes"
+      LDAP_ENABLE_TLS: "no"
       # LDAP_REQUIRE_TLS: "no"
       # LDAP_LDAPS_PORT_NUMBER: 1636
-      LDAP_TLS_CERT_FILE: "/opt/ldap/certs/backend.crt"
-      LDAP_TLS_KEY_FILE:  "/opt/ldap/certs/backend.key"
+      # LDAP_TLS_CERT_FILE: "/opt/ldap/certs/backend.crt"
+      # LDAP_TLS_KEY_FILE:  "/opt/ldap/certs/backend.key"
       LDAP_TLS_CA_FILE:   "/opt/ldap/certs/frontend.crt"
       # LDAP_TLS_DH_PARAMS_FILE: "{{ ldap_certs_dir }}/dh_params"
     etc_hosts: "{{ ldap_hosts }}"
@@ -133,6 +134,15 @@
       - "{{ ldap_data_dir }}:/bitnami/openldap"
     networks:
       - name: "{{internal_network}}"
+      - name: "{{traefik_network}}"
+    labels:
+      traefik.enable: "true"
+      traefik.docker.network: "{{traefik_network}}"
+      traefik.tcp.routers.ldap.entrypoints: "ldaps"
+      traefik.tcp.routers.ldap.rule: "HostSNI(`*`)"
+      traefik.tcp.routers.ldap.tls: "true"
+      # traefik.tcp.routers.ldap.service: "ldap"
+      traefik.tcp.services.ldap.loadbalancer.server.port: "1389"
 
 - name: Generate ldap.conf
   template:

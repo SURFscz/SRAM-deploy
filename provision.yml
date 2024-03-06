@@ -98,7 +98,7 @@
     - { import_tasks: "tasks/versions.yml", tags: ['common']  }
   roles:
     - { role: docker,                       tags: ['docker'] }
-    - { role: docker_traefik,               tags: ['docker'] }
+    - { role: docker_traefik,               tags: ['docker', 'docker_traefik'] }
     - { role: docker_images,                tags: ['images', 'docker_images'] }
     - { role: docker_db,                    tags: ['db', 'docker_db'],
         when: environment_name!='tst2' }
@@ -117,7 +117,7 @@
     - { import_tasks: "tasks/versions.yml", tags: ['common']  }
   roles:
     - { role: docker,                       tags: ['docker'] }
-    - { role: docker_traefik,               tags: ['docker'] }
+    - { role: docker_traefik,               tags: ['docker', 'docker_traefik'] }
     - { role: docker_images,                tags: ['images', 'docker_images'] }
     - { role: docker_ldap,                  tags: ['ldap', 'docker_ldap'] }
 
