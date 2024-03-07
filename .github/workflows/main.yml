@@ -104,6 +104,7 @@ jobs:
           docker system prune -f --all
           docker image  prune -f --all
           docker volume prune -f
+          docker buildx prune -f
 
       # Get scz-base ImageID
       - name: Get scz-base ImageID
@@ -202,7 +203,7 @@ jobs:
         uses: mxschmitt/action-tmate@v3
         with:
           limit-access-to-actor: true
-        timeout-minutes: 15
+        timeout-minutes: 60
 
 
   deploy_docker:
@@ -274,6 +275,14 @@ jobs:
       - name: Restore docker cache
         run: docker load -i ~/docker-save/scz-base-cache.tar || true
 
+      # Clean  up old docker cruft
+      - name: Clean  up old docker cruft
+        run: |
+          docker system prune -f --all
+          docker image  prune -f --all
+          docker volume prune -f
+          docker buildx prune -f
+
       # Get scz-base-cache ImageID
       - name: Get scz-base-cache ImageID
         id: scz-base-cache-id
@@ -287,13 +296,6 @@ jobs:
         env:
           SKIP_ANSIBLE: 1
         run: "./start-vm --container"
-
-      # Clean  up old docker cruft
-      - name: Clean  up old docker cruft
-        run: |
-          docker system prune -f --all
-          docker image  prune -f --all
-          docker volume prune -f
 
       # Get scz-base ImageID
       - name: Get scz-base ImageID
@@ -391,5 +393,5 @@ jobs:
         uses: mxschmitt/action-tmate@v3
         with:
           limit-access-to-actor: true
-        timeout-minutes: 15
+        timeout-minutes: 60
 
