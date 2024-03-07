@@ -197,8 +197,8 @@ jobs:
       # Setup tmate session
       - name: Setup tmate session
         env:
-          ACTIONS_STEP_DEBUG: "${{ secrets.ACTIONS_STEP_DEBUG}}"
-        if: "${{ env.ACTIONS_STEP_DEBUG}}"
+          ACTIONS_STEP_DEBUG: ${{ secrets.ACTIONS_STEP_DEBUG}}
+        if: ${{ env.ACTIONS_STEP_DEBUG}}
         uses: mxschmitt/action-tmate@v3
         with:
           limit-access-to-actor: true
@@ -386,8 +386,8 @@ jobs:
       # Setup tmate session
       - name: Setup tmate session
         env:
-          ACTIONS_STEP_DEBUG: "${{ secrets.ACTIONS_STEP_DEBUG}}"
-        if: "(failure() && ${{ env.ACTIONS_STEP_DEBUG}})"
+          ACTIONS_STEP_DEBUG: ${{ secrets.ACTIONS_STEP_DEBUG}}
+        if: ${{ env.ACTIONS_STEP_DEBUG}})
         uses: mxschmitt/action-tmate@v3
         with:
           limit-access-to-actor: true
