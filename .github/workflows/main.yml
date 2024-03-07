@@ -40,7 +40,7 @@ jobs:
           cat docker/hosts | sudo tee -a /etc/hosts
         # sudo docker system prune -f
         # sudo systemctl stop docker
-        # time sudo mv -v /var/lib/docker /mnt
+        # time sudo mv /var/lib/docker /mnt
         # sudo ln -s /mnt/docker /var/lib
         # sudo systemctl start docker
 
@@ -236,7 +236,7 @@ jobs:
           cat docker/hosts | sudo tee -a /etc/hosts
           sudo docker system prune -f
           sudo systemctl stop docker
-          time sudo mv -v /var/lib/docker /mnt
+          time sudo mv /var/lib/docker /mnt
           sudo ln -s /mnt/docker /var/lib
           sudo systemctl start docker
 
