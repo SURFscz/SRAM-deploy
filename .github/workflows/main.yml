@@ -53,8 +53,8 @@ jobs:
           git clone https://github.com/dw/mitogen.git ~/mitogen
           cat docker/hosts | sudo tee -a /etc/hosts
           sudo systemctl stop docker
-          mv /var/lib/docker /mnt
-          ln -s /mnt/docker /var/lib
+          sudo mv /var/lib/docker /mnt
+          sudo ln -s /mnt/docker /var/lib
           sudo systemctl start docker
 
       # Useful for debugging
@@ -248,8 +248,8 @@ jobs:
           git clone https://github.com/dw/mitogen.git ~/mitogen
           cat docker/hosts | sudo tee -a /etc/hosts
           sudo systemctl stop docker
-          mv /var/lib/docker /mnt
-          ln -s /mnt/docker /var/lib
+          sudo mv /var/lib/docker /mnt
+          sudo ln -s /mnt/docker /var/lib
           sudo systemctl start docker
 
       # Useful for debugging
