@@ -70,3 +70,6 @@ sbs_mfa_idp_allowed:
 sbs_ssid_identity_providers:
   - schac_home: "ssid.org"
     entity_id: "https://ssid.org"
+
+sbs_notifications_enabled: True
+sbs_cron_hour_of_day: "4"
