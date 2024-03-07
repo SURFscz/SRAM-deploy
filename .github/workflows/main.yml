@@ -30,14 +30,14 @@ jobs:
         id: get-date
         run: echo "date=$(/bin/date -u '+%Y%m%d%k%M%S')" >> $GITHUB_OUTPUT
 
-      # Restore cache based no fake time key (allways miss)
-      - name: Setup cache
-        id: cache-docker
-        uses: actions/cache@v4
-        with:
-          path: ~/docker-save
-          key: docker-save-${{ steps.get-date.outputs.date }}
-          restore-keys: docker-save-
+      # # Restore cache based no fake time key (allways miss)
+      # - name: Setup cache
+      #   id: cache-docker
+      #   uses: actions/cache@v4
+      #   with:
+      #     path: ~/docker-save
+      #     key: docker-save-${{ steps.get-date.outputs.date }}
+      #     restore-keys: docker-save-
 
       # Run errands
       - name: Run errands
@@ -80,9 +80,9 @@ jobs:
       - name: Run Syntax check
         run: ./scripts/check-syntax
 
-      # Restore docker cache
-      - name: Restore docker cache
-        run: docker load -i ~/docker-save/scz-base-cache.tar || true
+      # # Restore docker cache
+      # - name: Restore docker cache
+      #   run: docker load -i ~/docker-save/scz-base-cache.tar || true
 
       # Get scz-base-cache ImageID
       - name: Get scz-base-cache ImageID
@@ -114,14 +114,14 @@ jobs:
           echo "ID=$ID" >> $GITHUB_OUTPUT
 
 
-      # Save docker cache
-      - name: Save docker cache
-        run: >
-          mkdir -p ~/docker-save &&
-          docker tag scz-base scz-base-cache &&
-          docker save scz-base-cache -o ~/docker-save/scz-base-cache.tar &&
-          ls -lh ~/docker-save || true
-        if: steps.scz-base-cache-id.outputs.ID != steps.scz-base-id.outputs.ID
+      # # Save docker cache
+      # - name: Save docker cache
+      #   run: >
+      #     mkdir -p ~/docker-save &&
+      #     docker tag scz-base scz-base-cache &&
+      #     docker save scz-base-cache -o ~/docker-save/scz-base-cache.tar &&
+      #     ls -lh ~/docker-save || true
+      #   if: steps.scz-base-cache-id.outputs.ID != steps.scz-base-id.outputs.ID
 
       # Deploy components
       - name: Run start-vm
@@ -221,14 +221,14 @@ jobs:
         id: get-date
         run: echo "date=$(/bin/date -u '+%Y%m%d%k%M%S')" >> $GITHUB_OUTPUT
 
-      # Restore cache based no fake time key (always miss)
-      - name: Setup cache
-        id: cache-docker
-        uses: actions/cache@v4
-        with:
-          path: ~/docker-save
-          key: docker-save-${{ steps.get-date.outputs.date }}
-          restore-keys: docker-save-
+      # # Restore cache based no fake time key (always miss)
+      # - name: Setup cache
+      #   id: cache-docker
+      #   uses: actions/cache@v4
+      #   with:
+      #     path: ~/docker-save
+      #     key: docker-save-${{ steps.get-date.outputs.date }}
+      #     restore-keys: docker-save-
 
       # Run errands
       - name: Run errands
@@ -271,9 +271,9 @@ jobs:
       - name: Run Syntax check
         run: ./scripts/check-syntax
 
-      # Restore docker cache
-      - name: Restore docker cache
-        run: docker load -i ~/docker-save/scz-base-cache.tar || true
+      # # Restore docker cache
+      # - name: Restore docker cache
+      #   run: docker load -i ~/docker-save/scz-base-cache.tar || true
 
       # Clean  up old docker cruft
       - name: Clean  up old docker cruft
@@ -304,14 +304,14 @@ jobs:
           ID=$(docker image list scz-base -q) &&
           echo "ID=$ID" >> $GITHUB_OUTPUT
 
-      # Save docker cache
-      - name: Save docker cache
-        run: >
-          mkdir -p ~/docker-save &&
-          docker tag scz-base scz-base-cache &&
-          docker save scz-base-cache -o ~/docker-save/scz-base-cache.tar &&
-          ls -lh ~/docker-save || true
-        if: steps.scz-base-cache-id.outputs.ID != steps.scz-base-id.outputs.ID
+      # # Save docker cache
+      # - name: Save docker cache
+      #   run: >
+      #     mkdir -p ~/docker-save &&
+      #     docker tag scz-base scz-base-cache &&
+      #     docker save scz-base-cache -o ~/docker-save/scz-base-cache.tar &&
+      #     ls -lh ~/docker-save || true
+      #   if: steps.scz-base-cache-id.outputs.ID != steps.scz-base-id.outputs.ID
 
       # Deploy components
       - name: Run start-vm
