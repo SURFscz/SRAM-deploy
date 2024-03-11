@@ -66,6 +66,9 @@
 
         # Wordpress Reverse Proxy
         RedirectMatch 301 /wp$ /wp/
+        RedirectMatch 301 /wp/wp-admin$ /wp/wp-admin/
+        RewriteCond %{QUERY_STRING} rest_route
+        RewriteRule ^/wp /wp/
         <LocationMatch "^/wp/(.*)">
             ProxyPassMatch http://localhost:{{ports.wordpress}}/$1
             ProxyPassReverse http://localhost:{{ports.wordpress}}/$1
