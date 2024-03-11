@@ -114,7 +114,7 @@
       LDAP_CONFIG_ADMIN_PASSWORD: "{{ services_ldap_password }}"
       LDAP_CONFIG_ADMIN_ENABLED: "yes"
       LDAP_CUSTOM_SCHEMA_DIR: "/opt/ldap/schema"
-      #LDAP_EXTRA_SCHEMAS: "cosine,inetorgperson,nis,memberof"
+      # LDAP_EXTRA_SCHEMAS: "cosine,inetorgperson,nis,dyngroup"
       LDAP_SKIP_DEFAULT_TREE: "yes"
       # LDAP_USERS: ""
       # LDAP_PASSWORDS: ""
@@ -238,8 +238,8 @@
       olcModuleLoad:
         # - syncprov
         # - back_monitor
-        - memberof.so
-        - refint.so
+        # - memberof.so
+        # - refint.so
         - dynlist.so
     bind_dn: "cn=admin,cn=config"
     bind_pw: "{{ services_ldap_password }}"
@@ -253,32 +253,33 @@
 #       olcRootDN: "cn=admin,cn=Monitor"
 #       olcRootPW: "{{ '%s' | format(monitor_ldap_password) |  slapd_hash }}"
 #
-- name: Setup MemberOf(1)
-  community.general.ldap_entry:
-    dn: olcOverlay=memberof,olcDatabase={2}mdb,cn=config
-    objectClass:
-      - olcOverlayConfig
-      - olcMemberOf
-    attributes:
-      olcMemberOfRefInt: "TRUE"
-      olcMemberOfGroupOC: groupOfMembers
-      olcMemberOfMemberAD: member
-      olcMemberOfMemberOfAD: memberOf
-    bind_dn: "cn=admin,cn=config"
-    bind_pw: "{{ services_ldap_password }}"
-    server_uri: "{{ ldap_uri }}"
 
-- name: Setup MemberOf(2)
-  community.general.ldap_entry:
-    dn: olcOverlay=refint,olcDatabase={2}mdb,cn=config
-    objectClass:
-      - olcOverlayConfig
-      - olcRefintConfig
-    attributes:
-      olcRefintAttribute: memberof member
-    bind_dn: "cn=admin,cn=config"
-    bind_pw: "{{ services_ldap_password }}"
-    server_uri: "{{ ldap_uri }}"
+# - name: Setup MemberOf(1)
+#   community.general.ldap_entry:
+#     dn: olcOverlay=memberof,olcDatabase={2}mdb,cn=config
+#     objectClass:
+#       - olcOverlayConfig
+#       - olcMemberOf
+#     attributes:
+#       olcMemberOfRefInt: "TRUE"
+#       olcMemberOfGroupOC: groupOfMembers
+#       olcMemberOfMemberAD: member
+#       olcMemberOfMemberOfAD: memberOf
+#     bind_dn: "cn=admin,cn=config"
+#     bind_pw: "{{ services_ldap_password }}"
+#     server_uri: "{{ ldap_uri }}"
+#
+# - name: Setup MemberOf(2)
+#   community.general.ldap_entry:
+#     dn: olcOverlay=refint,olcDatabase={2}mdb,cn=config
+#     objectClass:
+#       - olcOverlayConfig
+#       - olcRefintConfig
+#     attributes:
+#       olcRefintAttribute: memberof member
+#     bind_dn: "cn=admin,cn=config"
+#     bind_pw: "{{ services_ldap_password }}"
+#     server_uri: "{{ ldap_uri }}"
 
 - name: Setup Dynlist
   community.general.ldap_entry:
@@ -287,7 +288,7 @@
       - olcOverlayConfig
       - olcDynamicList
     attributes:
-      olcDlAttrSet: "{0}organizationalRole labeledURI roleOccupant"
+      olcDlAttrSet: "voPerson labeledURI member+memberOf@groupOfMembers"
     bind_dn: "cn=admin,cn=config"
     bind_pw: "{{ services_ldap_password }}"
     server_uri: "{{ ldap_uri }}"
