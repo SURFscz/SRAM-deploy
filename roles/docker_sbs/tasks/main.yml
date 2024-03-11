@@ -76,6 +76,7 @@
     # group: "{{sbs_group}}"
     mode: "{{item.mode}}"
   with_items:
+    - { path: "{{redis_conf_dir}}",          mode: "0755" }
     - { path: "{{sbs_work_dir}}",            mode: "0755" }
     - { path: "{{sbs_conf_dir}}",            mode: "0755" }
     - { path: "{{sbs_conf_dir}}/saml",       mode: "0755" }
@@ -148,6 +149,11 @@
     owner: "root"
     group: "root"
     mode: 0644
+
+- name: "Create redis config"
+  template:
+    src: "redis.conf.j2"
+    dest: "{{ redis_conf_dir }}/redis.conf"
 
 - name: "Create SBS config files"
   template:
@@ -261,6 +267,9 @@
     # restart: true
     state: started
     # pull: true
+    command: redis-server /usr/local/etc/redis/redis.conf
+    volumes:
+      - "{{ redis_conf_dir }}:/usr/local/etc/redis"
     networks:
       - name: "{{internal_network}}"
 

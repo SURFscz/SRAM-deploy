@@ -1,4 +1,6 @@
 ---
+redis_conf_dir: "{{sram_conf_dir}}/redis"
+
 sbs_openidc_timeout: 86400
 
 sbs_build_url: "https://github.com/SURFscz/SBS/releases/download/{{sbs_version}}/sbs.tar.xz"
