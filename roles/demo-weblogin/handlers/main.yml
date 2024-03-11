@@ -1,0 +1,13 @@
+---
+- name: "enable weblogin-cleanup job"
+  systemd:
+    name: "weblogin-cleanup.timer"
+    enabled: true
+    state: "started"
+    daemon_reload: true
+
+- name: "run weblogin-cleanup job"
+  systemd:
+    name: "weblogin-cleanup.service"
+    state: "started"
+    daemon_reload: true
