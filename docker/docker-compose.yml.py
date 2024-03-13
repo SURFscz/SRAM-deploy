@@ -135,9 +135,8 @@ def mail_config(num: int, name: str) -> Dict[str, Any]:
     """
     data = host_config(num, name)
     data.update({
-        'image': 'mailhog/mailhog:v1.0.1',
-        'ports': ['8025:8025'],
-
+        'image': 'axllent/mailpit',
+        'ports': ['1025:1025', '8025:8025'],
     })
     return data
 
