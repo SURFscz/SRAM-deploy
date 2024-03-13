@@ -121,11 +121,12 @@
       LDAP_ENABLE_SYNCPROV: "yes"
       # LDAP_ENABLE_TLS: "yes"
       LDAP_ENABLE_TLS: "no"
+      # TLS settings (including CA) are discarded if LDAP_ENABLE_TLS=no
       # LDAP_REQUIRE_TLS: "no"
       # LDAP_LDAPS_PORT_NUMBER: 1636
       # LDAP_TLS_CERT_FILE: "/opt/ldap/certs/backend.crt"
       # LDAP_TLS_KEY_FILE:  "/opt/ldap/certs/backend.key"
-      LDAP_TLS_CA_FILE:   "/opt/ldap/certs/frontend.crt"
+      # LDAP_TLS_CA_FILE:   "/opt/ldap/certs/frontend.crt"
       # LDAP_TLS_DH_PARAMS_FILE: "{{ ldap_certs_dir }}/dh_params"
     etc_hosts: "{{ ldap_hosts }}"
     volumes:
@@ -212,7 +213,7 @@
 # olcTLSCipherSuite: "ALL:!NULL"
 # olcTLSCertificateKeyFile: "{{ ldap_certs_dir }}/backend.key"
 # olcTLSCertificateFile: "{{ ldap_certs_dir }}/backend.crt"
-# olcTLSCACertificateFile: "{{ ldap_certs_dir }}/backend.crt"
+      olcTLSCACertificateFile: "/opt/ldap/certs/frontend.crt"
     bind_dn: "cn=admin,cn=config"
     bind_pw: "{{ services_ldap_password }}"
     server_uri: "{{ ldap_uri }}"
