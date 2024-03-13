@@ -197,7 +197,7 @@
 - name: Set config
   community.general.ldap_attrs:
     dn: "cn=config"
-    state: "exact"
+    state: "present"
     attributes:
       olcServerID: "{{ ldap_server_id }}"
       olcSizeLimit: "unlimited"
