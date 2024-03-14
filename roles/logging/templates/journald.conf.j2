@@ -10,11 +10,11 @@ RateLimitBurst=10000
 
 # Keep a maximum of 1GB on disk storage
 SystemMaxUse=1G
-SystemMaxFileSize=2G
+SystemMaxFileSize=256M
 SystemMaxFiles=100
 
 # split files every day, and keep message for max 2 weeks
-MaxFileSec=2day
+MaxFileSec=1day
 MaxRetentionSec={{journal_retention}}
 SyncIntervalSec=1m
 
