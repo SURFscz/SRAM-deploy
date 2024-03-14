@@ -218,6 +218,9 @@
   command:
     cmd: "{{ sbs_env_dir }}/bin/alembic --config migrations/alembic.ini upgrade head"
     chdir: "{{ sbs_work_dir }}/sbs/server"
+  environment:
+    CONFIG: "config/config.yml"
+
   register: "result"
   failed_when: "result.rc != 0"
   changed_when: "'[alembic.runtime.migration] Running upgrade' in result.stderr"
