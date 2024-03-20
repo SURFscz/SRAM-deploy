@@ -168,6 +168,8 @@ retention:
   remove_suspended_users_period_days: 90
   # how many days before deletion do we send a reminder
   reminder_expiry_period_days: 7
+  # whether to send a notification of the result of the retention process to the beheer_email
+  admin_notification_mail: {{ sbs_suspension_notify_admin }}
 
 collaboration_expiration:
   # Do we daily check for CO's that will be deleted because they have been expired?
