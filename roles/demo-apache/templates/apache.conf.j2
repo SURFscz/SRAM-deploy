@@ -17,6 +17,8 @@
         SSLEngine on
         SSLCertificateFile    /etc/letsencrypt/live/{{demo_hosts.demo1}}/fullchain.pem
         SSLCertificateKeyFile /etc/letsencrypt/live/{{demo_hosts.demo1}}/privkey.pem
+
+        Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload;"
 {% endif %}
 
         # Authentication Header
