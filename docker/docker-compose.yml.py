@@ -166,7 +166,6 @@ def redis_config(num: int, name: str) -> Dict[str, Any]:
 def create_compose() -> Dict[str, Any]:
     # generate the full docker-compose.yml file
     compose: Dict[str, Any] = dict()
-    compose['version'] = '2.4'
     compose['networks'] = {
         'scznet': {
             'driver': 'bridge',
