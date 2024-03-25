@@ -3,35 +3,21 @@
 #
 # An auxiliary object class, "sramPerson," is a convenient container
 # for an extensible set of attributes concerning sram persons.
-# At this time, the only attributes specified as belonging to the
-# object class are "sramLastActivityDate", "sramAUPacceptedURI"
-# and "sramAUPacceptedDate".
+# At this time, the only attribute specified as belonging to the
+# object class is "sramInactiveDays".
 #
 dn: cn=sramPerson,cn=schema,cn=config
 objectClass: olcSchemaConfig
 cn: sramPerson
-olcAttributeTypes: ( 1.3.6.1.4.1.1076.20.100.20.2.1 NAME 'sramLastActivityDate'
-  DESC 'Date when this entity was last active'
-  EQUALITY generalizedTimeMatch
-  ORDERING generalizedTimeOrderingMatch
-  SYNTAX 1.3.6.1.4.1.1466.115.121.1.24
-  )
-olcAttributeTypes: ( 1.3.6.1.4.1.1076.20.100.20.2.2 NAME 'sramAUPacceptedURI'
-  DESC 'URI of accepted AUP'
-  EQUALITY  caseExactMatch
-  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
-  )
-olcAttributeTypes: ( 1.3.6.1.4.1.1076.20.100.20.2.3 NAME 'sramAUPacceptedDate'
-  DESC 'Date when the AUP was accepted'
-  EQUALITY generalizedTimeMatch
-  ORDERING generalizedTimeOrderingMatch
-  SYNTAX 1.3.6.1.4.1.1466.115.121.1.24
+olcAttributeTypes: ( 1.3.6.1.4.1.1076.20.100.20.2.1 NAME 'sramInactiveDays'
+  DESC 'Number of days this entity was inactive'
+  EQUALITY IntegerMatch
+  ORDERING IntegerOrderingMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.27
   )
 olcObjectClasses: ( 1.3.6.1.4.1.1076.20.100.20.1.1 NAME 'sramPerson'
   AUXILIARY
   MAY (
-    sramLastActivityDate $
-    sramAUPacceptedURI $
-    sramAUPacceptedDate
+    sramInactiveDays
     )
   )
