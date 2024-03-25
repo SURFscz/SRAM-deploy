@@ -135,14 +135,8 @@ def mail_config(num: int, name: str) -> Dict[str, Any]:
     """
     data = host_config(num, name)
     data.update({
-<<<<<<< HEAD
         'image': 'axllent/mailpit',
         'ports': ['1025:1025', '8025:8025'],
-=======
-        'image': 'mailhog/mailhog:v1.0.1',
-        'ports': ['8025:8025'],
-
->>>>>>> e0151497 (Add sramPerson schema plus some necessary minor fixes)
     })
     return data
 
