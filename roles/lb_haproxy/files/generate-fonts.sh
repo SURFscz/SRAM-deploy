@@ -16,7 +16,7 @@ cat > $TMPFILE <<EOF
     space
 EOF
 
-for font in SourceSansPro-Regular SourceSansPro-Semibold
+for font in SourceSansPro-Regular SourceSansPro-Semibold Nunito-Bold
 do
 	echo ${font}
 	fonttools subset \
