@@ -146,7 +146,7 @@ backend {{host.name}}
 {% endfor %}
 
 {% for host in lb_ldap %}
-{% set name = "{}{}".format(host.hostname.split('.')[0], "" if loop.index==1 else "{}".format(loop.index)) -%}
+{% set name = "{}".format(host.hostname.split('.')[0]) -%}
 listen {{name}}
     no option dontlognull
     bind    *:{{host.frontend_port}} ssl crt {{host.hostname}}/priv+fullchain.pem transparent

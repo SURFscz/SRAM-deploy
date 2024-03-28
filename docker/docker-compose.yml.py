@@ -27,8 +27,9 @@ ip_lookup = {
     'db': 28,
     'bhr': 29,
     'test': 30,
-    'docker': 31,
-    'demo1': 32,
+    'demo1': 31,
+    'docker1': 32,
+    'docker2': 33,
     'redis': 98,
     'mail': 99,
 }
@@ -38,7 +39,7 @@ if args.ci and args.container:
 elif args.ci and not args.container:
     hosts = ['db', 'redis', 'sbs', 'test']
 elif not args.ci and args.container:
-    hosts = ['bhr', 'client', 'mail', 'lb', 'docker', 'demo1']
+    hosts = ['bhr', 'client', 'mail', 'lb', 'demo1', 'docker1', 'docker2']
 else:  # classic, non-ci, non-containerized setup
     hosts = ['bhr', 'client', 'lb', 'redis', 'mail', 'sandbox1', 'db', 'sbs', 'ldap1', 'ldap2', 'meta', 'demo1']
 
@@ -47,8 +48,9 @@ hosts_ip = {h: ip_lookup[h] for h in hosts}
 # these are the Docker containers that need to be spun up
 hosts = {
     'bhr': 29,
-    'docker': 31,
-    'demo1': 32,
+    'demo1': 31,
+    'docker1': 32,
+    'docker2': 33,
 }
 
 # the old non-containerized setup needs more hosts
@@ -133,9 +135,8 @@ def mail_config(num: int, name: str) -> Dict[str, Any]:
     """
     data = host_config(num, name)
     data.update({
-        'image': 'mailhog/mailhog:v1.0.1',
-        'ports': ['80:8025'],
-
+        'image': 'axllent/mailpit',
+        'ports': ['1025:1025', '8025:8025'],
     })
     return data
 
@@ -159,7 +160,6 @@ def redis_config(num: int, name: str) -> Dict[str, Any]:
 def create_compose() -> Dict[str, Any]:
     # generate the full docker-compose.yml file
     compose: Dict[str, Any] = dict()
-    compose['version'] = '2.4'
     compose['networks'] = {
         'scznet': {
             'driver': 'bridge',
@@ -182,7 +182,8 @@ def create_compose() -> Dict[str, Any]:
     if args.container:
         # Add volume for docker '/var/lib/docker'
         compose.setdefault('volumes', {})['docker_volume'] = {'driver': 'local'}
-        compose['services']['docker'].setdefault('volumes', []).append('docker_volume:/var/lib/docker')
+        compose['services']['docker1'].setdefault('volumes', []).append('docker_volume:/var/lib/docker1')
+        compose['services']['docker2'].setdefault('volumes', []).append('docker_volume:/var/lib/docker2')
 
     # Add mail test host on .99
     return compose

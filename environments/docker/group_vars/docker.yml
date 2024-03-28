@@ -18,14 +18,20 @@ containers:
 images:
   db: mariadb:11
   redis: redis:7
-  sbs: sram-sbs
-  sbs_server: sram-sbs-server
-  ldap: sram-ldap
-  metadata: sram-metadata
-  pyff: sram-pyff
-  plsc: sram-plsc
+  sbs: ghcr.io/surfscz/sram-sbs:main
+  sbs_server: ghcr.io/surfscz/sram-sbs-server:main
+  ldap: ghcr.io/surfscz/sram-ldap:main
+  metadata: ghcr.io/surfscz/sram-metadata:main
+  pyff: ghcr.io/surfscz/sram-pyff:main
+  plsc: ghcr.io/surfscz/sram-plsc:main
 
 ldap_uri: "ldap://localhost/"
+ldap_rids:
+  101: ldaps://ldap1.scz-vm.net/
+  102: ldaps://ldap2.scz-vm.net/
+ldap_hosts:
+  ldap1.scz-vm.net: "{{ iprange.lb }}"
+  ldap2.scz-vm.net: "{{ iprange.lb }}"
 
 traefik_network: traefik
 internal_network: sram
@@ -34,7 +40,7 @@ internal_network: sram
 ####################################################
 ## SBS
 ####################################################
-db_host: "docker.vm.scz-vm.net"
+db_host: "docker1.vm.scz-vm.net"
 sbs_db_host: "{{ containers.db }}"
 sbs_redis_host: "{{ containers.redis }}"
 
@@ -64,3 +70,6 @@ sbs_mfa_idp_allowed:
 sbs_ssid_identity_providers:
   - schac_home: "ssid.org"
     entity_id: "https://ssid.org"
+
+sbs_notifications_enabled: True
+sbs_cron_hour_of_day: "4"
