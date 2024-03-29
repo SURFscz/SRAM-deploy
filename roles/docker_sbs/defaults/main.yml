@@ -69,6 +69,7 @@ sbs_second_factor_authentication_required: True
 sbs_totp_token_name: "SRAM-example"
 sbs_notifications_enabled: True
 sbs_invitation_reminders_enabled: True
+sbs_open_requests_enabled: True
 sbs_scim_sweep: False
 sbs_impersonation_allowed: True
 sbs_admin_platform_backdoor_totp: True

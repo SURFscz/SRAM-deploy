@@ -208,11 +208,16 @@ invitation_reminders:
   invitation_reminders_threshold: 5
 
 orphan_users:
-  # Do we daily check for users that are orphans so they can be deleted?
+  # Do we daily check for users that are orphans soo they can be deleted?
   enabled:  {{ sbs_delete_orphaned }}
   cron_hour_of_day: {{ sbs_cron_hour_of_day }}
   # How long after created do we delete orphan users
   delete_days_threshold: 14
+
+open_requests:
+  # Do we weekly check for all open requests?
+  enabled: {{ sbs_open_requests_enabled }}
+  cron_day_of_week: 1
 
 scim_sweep:
   # Do we enable scim sweeps?
