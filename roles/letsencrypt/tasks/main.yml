@@ -19,11 +19,32 @@
     mode: "0755"
   notify: "renew letsencrypt certificates"
 
-- name: register letsencrypt account
+- name: register account (letsencrypt)
   command: "/usr/bin/certbot register"
   args:
-    creates: "{{letsencrypt_account_dir}}"
+    creates: "{{letsencrypt_account_dir}}\
+              /{{ 'acme-staging-v02.api.letsencrypt.org' \
+                  if letsencrypt_staging
+                  else 'acme-v02.api.letsencrypt.org' }}\
+              /directory"
   notify: "renew letsencrypt certificates"
+  when: "letsencrypt_server is not defined"
+
+- name: register account
+  command: >
+    /usr/bin/certbot register
+                     --server '{{letsencrypt_server}}'
+                      {% if letsencrypt_eab_keyid is defined %}
+                      --eab-kid '{{letsencrypt_eab_keyid}}'
+                      --eab-hmac-key '{{letsencrypt_eab_hmac}}'
+                      {% endif %}
+  args:
+    # NB: this is a hack to get the account dir from the server URL:
+    #     basically strip protocol up to //
+    creates: "{{letsencrypt_account_dir}}/\
+              {{ '/'.join(letsencrypt_server.split('/')[2:]) }}"
+  notify: "renew letsencrypt certificates"
+  when: "letsencrypt_server is defined"
 
 - name: check for new certs to generate
   stat:
@@ -37,6 +58,9 @@
   command:
     cmd: >
       /usr/bin/certbot certonly --noninteractive
+                                {% if letsencrypt_server is defined %}
+                                  --server '{{letsencrypt_server}}'
+                                {% endif %}
                                 --keep-until-expiring
                                 --renew-with-new-domains
                                 --domains={{item}}

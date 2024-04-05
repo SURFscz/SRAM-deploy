@@ -3,6 +3,9 @@
   command:
     cmd: >
       /usr/bin/certbot certonly --noninteractive
+                                {% if letsencrypt_server is defined %}
+                                  --server '{{letsencrypt_server}}'
+                                {% endif %}
                                 --keep-until-expiring
                                 --renew-with-new-domains
                                 --domains={{item}}
@@ -16,6 +19,9 @@
   command:
     cmd: >
       /usr/bin/certbot renew --noninteractive
+                             {% if letsencrypt_server is defined %}
+                               --server '{{letsencrypt_server}}'
+                             {% endif %}
                              --no-random-sleep-on-renew
                              --force-renewal
                              --cert-name={{item}}
