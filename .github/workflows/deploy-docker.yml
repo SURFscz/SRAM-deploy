@@ -126,17 +126,17 @@ jobs:
         run: "./start-vm --container"
 
       # Deploy components again for idempotency
-      #- name: Run start-vm --diff
-      #  env:
-      #    REEANTRANT: 1
-      #  run: "./start-vm --diff"
+      - name: Run start-vm
+        env:
+          REEANTRANT: 1
+        run: "./start-vm --container --diff"
 
-      #- name: Run idempotency check...
-      #  run: /usr/bin/python3 ./scripts/check-idempotency-status
+      - name: Run idempotency check...
+        run: /usr/bin/python3 ./scripts/check-idempotency-status
 
       # Run SBS logintest
-      #- name: Run SBS logintest
-      #  run: /usr/bin/python3 ./scripts/sbs-login.py
+      - name: Run SBS logintest
+        run: /usr/bin/python3 ./scripts/sbs-login.py
 
       - name: Save screenshot of error
         uses: actions/upload-artifact@v4
