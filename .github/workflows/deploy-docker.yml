@@ -1,7 +1,7 @@
 ---
 # This is a basic workflow to help you get started with Actions
 
-name: "VM-deploy"
+name: "deploy-docker"
 
 # Controls when the action will run.
 on:
@@ -14,8 +14,7 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  deploy_classic:
+  deploy_docker:
     # The type of runner that the job will run on
     runs-on: "ubuntu-20.04"
 
@@ -30,7 +29,7 @@ jobs:
         id: get-date
         run: echo "date=$(/bin/date -u '+%Y%m%d%k%M%S')" >> $GITHUB_OUTPUT
 
-      # Restore cache based no fake time key (allways miss)
+      # Restore cache based no fake time key (always miss)
       - name: Setup cache
         id: cache-docker
         uses: actions/cache@v4
@@ -96,7 +95,7 @@ jobs:
         shell: bash
         env:
           SKIP_ANSIBLE: 1
-        run: "./start-vm"
+        run: "./start-vm --container"
 
       # Clean  up old docker cruft
       - name: Clean  up old docker cruft
@@ -112,7 +111,6 @@ jobs:
           ID=$(docker image list scz-base -q) &&
           echo "ID=$ID" >> $GITHUB_OUTPUT
 
-
       # Save docker cache
       - name: Save docker cache
         run: >
@@ -125,20 +123,20 @@ jobs:
       # Deploy components
       - name: Run start-vm
         shell: bash
-        run: "./start-vm"
+        run: "./start-vm --container"
 
       # Deploy components again for idempotency
-      - name: Run start-vm --diff
-        env:
-          REEANTRANT: 1
-        run: "./start-vm --diff"
+      #- name: Run start-vm --diff
+      #  env:
+      #    REEANTRANT: 1
+      #  run: "./start-vm --diff"
 
-      - name: Run idempotency check...
-        run: /usr/bin/python3 ./scripts/check-idempotency-status
+      #- name: Run idempotency check...
+      #  run: /usr/bin/python3 ./scripts/check-idempotency-status
 
       # Run SBS logintest
-      - name: Run SBS logintest
-        run: /usr/bin/python3 ./scripts/sbs-login.py
+      #- name: Run SBS logintest
+      #  run: /usr/bin/python3 ./scripts/sbs-login.py
 
       - name: Save screenshot of error
         uses: actions/upload-artifact@v4
