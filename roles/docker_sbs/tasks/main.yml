@@ -295,7 +295,7 @@
     restart_policy: "always"
     restart: true
     state: started
-    # pull: true
+    pull: true
     env:
       REQUESTS_CA_BUNDLE: /etc/ssl/certs/ca-certificates.crt
     volumes:

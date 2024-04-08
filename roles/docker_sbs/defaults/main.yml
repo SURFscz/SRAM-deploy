@@ -26,6 +26,7 @@ sbs_migration_user: "sbs_migrater"
 sbs_redis_host: "sbs-redis"
 sbs_redis_port: 6379
 sbs_redis_ssl: false
+sbs_redis_user: default
 
 sbs_mail_host: "{{ mail.relay_to }}"
 sbs_mail_port: "{{ mail.relay_port }}"
@@ -76,6 +77,8 @@ sbs_impersonation_allowed: True
 sbs_admin_platform_backdoor_totp: True
 sbs_past_dates_allowed: True
 sbs_mock_scim_enabled: True
+
+sbs_open_requests: False
 
 sbs_delete_orphaned: True
 sbs_suspension_inactive_days: 365
