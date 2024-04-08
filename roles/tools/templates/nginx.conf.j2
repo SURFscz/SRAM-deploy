@@ -19,7 +19,7 @@ server {
 
     ssl_certificate        /etc/letsencrypt/live/{{tools_hostname}}/fullchain.pem;
     ssl_certificate_key    /etc/letsencrypt/live/{{tools_hostname}}/privkey.pem;
-    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
 
     include security_headers;
 
