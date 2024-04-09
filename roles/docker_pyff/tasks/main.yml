@@ -6,6 +6,7 @@
     mode: "0755"
     owner: "root"
   loop: "{{ lookup('ansible.builtin.dict', metadata_dirs) }}"
+  notify: "Restart the pyFF container"
 
 - name: Copy source certificates
   copy:
@@ -14,6 +15,7 @@
   with_items:
     - edugain.crt
     - surfconext.crt
+  notify: "Restart the pyFF container"
 
 - name: create self-signed Metadata Signing SSL certs
   shell:
@@ -24,6 +26,7 @@
       -out "{{ metadata_dirs.certs }}/signing.crt" -extensions v3_ca
     creates: "{{ metadata_dirs.certs }}/signing.crt"
   when: "metadata_signing_cert is not defined"
+  notify: "Restart the pyFF container"
 
 - name: write fixed Metadata signing certificates
   copy:
@@ -34,6 +37,7 @@
     - { file: "signing.key", mode: "0640", contents: "{{metadata_signing_cert.priv}}" }
     - { file: "signing.crt", mode: "0644", contents: "{{metadata_signing_cert.pub}}"  }
   when: "metadata_signing_cert is defined"
+  notify: "Restart the pyFF container"
 
 # - name: Write source metadata certificates
 #   template:
@@ -63,8 +67,7 @@
     mode: "0644"
     owner: "root"
   with_items: "{{ metadata_idps_files }}"
-  # notify:
-  #   - "run pyff-metadata job"
+  notify: "Restart the pyFF container"
 
 # - name: Remove old files
 #   file:
@@ -82,6 +85,7 @@
     - 02_backend.fd
     - 03_frontend.fd
     - 04_edugain.fd
+  notify: "Restart the pyFF container"
 
 - name: Copy pyFF xslt transformations
   copy:
@@ -91,6 +95,7 @@
     - transform_edugain.xslt
     - transform_proxy.xslt
     - transform.xslt
+  notify: "Restart the pyFF container"
 
 # - name: Create pyFF mdq configuration
 #   template:
