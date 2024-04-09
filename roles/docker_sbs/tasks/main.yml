@@ -278,34 +278,16 @@
     networks:
       - name: "{{internal_network}}"
 
-
-- name: Pull sbs container image and create container
-  docker_container:
-    name: "{{ containers.sbs }}"
-    image: "{{ images.sbs }}"
-    restart_policy: "always"
-    state: present
-    pull: "always"
-    comparisons:
-      image: "strict"
-    env:
-      REQUESTS_CA_BUNDLE: /etc/ssl/certs/ca-certificates.crt
-    volumes:
-      - "{{ sbs_conf_dir }}:/opt/sbs/config"
-      - "{{ sbs_cert_dir }}:/opt/sbs/cert"
-      - "{{ sbs_log_dir }}:/opt/sbs/log"
-      - "sbs_static:/opt/sbs/client/build"
-    networks:
-      - name: "{{internal_network}}"
-    etc_hosts:
-      oidc-op.scz-vm.net: "172.20.1.24"
-  register: sbs_container
+- name: Pull sbs image
+  community.docker.docker_image_pull:
+    name: "{{ images.sbs }}"
+  register: "sbs_image"
 
 - name: Start sbs container
   docker_container:
     name: "{{ containers.sbs }}"
     state: started
-  when: "sbs_container is changed"
+  when: "sbs_image is changed"
 
 # We need to remove sram-static so it gets repopulated
 # with new SBS image static content
@@ -316,18 +298,19 @@
   with_items:
     - "{{ containers.sbs }}"
     - "{{ containers.sbs_server }}"
-  when: "sbs_container is changed"
+  when: "sbs_image is changed"
 
 - name: Remove sbs_static volume
   community.docker.docker_volume:
     name: sbs_static
     state: absent
-  when: "sbs_container is changed"
+  when: "sbs_image is changed"
 
 - name: Recreate sbs container
   docker_container:
     name: "{{ containers.sbs }}"
     image: "{{ images.sbs }}"
+    pull: "never"
     restart_policy: "always"
     state: "started"
     env:
@@ -341,7 +324,7 @@
       - name: "{{internal_network}}"
     etc_hosts:
       oidc-op.scz-vm.net: "172.20.1.24"
-  when: "sbs_container is changed"
+  when: "sbs_image is changed"
 
 - name: Create apache container
   docker_container:
