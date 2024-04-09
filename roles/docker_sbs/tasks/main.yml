@@ -283,12 +283,6 @@
     name: "{{ images.sbs }}"
   register: "sbs_image"
 
-- name: Start sbs container
-  docker_container:
-    name: "{{ containers.sbs }}"
-    state: started
-  when: "sbs_image is changed"
-
 # We need to remove sram-static so it gets repopulated
 # with new SBS image static content
 - name: Stop and remove sbs and sbs-server containers
@@ -306,7 +300,7 @@
     state: absent
   when: "sbs_image is changed"
 
-- name: Recreate sbs container
+- name: Start sbs container
   docker_container:
     name: "{{ containers.sbs }}"
     image: "{{ images.sbs }}"
@@ -324,9 +318,8 @@
       - name: "{{internal_network}}"
     etc_hosts:
       oidc-op.scz-vm.net: "172.20.1.24"
-  when: "sbs_image is changed"
 
-- name: Create apache container
+- name: Start apache container
   docker_container:
     name: "{{ containers.sbs_server }}"
     image: "{{ images.sbs_server }}"
