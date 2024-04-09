@@ -141,6 +141,7 @@
     owner: "root"
     group: "root"
     mode: 0644
+  notify: "Restart sbs containers"
 
 - name: Copy https cert
   copy:
@@ -149,11 +150,13 @@
     owner: "root"
     group: "root"
     mode: 0644
+  notify: "Restart sbs containers"
 
 - name: "Create redis config"
   template:
     src: "redis.conf.j2"
     dest: "{{ redis_conf_dir }}/redis.conf"
+  notify: "Restart redis container"
 
 - name: "Create SBS config files"
   template:
@@ -168,6 +171,7 @@
     - { name: "disclaimer.css", mode: "0644" }
   # notify: "restart sbs"
   no_log: "{{sram_ansible_nolog}}"
+  notify: "Restart sbs containers"
 
 # - name: "Remove obsolete JWT keys"
 #   file:
@@ -189,6 +193,7 @@
     - { name: "advanced_settings.json", mode: "0644" }
   # notify: "restart sbs"
   no_log: "{{ sram_ansible_nolog }}"
+  notify: "Restart sbs containers"
 
 # - name: "Create links to config files"
 #   file:
@@ -236,6 +241,7 @@
   template:
     src: "sbs-apache.j2"
     dest: "{{ sbs_apache_conf }}"
+  notify: "Restart sbs containers"
 
 # - name: "install nginx config"
 #   template:
@@ -272,29 +278,16 @@
     networks:
       - name: "{{internal_network}}"
 
-# We need to remove sram-static so it gets repopulated
-# with new SBS image static content
-- name: Stop and remove sbs and sbs-server containers
-  docker_container:
-    name: "{{ item }}"
-    state: absent
-  with_items:
-    - "{{ containers.sbs }}"
-    - "{{ containers.sbs_server }}"
 
-- name: Remove sbs_static volume
-  community.docker.docker_volume:
-    name: sbs_static
-    state: absent
-
-- name: Create sbs container
+- name: Pull sbs container image and create container
   docker_container:
     name: "{{ containers.sbs }}"
     image: "{{ images.sbs }}"
     restart_policy: "always"
-    restart: true
-    state: started
-    pull: true
+    state: present
+    pull: "always"
+    comparisons:
+      image: "strict"
     env:
       REQUESTS_CA_BUNDLE: /etc/ssl/certs/ca-certificates.crt
     volumes:
@@ -305,16 +298,58 @@
     networks:
       - name: "{{internal_network}}"
     etc_hosts:
-      oidc-op.scz-vm.net: 172.20.1.24
+      oidc-op.scz-vm.net: "172.20.1.24"
+  register: sbs_container
+
+- name: Start sbs container
+  docker_container:
+    name: "{{ containers.sbs }}"
+    state: started
+  when: "sbs_container is changed"
+
+# We need to remove sram-static so it gets repopulated
+# with new SBS image static content
+- name: Stop and remove sbs and sbs-server containers
+  docker_container:
+    name: "{{ item }}"
+    state: absent
+  with_items:
+    - "{{ containers.sbs }}"
+    - "{{ containers.sbs_server }}"
+  when: "sbs_container is changed"
+
+- name: Remove sbs_static volume
+  community.docker.docker_volume:
+    name: sbs_static
+    state: absent
+  when: "sbs_container is changed"
+
+- name: Recreate sbs container
+  docker_container:
+    name: "{{ containers.sbs }}"
+    image: "{{ images.sbs }}"
+    restart_policy: "always"
+    state: "started"
+    env:
+      REQUESTS_CA_BUNDLE: /etc/ssl/certs/ca-certificates.crt
+    volumes:
+      - "{{ sbs_conf_dir }}:/opt/sbs/config"
+      - "{{ sbs_cert_dir }}:/opt/sbs/cert"
+      - "{{ sbs_log_dir }}:/opt/sbs/log"
+      - "sbs_static:/opt/sbs/client/build"
+    networks:
+      - name: "{{internal_network}}"
+    etc_hosts:
+      oidc-op.scz-vm.net: "172.20.1.24"
+  when: "sbs_container is changed"
 
 - name: Create apache container
   docker_container:
     name: "{{ containers.sbs_server }}"
     image: "{{ images.sbs_server }}"
     restart_policy: "always"
-    restart: true
     state: started
-    # pull: true
+    pull: "always"
     volumes:
       - "{{ sbs_apache_conf }}:/etc/apache2/sites-enabled/sbs.conf:ro"
       - "sbs_static:/var/www/html"
