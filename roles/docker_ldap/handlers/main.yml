@@ -17,3 +17,8 @@
     enabled: true
     daemon-reload: true
 
+- name: Restart the ldap container
+  docker_container:
+    name: "{{ containers.ldap }}"
+    restart: true
+    state: started

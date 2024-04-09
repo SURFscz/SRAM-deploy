@@ -49,6 +49,7 @@
     - { path: "{{ldap_ldif_dir}}",  mode: "0755" }
     - { path: "{{ldap_certs_dir}}", mode: "0755" }
     - { path: "{{ldap_data_dir}}",  mode: "0777" }
+  notify: Restart the ldap container
 
 - name: Copy schemas
   copy:
@@ -63,6 +64,7 @@
     - eduMember.ldif
     - voPerson.ldif
     - sramPerson.ldif
+  notify: Restart the ldap container
 
 # - name: Copy DH params
 #   copy:
@@ -80,6 +82,7 @@
     # group: "ssl-cert"
     mode: "0644"
   no_log: "{{sram_ansible_nolog}}"
+  notify: Restart the ldap container
 
 - name: Create wildcard backend cert
   copy:
@@ -88,6 +91,7 @@
     # owner: "root"
     # group: "root"
     mode: "0644"
+  notify: Restart the ldap container
 
 - name: Copy wildcard frontend cert
   copy:
@@ -95,13 +99,13 @@
     remote_src: true
     dest: "{{ldap_certs_dir}}/frontend.crt"
     mode: "0644"
+  notify: Restart the ldap container
 
 - name: Create the ldap container
   docker_container:
     name: "{{ containers.ldap }}"
     image: "{{ images.ldap }}"
     restart_policy: "always"
-    restart: true
     state: started
     # pull: true
     ports:

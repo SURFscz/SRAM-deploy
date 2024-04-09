@@ -142,6 +142,7 @@
   with_items:
     - { path: "{{mariadb_conf_dir}}",  mode: "0755" }
     - { path: "{{mariadb_cert_dir}}",  mode: "0755" }
+  notify: "Restart the database container"
 
 - name: Create wildcard backend key
   copy:
@@ -151,6 +152,8 @@
     group: "ssl-cert"
     mode: 0644
   no_log: "{{sram_ansible_nolog}}"
+  notify: "Restart the database container"
+
 
 - name: Create wildcard backend cert
   copy:
@@ -159,12 +162,14 @@
     owner: "root"
     group: "root"
     mode: 0644
+  notify: "Restart the database container"
 
 - name: Install mariadb config
   template:
     src: 60-sram.cnf.j2
     # dest: /etc/mysql/mariadb.conf.d/60-scz.cnf
     dest: "{{mariadb_conf_dir}}/sram.cnf"
+  notify: "Restart the database container"
   # notify: restart MariaDB
 
 # - name: add mysql user to ssl-cert group
@@ -188,7 +193,6 @@
     name: "{{ containers.db }}"
     image: "{{ images.db }}"
     restart_policy: "always"
-    restart: true
     state: started
     # pull: true
     ports:

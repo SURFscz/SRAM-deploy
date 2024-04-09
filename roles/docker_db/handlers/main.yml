@@ -1,7 +1,13 @@
 ---
-- name: restart MariaDB
-  systemd:
-    daemon_reload: true
-    name: "mariadb"
-    state: "restarted"
-    enabled: true
+# - name: restart MariaDB
+#   systemd:
+#     daemon_reload: true
+#     name: "mariadb"
+#     state: "restarted"
+#     enabled: true
+
+- name: Restart the database container
+  docker_container:
+    name: "{{ containers.db }}"
+    restart: true
+    state: started

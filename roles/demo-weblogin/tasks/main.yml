@@ -12,7 +12,6 @@
     name: "{{ containers.weblogin }}"
     image: "{{ images.weblogin }}"
     restart_policy: "always"
-    restart: true
     state: started
     # pull: true
     env:

@@ -143,7 +143,6 @@
     name: "{{ containers.pyff }}"
     image: "{{ images.pyff }}"
     restart_policy: "always"
-    restart: true
     state: started
     # pull: true
     volumes:
@@ -154,4 +153,3 @@
       - "{{ metadata_dirs.web }}:/opt/pyff/web"
     networks:
       - name: "bridge"
-

@@ -140,7 +140,6 @@
     name: "{{ containers.metadata }}"
     image: "{{ images.metadata }}"
     restart_policy: "always"
-    restart: true
     state: started
     # pull: true
     volumes:

@@ -264,7 +264,6 @@
     name: "{{ containers.redis }}"
     image: "{{ images.redis }}"
     restart_policy: "always"
-    restart: true
     state: started
     # pull: true
     command: redis-server /usr/local/etc/redis/redis.conf
@@ -318,7 +317,7 @@
     # pull: true
     volumes:
       - "{{ sbs_apache_conf }}:/etc/apache2/sites-enabled/sbs.conf:ro"
-      - sbs_static:/var/www/html
+      - "sbs_static:/var/www/html"
     networks:
       - name: "{{traefik_network}}"
       - name: "{{internal_network}}"

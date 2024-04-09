@@ -1,14 +1,14 @@
 ---
-- name: restart nginx
-  service:
-    name: nginx
-    state: restarted
+# - name: restart nginx
+#   service:
+#     name: nginx
+#     state: restarted
 
-- name: "systemd daemon-reload"
-  systemd:
-    daemon_reload: true
+# - name: "systemd daemon-reload"
+#   systemd:
+#     daemon_reload: true
 
-- name: "restart zabbix-agent"
-  systemd:
-    name: "zabbix-agent2.service"
-    state: "restarted"
+# - name: "restart zabbix-agent"
+#   systemd:
+#     name: "zabbix-agent2.service"
+#     state: "restarted"
