@@ -156,30 +156,17 @@ jobs:
 
       - name: Show docker status
         run: >
-          ansible -v -i environments/docker/inventory --become "docker"
-                  -m command -a "/usr/bin/docker ps -a"
+          ansible -v -i environments/docker/inventory --become "docker" -m command -a "/usr/bin/docker ps -a"
         if: failure()
 
       - name: Show docker logs
         run: >
-          ansible -v -i environments/docker/inventory --become "docker"
-                  -m command -a
-                  "for c in $(docker ps -q);
-                   do
-                     name=$(docker inspect --format '{{.Name}} ({{.Id}})' $c);
-                     echo -e '\n\n========\n== '$name'\n==========\n';
-                     docker logs -n 1000 $c 2>/dev/null;
-                  done
-                "
+          ansible -v -i environments/docker/inventory --become "docker" -m command -a "for c in $(docker ps -q); do name=$(docker inspect --format '{{.Name}} ({{.Id}})' $c); echo -e '\n\n========\n== '$name'\n==========\n'; docker logs -n 1000 $c 2>/dev/null; done "
         if: failure()
 
       - name: Show sbs logs
         run: >
-          ansible -v -i environments/vm/inventory --become "docker1" -m command -a "/bin/sh -c '
-              echo ===sbs log===;
-              cat /opt/sram/sbs/log/sbs_debug.log
-            fi;
-          '"
+          ansible -v -i environments/vm/inventory --become "docker1" -m command -a "/bin/sh -c ' echo ===sbs log===; cat /opt/sram/sbs/log/sbs_debug.log fi; '"
         if: failure()
 
       # Setup tmate session
