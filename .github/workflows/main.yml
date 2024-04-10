@@ -179,7 +179,7 @@ jobs:
           ansible -v -i environments/vm/inventory --become "sbs" -m command -a "/bin/sh -c '
             if [ -e /opt/sbs/sbs/log/sbs.log ]; then
               echo ===sbs log===;
-              cat /opt/sbs/log/sbs_debug.log
+              cat /opt/sbs/log/debug.log
             fi;
             echo ===apt log===; cat /var/log/apt/term.log
             echo ===netstat===; netstat -lnp
