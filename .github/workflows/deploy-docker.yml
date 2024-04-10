@@ -36,10 +36,14 @@ jobs:
           sudo pip3 install --upgrade wheel yamllint jinja2 pyyaml selenium \
                                       zabbix-api requests bs4
           git clone https://github.com/dw/mitogen.git ~/mitogen
+
+      - name: Fix docker crap
+        run: |
           cat docker/hosts | sudo tee -a /etc/hosts
-          sudo docker system prune -f
+          #sudo docker system prune -f
           sudo systemctl stop docker
-          time sudo mv /var/lib/docker /mnt
+          sudo mv /var/lib/docker /var/lib/docker.old  # faster than removing
+          sudo mkdir -p /mnt/docker
           sudo ln -s /mnt/docker /var/lib
           sudo systemctl start docker
 
