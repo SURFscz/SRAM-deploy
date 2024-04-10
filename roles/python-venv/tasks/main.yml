@@ -57,5 +57,6 @@
     requirements: "{{ python_venv_requirements }}"
     virtualenv: "{{ python_venv_dir }}"
     state: "present"
+    extra_args: --upgrade
   become: "{{python_venv_become}}"
   become_user: "{{python_venv_user}}"
