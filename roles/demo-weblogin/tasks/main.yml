@@ -1,4 +1,11 @@
 ---
+- name: Create weblogin directory
+  file:
+    path: "{{ weblogin_basedir }}"
+    state: "directory"
+    mode: "0755"
+    owner: "root"
+
 - name: Pull the Weblogin container image
   community.docker.docker_image_pull:
     name: "{{ images.weblogin }}"

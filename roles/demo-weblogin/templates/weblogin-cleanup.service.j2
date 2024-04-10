@@ -9,7 +9,7 @@ WorkingDirectory={{weblogin_basedir}}
 # clean up
 ExecStart=-/usr/bin/docker rm -f {{ containers.weblogin }}
 ExecStart=+/bin/rm -rf '{{weblogin_basedir}}/home'
-ExecStart=+/bin/mkdir -m0755 '{{weblogin_basedir}}/home'
+ExecStart=+/bin/mkdir -p -m0755 '{{weblogin_basedir}}/home'
 
 # start container
 ExecStart=/usr/bin/docker run -d \
