@@ -93,12 +93,12 @@ jobs:
         run: docker load -i ~/docker-save/scz-base-cache.tar || true
 
       # Clean  up old docker cruft
-      - name: Clean  up old docker cruft
-        run: |
-          docker system prune -f --all
-          docker image  prune -f --all
-          docker volume prune -f
-          docker buildx prune -f
+      #- name: Clean  up old docker cruft
+      #  run: |
+      #    docker system prune -f --all
+      #    docker image  prune -f --all
+      #    docker volume prune -f
+      #    docker buildx prune -f
 
       # Get scz-base-cache ImageID
       - name: Get scz-base-cache ImageID
@@ -166,23 +166,29 @@ jobs:
 
       - name: Show docker logs
         run: |
-          ansible -v -i environments/docker/inventory --become "docker" \
-                  -m command -a "/bin/sh -c '
-                    docker ps -q | while read c; do
-                      name=`docker inspect --format \"{{.Name}} ({{.Id}})\" $c`;
-                      echo -e \"\n\n========\n== $name\n==========\n\";
-                      docker logs -n 1000 $c 2>/dev/null;
-                    done
-                  '"
-        if: failure()
+          docker exec -ti docker-docker1-1 /bin/sh -c '
+            docker ps -q | while read c; do
+              name=$(docker inspect --format "{{.Name}} ({{.Id}})" $c);
+              echo -e "\n\n========\n== $name\n==========\n";
+              docker logs -n 10 $c 2>/dev/null;
+            done
+          '
+          docker exec -ti docker-docker2-1 /bin/sh -c '
+            docker ps -q | while read c; do
+              name=$(docker inspect --format "{{.Name}} ({{.Id}})" $c);
+              echo -e "\n\n========\n== $name\n==========\n";
+              docker logs -n 10 $c 2>/dev/null;
+            done
+          '
+          if: failure()
 
       - name: Show sbs logs
         run: |
           ansible -v -i environments/docker/inventory --become "docker" \
                   -m command -a "/bin/sh -c '
-                    if test -e /opt/sram/sbs/log/sbs_debug.log; then
+                    if test -e /opt/sram/sbs/log/sbs.log; then
                       echo ===sbs log===;
-                      cat /opt/sram/sbs/log/sbs_debug.log;
+                      cat /opt/sram/sbs/log/sbs.log;
                     else
                       echo ===no sbs log===;
                     fi
@@ -193,7 +199,7 @@ jobs:
       - name: Setup tmate session
         env:
           ACTIONS_STEP_DEBUG: ${{ secrets.ACTIONS_STEP_DEBUG }}
-        if: ${{ failure() && env.ACTIONS_STEP_DEBUG == 'true' }}
+        #if: ${{ failure() && env.ACTIONS_STEP_DEBUG == 'true' }}
         uses: mxschmitt/action-tmate@v3
         with:
           limit-access-to-actor: true
