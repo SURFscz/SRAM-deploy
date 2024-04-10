@@ -164,7 +164,7 @@ jobs:
         run: |
           ansible -v -i environments/docker/inventory --become "docker" \
                   -m command -a "/bin/sh -c '
-                    for c in `docker ps -q`; do
+                    docker ps -q | while read c; do
                       name=`docker inspect --format \"{{.Name}} ({{.Id}})\" $c`;
                       echo -e \"\n\n========\n== $name\n==========\n\";
                       docker logs -n 1000 $c 2>/dev/null;
@@ -176,8 +176,12 @@ jobs:
         run: |
           ansible -v -i environments/docker/inventory --become "docker" \
                   -m command -a "/bin/sh -c '
-                    echo ===sbs log===;
-                    cat /opt/sram/sbs/log/sbs_debug.log
+                    if test -e /opt/sram/sbs/log/sbs_debug.log; then
+                      echo ===sbs log===;
+                      cat /opt/sram/sbs/log/sbs_debug.log;
+                    else
+                      echo ===no sbs log===;
+                    fi
                   '"
         if: failure()
 
