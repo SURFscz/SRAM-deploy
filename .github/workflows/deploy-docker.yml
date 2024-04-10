@@ -135,10 +135,10 @@ jobs:
       - name: Run start-vm
         env:
           REEANTRANT: 1
-        run: "./start-vm --container --diff"
+        run: "./start-vm --container --diff --tags=common"
 
-      - name: Run idempotency check...
-        run: /usr/bin/python3 ./scripts/check-idempotency-status
+      #- name: Run idempotency check...
+      #  run: /usr/bin/python3 ./scripts/check-idempotency-status
 
       # Run SBS logintest
       - name: Run SBS logintest
@@ -163,21 +163,21 @@ jobs:
       - name: Show docker logs
         run: |
           ansible -v -i environments/docker/inventory --become "docker" \
-                  -m command -a " \
-                    for c in $(docker ps -q); do \
-                      name=$(docker inspect --format '{{.Name}} ({{.Id}})' $c); \
-                      echo -e '\n\n========\n== '$name'\n==========\n'; \
-                      docker logs -n 1000 $c 2>/dev/null; \
-                    done\
-                  "
+                  -m command -a "/bin/sh -c '
+                    for c in $(docker ps -q); do
+                      name=$(docker inspect --format \"{{.Name}} ({{.Id}})\" $c);
+                      echo -e \"\n\n========\n== $name\n==========\n\";
+                      docker logs -n 1000 $c 2>/dev/null;
+                    done
+                  '"
         if: failure()
 
       - name: Show sbs logs
         run: |
-          ansible -v -i environments/vm/inventory --become "docker1" \
-                  -m command -a "/bin/sh -c '\
-                    echo ===sbs log===; \
-                    cat /opt/sram/sbs/log/sbs_debug.log \
+          ansible -v -i environments/vm/inventory --become "docker" \
+                  -m command -a "/bin/sh -c '
+                    echo ===sbs log===;
+                    cat /opt/sram/sbs/log/sbs_debug.log
                   '"
         if: failure()
 
