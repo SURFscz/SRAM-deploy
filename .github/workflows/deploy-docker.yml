@@ -154,47 +154,31 @@ jobs:
             console.txt
         if: failure()
 
-      - name: Show journal output
+      - name: Show docker status
         run: >
-          ansible -v -i environments/vm/inventory --become "all" -m command -a "/bin/sh -c '
-            echo ====journal===;
-            journalctl -n200;
-          '"
+          ansible -v -i environments/docker/inventory --become "docker"
+                  -m command -a "/usr/bin/docker ps -a"
         if: failure()
 
-      - name: Show apache output
+      - name: Show docker logs
         run: >
-          ansible -v -i environments/vm/inventory --become "all" -m command -a "/bin/sh -c '
-            if [ -e /var/log/apache2/error.log ]; then
-              echo ===apache errorlog===;
-              cat /var/log/apache2/error.log;
-            fi;
-          '"
+          ansible -v -i environments/docker/inventory --become "docker"
+                  -m command -a
+                  "for c in $(docker ps -q);
+                   do
+                     name=$(docker inspect --format '{{.Name}} ({{.Id}})' $c);
+                     echo -e '\n\n========\n== '$name'\n==========\n';
+                     docker logs -n 1000 $c 2>/dev/null;
+                  done
+                "
         if: failure()
 
-      - name: Show sbs output
+      - name: Show sbs logs
         run: >
-          ansible -v -i environments/vm/inventory --become "sbs" -m command -a "/bin/sh -c '
-            if [ -e /opt/sbs/sbs/log/sbs.log ]; then
+          ansible -v -i environments/vm/inventory --become "docker1" -m command -a "/bin/sh -c '
               echo ===sbs log===;
-              cat /opt/sbs/log/sbs_debug.log
+              cat /opt/sram/sbs/log/sbs_debug.log
             fi;
-            echo ===apt log===; cat /var/log/apt/term.log
-            echo ===netstat===; netstat -lnp
-          '"
-        if: failure()
-
-      - name: Show apt output
-        run: >
-          ansible -v -i environments/vm/inventory --become "all" -m command -a "/bin/sh -c '
-            echo ===apt log===; cat /var/log/apt/term.log
-          '"
-        if: failure()
-
-      - name: Show netstat output
-        run: >
-          ansible -v -i environments/vm/inventory --become "all" -m command -a "/bin/sh -c '
-            echo ===netstat===; netstat -lnp
           '"
         if: failure()
 
