@@ -52,11 +52,20 @@
   become: "{{python_venv_become}}"
   become_user: "{{python_venv_user}}"
 
+- name: Upgrade default
+  set_fact:
+    upgrade: ""
+
+- name: Upgrade when changed
+  set_fact:
+    upgrade: "--upgrade"
+  when: "python_venv_upgrade"
+
 - name: Install requirements
   pip:
     requirements: "{{ python_venv_requirements }}"
     virtualenv: "{{ python_venv_dir }}"
     state: "present"
-    extra_args: --upgrade
+    extra_args: "{{ upgrade }}"
   become: "{{python_venv_become}}"
   become_user: "{{python_venv_user}}"
