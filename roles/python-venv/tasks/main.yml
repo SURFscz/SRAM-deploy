@@ -52,10 +52,6 @@
   become: "{{python_venv_become}}"
   become_user: "{{python_venv_user}}"
 
-# - name: Upgrade default
-#   set_fact:
-#     upgrade: ""
-
 - name: Upgrade when changed
   set_fact:
     upgrade: "--upgrade"
