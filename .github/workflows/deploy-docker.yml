@@ -24,22 +24,7 @@ jobs:
       - name: Checkout $GITHUB_WORKSPACE
         uses: actions/checkout@v4
 
-      # Create date output to seconds
-      - name: Get Date
-        id: get-date
-        run: echo "date=$(/bin/date -u '+%Y%m%d%k%M%S')" >> $GITHUB_OUTPUT
-
-      # Restore cache based no fake time key (always miss)
-      - name: Setup cache
-        id: cache-docker
-        uses: actions/cache@v4
-        with:
-          path: ~/docker-save
-          key: docker-save-${{ steps.get-date.outputs.date }}
-          restore-keys: docker-save-
-
-      # Run errands
-      - name: Run errands
+      - name: Update and install stuff
         run: |
           sudo rm -f /opt/pipx_bin/ansible*
           sudo rm -rf /etc/apt/sources.list.d/*
@@ -50,7 +35,25 @@ jobs:
           sudo pip3 install --upgrade wheel yamllint jinja2 pyyaml selenium \
                                       zabbix-api requests bs4
           git clone https://github.com/dw/mitogen.git ~/mitogen
+
+      - name: Fix docker crap
+        run: |
           cat docker/hosts | sudo tee -a /etc/hosts
+          #sudo docker system prune -f
+          sudo systemctl stop docker
+          sudo mv /var/lib/docker /var/lib/docker.old  # faster than removing
+          sudo mkdir -p /mnt/docker
+          sudo ln -s /mnt/docker /var/lib
+          sudo systemctl start docker
+
+      # See https://github.com/actions/cache/blob/main/tips-and-workarounds.md#update-a-cache
+      - name: Setup cache
+        id: cache-docker
+        uses: actions/cache@v4
+        with:
+          path: ~/docker-save
+          key: docker-save-${{ github.run_id }}
+          restore-keys: docker-save-
 
       # Useful for debugging
       - name: Show versions
@@ -97,13 +100,6 @@ jobs:
           SKIP_ANSIBLE: 1
         run: "./start-vm --container"
 
-      # Clean  up old docker cruft
-      - name: Clean  up old docker cruft
-        run: |
-          docker system prune -f --all
-          docker image  prune -f --all
-          docker volume prune -f
-
       # Get scz-base ImageID
       - name: Get scz-base ImageID
         id: scz-base-id
@@ -111,7 +107,7 @@ jobs:
           ID=$(docker image list scz-base -q) &&
           echo "ID=$ID" >> $GITHUB_OUTPUT
 
-      # Save docker cache
+      # Save newly created containers to docker cache
       - name: Save docker cache
         run: >
           mkdir -p ~/docker-save &&
@@ -129,7 +125,7 @@ jobs:
       - name: Run start-vm
         env:
           REEANTRANT: 1
-        run: "./start-vm --container --diff"
+        run: "./start-vm --container --diff --tags=common"
 
       - name: Run idempotency check...
         run: /usr/bin/python3 ./scripts/check-idempotency-status
@@ -148,57 +144,52 @@ jobs:
             console.txt
         if: failure()
 
-      - name: Show journal output
-        run: >
-          ansible -v -i environments/vm/inventory --become "all" -m command -a "/bin/sh -c '
-            echo ====journal===;
-            journalctl -n200;
-          '"
+      - name: Show docker status
+        run: |
+          ansible -v -i environments/docker/inventory --become "docker" \
+                  -m command -a "/usr/bin/docker ps -a"
         if: failure()
 
-      - name: Show apache output
-        run: >
-          ansible -v -i environments/vm/inventory --become "all" -m command -a "/bin/sh -c '
-            if [ -e /var/log/apache2/error.log ]; then
-              echo ===apache errorlog===;
-              cat /var/log/apache2/error.log;
-            fi;
-          '"
+      - name: Show docker logs
+        run: |
+          docker exec -ti docker-docker1-1 /bin/sh -c '
+            docker ps -q | while read c; do
+              name=$(docker inspect --format "{{.Name}} ({{.Id}})" $c);
+              echo -e "\n\n========\n== $name\n==========\n";
+              docker logs -n 10 $c 2>/dev/null;
+            done
+          '
+          docker exec -ti docker-docker2-1 /bin/sh -c '
+            docker ps -q | while read c; do
+              name=$(docker inspect --format "{{.Name}} ({{.Id}})" $c);
+              echo -e "\n\n========\n== $name\n==========\n";
+              docker logs -n 10 $c 2>/dev/null;
+            done
+          '
         if: failure()
 
-      - name: Show sbs output
-        run: >
-          ansible -v -i environments/vm/inventory --become "sbs" -m command -a "/bin/sh -c '
-            if [ -e /opt/sbs/sbs/log/sbs.log ]; then
-              echo ===sbs log===;
-              cat /opt/sbs/log/sbs_debug.log
-            fi;
-            echo ===apt log===; cat /var/log/apt/term.log
-            echo ===netstat===; netstat -lnp
-          '"
-        if: failure()
-
-      - name: Show apt output
-        run: >
-          ansible -v -i environments/vm/inventory --become "all" -m command -a "/bin/sh -c '
-            echo ===apt log===; cat /var/log/apt/term.log
-          '"
-        if: failure()
-
-      - name: Show netstat output
-        run: >
-          ansible -v -i environments/vm/inventory --become "all" -m command -a "/bin/sh -c '
-            echo ===netstat===; netstat -lnp
-          '"
+      - name: Show sbs logs
+        run: |
+          ansible -v -i environments/docker/inventory --become "docker" \
+                  -m command -a "/bin/sh -c '
+                    if test -e /opt/sram/sbs/log/sbs.log; then
+                      echo ===sbs log===;
+                      cat /opt/sram/sbs/log/sbs.log;
+                    else
+                      echo ===no sbs log===;
+                    fi
+                  '"
         if: failure()
 
       # Setup tmate session
       - name: Setup tmate session
-        env:
-          ACTIONS_STEP_DEBUG: "${{ secrets.ACTIONS_STEP_DEBUG}}"
-        if: "${{ env.ACTIONS_STEP_DEBUG}}"
         uses: mxschmitt/action-tmate@v3
         with:
           limit-access-to-actor: true
-        timeout-minutes: 15
+        timeout-minutes: 60
+        if: failure()
 
+
+#        env:
+#          ACTIONS_STEP_DEBUG: ${{ secrets.ACTIONS_STEP_DEBUG }}
+#        if: ${{ failure() && env.ACTIONS_STEP_DEBUG == 'true' }}

@@ -58,6 +58,8 @@ try:
     # Wait for login button to disappear
     wait.until(staleness_of(login), 'Timeout waiting for login page')
 
+    wait.until(lambda driver: driver.current_url.startswith("https://oidc-op.scz-vm.net/authorization"))
+
     # Select ACR = MFA
     browser.find_element(By.ID, 'acr_mfa').click()
 
@@ -75,6 +77,7 @@ try:
     print(" - accepted AUP")
 
     # Wait for landing page
+    wait.until(lambda driver: driver.current_url.startswith("https://sbs.scz-vm.net"))
     wait.until(presence_of_element_located((By.XPATH, xpath_logo)),
                'Timeout waiting for logo')
     print(" - landing page")

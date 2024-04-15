@@ -18,6 +18,8 @@ hostnames:
   sbs:      sbs.{{base_domain}}
   meta:     meta.{{base_domain}}
   ldap:     ldap.{{base_domain}}
+  ldap1:    ldap1.{{base_domain}}
+  ldap2:    ldap2.{{base_domain}}
   oidc:     oidc-test.{{base_domain}}
   sp:       sp-test.{{base_domain}}
   idp:      idp-test.{{base_domain}}
@@ -32,14 +34,14 @@ loadbalancer:
   - name: "sbs"
     hostname: "{{hostnames.sbs}}"
     protocol: http
-    backend_hosts: "{{groups['docker']}}"
+    backend_hosts: "{{groups['container_docker1']}}"
     backend_port: 443
     options:
       httpchk: "GET /health"
   - name: "meta"
     hostname: "{{hostnames.meta}}"
     protocol: http
-    backend_hosts: "{{groups['docker']}}"
+    backend_hosts: "{{groups['container_docker1']}}"
     backend_port: 443
   - name: "client_oidc"
     hostname: "{{hostnames.oidc}}"
@@ -65,5 +67,17 @@ loadbalancer:
     hostname: "{{hostnames.ldap}}"
     protocol: ldap
     frontend_port: 636
-    backend_hosts: "{{groups['docker']}}"
+    backend_hosts: "{{groups['container_docker1']}}"
+    backend_port: 636
+  - name: "client_ldap1"
+    hostname: "{{hostnames.ldap1}}"
+    protocol: ldap
+    frontend_port: 636
+    backend_hosts: "{{groups['container_docker1']}}"
+    backend_port: 636
+  - name: "client_ldap2"
+    hostname: "{{hostnames.ldap2}}"
+    protocol: ldap
+    frontend_port: 636
+    backend_hosts: "{{groups['container_docker2']}}"
     backend_port: 636

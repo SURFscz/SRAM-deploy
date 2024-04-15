@@ -38,6 +38,7 @@
     dest: "{{ plsc_dir }}/plsc.yml"
     mode: "0640"
   no_log: "{{sram_ansible_nolog}}"
+  notify: "Restart the plsc container"
 
 # - name: "Copy plsc_monitor script"
 #   copy:
@@ -63,7 +64,6 @@
     name: "{{ containers.plsc }}"
     image: "{{ images.plsc }}"
     restart_policy: "always"
-    restart: true
     state: started
     # pull: true
     # volumes:

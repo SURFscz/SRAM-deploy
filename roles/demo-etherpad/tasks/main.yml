@@ -5,6 +5,7 @@
     state: "directory"
     mode: "0755"
     owner: "root"
+  notify: "Restart the Etherpad container"
 
 - name: Copy settings.json
   copy:
@@ -12,13 +13,13 @@
     dest: "{{ etherpad_basedir }}"
   with_items:
     - settings.json
+  notify: "Restart the Etherpad container"
 
 - name: Create the Etherpad container
   docker_container:
     name: "{{ containers.etherpad }}"
     image: "{{ images.etherpad }}"
     restart_policy: "always"
-    restart: true
     state: started
     # pull: true
     env:

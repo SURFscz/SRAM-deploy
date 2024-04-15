@@ -47,6 +47,7 @@
         image: "traefik:latest"
         published_ports:
           - "0.0.0.0:443:443"
+          - "0.0.0.0:636:636"
         pull: true
         restart_policy: "always"
         networks:

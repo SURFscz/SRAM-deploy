@@ -69,15 +69,15 @@
 - name: "bhr2"
   hosts: "bhr2"
   roles:
-    - { role: backup_collector,  tags: ['bhr2','backup_collector']  }
-    - { role: logging_collector, tags: ['bhr2','logging_collector'] }
+    - { role: backup_collector,  tags: ['bhr2','backup-collector']  }
+    - { role: logging_collector, tags: ['bhr2','logging-collector'] }
     - { role: zabbix-server,     tags: ['bhr2','zabbix-server'],
         when: "not is_docker" }
 
 - name: "bhr11"
   hosts: "bhr11"
   roles:
-    - { role: backup-offsite,   tags: ['bhr11','backup_offsite'] }
+    - { role: backup-offsite,   tags: ['bhr11','backup-offsite'] }
 
 - name: "bhr1"
   hosts: "bhr1"
@@ -89,8 +89,8 @@
     - { role: 'http_apache', tags: ['bhr12','ci-runner']}
     - { role: 'ci-runner',   tags: ['bhr12','ci-runner']}
 
-- name: "docker"
-  hosts: docker
+- name: "docker1"
+  hosts: container_docker1
   vars_files:
     - "{{ secrets_users_file }}"
     - "{{ secrets_file }}"
@@ -98,25 +98,38 @@
     - { import_tasks: "tasks/versions.yml", tags: ['common']  }
   roles:
     - { role: docker,                       tags: ['docker'] }
-    - { role: docker_traefik,               tags: ['docker'] }
-    - { role: docker_images,                tags: ['images', 'docker_images'] }
-    - { role: docker_db,                    tags: ['db', 'docker_db'],
+    - { role: docker_traefik,               tags: ['docker', 'docker-traefik'] }
+    # - { role: docker_images,                tags: ['images', 'docker-images'] }
+    - { role: docker_db,                    tags: ['db', 'docker-db'],
         when: environment_name!='tst2' }
-    - { role: docker_ldap,                  tags: ['ldap', 'docker_ldap'] }
-    - { role: docker_pyff,                  tags: ['meta', 'docker_pyff'] }
-    - { role: docker_metadata,              tags: ['meta', 'docker_metadata'] }
-    - { role: docker_plsc,                  tags: ['plsc', 'docker_plsc'] }
-    - { role: docker_sbs,                   tags: ['sbs', 'docker_sbs'] }
+    - { role: docker_ldap,                  tags: ['ldap', 'docker-ldap'] }
+    - { role: docker_pyff,                  tags: ['meta', 'docker-pyff'] }
+    - { role: docker_metadata,              tags: ['meta', 'docker-metadata'] }
+    - { role: docker_plsc,                  tags: ['plsc', 'docker-plsc'] }
+    - { role: docker_sbs,                   tags: ['sbs', 'docker-sbs'] }
+
+- name: "docker2"
+  hosts: container_docker2
+  vars_files:
+    - "{{ secrets_users_file }}"
+    - "{{ secrets_file }}"
+  tasks:
+    - { import_tasks: "tasks/versions.yml", tags: ['common']  }
+  roles:
+    - { role: docker,                       tags: ['docker'] }
+    - { role: docker_traefik,               tags: ['docker', 'docker-traefik'] }
+    # - { role: docker_images,                tags: ['images', 'docker-images'] }
+    - { role: docker_ldap,                  tags: ['ldap', 'docker-ldap'] }
 
 - name: "lb"
   hosts: lb
   tasks:
     - { import_tasks: "tasks/versions.yml", tags: ['common'] }
   roles:
-    - { role: http_redirect,   tags: ['lb','http_redirect']    }
-    - { role: tls_letsencrypt, tags: ['lb','tls_letsencrypt'],
+    - { role: http_redirect,   tags: ['lb','http-redirect']    }
+    - { role: tls_letsencrypt, tags: ['lb','tls-letsencrypt'],
         when: not use_fixed_cert }
-    - { role: tls_fixed_cert,  tags: ['lb','tls_fixedcert'],
+    - { role: tls_fixed_cert,  tags: ['lb','tls-fixedcert'],
         when: use_fixed_cert     }
     - { role: lb_haproxy,      tags: ['lb','haproxy']          }
 

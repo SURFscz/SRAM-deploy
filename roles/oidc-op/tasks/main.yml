@@ -6,7 +6,7 @@
     version: "{{ oidc_op_version }}"
     force: yes
   notify: "restart oidc-op"
-  changed_when: false
+  register: "oidc_op"
 
 - name: Copy requirements files
   copy:
@@ -21,6 +21,7 @@
   vars:
     python_venv_dir: "{{ oidc_dir_venv }}"
     python_venv_requirements: "{{ oidc_dir }}/sram-req.txt"
+    python_venv_upgrade: "{{ oidc_op is changed }}"
   notify: "restart oidc-op"
 
 - name: Make server executable

@@ -1,4 +1,6 @@
 ---
+redis_conf_dir: "{{sram_conf_dir}}/redis"
+
 sbs_openidc_timeout: 86400
 
 sbs_build_url: "https://github.com/SURFscz/SBS/releases/download/{{sbs_version}}/sbs.tar.xz"
@@ -24,6 +26,7 @@ sbs_migration_user: "sbs_migrater"
 sbs_redis_host: "sbs-redis"
 sbs_redis_port: 6379
 sbs_redis_ssl: false
+sbs_redis_user: default
 
 sbs_mail_host: "{{ mail.relay_to }}"
 sbs_mail_port: "{{ mail.relay_port }}"
@@ -75,10 +78,10 @@ sbs_impersonation_allowed: True
 sbs_admin_platform_backdoor_totp: True
 sbs_past_dates_allowed: True
 sbs_mock_scim_enabled: True
-sbs_suspension_notify_admin: False
 
 sbs_delete_orphaned: True
 sbs_suspension_inactive_days: 365
+sbs_suspension_notify_admin: False
 
 sbs_oidc_config_url: "http://localhost/.well-known/openid-configuration"
 sbs_oidc_authz_endpoint: "http://localhost/OIDC/authorization"
@@ -94,7 +97,7 @@ sbs_continue_eduteams_redirect_uri: "https://localhost/continue"
 
 sbs_idp_metadata_url: "https://meta.{{base_domain}}/metadata/edugain.xml"
 sbs_backup_dir: "{{backup_base}}/sbs"
-sbs_db_cert_path: "/etc/ssl/sbs_db_root_cert.pem"
+sbs_db_cert_path: "/opt/sbs/cert/backend.crt"
 
 sbs_swagger_enabled: true
 

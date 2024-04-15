@@ -50,3 +50,5 @@ sbs_mfa_idp_allowed:
 sbs_ssid_identity_providers:
   - schac_home: "ssid.org"
     entity_id: "https://ssid.org"
+
+sbs_encryption_key: secret

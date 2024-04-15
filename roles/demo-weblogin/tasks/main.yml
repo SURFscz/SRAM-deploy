@@ -1,30 +1,19 @@
 ---
-
 - name: Create weblogin directory
   file:
-    path: "{{ weblogin_basedir }}/home"
+    path: "{{ weblogin_basedir }}"
     state: "directory"
     mode: "0755"
     owner: "root"
 
-- name: Create the Weblogin container
-  docker_container:
-    name: "{{ containers.weblogin }}"
-    image: "{{ images.weblogin }}"
-    restart_policy: "always"
-    restart: true
-    state: started
-    # pull: true
-    env:
-      URL: "{{ demo1_weblogin_url }}"
-      TOKEN: "{{ demo1_weblogin_token }}"
-    published_ports:
-      - "{{ ports.weblogin }}:22"
-    volumes:
-      - "{{ weblogin_basedir }}/home:/home"
-    networks:
-      - name: "{{ internal_network }}"
+- name: Pull the Weblogin container image
+  community.docker.docker_image_pull:
+    name: "{{ images.weblogin }}"
+    pull: "always"
+  notify:
+    - "run weblogin-cleanup job"
 
+# NB: cleanup script also starts container
 - name: Create weblogin-cleanup job timer
   template:
     src: "{{item}}.j2"

@@ -11,7 +11,8 @@
 172.20.1.28 db.vm.scz-vm.net
 172.20.1.29 bhr.vm.scz-vm.net
 172.20.1.30 test.vm.scz-vm.net
-172.20.1.31 docker.vm.scz-vm.net
-172.20.1.32 demo1.vm.scz-vm.net
+172.20.1.31 demo1.vm.scz-vm.net
+172.20.1.32 docker1.vm.scz-vm.net
+172.20.1.33 docker2.vm.scz-vm.net
 172.20.1.40 websso.scz-vm.net
 172.20.1.41 webssod.scz-vm.net
