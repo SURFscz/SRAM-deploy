@@ -88,7 +88,6 @@ sbs_oidc_authz_endpoint: "http://localhost/OIDC/authorization"
 sbs_oidc_token_endpoint: "http://localhost/OIDC/token"
 sbs_oidc_userinfo_endpoint: "http://localhost/OIDC/userinfo"
 sbs_oidc_jwks_endpoint: "http://localhost/OIDC/jwks.json"
-sbs_oidc_sfo_endpoint: "https://localhost/sfo"
 sbs_oidc_redirect_uri: "https://sbs.scz-vm.net/api/users/resume-session"
 sbs_mfa_idp_allowed: false
 sbs_eduteams_continue_endpoint: "https://localhost/continue"

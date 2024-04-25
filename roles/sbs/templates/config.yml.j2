@@ -39,7 +39,6 @@ oidc:
   jwks_endpoint: "{{ sbs_oidc_jwks_endpoint }}"
   #Note that the paths for these  uri's is hardcoded and only domain and port differ per environment
   redirect_uri: "{{ sbs_oidc_redirect_uri }}"
-  sfo_eduteams_redirect_uri: "{{ sbs_oidc_sfo_endpoint }}"
   continue_eduteams_redirect_uri: "{{ sbs_eduteams_continue_endpoint }}"
   second_factor_authentication_required: {{ sbs_second_factor_authentication_required }}
   totp_token_name: "{{ sbs_totp_token_name }}"
