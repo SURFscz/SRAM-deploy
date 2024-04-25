@@ -88,8 +88,8 @@ vm_bhr
 
 ##########################################
 # all
-[sram:children]
+[common:children]
 vm
 
 [all:children]
-sram
+vm

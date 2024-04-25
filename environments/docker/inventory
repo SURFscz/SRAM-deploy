@@ -76,7 +76,7 @@ container_demo1
 
 ##########################################
 # all
-[sram:children]
+[common:children]
 container
 
 [all:children]
