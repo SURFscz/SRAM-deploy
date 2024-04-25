@@ -21,7 +21,7 @@
       run_once: true
 
 - name: "get time"
-  hosts: all
+  hosts: "all"
   serial: 20
   gather_facts: true
   tags: "always"
@@ -36,8 +36,8 @@
 # TODO: this is not aggressive enough; we need to gather facts from _all_
 #       hosts, even if we"re limiting the actual deployments
 - name: "gather facts"
-  hosts: all
-  tags: always
+  hosts: "all"
+  tags: "always"
   become: yes
   serial: 20
   no_log: "{{sram_ansible_nolog}}}"
@@ -57,31 +57,31 @@
   tasks:
     - { name: "version", import_tasks: "tasks/versions.yml", tags: "always"     }
   roles:
-    - { role: basic,          tags: ["common","basic"]         }
-    - { role: certificates,   tags: ["common","cert"]          }
-    - { role: apt,            tags: ["common","apt"]           }
-    - { role: users,          tags: ["common","users"]         }
-    - { role: logging,        tags: ["common","logging"]       }
-    - { role: firewall,       tags: ["common","firewall"],
+    - { role: "basic",          tags: ["common","basic"]         }
+    - { role: "certificates",   tags: ["common","cert"]          }
+    - { role: "apt",            tags: ["common","apt"]           }
+    - { role: "users",          tags: ["common","users"]         }
+    - { role: "logging",        tags: ["common","logging"]       }
+    - { role: "firewall",       tags: ["common","firewall"],
         when: "not is_docker" }
-    - { role: ntp,            tags: ["common","ntp"]           }
-    - { role: aws-cleanup,    tags: ["common","clean"]         }
-    - { role: mail,           tags: ["common","mail"]          }
-    - { role: backups,        tags: ["common","backups"]       }
-    - { role: zabbix-agent,   tags: ["common","zabbix-agent"]  }
+    - { role: "ntp",            tags: ["common","ntp"]           }
+    - { role: "aws-cleanup",    tags: ["common","clean"]         }
+    - { role: "mail",           tags: ["common","mail"]          }
+    - { role: "backups",        tags: ["common","backups"]       }
+    - { role: "zabbix-agent",   tags: ["common","zabbix-agent"]  }
 
 - name: "bhr2"
   hosts: "bhr2"
   roles:
-    - { role: backup_collector,  tags: ["bhr2","backup-collector"]  }
-    - { role: logging_collector, tags: ["bhr2","logging-collector"] }
-    - { role: zabbix-server,     tags: ["bhr2","zabbix-server"],
+    - { role: "backup_collector",  tags: ["bhr2","backup-collector"]  }
+    - { role: "logging_collector", tags: ["bhr2","logging-collector"] }
+    - { role: "zabbix-server",     tags: ["bhr2","zabbix-server"],
         when: "not is_docker" }
 
 - name: "bhr11"
   hosts: "bhr11"
   roles:
-    - { role: backup-offsite,   tags: ['bhr11','backup-offsite'] }
+    - { role: "backup-offsite",   tags: ["bhr11","backup-offsite"] }
 
 - name: "ci-runner"
   hosts: "bhr12"
@@ -103,10 +103,10 @@
     - { role: docker_db,                    tags: ["db", "docker-db"],
         when: environment_name!="tst2" }
     - { role: docker_ldap,                  tags: ["ldap", "docker-ldap"] }
-    - { role: docker_pyff,                  tags: ["meta", "docker-pyff"] }
-    - { role: docker_metadata,              tags: ["meta", "docker-metadata"] }
-    - { role: docker_plsc,                  tags: ["plsc", "docker-plsc"] }
-    - { role: docker_sbs,                   tags: ["sbs", "docker-sbs"] }
+    - { role: "docker_pyff",                  tags: ["meta", "docker-pyff"] }
+    - { role: "docker_metadata",              tags: ["meta", "docker-metadata"] }
+    - { role: "docker_plsc",                  tags: ["plsc", "docker-plsc"] }
+    - { role: "docker_sbs",                   tags: ["sbs", "docker-sbs"] }
 
 - name: "docker2"
   hosts: container_docker2
@@ -119,10 +119,10 @@
     - { role: docker,                       tags: ["docker"] }
     - { role: docker_traefik,               tags: ["docker", "docker-traefik"] }
     # - { role: docker_images,                tags: ["images", "docker-images"] }
-    - { role: docker_ldap,                  tags: ["ldap", "docker-ldap"] }
+    - { role: "docker_ldap",                  tags: ["ldap", "docker-ldap"] }
 
 - name: "lb"
-  hosts: lb
+  hosts: "lb"
   tasks:
     - { name: "version", import_tasks: "tasks/versions.yml", tags: ["common"] }
   roles:
@@ -134,74 +134,73 @@
     - { role: lb_haproxy,      tags: ["lb","haproxy"]          }
 
 - name: "database"
-  hosts: db
+  hosts: "db"
   tasks:
     - { name: "version", import_tasks: "tasks/versions.yml", tags: ["common"] }
   roles:
     - { role: db_server,        tags: ["db", "db-server"] }
 
 - name: "sbs"
-  hosts: sbs
+  hosts: "sbs"
   tasks:
     - { name: "version", import_tasks: "tasks/versions.yml", tags: ["common"] }
   roles:
-    - { role: sbs,         tags: ["sbs"]  }
+    - { role: "sbs",         tags: ["sbs"]  }
 
 - name: "ldap"
-  hosts: ldap
+  hosts: "ldap"
   tasks:
     - { name: "version", import_tasks: "tasks/versions.yml", tags: ["common"] }
   roles:
-    - { role: ldap,               tags: ["ldap"                 ] }
-    - { role: ldap_monitor,       tags: ["ldap", "ldap-monitor" ] }
+    - { role: "ldap",               tags: ["ldap"                 ] }
+    - { role: "ldap_monitor",       tags: ["ldap", "ldap-monitor" ] }
 
 - name: "first ldap"
   hosts: "ldap_primary"
   roles:
-    - { role: plsc,               tags: ["plsc", "ldap-plsc"     ] }
+    - { role: "plsc",               tags: ["plsc", "ldap-plsc"     ] }
 
 - name: "meta"
-  hosts: meta
+  hosts: "meta"
   tasks:
     - { name: "version", import_tasks: "tasks/versions.yml", tags: ["common"] }
   roles:
-    - { role: pyff-metadata, tags: ["meta","pyff-metadata"]}
-    - { role: metadata,      tags: ["meta","metadata"]     }
+    - { role: "pyff-metadata", tags: ["meta","pyff-metadata"]}
+    - { role: "metadata",      tags: ["meta","metadata"]     }
 
 - name: "client"
   hosts: client
   tasks:
     - { name: "version", import_tasks: "tasks/versions.yml", tags: ["common"] }
   roles:
-    - { role: oidc-op,              tags: ["client","oidc-op"      ] }
+    - { role: "oidc-op",              tags: ["client","oidc-op"      ] }
 
 - name: "demo clients bhr13"
-  hosts: bhr13
+  hosts: "bhr13"
   tasks:
     - { name: "version", import_tasks: "tasks/versions.yml", tags: ["common"] }
   roles:
-    - { role: demo-sp,              tags: ["bhr13","demo-sp"]        }
-    - { role: test-idp,             tags: ["bhr13","test-idp"]       }
-    - { role: surfstar-idp,         tags: ["bhr13","surfstar-idp"]   }
-    - { role: tools,                tags: ["bhr13","tools"]          }
-    - { role: sram_monitor,         tags: ["bhr13","sram-monitor"]   }
-    - { role: scim_monitor,         tags: ["bhr13","scim-monitor"]   }
+    - { role: "demo-sp",              tags: ["bhr13","demo-sp"]        }
+    - { role: "test-idp",             tags: ["bhr13","test-idp"]       }
+    - { role: "surfstar-idp",         tags: ["bhr13","surfstar-idp"]   }
+    - { role: "tools",                tags: ["bhr13","tools"]          }
+    - { role: "sram_monitor",         tags: ["bhr13","sram-monitor"]   }
+    - { role: "scim_monitor",         tags: ["bhr13","scim-monitor"]   }
 
 - name: "demo clients demo1"
-  hosts: demo1
+  hosts: "demo1"
   tasks:
     - { name: "version", import_tasks: "tasks/versions.yml", tags: ["common"] }
   roles:
-    - { role: docker,               tags: ["demo1","demo-docker"] }
-    - { role: demo-apache,          tags: ["demo1","demo-apache"]  }
-    - { role: letsencrypt,          tags: ["demo1","demo-letsencrypt"],
-        when: letsencrypt_enabled }
-    - { role: demo-etherpad,        tags: ["demo1","demo-etherpad"]  }
-    - { role: demo-weblogin,        tags: ["demo1","demo-weblogin"]  }
+    - { role: "docker",               tags: ["demo1","demo-docker"] }
+    - { role: "demo-apache",          tags: ["demo1","demo-apache"]  }
+    - { role: "letsencrypt",          tags: ["demo1","demo-letsencrypt"] }
+    - { role: "demo-etherpad",        tags: ["demo1","demo-etherpad"]  }
+    - { role: "demo-weblogin",        tags: ["demo1","demo-weblogin"]  }
 
 # CI test docker
 - name: "test"
-  hosts: test
+  hosts: "test"
   tasks:
     - { name: "version", import_tasks: "tasks/versions.yml", tags: ["common"]  }
   roles:
