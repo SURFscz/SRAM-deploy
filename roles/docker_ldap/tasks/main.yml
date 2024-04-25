@@ -74,31 +74,34 @@
 #   with_items:
 #     - dh_params
 
-- name: Create wildcard backend key
-  copy:
-    content: "{{wildcard_backend_cert.priv}}"
-    dest: "{{ldap_certs_dir}}/backend.key"
-    # owner: "root"
-    # group: "ssl-cert"
-    mode: "0644"
-  no_log: "{{sram_ansible_nolog}}"
-  notify: Restart the ldap container
+# - name: Create wildcard backend key
+#   copy:
+#     content: "{{wildcard_backend_cert.priv}}"
+#     dest: "{{ldap_certs_dir}}/backend.key"
+#     # owner: "root"
+#     # group: "ssl-cert"
+#     mode: "0644"
+#   no_log: "{{sram_ansible_nolog}}"
+#   notify: Restart the ldap container
 
-- name: Create wildcard backend cert
-  copy:
-    content: "{{wildcard_backend_cert.pub}}"
-    dest: "{{ldap_certs_dir}}/backend.crt"
-    # owner: "root"
-    # group: "root"
-    mode: "0644"
-  notify: Restart the ldap container
+# - name: Create wildcard backend cert
+#   copy:
+#     content: "{{wildcard_backend_cert.pub}}"
+#     dest: "{{ldap_certs_dir}}/backend.crt"
+#     # owner: "root"
+#     # group: "root"
+#     mode: "0644"
+#   notify: Restart the ldap container
 
+# cert is used for communication between ldap for sync
+# is generated in roles/certificates/tasks/main.yml
 - name: Copy wildcard frontend cert
   copy:
-    src: /etc/ssl/certs/sram-https.pem
+    src: /etc/ssl/certs/sram-https.crt
     remote_src: true
     dest: "{{ldap_certs_dir}}/frontend.crt"
     mode: "0644"
+  when: "is_docker"  # TODO: wrong name; we mean: "is local dev env"
   notify: Restart the ldap container
 
 - name: Create the ldap container
@@ -149,6 +152,7 @@
       traefik.tcp.routers.ldap.tls: "true"
       # traefik.tcp.routers.ldap.service: "ldap"
       traefik.tcp.services.ldap.loadbalancer.server.port: "1389"
+  register: "ldap_container"
 
 - name: Generate ldap.conf
   template:
@@ -164,6 +168,7 @@
 - name: Wait for 5 seconds
   ansible.builtin.wait_for:
     timeout: 5
+  when: "ldap_container is changed"
 
 - name: Set indices
   community.general.ldap_attrs:
@@ -209,19 +214,23 @@
       olcSizeLimit: "unlimited"
       olcLogLevel: "{{ ldap_loglevel }}"
       olcAttributeOptions: "time-"
-# olcTLSCipherSuite: >
-#  "SECURE256:-VERS-DTLS-ALL:-VERS-SSL3.0:-VERS-TLS1.0:-VERS-TLS1.1:-RSA:-DHE-RSA:-ECDHE-RSA"
-# olcTLSCipherSuite: >
-#  "HIGH:+SSLv3:+TLSv1:MEDIUM:+SSLv2:@STRENGTH:+SHA:+MD5:!NULL"
-# olcTLSCipherSuite: >
-#  "TLS_RSA_CAMELLIA_128_CBC_SHA1:TLS_RSA_CAMELLIA_256_CBC_SHA1:!NULL"
-# olcTLSCipherSuite: "ALL:!NULL"
-# olcTLSCertificateKeyFile: "{{ ldap_certs_dir }}/backend.key"
-# olcTLSCertificateFile: "{{ ldap_certs_dir }}/backend.crt"
-      olcTLSCACertificateFile: "/opt/ldap/certs/frontend.crt"
     bind_dn: "cn=admin,cn=config"
     bind_pw: "{{ services_ldap_password }}"
     server_uri: "{{ ldap_uri }}"
+
+# cert is used for communication between ldap for sync
+# is generated in roles/certificates/tasks/main.yml
+- name: Set TLS config
+  community.general.ldap_attrs:
+    dn: "cn=config"
+    state: "present"
+    attributes:
+      olcTLSCACertificateFile: "/etc/ssl/certs/sram-https.crt"
+    bind_dn: "cn=admin,cn=config"
+    bind_pw: "{{ services_ldap_password }}"
+    server_uri: "{{ ldap_uri }}"
+  when: "is_docker"
+
 
 # - name: Ensure the schemas are added to LDAP
 #   ansible.builtin.script: "scripts/ldap-add {{ ldap_ldif_dir }}/{{ item }}"
