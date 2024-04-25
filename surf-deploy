@@ -23,14 +23,14 @@ if [ "$ARG" = "bhr" -o "$ARG" = "beheer" ]
 then
     ENV=bhr
     CONFDIR=./environments/aws_bhr
-    EXTRA="${EXTRA} --ask-vault-pass"
+    EXTRA="${EXTRA} --ask-become --ask-vault-pass"
     STRICT=0
     shift
 elif [ "$ARG" = "prd" -o "$ARG" = "prod" ]
 then
     ENV=prd
     CONFDIR=./environments/aws_prd/
-    EXTRA="${EXTRA} --ask-vault-pass"
+    EXTRA="${EXTRA} --ask-become --ask-vault-pass"
     echo -n 'Are you sure you want to deploy to production?  Type "prod" to confirm: '
     read confirm
     if [ "$confirm" != "prod" ]
@@ -43,18 +43,18 @@ elif [ "$ARG" = "acc" ]
 then
     ENV=acc
     CONFDIR=./environments/aws_acc
-    EXTRA="${EXTRA} --ask-vault-pass"
+    EXTRA="${EXTRA} --ask-become --ask-vault-pass"
     shift
 elif [ "$ARG" = "tst" -o "$ARG" = "test" ]
 then
     ENV=tst
     CONFDIR=./environments/aws_tst
-    EXTRA="${EXTRA}"
+    EXTRA="${EXTRA} --ask-become"
     STRICT=0
     shift
 elif [ "$ARG" = "tst2" -o "$ARG" = "test2" ]
 then
-    ENV=docker
+    ENV=test2
     CONFDIR=./environments/surf_test2
     EXTRA="${EXTRA}"
     STRICT=0
@@ -152,7 +152,6 @@ fi
 CMD="ansible-playbook provision.yml \
     -i "$CONFDIR/inventory" \
     --limit=${ENV} \
-    --ask-become \
     --diff \
     ${EXTRA} \
     "$@"

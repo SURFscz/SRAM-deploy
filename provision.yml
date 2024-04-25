@@ -89,36 +89,39 @@
     - { role: "http_apache", tags: ["bhr12","ci-runner"]}
     - { role: "ci-runner",   tags: ["bhr12","ci-runner"]}
 
-- name: "docker1"
-  hosts: container_docker1
+- name: "container infra"
+  hosts: "container_infra"
   vars_files:
     - "{{ secrets_users_file }}"
     - "{{ secrets_file }}"
   tasks:
     - { name: "version", import_tasks: "tasks/versions.yml", tags: ["common"]  }
   roles:
-    - { role: docker,                       tags: ["docker"] }
-    - { role: docker_traefik,               tags: ["docker", "docker-traefik"] }
-    # - { role: docker_images,                tags: ["images", "docker-images"] }
-    - { role: docker_db,                    tags: ["db", "docker-db"],
-        when: environment_name!="tst2" }
-    - { role: docker_ldap,                  tags: ["ldap", "docker-ldap"] }
+    - { role: "docker",                       tags: ["docker"] }
+    - { role: "docker_traefik",               tags: ["docker", "docker-traefik"] }
+    - { role: "docker_db",                    tags: ["db", "docker-db"] }
+
+- name: "container_apps"
+  hosts: "container_apps"
+  vars_files:
+    - "{{ secrets_users_file }}"
+    - "{{ secrets_file }}"
+  tasks:
+    - { name: "version", import_tasks: "tasks/versions.yml", tags: ["common"]  }
+  roles:
     - { role: "docker_pyff",                  tags: ["meta", "docker-pyff"] }
     - { role: "docker_metadata",              tags: ["meta", "docker-metadata"] }
     - { role: "docker_plsc",                  tags: ["plsc", "docker-plsc"] }
     - { role: "docker_sbs",                   tags: ["sbs", "docker-sbs"] }
 
-- name: "docker2"
-  hosts: container_docker2
+- name: "container_ldap"
+  hosts: "container_ldap"
   vars_files:
     - "{{ secrets_users_file }}"
     - "{{ secrets_file }}"
   tasks:
     - { name: "version", import_tasks: "tasks/versions.yml", tags: ["common"]  }
   roles:
-    - { role: docker,                       tags: ["docker"] }
-    - { role: docker_traefik,               tags: ["docker", "docker-traefik"] }
-    # - { role: docker_images,                tags: ["images", "docker-images"] }
     - { role: "docker_ldap",                  tags: ["ldap", "docker-ldap"] }
 
 - name: "lb"
