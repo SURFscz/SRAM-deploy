@@ -17,6 +17,33 @@
     name: "sram-sbs"
     system: True
 
+- name: "Create directories"
+  file:
+    path: "{{item.path}}"
+    state: "directory"
+    owner: "{{sbs_file_owner}}"
+    group: "{{sbs_group}}"
+    mode: "{{item.mode}}"
+  with_items:
+    - { path: "{{sbs_work_dir}}",            mode: "0755" }
+    - { path: "{{sbs_conf_dir}}",            mode: "0755" }
+    - { path: "{{sbs_conf_dir}}/saml",       mode: "0755" }
+    - { path: "{{sbs_log_dir}}",             mode: "0775" }
+    - { path: "{{sbs_cert_dir}}",            mode: "0775" }
+
+- name: "Fix file permissions"
+  file:
+    path: "{{sbs_log_dir}}/{{item}}"
+    owner: "{{sbs_file_owner}}"
+    group: "{{sbs_group}}"
+    mode: "0664"
+    state: "touch"
+    modification_time: "preserve"
+    access_time: "preserve"
+  with_items:
+    - "sbs.log"
+    - "sbs_debug.log"
+
 - name: "Install database certificate"
   copy:
     dest: "{{sbs_db_cert_path}}"
@@ -27,9 +54,9 @@
   block:
     - name: "Add SBS database"
       community.mysql.mysql_db:
-        login_host: '{{ db_host }}'
-        login_user: '{{ db_admin_user }}'
-        login_password: '{{ db_admin_password }}'
+        login_host: '{{ sbs_db_host }}'
+        login_user: '{{ sbs_db_admin_user }}'
+        login_password: '{{ sbs_db_admin_password }}'
         name: '{{ sbs_db_name }}'
         encoding: 'utf8mb4'
         collation: 'utf8mb4_unicode_ci'
@@ -38,9 +65,9 @@
 
     - name: "Add SBS user"
       community.mysql.mysql_user:
-        login_host: '{{ db_host }}'
-        login_user: '{{ db_admin_user }}'
-        login_password: '{{ db_admin_password }}'
+        login_host: '{{ sbs_db_host }}'
+        login_user: '{{ sbs_db_admin_user }}'
+        login_password: '{{ sbs_db_admin_password }}'
         name: '{{ item.user }}'
         host: '{{ ansible_default_ipv4.address }}'
         password: '{{ item.passwd }}'
@@ -58,32 +85,6 @@
           priv: "SELECT"
       no_log: "{{sram_ansible_nolog}}"
       notify: "restart sbs"
-
-- name: "Create directories"
-  file:
-    path: "{{item.path}}"
-    state: "directory"
-    owner: "{{sbs_file_owner}}"
-    group: "{{sbs_group}}"
-    mode: "{{item.mode}}"
-  with_items:
-    - { path: "{{sbs_work_dir}}",            mode: "0755" }
-    - { path: "{{sbs_conf_dir}}",            mode: "0755" }
-    - { path: "{{sbs_conf_dir}}/saml",       mode: "0755" }
-    - { path: "{{sbs_log_dir}}",             mode: "0775" }
-
-- name: "Fix file permissions"
-  file:
-    path: "{{sbs_log_dir}}/{{item}}"
-    owner: "{{sbs_file_owner}}"
-    group: "{{sbs_group}}"
-    mode: "0664"
-    state: "touch"
-    modification_time: "preserve"
-    access_time: "preserve"
-  with_items:
-    - "sbs.log"
-    - "sbs_debug.log"
 
 - name: "Download SBS build"
   get_url:

@@ -42,6 +42,9 @@ internal_network: sram
 ####################################################
 db_host: "docker1.vm.scz-vm.net"
 sbs_db_host: "{{ containers.db }}"
+sbs_db_admin_user: "{{ db_admin_user }}"
+sbs_db_admin_passwd: "{{ db_admin_password }}"
+
 sbs_redis_host: "{{ containers.redis }}"
 
 sbs_base_domain: "{{ hostnames.sbs }}"

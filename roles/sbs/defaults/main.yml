@@ -9,17 +9,21 @@ sbs_git_dir: "{{ sbs_work_dir }}/sbs"
 sbs_env_dir: "{{ sbs_work_dir }}/sbs-env"
 sbs_conf_dir: "{{ sbs_work_dir }}/config"
 sbs_log_dir: "{{ sbs_work_dir }}/log"
+sbs_cert_dir: "{{ sbs_work_dir }}/cert"
 
 sbs_db_host: "localhost"
+sbs_db_cert_path: "{{sbs_cert_dir}}/db_ca.crt"
 sbs_db_name: "sbs"
+sbs_db_admin_user: "root"
+sbs_db_admin_password: "changethispassword"
+
 sbs_db_user: "sbs"
 sbs_dbbackup_user: "sbs_backupper"
-
 sbs_migration_user: "sbs_migrater"
 
 sbs_db_connection: "\
   mysql+mysqldb://%s:%s@{{ sbs_db_host }}/{{ sbs_db_name }}\
-  ?ssl=true&ssl_ca=/opt/sbs/cert/db_ca.crt&charset=utf8mb4"
+  ?ssl=true&ssl_ca={{ sbs_db_cert_path }}&charset=utf8mb4"
 sbs_db_connection_sbs: "{{ sbs_db_connection | format(sbs_db_user, sbs_db_password) }}"
 sbs_db_connection_migration: "\
   {{ sbs_db_connection | format(sbs_migration_user, sbs_migration_password) }}"
@@ -97,7 +101,6 @@ sbs_continue_eduteams_redirect_uri: "https://localhost/continue"
 
 sbs_idp_metadata_url: "https://meta.{{base_domain}}/metadata/edugain.xml"
 sbs_backup_dir: "{{backup_base}}/sbs"
-sbs_db_cert_path: "/etc/ssl/sbs_db_root_cert.pem"
 
 sbs_swagger_enabled: true
 
