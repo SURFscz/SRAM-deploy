@@ -17,6 +17,13 @@ sbs_dbbackup_user: "sbs_backupper"
 
 sbs_migration_user: "sbs_migrater"
 
+sbs_db_connection: "\
+  mysql+mysqldb://%s:%s@{{ sbs_db_host }}/{{ sbs_db_name }}\
+  ?ssl=true&ssl_ca=/opt/sbs/cert/db_ca.crt&charset=utf8mb4"
+sbs_db_connection_sbs: "{{ sbs_db_connection | format(sbs_db_user, sbs_db_password) }}"
+sbs_db_connection_migration: "\
+  {{ sbs_db_connection | format(sbs_migration_user, sbs_migration_password) }}"
+
 sbs_redis_user: "default"
 sbs_redis_host: "localhost"
 sbs_redis_port: 6379

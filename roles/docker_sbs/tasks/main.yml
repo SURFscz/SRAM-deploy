@@ -17,11 +17,6 @@
 #     name: "sram-sbs"
 #     system: True
 
-# - name: "Install database certificate"
-#   copy:
-#     dest: "{{sbs_db_cert_path}}"
-#     content: "{{ sbs_db_tls_cert }}"
-
 - name: "Initialialize database"
   throttle: 1
   block:
@@ -151,6 +146,11 @@
     group: "root"
     mode: 0644
   notify: "Restart sbs containers"
+
+- name: "Install database certificate"
+  copy:
+    dest: "{{sbs_db_cert_path}}"
+    content: "{{ sbs_db_tls_cert }}"
 
 - name: "Create redis config"
   template:

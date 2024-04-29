@@ -1,9 +1,5 @@
 database:
-{% if environment_name == 'tst2' %}
-  uri: "mysql+mysqldb://{{ sbs_db_user }}:{{ sbs_db_password }}@{{ sbs_db_host }}/{{ sbs_db_name }}?ssl=true&charset=utf8mb4"
-{% else %}
-  uri: "mysql+mysqldb://{{ sbs_db_user }}:{{ sbs_db_password }}@{{ sbs_db_host }}/{{ sbs_db_name }}?ssl=true&ssl_ca={{sbs_db_cert_path}}&charset=utf8mb4"
-{% endif %}
+    uri: {{ sbs_db_connection_sbs }}
 
 redis:
 {% if environment_name == 'tst2' %}
