@@ -4,64 +4,8 @@
   apt:
     state: "latest"
     name:
-      # - nodejs
       - python3-pymysql
-      # - mariadb-client
-      # - libmariadb-dev-compat
-      # - libxmlsec1-dev  # for python xmlsec pkg
-      # - pkg-config      # for python xmlsec pkg
     install_recommends: false
-
-# - name: "Create SBS group"
-#   group:
-#     name: "sram-sbs"
-#     system: True
-
-- name: "Initialialize database"
-  throttle: 1
-  block:
-    - name: "Add SBS database"
-      community.mysql.mysql_db:
-        login_host: '{{ sbs_db_host }}'
-        # login_host: 'docker.vm.scz-vm.net'
-        login_port: '3306'
-        login_user: '{{ sbs_db_admin_user }}'
-        login_password: '{{ sbs_db_admin_password }}'
-        # login_user: 'root'
-        # login_password: 'changethispassword'
-        name: '{{ sbs_db_name }}'
-        encoding: 'utf8mb4'
-        collation: 'utf8mb4_unicode_ci'
-        ca_cert: "/etc/ssl/vm.scz-vm.net.crt"
-      # notify: "restart sbs"
-      when: environment_name!='tst2'
-
-    - name: "Add SBS user"
-      community.mysql.mysql_user:
-        login_host: '{{ sbs_db_host }}'
-        # login_host: 'docker.vm.scz-vm.net'
-        login_port: '3306'
-        login_user: '{{ sbs_db_admin_user }}'
-        login_password: '{{ sbs_db_admin_password }}'
-        name: '{{ item.user }}'
-        # host: '{{ ansible_default_ipv4.address }}'
-        host: '%'
-        password: '{{ item.passwd }}'
-        priv: '{{ sbs_db_name }}.*:{{ item.priv }}'
-        ca_cert: "/etc/ssl/vm.scz-vm.net.crt"
-      with_items:
-        - user: "{{ sbs_db_user }}"
-          passwd: "{{ sbs_db_password }}"
-          priv: "SELECT,INSERT,DELETE,UPDATE,TRIGGER"
-        - user: "{{ sbs_migration_user }}"
-          passwd: "{{ sbs_migration_password }}"
-          priv: "ALL"
-        - user: "{{ sbs_dbbackup_user }}"
-          passwd: "{{ sbs_dbbackup_password }}"
-          priv: "SELECT"
-      no_log: "{{sram_ansible_nolog}}"
-      # notify: "restart sbs"
-  when: environment_name=='vm'
 
 - name: "Create directories"
   file:
@@ -77,6 +21,47 @@
     - { path: "{{sbs_conf_dir}}/saml",       mode: "0755" }
     - { path: "{{sbs_log_dir}}",             mode: "0775" }
     - { path: "{{sbs_cert_dir}}",            mode: "0775" }
+
+- name: "Initialialize database"
+  throttle: 1
+  block:
+    - name: "Add SBS database"
+      community.mysql.mysql_db:
+        login_host: '{{ sbs_db_host }}'
+        login_port: '3306'
+        login_user: '{{ sbs_db_admin_user }}'
+        login_password: '{{ sbs_db_admin_password }}'
+        name: '{{ sbs_db_name }}'
+        encoding: 'utf8mb4'
+        collation: 'utf8mb4_unicode_ci'
+        ca_cert: "/etc/ssl/vm.scz-vm.net.crt"
+      notify: "Restart sbs containers"
+      when: environment_name!='tst2'
+
+    - name: "Add SBS user"
+      community.mysql.mysql_user:
+        login_host: '{{ sbs_db_host }}'
+        login_port: '3306'
+        login_user: '{{ sbs_db_admin_user }}'
+        login_password: '{{ sbs_db_admin_password }}'
+        name: '{{ item.user }}'
+        host: '%'  #TODO: restrict to correct vlan
+        password: '{{ item.passwd }}'
+        priv: '{{ sbs_db_name }}.*:{{ item.priv }}'
+        ca_cert: "/etc/ssl/vm.scz-vm.net.crt"
+      with_items:
+        - user: "{{ sbs_db_user }}"
+          passwd: "{{ sbs_db_password }}"
+          priv: "SELECT,INSERT,DELETE,UPDATE,TRIGGER"
+        - user: "{{ sbs_migration_user }}"
+          passwd: "{{ sbs_migration_password }}"
+          priv: "ALL"
+        - user: "{{ sbs_dbbackup_user }}"
+          passwd: "{{ sbs_dbbackup_password }}"
+          priv: "SELECT"
+      no_log: "{{sram_ansible_nolog}}"
+      notify: "Restart sbs containers"
+  when: environment_name=='vm'
 
 # - name: "Fix file permissions"
 #   file:
@@ -338,21 +323,3 @@
       traefik.http.routers.sbs.rule: "Host(`{{ sbs_base_domain }}`)"
       traefik.http.routers.sbs.tls: "true"
 
-# - name: Create nginx container
-#   docker_container:
-#     name: sbs-server
-#     image: nginx:1
-#     # restart_policy: "always"
-#     # restart: true
-#     state: started
-#     # pull: true
-#     volumes:
-#       - "{{ sbs_nginx_conf }}:/etc/nginx/nginx.conf:ro"
-#       - sbs_static:/var/www
-#     networks:
-#       - name: "{{traefik_network}}"
-#       - name: "{{internal_network}}"
-#     labels:
-#       traefik.http.routers.sbs.rule: "Host(`{{ hostnames.sbs }}`)"
-#       traefik.http.routers.sbs.tls: "true"
-#       traefik.enable: "true"
