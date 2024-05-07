@@ -53,7 +53,7 @@
       when: "debug | default(false) | bool"
 
 - name: "common"
-  hosts: "common"
+  hosts: "all"
   tasks:
     - { name: "version", import_tasks: "tasks/versions.yml", tags: "always"     }
   roles:

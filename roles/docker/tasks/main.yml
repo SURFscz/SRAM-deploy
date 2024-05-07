@@ -44,6 +44,19 @@
         name: "ansible"
         groups: "docker"
         append: true
+
+    # hackish way to allow name resolution from the host
+    # it watches the docker daemon and updates /etc/hosts on the host
+    - name: Install name resolution container
+      docker_container:
+        name: "name-resolver"
+        image: "dvdarias/docker-hoster"
+        state: "started"
+        restart_policy: "always"
+        volumes:
+          - "/var/run/docker.sock:/tmp/docker.sock"
+          - "/etc/hosts:/tmp/hosts"
+
   when: "environment_name=='vm'"
 
 - name: Create the internal network

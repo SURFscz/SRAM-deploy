@@ -184,7 +184,6 @@ else
     ansible-playbook provision.yml \
         -i $ENV_DIR/inventory \
         $ANSIBLE_VAULT_ARG \
-        --extra-vars="secrets_file=$ENV_DIR/secrets/all.yml" \
         $EXTRA_VARS \
         $@
 fi
