@@ -42,6 +42,9 @@ internal_network: sram
 ####################################################
 db_host: "docker1.vm.scz-vm.net"
 sbs_db_host: "{{ containers.db }}"
+sbs_db_admin_user: "{{ db_admin_user }}"
+sbs_db_admin_passwd: "{{ db_admin_password }}"
+
 sbs_redis_host: "{{ containers.redis }}"
 
 sbs_base_domain: "{{ hostnames.sbs }}"
@@ -53,7 +56,6 @@ sbs_oidc_token_endpoint: "https://{{ hostnames.oidc_op }}/token"
 sbs_oidc_userinfo_endpoint: "https://{{ hostnames.oidc_op }}/userinfo"
 sbs_oidc_jwks_endpoint: "https://{{ hostnames.oidc_op }}/jwks.json"
 sbs_oidc_redirect_uri: "https://{{ hostnames.sbs }}/api/users/resume-session"
-sbs_oidc_sfo_endpoint: "https://{{ hostnames.oidc_op }}/sfo"
 sbs_eduteams_continue_endpoint: "https://{{ hostnames.oidc_op }}/continue"
 sbs_oidc_jwt_audience: "https://{{ hostnames.oidc_op }}"
 

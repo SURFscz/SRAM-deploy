@@ -15,7 +15,7 @@ BACKUP_FILE="$BACKUP_DIR/db_sbs_$(/bin/date +%Y-%m-%d_%H:%M).sql"
 mkdir -p -m 0755 "$BACKUP_DIR"
 
 export MYSQL_PWD="{{ sbs_dbbackup_password }}"
-mysqldump --host="{{ db_host }}" \
+mysqldump --host="{{ sbs_db_host }}" \
           --user="{{ sbs_dbbackup_user }}" \
           --ssl-ca="{{sbs_db_cert_path}}" \
           --single-transaction \

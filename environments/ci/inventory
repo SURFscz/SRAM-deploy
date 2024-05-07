@@ -59,8 +59,8 @@ ci_test
 
 ##########################################
 # all
-[sram:children]
+[common:children]
 ci
 
 [all:children]
-sram
+ci

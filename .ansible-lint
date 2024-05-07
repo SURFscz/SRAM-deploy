@@ -1,5 +1,6 @@
 # vim:ft=yaml
 ---
+offline: false
 
 skip_list:
   - "name[casing]"

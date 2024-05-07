@@ -6,7 +6,7 @@ sbs_openidc_timeout: 86400
 sbs_build_url: "https://github.com/SURFscz/SBS/releases/download/{{sbs_version}}/sbs.tar.xz"
 sbs_version: "branch+main"
 
-sbs_work_dir: "{{sram_conf_dir}}/sbs"
+sbs_work_dir: "{{ sram_conf_dir }}/sbs"
 sbs_git_dir: "{{ sbs_work_dir }}/sbs"
 sbs_env_dir: "{{ sbs_work_dir }}/sbs-env"
 sbs_conf_dir: "{{ sbs_work_dir }}/config"
@@ -16,12 +16,22 @@ sbs_apache_conf: "{{ sbs_work_dir }}/sbs.conf"
 sbs_nginx_conf: "{{ sbs_work_dir }}/nginx.conf"
 
 
-db_host: "db"
+sbs_db_host: "localhost"
+sbs_db_cert_path: "{{sbs_cert_dir}}/db_ca.crt"
 sbs_db_name: "sbs"
+sbs_db_admin_user: "root"
+sbs_db_admin_passwd: "changethispassword"
+
 sbs_db_user: "sbs"
 sbs_dbbackup_user: "sbs_backupper"
-
 sbs_migration_user: "sbs_migrater"
+
+sbs_db_connection: "\
+  mysql+mysqldb://%s:%s@{{ sbs_db_host }}/{{ sbs_db_name }}\
+  ?ssl=true&ssl_ca=/opt/sbs/cert/db_ca.crt&charset=utf8mb4"
+sbs_db_connection_sbs: "{{ sbs_db_connection | format(sbs_db_user, sbs_db_password) }}"
+sbs_db_connection_migration: "\
+  {{ sbs_db_connection | format(sbs_migration_user, sbs_migration_password) }}"
 
 sbs_redis_host: "sbs-redis"
 sbs_redis_port: 6379
@@ -58,7 +68,7 @@ sbs_eduteams_email: "eduteams@localhost"
 
 sbs_wiki_link: "https://www.example.org/wiki"
 
-sbs_backend_port: 80
+sbs_backend_port: 8080
 sbs_num_workers: 2
 
 sbs_cron_hour_of_day: 4
@@ -88,7 +98,6 @@ sbs_oidc_authz_endpoint: "http://localhost/OIDC/authorization"
 sbs_oidc_token_endpoint: "http://localhost/OIDC/token"
 sbs_oidc_userinfo_endpoint: "http://localhost/OIDC/userinfo"
 sbs_oidc_jwks_endpoint: "http://localhost/OIDC/jwks.json"
-sbs_oidc_sfo_endpoint: "https://localhost/sfo"
 sbs_oidc_redirect_uri: "https://sbs.scz-vm.net/api/users/resume-session"
 sbs_mfa_idp_allowed: false
 sbs_eduteams_continue_endpoint: "https://localhost/continue"
@@ -97,7 +106,6 @@ sbs_continue_eduteams_redirect_uri: "https://localhost/continue"
 
 sbs_idp_metadata_url: "https://meta.{{base_domain}}/metadata/edugain.xml"
 sbs_backup_dir: "{{backup_base}}/sbs"
-sbs_db_cert_path: "/opt/sbs/cert/backend.crt"
 
 sbs_swagger_enabled: true
 
