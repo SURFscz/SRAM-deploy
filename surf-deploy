@@ -140,7 +140,7 @@ do
         break
     fi
 done
-if [ -n "$MITOGEN_PATH" ]
+if [ -n "$MITOGEN_PATH" -a "$NO_MITOGEN" != "1" ]
 then
     echo "Found Mitogen at $MITOGEN_PATH"
     export ANSIBLE_STRATEGY_PLUGINS=$MITOGEN_PATH/$MITOGEN_SUBPATH/
