@@ -84,7 +84,8 @@
     line: "listen.mode = 0660"
   notify: "restart php-fpm-version"
 
-- meta: "flush_handlers"
+- name: "flush handlers"
+  meta: "flush_handlers"
 
 
 - name: zabbix

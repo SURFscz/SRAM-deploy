@@ -130,7 +130,7 @@ zabbix_enabled: false
 
 journal_upload_host: "bhr.vm.scz-vm.net"
 
-zabbix_api_url: "https://bhr.vm.scz-vm.net:443/"
+zabbix_host: "bhr.vm.scz-vm.net"
 zabbix_api_user: "ansible_api"
 zabbix_api_password: "geheim_api_password"
 zabbix_server: "bhr.vm.scz-vm.net"
