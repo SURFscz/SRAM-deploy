@@ -197,7 +197,8 @@
   roles:
     - { role: "docker",               tags: ["demo1","demo-docker"] }
     - { role: "demo-apache",          tags: ["demo1","demo-apache"]  }
-    - { role: "letsencrypt",          tags: ["demo1","demo-letsencrypt"] }
+    - { role: "letsencrypt",          tags: ["demo1","demo-letsencrypt"],
+        when: letsencrypt_enabled }
     - { role: "demo-etherpad",        tags: ["demo1","demo-etherpad"]  }
     - { role: "demo-weblogin",        tags: ["demo1","demo-weblogin"]  }
 
