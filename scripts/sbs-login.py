@@ -39,7 +39,7 @@ try:
     status = ""
     while status != "UP":
         browser.get(health)
-        state = json.loads(browser.find_element(By.XPATH, "//pre").text)
+        state = json.loads(browser.find_element(By.TAG_NAME, "body").text)
         status = state.get("status")
         time.sleep(1)
 
