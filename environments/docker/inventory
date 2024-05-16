@@ -43,14 +43,14 @@ container_bhr
 [bhr2:children]
 container_bhr
 
-[docker_infra:children]
+[container_infra:children]
 container_docker1
 container_docker2
 
-[docker_apps:children]
+[container_apps:children]
 container_docker1
 
-[docker_ldap:children]
+[container_ldap:children]
 container_docker1
 container_docker2
 
