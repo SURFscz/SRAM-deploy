@@ -135,7 +135,7 @@ loadbalancer:
 db_host: "docker1.vm.scz-vm.net"
 sbs_db_host: "{{ containers.db }}"
 sbs_db_admin_user: "{{ db_admin_user }}"
-sbs_db_admin_passwd: "{{ db_admin_password }}"
+sbs_db_admin_password: "{{ db_admin_password }}"
 
 sbs_redis_host: "{{ containers.redis }}"
 
