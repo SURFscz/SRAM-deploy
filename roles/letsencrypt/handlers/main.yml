@@ -12,6 +12,7 @@
   register: result
   changed_when: "'Your certificate and chain have been saved' in result.stdout"
   with_items: "{{ letsencrypt_hosts }}"
+  when: "letsencrypt_enabled and letsencrypt_hosts is defined"
   notify: "renew letsencrypt certificates again"
 
 # we need to renew directly in order to run the post renewal hooks...
@@ -28,4 +29,5 @@
     creates: '{{certbot_cert_dir}}/{{item}}/priv+fullchain.pem'
   register: result
   changed_when: '"Your certificate and chain have been saved" in result.stdout'
+  when: "letsencrypt_enabled and letsencrypt_hosts is defined"
   with_items: "{{ letsencrypt_hosts }}"

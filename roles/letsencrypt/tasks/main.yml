@@ -19,53 +19,58 @@
     mode: "0755"
   notify: "renew letsencrypt certificates"
 
-- name: register account (letsencrypt)
-  command: "/usr/bin/certbot register"
-  args:
-    creates: "{{letsencrypt_account_dir}}\
-              /{{ 'acme-staging-v02.api.letsencrypt.org' \
-                  if letsencrypt_staging
-                  else 'acme-v02.api.letsencrypt.org' }}\
-              /directory"
-  notify: "renew letsencrypt certificates"
-  when: "letsencrypt_server is not defined"
 
-- name: register account
-  command: >
-    /usr/bin/certbot register
-                     --server '{{letsencrypt_server}}'
-                      {% if letsencrypt_eab_keyid is defined %}
-                      --eab-kid '{{letsencrypt_eab_keyid}}'
-                      --eab-hmac-key '{{letsencrypt_eab_hmac}}'
-                      {% endif %}
-  args:
-    # NB: this is a hack to get the account dir from the server URL:
-    #     basically strip protocol up to //
-    creates: "{{letsencrypt_account_dir}}/\
-              {{ '/'.join(letsencrypt_server.split('/')[2:]) }}"
-  notify: "renew letsencrypt certificates"
-  when: "letsencrypt_server is defined"
+- name: "letsencrypt"
+  when: "letsencrypt_enabled and letsencrypt_hosts is defined"
+  block:
 
-- name: check for new certs to generate
-  stat:
-    path: "{{letsencrypt_cert_dir}}/{{item}}"
-  register: "no_cert_yet"
-  changed_when: "not no_cert_yet.stat.exists"
-  with_items: "{{letsencrypt_hosts}}"
-  notify: "renew letsencrypt certificates"
+    - name: register account (letsencrypt)
+      command: "/usr/bin/certbot register"
+      args:
+        creates: "{{letsencrypt_account_dir}}\
+                  /{{ 'acme-staging-v02.api.letsencrypt.org' \
+                      if letsencrypt_staging
+                      else 'acme-v02.api.letsencrypt.org' }}\
+                  /directory"
+      notify: "renew letsencrypt certificates"
+      when: "letsencrypt_server is not defined"
 
-- name: generate letsencrypt certificates
-  command:
-    cmd: >
-      /usr/bin/certbot certonly --noninteractive
-                                {% if letsencrypt_server is defined %}
-                                  --server '{{letsencrypt_server}}'
-                                {% endif %}
-                                --keep-until-expiring
-                                --renew-with-new-domains
-                                --domains={{item}}
-  register: result
-  changed_when: "'Your certificate and chain have been saved' in result.stdout"
-  with_items: "{{ letsencrypt_hosts }}"
-  when: "no_cert_yet.changed"
-  notify: "renew letsencrypt certificates again"
+    - name: register account
+      command: >
+        /usr/bin/certbot register
+                        --server '{{letsencrypt_server}}'
+                          {% if letsencrypt_eab_keyid is defined %}
+                          --eab-kid '{{letsencrypt_eab_keyid}}'
+                          --eab-hmac-key '{{letsencrypt_eab_hmac}}'
+                          {% endif %}
+      args:
+        # NB: this is a hack to get the account dir from the server URL:
+        #     basically strip protocol up to //
+        creates: "{{letsencrypt_account_dir}}/\
+                  {{ '/'.join(letsencrypt_server.split('/')[2:]) }}"
+      notify: "renew letsencrypt certificates"
+      when: "letsencrypt_server is defined"
+
+    - name: check for new certs to generate
+      stat:
+        path: "{{letsencrypt_cert_dir}}/{{item}}"
+      register: "no_cert_yet"
+      changed_when: "not no_cert_yet.stat.exists"
+      with_items: "{{letsencrypt_hosts}}"
+      notify: "renew letsencrypt certificates"
+
+    - name: generate letsencrypt certificates
+      command:
+        cmd: >
+          /usr/bin/certbot certonly --noninteractive
+                                    {% if letsencrypt_server is defined %}
+                                      --server '{{letsencrypt_server}}'
+                                    {% endif %}
+                                    --keep-until-expiring
+                                    --renew-with-new-domains
+                                    --domains={{item}}
+      register: result
+      changed_when: "'Your certificate and chain have been saved' in result.stdout"
+      with_items: "{{ letsencrypt_hosts }}"
+      when: "no_cert_yet.changed"
+      notify: "renew letsencrypt certificates again"
