@@ -97,7 +97,7 @@
 # is generated in roles/certificates/tasks/main.yml
 - name: Copy wildcard frontend cert
   copy:
-    src: /etc/ssl/certs/sram-https.crt
+    src: "/etc/ssl/certs/sram-https.pem"   # was installed here by update-ca-certificates
     remote_src: true
     dest: "{{ldap_certs_dir}}/frontend.crt"
     mode: "0644"
@@ -223,9 +223,9 @@
 - name: Set TLS config
   community.general.ldap_attrs:
     dn: "cn=config"
-    state: "present"
+    state: "exact"
     attributes:
-      olcTLSCACertificateFile: "/etc/ssl/certs/sram-https.crt"
+      olcTLSCACertificateFile: "/opt/ldap/certs/frontend.crt"
     bind_dn: "cn=admin,cn=config"
     bind_pw: "{{ services_ldap_password }}"
     server_uri: "{{ ldap_uri }}"
