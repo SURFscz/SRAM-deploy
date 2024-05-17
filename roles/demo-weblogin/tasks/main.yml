@@ -8,7 +8,7 @@
 
 - name: Pull the Weblogin container image
   community.docker.docker_image_pull:
-    name: "{{ images.weblogin }}"
+    name: "{{ demo_images.weblogin }}"
     pull: "always"
   notify:
     - "run weblogin-cleanup job"

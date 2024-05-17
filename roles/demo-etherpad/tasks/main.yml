@@ -17,8 +17,8 @@
 
 - name: Create the Etherpad container
   docker_container:
-    name: "{{ containers.etherpad }}"
-    image: "{{ images.etherpad }}"
+    name: "{{ demo_containers.etherpad }}"
+    image: "{{ demo_images.etherpad }}"
     restart_policy: "always"
     state: started
     # pull: true
