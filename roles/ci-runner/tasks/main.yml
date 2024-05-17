@@ -15,7 +15,7 @@
     path: "/etc/default/grub"
     line: >
       GRUB_CMDLINE_LINUX="systemd.legacy_systemd_cgroup_controller=yes
-      systemd.unified_cgroup_hierarchy=0"'
+      systemd.unified_cgroup_hierarchy=0"
     regexp: '^GRUB_CMDLINE_LINUX='
     state: "present"
 
