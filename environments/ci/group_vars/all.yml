@@ -6,7 +6,7 @@ ansible_ssh_user: "ansible"
 ansible_ssh_private_key_file: "docker/ansible_key"
 
 secrets_file: "environments/ci/secrets/all.yml"
-secrets_users_file: "environments/ci/secrets/users.yml"
+secrets_users_file: "environments/vm/secrets/users.yml"
 
 admin_email: "admin@{{base_domain}}"
 
