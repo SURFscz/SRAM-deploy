@@ -73,8 +73,7 @@
   hosts: "all"
   strategy: "linear"  # disable mitogen for these roles
   roles:
-    - { role: zabbix-agent,   tags: ['common','zabbix-agent'],
-        when: "not is_docker" }
+    - { role: zabbix-agent,   tags: ['common','zabbix-agent'] }
 
 - name: "bhr2"
   hosts: "bhr2"
