@@ -105,7 +105,6 @@
   roles:
     - { role: "docker",                       tags: ["docker"] }
     - { role: "docker_traefik",               tags: ["docker", "docker-traefik"] }
-    - { role: "docker_db",                    tags: ["db", "docker-db"] }
 
 - name: "container_apps"
   hosts: "container_apps"
@@ -115,6 +114,7 @@
   tasks:
     - { name: "version", import_tasks: "tasks/versions.yml", tags: ["common"]  }
   roles:
+    - { role: "docker_db",                    tags: ["db", "docker-db"] }
     - { role: "docker_pyff",                  tags: ["meta", "docker-pyff"] }
     - { role: "docker_metadata",              tags: ["meta", "docker-metadata"] }
     - { role: "docker_plsc",                  tags: ["plsc", "docker-plsc"] }
