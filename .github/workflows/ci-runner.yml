@@ -1,4 +1,6 @@
 ---
+
+# Documented in https://wiki.surfnet.nl/display/coininfra/SRAM+CI+Runner
 name: CI-runner
 
 on:
