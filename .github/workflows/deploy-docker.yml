@@ -65,6 +65,7 @@ jobs:
         # this complains a lot but does the trick
         run: |
           sudo aa-teardown >/dev/null 2>&1  || true
+          sudo apt purge -y apparmor
 
       # Install Ansible modules
       - name: Install Ansible modules
