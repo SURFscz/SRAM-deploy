@@ -67,11 +67,13 @@ jobs:
       - name: Disable apparmor
         run: |
           sudo aa-status --json | jq '
-            .profiles
-            | to_entries
+            .profiles | to_entries
             | map( select( (.key | startswith("/") ) and .value=="enforce") | .key )
             | .[]
-          ' | grep -vE 'totem|pidgin|passt' | xargs sudo aa-complain
+          ' | grep -vE 'totem|pidgin|passt' | \
+          while read -r profile; do
+            sudo aa-complain "$profile" || true
+          done
 
 
       # Install Ansible modules
