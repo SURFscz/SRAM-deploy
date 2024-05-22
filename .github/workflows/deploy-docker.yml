@@ -34,7 +34,7 @@ jobs:
                               python3-selenium python3-requests python3-bs4
           sudo pip3 install --break-system-packages webdriver-manager
           git clone https://github.com/dw/mitogen.git ~/mitogen
-          wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+          wget --quiet https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
           sudo apt install ./google-chrome-stable_current_amd64.deb
 
       - name: Fix docker crap

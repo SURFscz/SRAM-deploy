@@ -43,7 +43,7 @@ find . -name '*.yml' -not -path "./mitogen/*" -print0 | xargs -0 -P${numcpu} ${D
 echo
 
 echo -n "Running yamllint... "
-find . -name '*.yml' -not -path "./mitogen/*" -print0 | xargs -0 yamllint                        || RESULT=1
+find . -name '*.yml' -not -path "./mitogen/*" -print0 | xargs -0 yamllint --strict               || RESULT=1
 echo done
 
 echo -n "Running Ansible check... "
