@@ -63,12 +63,8 @@ jobs:
       # mysql from reading tls keys
       - name: Disable apparmor
         run: >
-          sudo aa-status --json | jq '
-            .profiles
-            | to_entries
-            | map( select( (.key | startswith("/") ) and .value=="enforce") | .key )
-            | .[]
-          ' | xargs sudo aa-complain
+          sudo aa-teardown
+          sudo systemctl disable --now apparmor
 
       # Install Ansible modules
       - name: Install Ansible modules
