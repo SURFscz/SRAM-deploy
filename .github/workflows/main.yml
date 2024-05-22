@@ -17,7 +17,7 @@ jobs:
   # This workflow contains a single job called "build"
   deploy_classic:
     # The type of runner that the job will run on
-    runs-on: "ubuntu-22.04"
+    runs-on: "ubuntu-24.04"
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -30,7 +30,6 @@ jobs:
         run: |
           sudo rm -f /opt/pipx_bin/ansible*
           sudo rm -rf /etc/apt/sources.list.d/*
-          sudo add-apt-repository --yes --no-update ppa:ansible/ansible-5
           sudo apt -q update
           sudo apt -y purge ansible
           sudo apt -y install ansible bridge-utils apparmor-utils
