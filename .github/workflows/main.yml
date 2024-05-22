@@ -30,7 +30,7 @@ jobs:
         run: |
           sudo rm -f /opt/pipx_bin/ansible*
           sudo apt -q update
-          sudo apt -y install ansible bridge-utils
+          sudo apt -y install ansible bridge-utils apparmor-utils
           sudo apt -y install python3-pip python3-setuptools python3-wheel \
                               python3-venv yamllint python3-jinja2 python3-yaml \
                               python3-selenium python3-requests python3-bs4
