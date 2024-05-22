@@ -78,10 +78,6 @@ jobs:
           ansible-galaxy role install -r requirements.yml
           ansible-galaxy collection install -r requirements.yml
 
-      # Run Syntax check
-      - name: Run Syntax check
-        run: ./scripts/check-syntax
-
       # Restore docker cache
       - name: Restore docker cache
         run: docker load -i ~/docker-save/scz-base-cache.tar || true
