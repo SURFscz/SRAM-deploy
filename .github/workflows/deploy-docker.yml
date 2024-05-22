@@ -62,10 +62,14 @@ jobs:
       # apparmor is by default enabled for binaries _in_ the containers and is restricting
       # mysql from reading tls keys
       - name: Disable apparmor
-        # this complains a lot but does the trick
         run: |
-          sudo aa-teardown >/dev/null 2>&1  || true
-          sudo apt purge -y apparmor
+          sudo apt purge passt  # broken apparmor profile
+          sudo aa-status --json | jq '
+            .profiles
+            | to_entries
+            | map( select( (.key | startswith("/") ) and .value=="enforce") | .key )
+            | .[]
+          ' | grep -vE 'totem|pidgin' | xargs sudo aa-complain
 
       # Install Ansible modules
       - name: Install Ansible modules
