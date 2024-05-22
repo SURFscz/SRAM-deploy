@@ -31,8 +31,9 @@ jobs:
           sudo rm -f /opt/pipx_bin/ansible*
           sudo apt -q update
           sudo apt -y install ansible bridge-utils apparmor-utils
-          sudo pip3 install --upgrade wheel yamllint jinja2 pyyaml selenium \
-                                      zabbix-api requests bs4
+          sudo apt -y install python3-pip python3-setuptools python3-wheel \
+                              python3-venv yamllint python3-jinja2 python3-yaml \
+                              python3-selenium python3-requests python3-bs4
           git clone https://github.com/dw/mitogen.git ~/mitogen
           cat docker/hosts | sudo tee -a /etc/hosts
         # sudo docker system prune -f
