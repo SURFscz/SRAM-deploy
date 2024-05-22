@@ -31,7 +31,6 @@ jobs:
           sudo rm -f /opt/pipx_bin/ansible*
           sudo rm -rf /etc/apt/sources.list.d/*
           sudo apt -q update
-          sudo apt -y purge ansible
           sudo apt -y install ansible bridge-utils apparmor-utils
           sudo pip3 install --upgrade wheel yamllint jinja2 pyyaml selenium \
                                       zabbix-api requests bs4
