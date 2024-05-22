@@ -62,8 +62,9 @@ jobs:
       # apparmor is by default enabled for binaries _in_ the containers and is restricting
       # mysql from reading tls keys
       - name: Disable apparmor
+        # this complains a lot but does the trick
         run: |
-          sudo aa-teardown
+          sudo aa-teardown >/dev/null 2>&1  || true
 
       # Install Ansible modules
       - name: Install Ansible modules
