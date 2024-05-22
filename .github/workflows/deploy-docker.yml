@@ -63,13 +63,12 @@ jobs:
       # mysql from reading tls keys
       - name: Disable apparmor
         run: |
-          sudo apt purge passt  # broken apparmor profile
           sudo aa-status --json | jq '
             .profiles
             | to_entries
             | map( select( (.key | startswith("/") ) and .value=="enforce") | .key )
             | .[]
-          ' | grep -vE 'totem|pidgin' | xargs sudo aa-complain
+          ' | grep -vE 'totem|pidgin|passt' | xargs sudo aa-complain
 
       # Install Ansible modules
       - name: Install Ansible modules
