@@ -132,7 +132,7 @@ backend {{host.name}}
     mode http
 {% if host.options is defined %}
 {% for option, value in host.options.items() %}
-    option {{option}} {{value}}
+    {{option}} {{value}}
 {% endfor %}
 {% endif %}
     {% for be_server in host.backend_hosts -%}
