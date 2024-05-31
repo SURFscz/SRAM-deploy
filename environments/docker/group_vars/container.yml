@@ -83,8 +83,8 @@ loadbalancer:
     backend_hosts: "{{groups['container_docker1']}}"
     backend_port: 443
     options:
-      option: "httpchk"
-      http-check: "send meth GET uri /health ver HTTP/2 hdr Host {{hostnames.sbs}}"
+      option: "httpchk GET /health"
+      http-check: "send ver HTTP/2 hdr Host {{hostnames.sbs}}"
   - name: "meta"
     hostname: "{{hostnames.meta}}"
     protocol: http
