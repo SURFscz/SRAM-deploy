@@ -2,7 +2,7 @@
 
 - name: "Install required packages"
   apt:
-    state: "latest"
+    state: "present"
     name:
       - nodejs
       - python3-pymysql
