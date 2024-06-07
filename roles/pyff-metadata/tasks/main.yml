@@ -41,6 +41,12 @@
     state: "absent"
   with_items:
     - "{{ pyff_env_dir }}/idp_feed.fd"
+    - "{{ metadata_basedir }}/edugain_feed.fd"
+    - "{{ metadata_basedir }}/transform_edugain.xslt"
+    - "{{ metadata_basedir }}/certs/edugain.xrd"
+    - "{{metadata_target_dir}}/edugain.xml.new"
+    - "{{metadata_web_dir}}/edugain.xml.new"
+    - "{{metadata_web_dir}}/edugain.xml"
 
 - name: Create pyFF mdq configuration
   template:
