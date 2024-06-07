@@ -20,7 +20,7 @@ sbs_db_host: "localhost"
 sbs_db_cert_path: "{{sbs_cert_dir}}/db_ca.crt"
 sbs_db_name: "sbs"
 sbs_db_admin_user: "root"
-sbs_db_admin_passwd: "changethispassword"
+sbs_db_admin_password: "changethispassword"
 
 sbs_db_user: "sbs"
 sbs_dbbackup_user: "sbs_backupper"

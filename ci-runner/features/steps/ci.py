@@ -26,7 +26,7 @@ def step_impl(context, idp):
 
     # Wait for IdP to appear
     search = context.wait.until(presence_of_element_located(
-        (By.XPATH, "//ul[@id='ds-search-list']/a[contains(@class,'identityprovider')]")),
+        (By.XPATH, "//ul[@id='ds-search-list']/li[contains(@class,'identityprovider')]")),
         'Timeout waiting for result')
 
     context.browser.find_element(By.XPATH, f"//div[@class='text-truncate label primary' and text()='{idp}']").click()

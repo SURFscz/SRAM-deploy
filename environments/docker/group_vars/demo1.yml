@@ -8,14 +8,14 @@ sram_conf_dir: "/opt/sram"
 
 internal_network: sram
 
-containers:
+demo_containers:
   etherpad: sram-etherpad
   wordpress: sram-wordpress
   wordpress_cli: sram-wordpress-cli
   weblogin: sram-weblogin
   database: sram-db
 
-images:
+demo_images:
   etherpad: ghcr.io/surfscz/sram-etherpad:main
   wordpress: wordpress:6
   wordpress_cli: wordpress:cli

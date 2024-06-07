@@ -124,12 +124,11 @@
 #     src: type.conf
 #     dest: /etc/systemd/system/mariadb.service.d/type.conf
 #
-# - name: Ensure that packages are installed
-#   apt:
-#     name:
-#       - mariadb-server
-#       - python3-pymysql
-#     state: present
+- name: Ensure that packages are installed
+  apt:
+    name:
+      - python3-pymysql
+    state: present
 
 - name: Ensure that a number of directories exist
   file:
@@ -178,16 +177,6 @@
 #     groups: ssl-cert
 #     append: yes
 
-# - name: Add admin user
-#   mysql_user:
-#     name: '{{ db_admin_user }}'
-#     host: '%'
-#     password: '{{ db_admin_password }}'
-#     priv: '*.*:ALL,GRANT'
-#     state: present
-#     login_unix_socket: /var/run/mysqld/mysqld.sock
-#     check_implicit_admin: yes
-
 - name: Create the database container
   docker_container:
     name: "{{ containers.db }}"
@@ -198,7 +187,8 @@
     ports:
       - 3306:3306
     env:
-      MARIADB_ROOT_PASSWORD: "{{ db_admin_password }}"
+      MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: "1"
+      MARIADB_ROOT_PASSWORD: ""
     mounts:
       - type: bind
         source: "{{ mariadb_conf_dir }}/sram.cnf"
@@ -208,3 +198,23 @@
       - "{{ mariadb_data_dir }}:/var/lib/mysql:Z"
     networks:
       - name: "{{internal_network}}"
+
+- name: Wait for hostname to be available
+  wait_for:
+    host: "{{ sbs_db_host }}"
+    port: 3306
+    delay: 1
+    timeout: 300
+
+- name: Add admin user
+  mysql_user:
+    login_host: '{{ sbs_db_host }}'
+    login_user: 'root'
+    login_password: ''
+    check_hostname: false
+    name: '{{ db_admin_user }}'
+    host: '%'
+    password: '{{ db_admin_password }}'
+    priv: '*.*:ALL,GRANT'
+    state: present
+

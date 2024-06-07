@@ -3,25 +3,33 @@
 import time
 import json
 import traceback
-from selenium.webdriver import Chrome
-from selenium.webdriver.chrome.options import Options
+
+from selenium import webdriver
+from selenium import __version__ as selenium_version
+from selenium.webdriver.chrome.service import Service as ChromeService
+from webdriver_manager.chrome import ChromeDriverManager
+
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support.expected_conditions import staleness_of, presence_of_element_located
 from selenium.webdriver.common.by import By
 
 
-class CustomChrome(Chrome):
+# check that we have selenium version 4
+assert selenium_version.startswith('4.'), f"Expected selenium version 4.x.x, got {selenium_version}"
+
+
+class CustomChrome(webdriver.Chrome):
     def get(self, url) -> None:
         print(f"Fetching page '{url}'")
         return super(CustomChrome, self).get(url)
 
 
-options = Options()
+options = webdriver.chrome.options.Options()
 options.add_argument('--headless')
 options.add_argument('ignore-certificate-errors')
 options.set_capability('goog:loggingPrefs', {'browser': 'ALL'})
 
-browser = CustomChrome(options=options)
+browser = CustomChrome(service=ChromeService(ChromeDriverManager().install()), options=options)
 wait = WebDriverWait(browser, timeout=3)
 
 send_command = ('POST', '/session/$sessionId/chromium/send_command')
@@ -39,7 +47,7 @@ try:
     status = ""
     while status != "UP":
         browser.get(health)
-        state = json.loads(browser.find_element(By.XPATH, "//pre").text)
+        state = json.loads(browser.find_element(By.TAG_NAME, "body").text)
         status = state.get("status")
         time.sleep(1)
 

@@ -24,6 +24,7 @@
 
 - name: "PSK handling"
   include_tasks: "psk.yml"
+  when: "not is_docker"
 
 - name: "Default configuration"
   template:
@@ -32,6 +33,7 @@
     owner: "root"
     group: "root"
     mode: "0644"
+  when: "not is_docker"
   notify: "restart zabbix-agent"
 
 # - name: "Count upgradeable packages"

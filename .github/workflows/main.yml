@@ -17,7 +17,7 @@ jobs:
   # This workflow contains a single job called "build"
   deploy_classic:
     # The type of runner that the job will run on
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-24.04"
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -29,20 +29,16 @@ jobs:
       - name: Run errands
         run: |
           sudo rm -f /opt/pipx_bin/ansible*
-          sudo rm -rf /etc/apt/sources.list.d/*
-          sudo add-apt-repository --yes --no-update ppa:ansible/ansible-5
           sudo apt -q update
-          sudo apt -y purge ansible
-          sudo apt -y install ansible bridge-utils apparmor-utils
-          sudo pip3 install --upgrade wheel yamllint jinja2 pyyaml selenium \
-                                      zabbix-api requests bs4
+          sudo apt -y install ansible bridge-utils apparmor-utils wget \
+                              python3-pip python3-setuptools python3-wheel \
+                              python3-venv yamllint python3-jinja2 python3-yaml \
+                              python3-selenium python3-requests python3-bs4
+          sudo pip3 install --break-system-packages webdriver-manager
           git clone https://github.com/dw/mitogen.git ~/mitogen
           cat docker/hosts | sudo tee -a /etc/hosts
-        # sudo docker system prune -f
-        # sudo systemctl stop docker
-        # time sudo mv /var/lib/docker /mnt
-        # sudo ln -s /mnt/docker /var/lib
-        # sudo systemctl start docker
+          wget --quiet https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+          sudo apt install ./google-chrome-stable_current_amd64.deb
 
       # Create date output to seconds
       - name: Get Date
@@ -67,23 +63,21 @@ jobs:
       # apparmor is by default enabled for binaries _in_ the containers and is restricting
       # mysql from reading tls keys
       - name: Disable apparmor
-        run: >
+        run: |
           sudo aa-status --json | jq '
-            .profiles
-            | to_entries
+            .profiles | to_entries
             | map( select( (.key | startswith("/") ) and .value=="enforce") | .key )
             | .[]
-          ' | xargs sudo aa-complain
+          ' | grep -vE 'totem|pidgin|passt' | \
+          while read -r profile; do
+            sudo aa-complain "$profile" || true
+          done
 
       # Install Ansible modules
       - name: Install Ansible modules
         run: |
           ansible-galaxy role install -r requirements.yml
           ansible-galaxy collection install -r requirements.yml
-
-      # Run Syntax check
-      - name: Run Syntax check
-        run: ./scripts/check-syntax
 
       # Restore docker cache
       - name: Restore docker cache

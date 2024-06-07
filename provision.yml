@@ -64,14 +64,20 @@
     - { role: "logging",        tags: ["common","logging"]       }
     - { role: "firewall",       tags: ["common","firewall"],
         when: "not is_docker" }
-    - { role: "ntp",            tags: ["common","ntp"]           }
-    - { role: "aws-cleanup",    tags: ["common","clean"]         }
-    - { role: "mail",           tags: ["common","mail"]          }
-    - { role: "backups",        tags: ["common","backups"]       }
-    - { role: "zabbix-agent",   tags: ["common","zabbix-agent"]  }
+    - { role: ntp,            tags: ['common','ntp']           }
+    - { role: aws-cleanup,    tags: ['common','clean']         }
+    - { role: mail,           tags: ['common','mail']          }
+    - { role: backups,        tags: ['common','backups']       }
+
+- name: "zabbix-agent"
+  hosts: "all"
+  strategy: "linear"  # disable mitogen for these roles
+  roles:
+    - { role: zabbix-agent,   tags: ['common','zabbix-agent'] }
 
 - name: "bhr2"
   hosts: "bhr2"
+  strategy: "linear"  # disable mitogen for these roles
   roles:
     - { role: "backup_collector",  tags: ["bhr2","backup-collector"]  }
     - { role: "logging_collector", tags: ["bhr2","logging-collector"] }
@@ -99,7 +105,6 @@
   roles:
     - { role: "docker",                       tags: ["docker"] }
     - { role: "docker_traefik",               tags: ["docker", "docker-traefik"] }
-    - { role: "docker_db",                    tags: ["db", "docker-db"] }
 
 - name: "container_apps"
   hosts: "container_apps"
@@ -109,6 +114,7 @@
   tasks:
     - { name: "version", import_tasks: "tasks/versions.yml", tags: ["common"]  }
   roles:
+    - { role: "docker_db",                    tags: ["db", "docker-db"] }
     - { role: "docker_pyff",                  tags: ["meta", "docker-pyff"] }
     - { role: "docker_metadata",              tags: ["meta", "docker-metadata"] }
     - { role: "docker_plsc",                  tags: ["plsc", "docker-plsc"] }

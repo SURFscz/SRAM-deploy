@@ -7,7 +7,7 @@ Type=oneshot
 WorkingDirectory={{weblogin_basedir}}
 
 # clean up
-ExecStart=-/usr/bin/docker rm -f {{ containers.weblogin }}
+ExecStart=-/usr/bin/docker rm -f {{ demo_containers.weblogin }}
 ExecStart=+/bin/rm -rf '{{weblogin_basedir}}/home'
 ExecStart=+/bin/mkdir -p -m0755 '{{weblogin_basedir}}/home'
 
@@ -17,10 +17,10 @@ ExecStart=/usr/bin/docker run -d \
     -e URL={{ demo1_weblogin_url }} \
     -e TOKEN={{ demo1_weblogin_token }} \
     -v {{ weblogin_basedir }}/home:/home:rw \
-    --name {{ containers.weblogin }} \
+    --name {{ demo_containers.weblogin }} \
     --network {{ internal_network }} \
     --restart always \
-    {{ images.weblogin }}
+    {{ demo_images.weblogin }}
 SyslogIdentifier=weblogin-cleanup
 
 [Install]
