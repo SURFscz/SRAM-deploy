@@ -18,8 +18,6 @@ sbs_oidc_redirect_uri: "https://{{ hostnames.sbs }}/api/users/resume-session"
 sbs_oidc_jwt_audience: "https://{{ hostnames.oidc_op }}"
 sbs_eduteams_continue_endpoint: "https://proxy.acc.sram.eduteams.org/continue"
 
-sbs_idp_metadata_url: "https://metadata.surfconext.nl/idps-metadata.xml"
-
 sbs_ldap_url: "ldap://ldap.scz-vm.net/dc=services,dc=vnet"
 # entity_id will be replaced run-time in the client
 sbs_ldap_bind_account: "cn=admin,dc=entity_id,dc=services,dc=vnet"
