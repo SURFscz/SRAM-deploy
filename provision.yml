@@ -70,7 +70,7 @@
     - { role: backups,        tags: ['common','backups']       }
 
 - name: "zabbix-agent"
-  hosts: "all"
+  hosts: "common"
   strategy: "linear"  # disable mitogen for these roles
   roles:
     - { role: zabbix-agent,   tags: ['common','zabbix-agent'] }
