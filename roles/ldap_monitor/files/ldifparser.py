@@ -22,6 +22,8 @@ def freeze(o):
 def my_print(o, depth):
     if isinstance(o, OrderedDict):
         for k, v in o.items():
+            if k in ("contextCSN", "entryCSN", "modifyTimestamp", "modifiersName"):
+                continue
             my_print(k, depth)
             my_print(v, depth + 2)
     elif isinstance(o, list):
