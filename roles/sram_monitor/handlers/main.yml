@@ -1,10 +1,13 @@
 ---
 - name: "enable monitor job"
   systemd:
-    name: "sram-monitor.timer"
+    name: "sram-monitor@{{item}}.timer"
     enabled: true
     state: "started"
     daemon_reload: true
+  loop:
+    - "chrome"
+    - "firefox"
 
 - name: "restart zabbix-agent"
   systemd:
