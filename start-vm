@@ -59,7 +59,7 @@ while getopts -- '-:h' OPT; do
 done
 shift $OPTPROCESSED # remove parsed options and args from $@ list
 
-if [ -z "$IN_CONTAINER" ]; then
+if [ -z "$IN_CONTAINER" ] && [ -z "$CI_OPTION" ]; then
     read -p "Continue without --container? [Yes/No] " yn
     if [[ "$yn" == [Nn]* ]]; then
         exit 0
