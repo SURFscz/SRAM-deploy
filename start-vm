@@ -28,6 +28,12 @@ while getopts -- '-:h' OPT; do
                         echo "  --skip-vm: skip bringing up VMs, only run Ansible"
                         echo "  --container: Use container-in-container based deploy"
                         echo "  --no-mitogen: Disable use of mitogen"
+                        echo "  --stop: Stop all containers"
+                        exit 0
+                        ;;
+        s | stop )      docker exec -ti docker-docker1-1 bash -c 'docker stop $(docker ps -q) || true'
+                        docker exec -ti docker-docker2-1 bash -c 'docker stop $(docker ps -q) || true'
+                        docker compose -f docker/docker-compose.yml stop
                         exit 0
                         ;;
         ci )            CI_OPTION="--ci"
@@ -52,6 +58,13 @@ while getopts -- '-:h' OPT; do
     esac
 done
 shift $OPTPROCESSED # remove parsed options and args from $@ list
+
+if [ -z "$IN_CONTAINER" ]; then
+    read -p "Continue without --container? [Yes/No] " yn
+    if [[ "$yn" == [Nn]* ]]; then
+        exit 0
+    fi
+fi
 
 if [ "$SKIP_VM" ]
 then
