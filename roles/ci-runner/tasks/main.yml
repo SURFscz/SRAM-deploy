@@ -9,6 +9,9 @@
       - "docker-compose-plugin"
       - "ansible"
       - "apache2"
+      - "chromium"
+      - "chromium-common"
+      - "chromium-driver"
 
 - name: "Fix cgroup v1 for docker"
   ansible.builtin.lineinfile:
