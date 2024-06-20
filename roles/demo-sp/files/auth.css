@@ -27,8 +27,8 @@ table.redTable tr:nth-child(even) {
 
 table.redTable thead {
     background: #A40808;
-    background: -moz-linear-gradient(top, #bb4646 0%, #ad2020 66%, #A40808 100%);
-    background: -webkit-linear-gradient(top, #bb4646 0%, #ad2020 66%, #A40808 100%);
+    background: -moz-linear-gradient(to top, #bb4646 0%, #ad2020 66%, #A40808 100%);
+    background: -webkit-linear-gradient(to top, #bb4646 0%, #ad2020 66%, #A40808 100%);
     background: linear-gradient(to bottom, #bb4646 0%, #ad2020 66%, #A40808 100%);
 }
 

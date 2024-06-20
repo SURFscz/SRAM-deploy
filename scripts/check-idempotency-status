@@ -10,7 +10,7 @@ WHITELIST = {
 }
 
 
-class Color:
+class Color(Enum):
     # Foreground
     F_Default      = "\x1b[39m"
     F_Black        = "\x1b[30m"

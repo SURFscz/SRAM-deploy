@@ -20,7 +20,7 @@ for line in output.split("\n"):
     try:
         log = json.loads(line)
     except Exception:
-        print(f"Failed to load json message: {log}")
+        print(f"Failed to load json message: {line}")
         sys.exit(-1)
 
     message = log['MESSAGE']

@@ -19,7 +19,6 @@
     regexp: '^GRUB_CMDLINE_LINUX='
     state: "present"
 
-# TODO:
 # - add apache (of nog liever: nginx)
 - name: Enable Apache modules
   community.general.apache2_module:
