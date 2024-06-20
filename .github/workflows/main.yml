@@ -95,7 +95,7 @@ jobs:
         shell: bash
         env:
           SKIP_ANSIBLE: 1
-        run: "./start-vm"
+        run: "./start-vm --classic"
 
       # Clean  up old docker cruft
       - name: Clean  up old docker cruft
@@ -125,13 +125,13 @@ jobs:
       # Deploy components
       - name: Run start-vm
         shell: bash
-        run: "./start-vm"
+        run: "./start-vm --classic"
 
       # Deploy components again for idempotency
       - name: Run start-vm --diff
         env:
           REEANTRANT: 1
-        run: "./start-vm --diff"
+        run: "./start-vm --classic --diff"
 
       - name: Run idempotency check...
         run: /usr/bin/python3 ./scripts/check-idempotency-status
