@@ -28,7 +28,7 @@
     dest: "{{ ssl_certs_dir }}/{{ internal_base_domain }}.crt"
     owner: "root"
     group: "root"
-    mode: 0644
+    mode: "0644"
 
 - name: register backend wildcard pub in OS registry
   file:
@@ -44,7 +44,7 @@
     dest: "{{ ca_cert_dir }}/sram-https.crt"
     owner: "root"
     group: "root"
-    mode: 0644
+    mode: "0644"
   when: "is_docker"
   notify: "update certificates"
 

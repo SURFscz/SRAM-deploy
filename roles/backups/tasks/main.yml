@@ -28,7 +28,7 @@
   file:
     path: "{{backup_base}}"
     state: directory
-    mode: 0755
+    mode: "0755"
     owner: root
 
 # note: individual services can put their backup scripts in the
@@ -37,14 +37,14 @@
   file:
     path: "{{backup_runparts}}"
     state: directory
-    mode: 0755
+    mode: "0755"
     owner: root
 
 - name: Copy backup upload script
   template:
     src: "upload-backup.sh.j2"
     dest: "{{backup_base}}/upload-backup.sh"
-    mode: 0755
+    mode: "0755"
     owner: root
 
 - name: Copy ssh key for backup upload

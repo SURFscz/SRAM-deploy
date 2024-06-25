@@ -37,7 +37,7 @@
   template:
     src: websso-daemon.service.j2
     dest: "/etc/systemd/system/websso-daemon.service"
-    mode: 0644
+    mode: "0644"
 
 - name: set up nxginx proxy
   include_tasks: nginx.yml

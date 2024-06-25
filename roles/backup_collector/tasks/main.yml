@@ -164,5 +164,5 @@
   template:
     src: backups.nginx.j2
     dest: "/etc/nginx/sites-enabled/sram-backups"
-    mode: 0755
+    mode: "0755"
   notify: restart nginx

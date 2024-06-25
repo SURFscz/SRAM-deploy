@@ -3,7 +3,7 @@
   file:
     path: "{{ aclsync_dir }}"
     state: directory
-    mode: 0755
+    mode: "0755"
 
 - name: Install plsc
   git:

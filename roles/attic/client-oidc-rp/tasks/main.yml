@@ -20,13 +20,13 @@
   template:
     src: sp_index.php.j2
     dest: /var/www/html/index.php
-    mode: 0644
+    mode: "0644"
 
 - name: Create OIDC RP test dir
   file:
     path: "/var/www/html/oidc"
     state: directory
-    mode: 0755
+    mode: "0755"
     owner: www-data
     group: www-data
 
@@ -34,13 +34,13 @@
   copy:
     src: oidc_index.php
     dest: /var/www/html/oidc/index.php
-    mode: 0644
+    mode: "0644"
 
 - name: Add websites
   template:
     src: "{{ item }}.conf.j2"
     dest: "/etc/apache2/sites-available/{{ item }}.conf"
-    mode: 0644
+    mode: "0644"
   with_items:
     - oidc
   notify: restart Apache

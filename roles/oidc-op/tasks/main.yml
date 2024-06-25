@@ -33,19 +33,19 @@
   copy:
     src: "sram_user_pass.jinja2"
     dest: "{{oidc_dir }}/example/flask_op/templates/sram_user_pass.jinja2"
-    mode: 0644
+    mode: "0644"
 
 - name: Copy static script
   copy:
     src: "script.js"
     dest: "{{oidc_dir }}/example/flask_op/static/script.js"
-    mode: 0644
+    mode: "0644"
 
 - name: Copy users and passwd files
   template:
     src: "{{ item }}.j2"
     dest: "{{oidc_dir }}/example/flask_op/{{ item }}"
-    mode: 0644
+    mode: "0644"
   with_items:
     - sram_users.json
     - sram_passwd.json
@@ -68,19 +68,19 @@
 - name: Make sure cdb directory exists
   file:
     path: "{{ oidc_dir }}/example/flask_op/{{ item }}"
-    state: directory
-    owner: oidc-op
-    group: oidc-op
-    mode: 0755
+    state: "directory"
+    owner: "oidc-op"
+    group: "oidc-op"
+    mode: "0755"
   with_items:
-    - cdb
-    - log
+    - "cdb"
+    - "log"
 
 - name: Create client config if it doesn't exist
   template:
     src: "client_id.j2"
     dest: "{{ oidc_dir }}/example/flask_op/cdb/{{ sbs_client_id }}"
-    mode: 0640
+    mode: "0640"
     owner: oidc-op
     group: oidc-op
   no_log: "{{sram_ansible_nolog}}"

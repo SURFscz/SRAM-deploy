@@ -19,7 +19,7 @@
   template:
     src: "{{ item }}.conf.j2"
     dest: "/etc/apache2/sites-available/{{ item }}.conf"
-    mode: 0644
+    mode: "0644"
   with_items:
     - idp
   notify: restart Apache
@@ -37,7 +37,7 @@
   file:
     path: "{{ simplesaml_project_dir }}"
     state: directory
-    mode: 0755
+    mode: "0755"
     owner: www-data
     group: www-data
 
@@ -72,7 +72,7 @@
   file:
     path: "{{item}}"
     group: "www-data"
-    mode: 0775
+    mode: "0775"
   with_items:
     - "{{simplesaml_project_dir}}/simplesaml/log"
 

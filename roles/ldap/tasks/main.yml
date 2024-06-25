@@ -53,7 +53,7 @@
   copy:
     src: "{{ item }}"
     dest: "{{ ldap_ldif_dir }}/{{ item }}"
-    mode: 0755
+    mode: "0755"
   with_items:
     - sczGroup.ldif
     - groupOfMembers.ldif
@@ -67,7 +67,7 @@
   template:
     src: ldap.conf.j2
     dest: "{{ ldap_dir }}/ldap.conf"
-    mode: 0644
+    mode: "0644"
 
 - name: Set indices
   community.general.ldap_attrs:
