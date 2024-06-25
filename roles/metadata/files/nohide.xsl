@@ -3,7 +3,6 @@
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"
     xmlns:mdattr="urn:oasis:names:tc:SAML:metadata:attribute"
-    xmlns:mdrpi="urn:oasis:names:tc:SAML:metadata:rpi"
     xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
     version="1.0">
 

@@ -2,7 +2,6 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
                 xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"
-                xmlns:mdrpi="urn:oasis:names:tc:SAML:metadata:rpi"
                 xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
                 xmlns:mdattr="urn:oasis:names:tc:SAML:metadata:attribute"
                 version="2.0">

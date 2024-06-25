@@ -8,7 +8,7 @@
     version="1.0">
 
     <xsl:output method="xml" indent="yes" omit-xml-declaration="no"/>
-    
+
     <xsl:template match="md:EntitiesDescriptor">
         <xsl:copy>
             <xsl:copy-of select="md:EntityDescriptor
