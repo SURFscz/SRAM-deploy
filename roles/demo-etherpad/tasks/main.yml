@@ -9,10 +9,8 @@
 
 - name: Copy settings.json
   copy:
-    src: "{{ item }}"
-    dest: "{{ etherpad_basedir }}"
-  with_items:
-    - settings.json
+    src: "settings.json5"
+    dest: "{{ etherpad_basedir }}/settings.json"
   notify: "Restart the Etherpad container"
 
 - name: Create the Etherpad container
