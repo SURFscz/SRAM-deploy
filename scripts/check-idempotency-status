@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import json
+from enum import Enum
 
 # list of "allowed" "changed"-state tasks in a second ansible run
 # ideally, everything should be zero (fully idempotent), but let's make at least sure the
