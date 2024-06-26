@@ -13,15 +13,14 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support.expected_conditions import staleness_of, presence_of_element_located
 from selenium.webdriver.common.by import By
 
-
 # check that we have selenium version 4
 assert selenium_version.startswith('4.'), f"Expected selenium version 4.x.x, got {selenium_version}"
 
 
 class CustomChrome(webdriver.Chrome):
-    def get(self, url) -> None:
-        print(f"Fetching page '{url}'")
-        return super(CustomChrome, self).get(url)
+    def get(self, get_url) -> None:
+        print(f"Fetching page '{get_url}'")
+        return super(CustomChrome, self).get(get_url)
 
 
 options = webdriver.chrome.options.Options()
@@ -101,8 +100,8 @@ try:
 
     # Test admin attributes
     attributes = browser.find_elements(By.XPATH, "//table[@class='my-attributes']/*/*/*")
-    # for a in attributes:
-    #     print(f"a.text: {a.text}")
+    # for attr in attributes:
+    #     print(f"attr.text: {attr.text}")
     assert ('SCZ Admin' in [a.text for a in attributes]), "No valid admin profile found"
     print(" - profile ok")
 
@@ -164,6 +163,7 @@ except Exception as e:
     print("  ", tr.line)
 
     from bs4 import BeautifulSoup
+
     page = BeautifulSoup(browser.page_source, 'html.parser').prettify()
     with open("page.html", "w") as f:
         f.write(page)
