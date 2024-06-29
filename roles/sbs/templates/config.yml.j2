@@ -90,6 +90,11 @@ mail:
   send_exceptions_recipients: ["{{ sbs_exceptions_mail }}"]
   environment: "{{ base_domain }}"
 
+manage:
+  base_url: "{{ sbs_manage_base_url }}"
+  user: "{{ sbs_manage_user }}"
+  secret: "{{ sbs_manage_password }}"
+
 aup:
   version: 1
   url_aup_en: "https://edu.nl/6wb63"

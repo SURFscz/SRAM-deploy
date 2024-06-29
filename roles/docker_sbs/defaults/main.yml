@@ -104,6 +104,8 @@ sbs_eduteams_continue_endpoint: "https://localhost/continue"
 sbs_oidc_jwt_audience: "https://localhost"
 sbs_continue_eduteams_redirect_uri: "https://localhost/continue"
 
+sbs_manage_base_url: "https://manage.test2.surfconext.nl"
+
 sbs_idp_metadata_url: "https://metadata.surfconext.nl/signed/2023/edugain-downstream-idp.xml "
 sbs_backup_dir: "{{backup_base}}/sbs"
 
