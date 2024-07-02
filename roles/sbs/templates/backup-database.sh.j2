@@ -25,6 +25,6 @@ mysqldump --host="{{ sbs_db_host }}" \
           --disable-keys --extended-insert \
           --databases "{{ sbs_db_name }}" \
     > "${BACKUP_FILE}"
-bzip2 "${BACKUP_FILE}"
+zstd -qq --rm "${BACKUP_FILE}"
 
 exit 0
