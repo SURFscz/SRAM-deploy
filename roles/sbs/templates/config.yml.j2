@@ -91,6 +91,7 @@ mail:
   environment: "{{ base_domain }}"
 
 manage:
+  enabled: {{ sbs_manage_base_enabled }}
   base_url: "{{ sbs_manage_base_url }}"
   user: "{{ sbs_manage_user }}"
   password: "{{ sbs_manage_password }}"
