@@ -32,7 +32,8 @@ ports:
   weblogin_acc: 2022
   weblogin_prd: 1022
 
-demo1_weblogin_url: https://sbs.scz-vm.net/pam-weblogin
+demo1_weblogin_url_acc: https://sbs.scz-vm.net/pam-weblogin
+demo1_weblogin_url_prd: https://sbs.scz-vm.net/pam-weblogin
 demo1_weblogin_token_acc: 1234abcd
 demo1_weblogin_token_prd: 1234abcd
 

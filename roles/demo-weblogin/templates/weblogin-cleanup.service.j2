@@ -17,7 +17,7 @@ ExecStart=+/bin/mkdir -p -m0755 '{{weblogin_basedir}}/home_prd'
 # start container acc
 ExecStart=/usr/bin/docker run -d \
     -p 0.0.0.0:{{ ports.weblogin_acc }}:22 \
-    -e URL={{ demo1_weblogin_url }} \
+    -e URL={{ demo1_weblogin_url_acc }} \
     -e TOKEN={{ demo1_weblogin_token_acc }} \
     -v {{ weblogin_basedir }}/home_acc:/home:rw \
     --name {{ demo_containers.weblogin_acc }} \
@@ -28,7 +28,7 @@ ExecStart=/usr/bin/docker run -d \
 # start container prd
 ExecStart=/usr/bin/docker run -d \
     -p 0.0.0.0:{{ ports.weblogin_prd }}:22 \
-    -e URL={{ demo1_weblogin_url }} \
+    -e URL={{ demo1_weblogin_url_prd }} \
     -e TOKEN={{ demo1_weblogin_token_prd }} \
     -v {{ weblogin_basedir }}/home_prd:/home:rw \
     --name {{ demo_containers.weblogin_prd }} \
