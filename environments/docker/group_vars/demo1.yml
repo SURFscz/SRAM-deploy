@@ -12,7 +12,8 @@ demo_containers:
   etherpad: sram-etherpad
   wordpress: sram-wordpress
   wordpress_cli: sram-wordpress-cli
-  weblogin: sram-weblogin
+  weblogin_acc: sram-weblogin-acc
+  weblogin_prd: sram-weblogin-prd
   database: sram-db
 
 demo_images:
@@ -28,10 +29,12 @@ demo_hosts:
 ports:
   etherpad: 9001
   wordpress: 9002
-  weblogin: 2022
+  weblogin_acc: 2022
+  weblogin_prd: 1022
 
 demo1_weblogin_url: https://sbs.scz-vm.net/pam-weblogin
-demo1_weblogin_token: 1234abcd
+demo1_weblogin_token_acc: 1234abcd
+demo1_weblogin_token_prd: 1234abcd
 
 # oidc:
 #   demo1:
