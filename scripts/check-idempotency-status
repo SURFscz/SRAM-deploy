@@ -12,6 +12,9 @@ WHITELIST = {
 
 
 class Color(Enum):
+    def __str__(self):
+        return self.value
+
     # Foreground
     F_Default      = "\x1b[39m"
     F_Black        = "\x1b[30m"
