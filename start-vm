@@ -17,7 +17,7 @@ while getopts -- '-:h' OPT; do
     # support long options: https://stackoverflow.com/a/28466267/519360
     if [ "$OPT" = "-" ]; then   # long option: reformulate OPT and OPTARG
         OPT="${OPTARG%%=*}"       # extract long option name
-        OPTARG="${OPTARG#$OPT}"   # extract long option argument (may be empty)
+        OPTARG="${OPTARG#"$OPT"}"   # extract long option argument (may be empty)
         OPTARG="${OPTARG#=}"      # if long option argument, remove assigning `=`
     fi
     case "$OPT" in
@@ -128,7 +128,7 @@ else
         done
 
         # wait until ssh is running
-        if [ "$host" != "mail" -a "$host" != "redis" ]
+        if [ "$host" != "mail" ] &&  [ "$host" != "redis" ]
         then
             echo -n "."
             starttime=$(date +%s)
@@ -166,7 +166,7 @@ do
         break
     fi
 done
-if [ -n "$MITOGEN_PATH" -a "$NO_MITOGEN" != "1" ]
+if [ -n "$MITOGEN_PATH" ] && [ "$NO_MITOGEN" != "1" ]
 then
     echo "Found Mitogen at $MITOGEN_PATH"
     export ANSIBLE_STRATEGY_PLUGINS=$MITOGEN_PATH/$MITOGEN_SUBPATH/
@@ -200,7 +200,7 @@ else
         -i $ENV_DIR/inventory \
         $ANSIBLE_VAULT_ARG \
         $EXTRA_VARS \
-        $@
+        "$@"
 fi
 
 exit 0

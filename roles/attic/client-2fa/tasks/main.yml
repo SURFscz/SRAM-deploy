@@ -9,7 +9,7 @@
   template:
     src: "{{ item }}.conf.j2"
     dest: "/etc/apache2/sites-available/{{ item }}.conf"
-    mode: 0644
+    mode: "0644"
   with_items:
     - 2fa
   notify: restart Apache

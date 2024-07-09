@@ -34,7 +34,7 @@
   file:
     path: "{{ item }}"
     state: "directory"
-    mode: 0755
+    mode: "0755"
     owner: "root"
     group: "{{simplesaml_group}}"
   with_items:
@@ -45,7 +45,7 @@
   file:
     path: "{{ simplesaml_tmp_dir }}"
     state: "directory"
-    mode: 01775
+    mode: "01775"
     owner: "{{simplesaml_user}}"
     group: "{{simplesaml_group}}"
 
@@ -73,10 +73,10 @@
 - name: Make sure the log directory exists
   file:
     path: "{{ simplesaml_project_dir }}/simplesamlphp-{{ simplesaml_version }}/log"
-    state: directory
+    state: "directory"
     owner: "{{simplesaml_user}}"
     group: "{{simplesaml_user}}"
-    mode: '0755'
+    mode: "0755"
 
 - name: Link simplesaml
   file:

@@ -5,9 +5,12 @@ import sys
 import jinja2
 import argparse
 
+
 # custom class to support loading !vault entries from yml files
+# noinspection PyPep8Naming
 class vault(yaml.YAMLObject):
     yaml_tag = '!vault'
+
     def __init__(self, val):
         self.val = val
 

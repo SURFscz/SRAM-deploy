@@ -3,13 +3,13 @@
   template:
     src: sp_index.php.j2
     dest: /var/www/html/sp-test.php
-    mode: 0644
+    mode: "0644"
 
 - name: Add websites
   template:
     src: "{{ item }}.conf.j2"
     dest: "/etc/apache2/sites-available/{{ item }}.conf"
-    mode: 0644
+    mode: "0644"
   with_items:
     - sp
 

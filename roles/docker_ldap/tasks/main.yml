@@ -55,7 +55,7 @@
   copy:
     src: "{{ item }}"
     dest: "{{ ldap_ldif_dir }}/{{ item }}"
-    mode: 0644
+    mode: "0644"
   with_items:
     - sczGroup.ldif
     - groupOfMembers.ldif
@@ -70,7 +70,7 @@
 #   copy:
 #     src: "{{ item }}"
 #     dest: "{{ ldap_certs_dir }}/{{ item }}"
-#     mode: 0644
+#     mode: "0644"
 #   with_items:
 #     - dh_params
 
@@ -158,7 +158,7 @@
   template:
     src: ldap.conf.j2
     dest: "/etc/ldap/ldap.conf"
-    mode: 0644
+    mode: "0644"
 
 - name: Wait for LDAP initialization
   ansible.builtin.wait_for:

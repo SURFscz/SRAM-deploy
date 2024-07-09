@@ -149,7 +149,7 @@
     dest: "{{mariadb_cert_dir}}/backend.key"
     owner: "root"
     group: "ssl-cert"
-    mode: 0644
+    mode: "0644"
   no_log: "{{sram_ansible_nolog}}"
   notify: "Restart the database container"
 
@@ -160,7 +160,7 @@
     dest: "{{mariadb_cert_dir}}/backend.crt"
     owner: "root"
     group: "root"
-    mode: 0644
+    mode: "0644"
   notify: "Restart the database container"
 
 - name: Install mariadb config

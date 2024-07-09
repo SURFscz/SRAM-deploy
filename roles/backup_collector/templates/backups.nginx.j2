@@ -9,7 +9,7 @@ server {
 
         root {{backup_collector_basedir}}/webroot;
 
-{% for ip in backup_collector_ip_allowlist%}
+{% for ip in backup_collector_ip_allowlist %}
         allow {{ip}};
 {% endfor %}
         deny all;

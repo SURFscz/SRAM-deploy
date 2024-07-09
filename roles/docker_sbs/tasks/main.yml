@@ -122,7 +122,7 @@
     dest: "{{sbs_cert_dir}}/backend.crt"
     owner: "root"
     group: "root"
-    mode: 0644
+    mode: "0644"
   notify: "Restart sbs containers"
 
 - name: Copy https cert
@@ -131,7 +131,7 @@
     dest: "{{sbs_cert_dir}}/frontend.crt"
     owner: "root"
     group: "root"
-    mode: 0644
+    mode: "0644"
   notify: "Restart sbs containers"
 
 - name: "Install database certificate"

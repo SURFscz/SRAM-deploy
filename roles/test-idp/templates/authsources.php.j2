@@ -52,7 +52,7 @@ $config['example-userpass'] = [
 {% for user in testidp_extra_users %}
         '{{user.name}}:{{user.passwd}}' => [
             {% for attr, val in user.attributes.items() %}
-                '{{attr}}' => {%if val is string%}'{{val}}'{%else%}{{val}}{%endif%},
+                '{{attr}}' => {% if val is string %}'{{val}}'{% else %}{{val}}{% endif %},
             {% endfor %}
         ]
 {% endfor %}

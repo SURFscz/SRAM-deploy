@@ -95,7 +95,7 @@ StopRunningContainers() {
         tput bold
         echo -n "$container..."
         if [[ $dry_run == 0 ]]; then
-            docker kill $container 2>&1 >/dev/null
+            docker kill $container >/dev/null 2>&1
         fi
         tput sgr0
         tput setaf 2
@@ -197,7 +197,7 @@ GatherImages() {
     # dependancies.
     if [[ $remove_scz_image == 1 ]]; then
         image="$rm_image"
-        if [[ -n ${rm_tag+x}} ]]; then
+        if [[ -n ${rm_tag+x} ]]; then
             image="$image:$rm_tag"
         fi
         deb=$(docker images debian:buster --format="{{.ID}}")

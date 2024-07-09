@@ -53,7 +53,7 @@
   template:
     src: metadata.nginx.j2
     dest: "/etc/nginx/sites-available/metadata"
-    mode: 0644
+    mode: "0644"
   notify: restart nginx
 
 - name: Create symlink to metadata in /etc/nginx/sites-enabled
@@ -67,7 +67,7 @@
   template:
     src: "index.html.j2"
     dest: "{{metadata_documentroot}}/index.html"
-    mode: 0644
+    mode: "0644"
 
 - name: Install logo
   copy:

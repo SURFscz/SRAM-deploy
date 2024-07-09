@@ -121,6 +121,9 @@ sbs_client_id: !vault |
           3864613231396166363237656261393630616330346263316362
 sbs_base_url: "https://sbs.{{ internal_base_domain }}"
 
+# from manage
+sbs_manage_user: "sram"
+
 # Redis
 sbs_redis_host: "redis.vm.scz-vm.net"
 sbs_redis_port: 6379

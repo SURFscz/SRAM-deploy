@@ -9,6 +9,9 @@
       - "docker-compose-plugin"
       - "ansible"
       - "apache2"
+      - "chromium"
+      - "chromium-common"
+      - "chromium-driver"
 
 - name: "Fix cgroup v1 for docker"
   ansible.builtin.lineinfile:
@@ -19,7 +22,6 @@
     regexp: '^GRUB_CMDLINE_LINUX='
     state: "present"
 
-# TODO:
 # - add apache (of nog liever: nginx)
 - name: Enable Apache modules
   community.general.apache2_module:
