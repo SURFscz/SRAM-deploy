@@ -62,6 +62,7 @@
       - "vim"
       - "wget"
       - "xz-utils"
+      - "zstd"
 
 - name: Upgrade packages
   apt:
