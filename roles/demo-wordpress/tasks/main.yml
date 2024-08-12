@@ -64,14 +64,8 @@
       WORDPRESS_DB_PASSWORD: "wordpress"
       WORDPRESS_DB_NAME: "wordpress"
       WORDPRESS_CONFIG_EXTRA: |
-        define( 'WP_HOME', '/wp' );
-        define( 'WP_SITEURL', '/wp' );
-        if (!empty($_SERVER['HTTP_X_FORWARDED_HOST'])) {
-          $_SERVER['HTTP_HOST'] = $_SERVER['HTTP_X_FORWARDED_HOST'];
-        };
-        if (!empty($_SERVER['HTTP_X_FORWARDED_PROTO'])) {
-          $_SERVER['HTTPS'] = $_SERVER['HTTP_X_FORWARDED_PROTO'];
-        };
+        define( 'WP_HOME', 'https://{{ demo_hosts.demo1 }}/wp' );
+        define( 'WP_SITEURL', 'https://{{ demo_hosts.demo1 }}/wp' );
     published_ports:
       - "{{ports.wordpress}}:80"
     volumes:

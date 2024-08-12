@@ -58,8 +58,8 @@ SSLStaplingCache "shmcb:logs/ssl_stapling(32768)"
 {% endif %}
 
         ProxyPreserveHost on
+        RequestHeader set X-Forwarded-Proto expr=%{REQUEST_SCHEME}
         #RequestHeader set X-Forwarded-Host expr=%{HTTP_HOST}
-        #RequestHeader set X-Forwarded-Proto expr=%{HTTPS}
         #RequestHeader set X-Forwarded-Port "443"
 
         RewriteEngine on
