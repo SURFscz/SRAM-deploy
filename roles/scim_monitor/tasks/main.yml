@@ -78,6 +78,7 @@
     name: "letsencrypt"
     public: true
   vars:
+    letsencrypt_enabled: true
     letsencrypt_staging: false
     letsencrypt_hosts:
       - "{{ scim_monitor_hostname }}"
