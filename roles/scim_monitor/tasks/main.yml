@@ -152,5 +152,5 @@
     dest: "/etc/zabbix/zabbix_agent2.d/{{item}}"
     mode: "0644"
   with_items:
-    - sram-scimmonitor.conf
+    - "sram-scimmonitor.conf"
   notify: "restart zabbix-agent"

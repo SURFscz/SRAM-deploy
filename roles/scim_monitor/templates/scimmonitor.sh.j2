@@ -26,8 +26,9 @@ DIFF=$(
 )
 
 # output to status file
-date '+%s' > $STATUSFILE
-echo -n "$DIFF" | wc -l >> $STATUSFILE
+NOW=$(date '+%s')
+DIFFNR=$(echo "$DIFF"| wc -l)
+echo '{"time":'$NOW',"diff":'$DIFFNR'}' > $STATUSFILE
 echo -n "$DIFF"         >> $STATUSFILE
 
 if [ -z "$DIFF" ]
