@@ -154,9 +154,11 @@ user_requests_retention:
 retention:
   cron_hour_of_day: {{ sbs_cron_hour_of_day }}
   # how many days of inactivity before a user is suspended
+  #   0 allows for any last_login_date in the past to trigger suspension notification
   allowed_inactive_period_days: {{ sbs_suspension_inactive_days }}
   # how many days before suspension do we send a warning
-  reminder_suspend_period_days: 14
+  #   -1 will suspend notified users on second suspension cron
+  reminder_suspend_period_days: {{ sbs_suspension_reminder_days }}
   # how many days after suspension do we delete the account
   remove_suspended_users_period_days: 90
   # how many days before deletion do we send a reminder
