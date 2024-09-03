@@ -154,7 +154,8 @@ CMD="ansible-playbook provision.yml \
     --limit=${ENV} \
     --diff \
     ${EXTRA} \
-    " "$@"
+    "$@" \
+"
 
 
 CMD=$( echo $CMD | sed 's/\s\+/ /g' )
