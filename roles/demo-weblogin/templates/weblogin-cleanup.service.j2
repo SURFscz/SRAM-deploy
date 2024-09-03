@@ -7,20 +7,35 @@ Type=oneshot
 WorkingDirectory={{weblogin_basedir}}
 
 # clean up
-ExecStart=-/usr/bin/docker rm -f {{ demo_containers.weblogin }}
-ExecStart=+/bin/rm -rf '{{weblogin_basedir}}/home'
-ExecStart=+/bin/mkdir -p -m0755 '{{weblogin_basedir}}/home'
+ExecStart=-/usr/bin/docker rm -f {{ demo_containers.weblogin_acc }}
+ExecStart=-/usr/bin/docker rm -f {{ demo_containers.weblogin_prd }}
+ExecStart=+/bin/rm -rf '{{weblogin_basedir}}/home_acc'
+ExecStart=+/bin/rm -rf '{{weblogin_basedir}}/home_prd'
+ExecStart=+/bin/mkdir -p -m0755 '{{weblogin_basedir}}/home_acc'
+ExecStart=+/bin/mkdir -p -m0755 '{{weblogin_basedir}}/home_prd'
 
-# start container
+# start container acc
 ExecStart=/usr/bin/docker run -d \
-    -p 0.0.0.0:{{ ports.weblogin }}:22 \
-    -e URL={{ demo1_weblogin_url }} \
-    -e TOKEN={{ demo1_weblogin_token }} \
-    -v {{ weblogin_basedir }}/home:/home:rw \
-    --name {{ demo_containers.weblogin }} \
+    -p 0.0.0.0:{{ ports.weblogin_acc }}:22 \
+    -e URL={{ demo1_weblogin_url_acc }} \
+    -e TOKEN={{ demo1_weblogin_token_acc }} \
+    -v {{ weblogin_basedir }}/home_acc:/home:rw \
+    --name {{ demo_containers.weblogin_acc }} \
     --network {{ internal_network }} \
     --restart always \
     {{ demo_images.weblogin }}
+
+# start container prd
+ExecStart=/usr/bin/docker run -d \
+    -p 0.0.0.0:{{ ports.weblogin_prd }}:22 \
+    -e URL={{ demo1_weblogin_url_prd }} \
+    -e TOKEN={{ demo1_weblogin_token_prd }} \
+    -v {{ weblogin_basedir }}/home_prd:/home:rw \
+    --name {{ demo_containers.weblogin_prd }} \
+    --network {{ internal_network }} \
+    --restart always \
+    {{ demo_images.weblogin }}
+
 SyslogIdentifier=weblogin-cleanup
 
 [Install]
