@@ -17,7 +17,6 @@ import os
 from os.path import join as join_path
 from tempfile import gettempdir
 from ansible.parsing.vault import VaultEditor, VaultLib, VaultSecret
-from ansible.constants import DEFAULT_VAULT_IDENTITY
 from ansible.errors import AnsibleError
 from getpass import getpass
 
@@ -25,6 +24,7 @@ VAULT_REGEX = re.compile(r'(?P<vault>^(?P<indent>\s*)\$ANSIBLE_VAULT\S*\n(?:\s*\
 
 temp_count = 0
 
+DEFAULT_VAULT_IDENTITY='default'
 
 class ReKeyError(Exception):
     __slots__ = 'lineno', 'cause'

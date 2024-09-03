@@ -112,7 +112,7 @@
     state: started
     # pull: true
     ports:
-      - 389:1389
+      - 127.0.0.1:389:1389
     #   - 636:1636
     env:
       LDAP_ROOT: "{{ services_ldap.basedn }}"

@@ -72,62 +72,61 @@ echo "$0 $*" >> $LOG
 
 # first check that deploy and config repos are clean and are using the same version
 # deploy
-# echo -n "Checking if SRAM-deploy is clean... "
-# if ! git diff-index --quiet HEAD --
-# then
-#     echo -e "$FAIL"
-#     git status | sed 's/^/  > /'
-#     echo
-#     WARNING=1
-# else
-#     echo -e "$OK"
-# fi
-# branch_deploy=$(git symbolic-ref HEAD 2> /dev/null || git describe --exact)
+ echo -n "Checking if SRAM-deploy is clean... "
+ if ! git diff-index --quiet HEAD --
+ then
+     echo -e "$FAIL"
+     git status | sed 's/^/  > /'
+     echo
+     WARNING=1
+ else
+     echo -e "$OK"
+ fi
+ branch_deploy=$(git symbolic-ref HEAD 2> /dev/null || git describe --exact)
 
-# config
-# cwd=$(pwd)
-# cd "$CONFDIR"
-# echo -en "Checking if Environment repo is clean... "
-# if ! git diff-index --quiet HEAD --
-# then
-#     echo -e "$FAIL"
-#     git status | sed "s/^/  > /"
-#     echo
-#     WARNING=1
-# else
-#     echo -e "$OK"
-# fi
-# branch_config=$(git symbolic-ref HEAD 2> /dev/null || git describe --exact)
-# cd "$cwd"
+ # config
+ cwd=$(pwd)
+ cd "$CONFDIR"
+ echo -en "Checking if Environment repo is clean... "
+ if ! git diff-index --quiet HEAD --
+ then
+     echo -e "$FAIL"
+     git status | sed "s/^/  > /"
+     echo
+     WARNING=1
+ else
+     echo -e "$OK"
+ fi
+ branch_config=$(git symbolic-ref HEAD 2> /dev/null || git describe --exact)
+ cd "$cwd"
 
-# echo -n "Checking whether deploy and config are in sync... "
-# if [ "$branch_deploy" != "$branch_config" ]
-# then
-#     echo -e "$FAIL"
-#     echo "  > Deploy branch: ${RED}'$branch_deploy'${RESET}"
-#     echo "  > Config branch: ${RED}'$branch_config'${RESET}"
-#     echo
-#     WARNING=1
-# else
-#     echo -e "$OK ($branch_deploy)"
-# fi
-#
-# if [ "$WARNING" != "0" ]
-# then
-#     if [ "$STRICT" != "0" ]
-#     then
-#         echo "Warnings encountered, refusing to deploy in strict mode"
-#         exit 1
-#     fi
-#     echo
-#     read -p "Warning encountered, are you sure you want to continue (yes/no)? " result
-#     if [ "$result" != "yes" ]
-#     then
-#         echo "Exiting..."
-#         exit 1
-#     fi
-# fi
+ echo -n "Checking whether deploy and config are in sync... "
+ if [ "$branch_deploy" != "$branch_config" ]
+ then
+     echo -e "$FAIL"
+     echo "  > Deploy branch: ${RED}'$branch_deploy'${RESET}"
+     echo "  > Config branch: ${RED}'$branch_config'${RESET}"
+     echo
+     WARNING=1
+ else
+     echo -e "$OK ($branch_deploy)"
+ fi
 
+ if [ "$WARNING" != "0" ]
+ then
+     if [ "$STRICT" != "0" ]
+     then
+         echo "Warnings encountered, refusing to deploy in strict mode"
+         exit 1
+     fi
+     echo
+     read -p "Warning encountered, are you sure you want to continue (yes/no)? " result
+     if [ "$result" != "yes" ]
+     then
+         echo "Exiting..."
+         exit 1
+     fi
+ fi
 
 # try to find mitogen
 MITOGEN_PATH=
@@ -154,8 +153,7 @@ CMD="ansible-playbook provision.yml \
     --limit=${ENV} \
     --diff \
     ${EXTRA} \
-    "$@" \
-"
+    ""$@"
 
 
 CMD=$( echo $CMD | sed 's/\s\+/ /g' )
