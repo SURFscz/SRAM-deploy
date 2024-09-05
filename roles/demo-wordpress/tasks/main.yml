@@ -33,8 +33,8 @@
 
 - name: Create the Worpress DB container
   docker_container:
-    name: "{{ containers.database }}"
-    image: "{{ images.database }}"
+    name: "{{ demo_containers.database }}"
+    image: "{{ demo_images.database }}"
     restart_policy: "always"
     # restart: true
     state: started
@@ -52,14 +52,14 @@
 
 - name: Create the Worpress container
   docker_container:
-    name: "{{ containers.wordpress }}"
-    image: "{{ images.wordpress }}"
+    name: "{{ demo_containers.wordpress }}"
+    image: "{{ demo_images.wordpress }}"
     restart_policy: "always"
     # restart: true
     state: started
     # pull: true
     env:
-      WORDPRESS_DB_HOST: "{{ containers.database }}"
+      WORDPRESS_DB_HOST: "{{ demo_containers.database }}"
       WORDPRESS_DB_USER: "wordpress"
       WORDPRESS_DB_PASSWORD: "wordpress"
       WORDPRESS_DB_NAME: "wordpress"
@@ -75,13 +75,13 @@
 
 - name: Run command in the worpress container
   docker_container:
-    name: "{{ containers.wordpress_cli }}"
-    image: "{{ images.wordpress_cli }}"
+    name: "{{ demo_containers.wordpress_cli }}"
+    image: "{{ demo_images.wordpress_cli }}"
     restart_policy: "no"
     state: "started"
     user: 33
     env:
-      WORDPRESS_DB_HOST: "{{ containers.database }}"
+      WORDPRESS_DB_HOST: "{{ demo_containers.database }}"
       WORDPRESS_DB_USER: "wordpress"
       WORDPRESS_DB_PASSWORD: "wordpress"
       WORDPRESS_DB_NAME: "wordpress"
@@ -93,7 +93,7 @@
       wp plugin activate jit-user.php;
       '
     volumes_from:
-      - "{{ containers.wordpress }}"
+      - "{{ demo_containers.wordpress }}"
     volumes:
       - "{{ wordpress_basedir }}/wait-for-mysql.sh:/wait-for-mysql.sh"
     networks:
