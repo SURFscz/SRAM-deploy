@@ -206,7 +206,7 @@
     - { role: "letsencrypt",          tags: ["demo1","demo-letsencrypt"] }
     - { role: "demo-etherpad",        tags: ["demo1","demo-etherpad"]  }
     - { role: "demo-weblogin",        tags: ["demo1","demo-weblogin"]  }
-    # - { role: "demo-wordpress",       tags: ["demo1","demo-wordpress"]  } # Breaks CI
+    - { role: "demo-wordpress",       tags: ["demo1","demo-wordpress"]  } # Breaks CI
 
 # CI test docker
 - name: "test"
