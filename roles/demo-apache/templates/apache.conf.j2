@@ -88,4 +88,9 @@ SSLStaplingCache "shmcb:logs/ssl_stapling(32768)"
 # Letsencrypt fallback
 <VirtualHost *:80>
         DocumentRoot /var/www/certbot
+        <Directory /var/www/certbot>
+                Options -Indexes
+                AllowOverride None
+                Require all granted
+        </Directory>
 </VirtualHost>
