@@ -25,7 +25,8 @@ SSLStaplingCache "shmcb:logs/ssl_stapling(32768)"
 
         SSLUseStapling On
 
-        Header always set Content-Security-Policy "default-src 'self'; base-uri 'self'; frame-src 'none'; form-action 'self' https://*.{{base_domain}}; frame-ancestors 'none'; block-all-mixed-content;"
+        # This breaks Etherpad and WordPress in horible ways. If anybody has a better idea, shout!
+        # Header always set Content-Security-Policy "default-src 'self'; base-uri 'self'; frame-src 'none'; form-action 'self' https://*.{{base_domain}}; frame-ancestors 'none'; block-all-mixed-content;"
         Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload;"
 {% endif %}
 
@@ -57,8 +58,8 @@ SSLStaplingCache "shmcb:logs/ssl_stapling(32768)"
 {% endif %}
 
         ProxyPreserveHost on
+        RequestHeader set X-Forwarded-Proto expr=%{REQUEST_SCHEME}
         #RequestHeader set X-Forwarded-Host expr=%{HTTP_HOST}
-        #RequestHeader set X-Forwarded-Proto expr=%{HTTPS}
         #RequestHeader set X-Forwarded-Port "443"
 
         RewriteEngine on
