@@ -14,7 +14,7 @@ researchers, which allows them to
 It is meant to be used in combination with a (SAML/OIDC) identity federation and proxy such as
 [EduTEAMS](https://eduteams.org/), but can be used stand-alone in combination with a single OIDC OP.
 
-More information can be obtained from <https://wiki.surfnet.nl/display/sram>.
+More information can be obtained from our [documentation](https://edu.nl/vw3jx).
 
 ## Technical
 The SRAM is comprised of a number of open source components:
