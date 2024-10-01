@@ -5,7 +5,7 @@ Content-Type: text/html
 X-Content-Type-Options: nosniff
 X-Frame-Options: sameorigin
 Referrer-Policy: strict-origin-when-cross-origin
-Content-Security-Policy: default-src 'self'; base-uri 'self'; frame-src 'none'; form-action 'self' https://*.{{base_domain}}; frame-ancestors 'none'; block-all-mixed-content;
+Content-Security-Policy: default-src 'self' data:; style-src 'self' 'sha256-Rio9bMedj81uZXDijmeWokDZ2AO/RwH8+hfSXMOHETA='; base-uri 'self'; frame-src 'none'; form-action 'self' https://*.{{base_domain}}; frame-ancestors 'none'; block-all-mixed-content;
 Permissions-Policy: accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(), cross-origin-isolated=(), display-capture=(), document-domain=(), encrypted-media=(), execution-while-not-rendered=(), execution-while-out-of-viewport=(), fullscreen=(), geolocation=(), gyroscope=(), keyboard-map=(), magnetometer=(), microphone=(), midi=(), navigation-override=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), sync-xhr=(), usb=(), web-share=(), xr-spatial-tracking=(), clipboard-read=(), clipboard-write=(), gamepad=(), speaker-selection=()
 
 <!DOCTYPE html>
@@ -14,7 +14,6 @@ Permissions-Policy: accelerometer=(), ambient-light-sensor=(), autoplay=(), batt
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
 <meta name="theme-color" content="#000000">
-<meta http-equiv="content-security-policy" content="default-src 'none'; font-src 'self' data:; img-src 'self' data:; style-src 'unsafe-inline'; media-src 'self' data:; script-src 'unsafe-inline' data:;">
 <title>SURF Research Access Management</title>
 <link rel="icon" type="image/png" sizes="32x32" href="data:image/png;base64,{{ lookup('file','favicon-32x32.png') | b64encode }}" >
 <style>
@@ -326,10 +325,33 @@ Permissions-Policy: accelerometer=(), ambient-light-sensor=(), autoplay=(), batt
         font-weight: 600;
         src: url(data:font/woff2;base64,{{ lookup('file','SourceSansPro-Semibold.subset.otf') | b64encode }})format("woff2")
     }
-    @font-face{
+    @font-face {
         font-family: "Nunito";
         font-weight: 600;
         src: url(data:font/woff2;base64,{{ lookup('file','Nunito-Bold.subset.otf') | b64encode }})format("woff2")
+    }
+    .shape {
+        fill:#ffffff;
+    }
+    .text {
+        fill:#000000;
+        fill-opacity:1;
+    }
+    #path2 {
+        fill:#0078c7;
+        fill-opacity:1;
+    }
+    #path3 {
+        fill:#0078c7;
+        fill-opacity:1;
+    }
+    #svg30 {
+        width:100%;
+    }
+    #path29 {
+        fill:#0078c7;
+        fill-opacity:1;
+    }
 </style>
 </head>
 <body id=app_body>
@@ -374,7 +396,8 @@ Permissions-Policy: accelerometer=(), ambient-light-sensor=(), autoplay=(), batt
                       <span class="sds--branding--visual">
                         <svg xmlns="http://www.w3.org/2000/svg" class="logo-surf" width="70.9" height="36" viewBox="0 0 70.9 36">
                           <path class="shape" d="M65.5 21.8c3 0 5.4 2.4 5.4 5.4v3.4c0 3-2.4 5.4-5.4 5.4h-8.1c-3 0-5.4-2.4-5.4-5.4v-2.1c0-3.7-3-6.7-6.7-6.7H6.7C3 21.8 0 18.7 0 15V6.7C0 3 3 0 6.7 0h38.5C49 0 52 3 52 6.7V15c0 3.7 3 6.7 6.7 6.7h6.8z" fill-rule="evenodd" clip-rule="evenodd"/>
-                          <path class="text" d="M43.4 12.5c.7 0 1.1-.4 1.1-1.1 0-.7-.3-1.1-1.1-1.1h-2.7v-2H45c.7 0 1.1-.4 1.1-1.1 0-.7-.4-1.1-1.1-1.1h-5.4c-.7 0-1.1.4-1.1 1.1v7.6c0 .7.4 1.1 1.1 1.1.7 0 1.1-.4 1.1-1.1v-2.4h2.7zM32.2 8.3c.9 0 1.5.4 1.5 1.3s-.7 1.3-1.5 1.3h-1.9V8.3h1.9zm1.3 7c.2.5.5.7.9.7.6 0 1.3-.4 1.3-1.1 0-.2 0-.4-.1-.6l-1-2.1c1-.5 1.5-1.4 1.5-2.7 0-2-1.5-3.4-3.6-3.4h-3.2c-.7 0-1.1.4-1.1 1.1v7.6c0 .7.4 1.1 1.1 1.1.7 0 1.1-.4 1.1-1.1v-2h2.1l1 2.5zm-10.3-3.9c0 1.5-.9 2.4-2.2 2.4-1.3 0-2.2-.9-2.2-2.4V7.2c0-.7-.4-1.1-1.1-1.1-.7 0-1.1.4-1.1 1.1v4.3c0 2.8 1.9 4.6 4.4 4.6 2.6 0 4.5-1.8 4.5-4.6V7.2c0-.7-.4-1.1-1.1-1.1-.7 0-1.1.4-1.1 1.1v4.2zM10.5 14c-.9 0-1.5-.2-1.9-.4-.4-.1-.7-.2-1-.2-.6 0-1 .4-1 1 0 1 2.1 1.6 4 1.6 2.2 0 3.9-1.2 3.9-3 0-1.7-1.1-2.4-2.4-2.8l-1.8-.6C9.4 9.5 9 9.3 9 8.8s.8-.7 1.4-.7c.8 0 1.3.2 1.8.4.3.1.6.2.9.2.6 0 .9-.4.9-1 0-1-1.9-1.6-3.6-1.6C8.3 6 6.7 7.2 6.7 8.9c0 1.4 1 2.3 2.2 2.6l1.6.5c.8.2 1.5.5 1.5 1 .1.6-.8 1-1.5 1z" fill-rule="evenodd" clip-rule="evenodd" fill="#fff"></path>                        </svg>
+                          <path class="text" d="M43.4 12.5c.7 0 1.1-.4 1.1-1.1 0-.7-.3-1.1-1.1-1.1h-2.7v-2H45c.7 0 1.1-.4 1.1-1.1 0-.7-.4-1.1-1.1-1.1h-5.4c-.7 0-1.1.4-1.1 1.1v7.6c0 .7.4 1.1 1.1 1.1.7 0 1.1-.4 1.1-1.1v-2.4h2.7zM32.2 8.3c.9 0 1.5.4 1.5 1.3s-.7 1.3-1.5 1.3h-1.9V8.3h1.9zm1.3 7c.2.5.5.7.9.7.6 0 1.3-.4 1.3-1.1 0-.2 0-.4-.1-.6l-1-2.1c1-.5 1.5-1.4 1.5-2.7 0-2-1.5-3.4-3.6-3.4h-3.2c-.7 0-1.1.4-1.1 1.1v7.6c0 .7.4 1.1 1.1 1.1.7 0 1.1-.4 1.1-1.1v-2h2.1l1 2.5zm-10.3-3.9c0 1.5-.9 2.4-2.2 2.4-1.3 0-2.2-.9-2.2-2.4V7.2c0-.7-.4-1.1-1.1-1.1-.7 0-1.1.4-1.1 1.1v4.3c0 2.8 1.9 4.6 4.4 4.6 2.6 0 4.5-1.8 4.5-4.6V7.2c0-.7-.4-1.1-1.1-1.1-.7 0-1.1.4-1.1 1.1v4.2zM10.5 14c-.9 0-1.5-.2-1.9-.4-.4-.1-.7-.2-1-.2-.6 0-1 .4-1 1 0 1 2.1 1.6 4 1.6 2.2 0 3.9-1.2 3.9-3 0-1.7-1.1-2.4-2.4-2.8l-1.8-.6C9.4 9.5 9 9.3 9 8.8s.8-.7 1.4-.7c.8 0 1.3.2 1.8.4.3.1.6.2.9.2.6 0 .9-.4.9-1 0-1-1.9-1.6-3.6-1.6C8.3 6 6.7 7.2 6.7 8.9c0 1.4 1 2.3 2.2 2.6l1.6.5c.8.2 1.5.5 1.5 1 .1.6-.8 1-1.5 1z" fill-rule="evenodd" clip-rule="evenodd" fill="#fff"></path>
+                        </svg>
                       </span>
                       <span class="sds--branding--textual"/>
                     </div>
