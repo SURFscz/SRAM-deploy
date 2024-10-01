@@ -51,6 +51,7 @@
         priv: '{{ sbs_db_name }}.*:{{ item.priv }}'
         ca_cert: "/etc/ssl/vm.scz-vm.net.crt"
         check_hostname: false
+        column_case_sensitive: "{{ sbs_db_user_column_case_sensitive }}"
       with_items:
         - user: "{{ sbs_db_user }}"
           passwd: "{{ sbs_db_password }}"

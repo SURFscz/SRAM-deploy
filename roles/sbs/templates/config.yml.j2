@@ -132,14 +132,6 @@ metadata:
   idp_url: "{{sbs_idp_metadata_url}}"
   parse_at_startup: True
 
-service_bus:
-  enabled: False
-  host: "localhost"
-  client_id: "sbs"
-  user: "sbs"
-  password: "unused"
-
-
 platform_admin_notifications:
   # Do we daily check for CO join_requests and CO requests and send a summary mail to beheer_email?
   enabled: False
@@ -162,9 +154,11 @@ user_requests_retention:
 retention:
   cron_hour_of_day: {{ sbs_cron_hour_of_day }}
   # how many days of inactivity before a user is suspended
+  #   0 allows for any last_login_date in the past to trigger suspension notification
   allowed_inactive_period_days: {{ sbs_suspension_inactive_days }}
   # how many days before suspension do we send a warning
-  reminder_suspend_period_days: 14
+  #   -1 will suspend notified users on second suspension cron
+  reminder_suspend_period_days: {{ sbs_suspension_reminder_days }}
   # how many days after suspension do we delete the account
   remove_suspended_users_period_days: 90
   # how many days before deletion do we send a reminder
@@ -207,6 +201,15 @@ invitation_reminders:
   cron_hour_of_day: {{ sbs_cron_hour_of_day }}
   # How many days before expiration of an invitation do we remind the user?
   invitation_reminders_threshold: 5
+
+invitation_expirations:
+  # Do we daily check for invitations that are expired / accepted and are eligible for deletion ?
+  enabled: {{ sbs_invitation_expirations_enabled }}
+  cron_hour_of_day: {{ sbs_cron_hour_of_day }}
+  # How long after expiration of an invitation do we delete the invitation?
+  nbr_days_remove_expired_invitations: 10
+  # How long after expiration of an API created invitation do we delete the invitation?
+  nbr_days_remove_api_expired_invitations: 30
 
 orphan_users:
   # Do we daily check for users that are orphans soo they can be deleted?

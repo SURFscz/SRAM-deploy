@@ -16,6 +16,7 @@ sbs_db_cert_path: "{{sbs_cert_dir}}/db_ca.crt"
 sbs_db_name: "sbs"
 sbs_db_admin_user: "root"
 sbs_db_admin_password: "changethispassword"
+sbs_db_user_column_case_sensitive: false
 
 sbs_db_user: "sbs"
 sbs_dbbackup_user: "sbs_backupper"
@@ -79,6 +80,7 @@ sbs_second_factor_authentication_required: True
 sbs_totp_token_name: "SRAM"
 sbs_notifications_enabled: True
 sbs_invitation_reminders_enabled: True
+sbs_invitation_expirations_enabled: True
 sbs_open_requests_enabled: True
 sbs_scim_sweep: False
 sbs_impersonation_allowed: False
@@ -88,6 +90,7 @@ sbs_mock_scim_enabled: False
 
 sbs_delete_orphaned: True
 sbs_suspension_inactive_days: 365
+sbs_suspension_reminder_days: 14
 sbs_suspension_notify_admin: False
 
 sbs_oidc_config_url: "http://localhost/.well-known/openid-configuration"

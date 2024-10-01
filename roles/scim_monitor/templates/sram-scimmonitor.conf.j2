@@ -1,4 +1,3 @@
-# two parameters:
-# first is env name (tst, acc, prd) corresponding to statsu file
-# second is line in file to request (1==timestamp, 2==diff lines)
-UserParameter=sram.scimmonitor[*],cat {{scim_monitor_status_dir}}/status-$1 | head -n $2 | tail -n 1
+# parameter is env name (tst, acc, prd) corresponding to status file
+# returns json with data from status file
+UserParameter=sram.scimmonitor[*],cat {{scim_monitor_status_dir}}/status-$1 | head -n 1

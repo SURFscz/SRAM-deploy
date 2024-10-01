@@ -74,7 +74,7 @@ frontend fe_https
     # generic security headers
     http-response set-header X-Frame-Options "sameorigin"
     http-response set-header X-Content-Type-Options "nosniff"
-    http-response set-header Referrer-Policy "strict-origin-when-cross-origin"
+    http-response set-header Referrer-Policy "same-origin"
 
     # diable  mime type sniffing
     http-response set-header X-Content-Type-Options "nosniff"

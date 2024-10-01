@@ -171,3 +171,8 @@ sbs_ssid_identity_providers:
 
 sbs_notifications_enabled: True
 sbs_cron_hour_of_day: "4"
+
+# Any last_login_date in the past triggers suspension notification
+sbs_suspension_inactive_days: 0
+# Second suspension cron will suspend notified users
+sbs_suspension_reminder_days: -1
