@@ -102,7 +102,7 @@ frontend fe_https
     acl url_static path_beg /api/images
     http-request track-sc1 url32+src table proxy_req_rates unless url_static
     acl exceeds_limit sc_gpc0_rate(0) gt 50
-    acl network_allowed src {{ iprange.internal }}
+    acl network_allowed src -- {{ haproxy_internal_hosts | join(' ') }}
     http-request sc-inc-gpc0(0) if { sc_http_req_rate(1) eq 1 } !exceeds_limit
     http-request deny deny_status 429 if exceeds_limit !network_allowed
 {% endif %}
@@ -156,7 +156,7 @@ listen {{name}}
                     "green" if "green" in groups and be_server in groups["green"] else
                     "server" -%}
     {% set server_name = "{}-{}".format(colour, loop.index) -%}
-    server {{server_name}} {{be_server}}:{{host.backend_port}} ssl check weight 10 {% if loop.index==1 %}on-marked-up shutdown-backup-sessions{%else%}backup{%endif%}
+    server {{server_name}} {{be_server}}:{{host.backend_port}} ssl check weight 10 {% if loop.index==1 %}on-marked-up shutdown-backup-sessions{% else %}backup{% endif %}
 
     {% endfor %}
 

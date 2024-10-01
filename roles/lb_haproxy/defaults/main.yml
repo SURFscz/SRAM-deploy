@@ -21,3 +21,6 @@ haproxy_ldap_acl_group: "aclsync_config"
 haproxy_state_file: "/var/lib/haproxy/state"
 
 haproxy_socket_group: "haproxy_admins"
+
+haproxy_internal_hosts:
+  - "10.0.0.0/8"
