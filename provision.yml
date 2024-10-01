@@ -63,7 +63,7 @@
     - { role: "users",          tags: ["common","users"]         }
     - { role: "logging",        tags: ["common","logging"]       }
     - { role: "firewall",       tags: ["common","firewall"],
-        when: "not is_docker" }
+        when: "not is_dev" }
     - { role: ntp,            tags: ['common','ntp']           }
     - { role: aws-cleanup,    tags: ['common','clean']         }
     - { role: mail,           tags: ['common','mail']          }
@@ -82,7 +82,7 @@
     - { role: "backup_collector",  tags: ["bhr2","backup-collector"]  }
     - { role: "logging_collector", tags: ["bhr2","logging-collector"] }
     - { role: "zabbix-server",     tags: ["bhr2","zabbix-server"],
-        when: "not is_docker" }
+        when: "not is_dev" }
 
 - name: "bhr11"
   hosts: "bhr11"
@@ -114,7 +114,7 @@
   tasks:
     - { name: "version", import_tasks: "tasks/versions.yml", tags: ["common"]  }
   roles:
-    - { role: "docker_db",                    tags: ["db", "docker-db"] }
+    - { role: "docker_db",                    tags: ["db", "docker-db"], when: is_dev }
     - { role: "docker_pyff",                  tags: ["meta", "docker-pyff"] }
     - { role: "docker_metadata",              tags: ["meta", "docker-metadata"] }
     - { role: "docker_plsc",                  tags: ["plsc", "docker-plsc"] }
