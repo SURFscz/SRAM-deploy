@@ -1,0 +1,34 @@
+server {
+    listen 80;
+    server_name {{ ansible_fqdn  }};
+
+{% if letsencrypt_challenge_dir is defined %}
+    location /.well-known/acme-challenge {
+        alias {{ letsencrypt_challenge_dir }}/.well-known/acme-challenge;
+    }
+{% endif %}
+
+    location / {
+        rewrite ^(.*) https://{{ ansible_fqdn }}/$1 permanent;
+    }
+}
+
+
+server {
+    listen 443 ssl http2;
+    server_name {{ ansible_fqdn }};
+
+    ssl_certificate        {{ letsencrypt_cert_dir }}/{{ ansible_fqdn }}/fullchain.pem;
+    ssl_certificate_key    {{ letsencrypt_cert_dir }}/{{ ansible_fqdn }}/privkey.pem;
+    ssl_protocols          TLSv1.3;
+    ssl_stapling on;
+    ssl_stapling_verify on;
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
+
+    include security_headers;
+
+    location /  {
+        return 418 "Congratulations, you have found the coffee pot!";
+    }
+
+}

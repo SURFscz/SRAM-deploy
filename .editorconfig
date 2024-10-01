@@ -13,3 +13,6 @@ max_line_length = 120
 [*.{yml,yaml,yml.j2,yaml.j2}]
 max_line_length = 100
 indent_size = 2
+
+[*.{xslt,xslt.j2}]
+max_line_length = 256

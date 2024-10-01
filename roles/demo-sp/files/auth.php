@@ -24,7 +24,6 @@ $SUPPORTED = array(
     'voPersonID',
     'voPersonExternalID',
     'uid',
-    'userid',
     'eduPersonPrincipalName',
     'eduPersonScopedAffiliation',
     'voPersonExternalAffiliation',

@@ -1,63 +1,75 @@
 ---
-- name: set nameservers
-  template: src=resolv.conf.j2 dest=/etc/resolv.conf force=yes
+- name: "set nameservers"
+  template:
+    src: "resolv.conf.j2"
+    dest: "/etc/resolv.conf"
+    force: true
   when:
-    - not is_aws
-    - environment_name!="vm"
-    - environment_name!="ci"
+    - "not is_aws"
+    - "environment_name != 'vm'"
+    - "environment_name != 'ci'"
 
-- name: fix dhclient.conf
-  template: src=dhclient.conf.j2 dest=/etc/dhcp/dhclient.conf force=yes
+- name: "fix dhclient.conf"
+  template:
+    src: "dhclient.conf.j2"
+    dest: "/etc/dhcp/dhclient.conf"
+    force: true
   when:
-    - is_aws
-    - environment_name!="vm"
-    - environment_name!="ci"
-  register: dhclient
+    - "is_aws"
+    - "environment_name != 'vm'"
+    - "environment_name != 'ci'"
+  register: "dhclient"
 
-- name: Restart networking
+- name: "Restart networking"
   systemd:
-    name: networking
-    state: restarted
-  when: dhclient.changed
+    name: "networking"
+    state: "restarted"
+  when: "dhclient.changed"
 
 - name: "disable cloud-init VMWare customization"
   lineinfile:
     path: "/etc/cloud/cloud.cfg.d/99-sram.cfg"
     line: "disable_vmware_customization: true"
     create: true
-  when: ansible_virtualization_type == "VMware"
+  when: "ansible_virtualization_type == 'VMware'"
 
-- name: set localtime
+- name: "set localtime"
   file:
     dest: "/etc/localtime"
     state: "link"
     src: "/usr/share/zoneinfo/{{timezone}}"
 
-- name: set timezone
-  template: src=timezone.j2 dest=/etc/timezone
+- name: "set timezone"
+  template:
+    src: "timezone.j2"
+    dest: "/etc/timezone"
 
-- name: set hostname
-  hostname: name={{inventory_hostname_short}}
+- name: "set hostname"
+  hostname:
+    name: "{{inventory_hostname_short}}"
   when:
-    - environment_name!="vm"
-    - environment_name!="ci"
+    - "environment_name != 'vm'"
+    - "environment_name != 'ci'"
 
-- name: set /etc/hosts
-  template: src=hosts.j2 dest=/etc/hosts force=yes
+- name: "set /etc/hosts"
+  template:
+    src: "hosts.j2"
+    dest: "/etc/hosts"
+    force: true
   when:
-    - not is_aws
-    - environment_name!="vm"
-    - environment_name!="ci"
+    - "not is_aws"
+    - "environment_name != 'vm'"
+    - "environment_name != 'ci'"
 
-- name: check that hostname and fqdn are set up correctly
+- name: "check that hostname and fqdn are set up correctly"
   command: "/usr/bin/hostname --fqdn"
   any_errors_fatal: true
-  changed_when: false
+  changed_when: "false"
   when:
-    - environment_name!="vm"
-    - environment_name!="ci"
+    - "environment_name != 'vm'"
+    - "environment_name != 'ci'"
 
-- name: disable resume
+- name: "disable resume"
   file:
     path: "/etc/initramfs-tools/conf.d/resume"
     state: "absent"
@@ -73,10 +85,10 @@
     dest: "/etc/sysctl.d/99-user-dmesg.conf"
     create: true
     line: "kernel.dmesg_restrict = 0"
-    state: present
+    state: "present"
   notify: "reload sysctl settings"
 
-- name: install sudo permissions
+- name: "install sudo permissions"
   template:
     src: "scz-sudo.j2"
     dest: "/etc/sudoers.d/scz-sudo"
@@ -85,7 +97,7 @@
     mode: "0600"
     force: true
 
-- name: make sure ed25519 key exists
+- name: "make sure ed25519 key exists"
   command:
     cmd: "ssh-keygen -f '{{item}}' -N '' -t ed25519"
     creates: "{{item}}"
@@ -95,21 +107,21 @@
     - "restart sshd"
 
 # replace sshd config; we can't do it the easy way, because we're also editing it in the backup role
-# TODO: cansimplify this oncewe have openssh 8.1+, which support include directives.
-- name: Check if this ssd config file is managed by us
+# TODO: can simplify this once we have openssh 8.1+, which support include directives.
+- name: "Check if this ssd config file is managed by us"
   command:
     cmd: "grep '^# BEGIN ANSIBLE MANAGED {{ role_name }}' /etc/ssh/sshd_config"
-  register: sshconfig_is_managed
+  register: "sshconfig_is_managed"
   changed_when: false
   failed_when: false
 
-- name: install a fresh sshd config
+- name: "install a fresh sshd config"
   copy:
     content: ""
     dest: "/etc/ssh/sshd_config"
   when: "sshconfig_is_managed.rc > 0"
 
-- name: set up ssh config
+- name: "set up ssh config"
   blockinfile:
     path: "/etc/ssh/sshd_config"
     insertafter: "BOF"
@@ -121,10 +133,10 @@
   notify:
     - "restart sshd"
 
-- name: remove obsolete ssh host keys
+- name: "remove obsolete ssh host keys"
   file:
     path: "/etc/ssh/ssh_host_{{item}}"
-    state: absent
+    state: "absent"
   with_items:
     - "dsa_key"
     - "dsa_key.pub"
@@ -138,7 +150,7 @@
 ####################################
 ## pam limits
 ####################################
-- name: enable pam_access module
+- name: "enable pam_access module"
   lineinfile:
     path: "/etc/pam.d/sshd"
     line: "account  required     pam_access.so"
@@ -149,7 +161,7 @@
 
 # install pam access configuration;
 # make sure to fall back to allowing eveyone if the group is not defined
-- name: install pam access configuration
+- name: "install pam access configuration"
   copy:
     content: |
       +:{{ "({})".format(ssh_access_group) if ssh_access_group is defined else "ALL" }}:ALL

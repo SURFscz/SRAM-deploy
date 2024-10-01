@@ -78,6 +78,7 @@
     name: "letsencrypt"
     public: true
   vars:
+    letsencrypt_enabled: true
     letsencrypt_staging: false
     letsencrypt_hosts:
       - "{{ scim_monitor_hostname }}"
@@ -151,5 +152,5 @@
     dest: "/etc/zabbix/zabbix_agent2.d/{{item}}"
     mode: "0644"
   with_items:
-    - sram-scimmonitor.conf
+    - "sram-scimmonitor.conf"
   notify: "restart zabbix-agent"

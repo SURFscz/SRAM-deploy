@@ -110,7 +110,7 @@
 - name: Install mariadb repo
   apt_repository:
     filename: "mariadb"
-    repo: "deb https://mirror.rackspace.com/mariadb/repo/10.5/debian bullseye main"
+    repo: "deb https://deb.mariadb.org/10.11/debian {{debian_dist}} main"
     update_cache: true
 
 - name: Create mariadb.service.d directory

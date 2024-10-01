@@ -54,6 +54,6 @@ $config['example-userpass'] = [
             {% for attr, val in user.attributes.items() %}
                 '{{attr}}' => {% if val is string %}'{{val}}'{% else %}{{val}}{% endif %},
             {% endfor %}
-        ]
+        ],
 {% endfor %}
     ];

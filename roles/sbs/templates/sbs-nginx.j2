@@ -11,6 +11,8 @@ server {
 
     add_header Content-Security-Policy $csp;
 
+    server_tokens off;
+
     gzip  on;
     gzip_min_length 1000;
     gzip_proxied any;
@@ -33,10 +35,23 @@ server {
     }
 
     location ~ /(api|pam-weblogin|flasgger_static|swagger|health|config|info) {
-        add_header Content-Security-Policy $csp;
-        add_header Cache-Control "nocache, private";
         include proxy_params;
         proxy_pass http://127.0.0.1:8080;
+
+        proxy_hide_header Content-Security-Policy;
+        add_header Content-Security-Policy $csp;
+        proxy_hide_header Cache-Control;
+        add_header Cache-Control "nocache, private";
+    }
+
+    location ^~ /api/images {
+        include proxy_params;
+        proxy_pass http://127.0.0.1:8080;
+
+        proxy_hide_header Content-Security-Policy;
+        add_header Content-Security-Policy $csp;
+        proxy_hide_header Cache-Control;
+        add_header Cache-Control "max-age=31536000, public, immutable";
     }
 
     location /socket.io {

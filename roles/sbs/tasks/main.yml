@@ -73,6 +73,7 @@
         password: '{{ item.passwd }}'
         priv: '{{ sbs_db_name }}.*:{{ item.priv }}'
         ca_cert: "{{sbs_db_cert_path}}"
+        column_case_sensitive: "{{ sbs_db_user_column_case_sensitive }}"
       with_items:
         - user: "{{ sbs_db_user }}"
           passwd: "{{ sbs_db_password }}"

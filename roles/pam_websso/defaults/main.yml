@@ -1,5 +1,0 @@
----
-pam_websso:
-  repo_url: "https://github.com/SURFscz/pam-websso.git"
-  version: "master"
-  project_dir: "/opt/pam-websso"

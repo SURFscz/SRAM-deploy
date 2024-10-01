@@ -2,7 +2,7 @@
 - name: "restart php-fpm"
   listen: "restart php-fpm"
   systemd:
-    name: "php7.4-fpm.service"
+    name: "php{{php_version}}-fpm.service"
     state: "restarted"
     daemon_reload: true
     enabled: true
