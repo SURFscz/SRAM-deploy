@@ -31,7 +31,8 @@ global
 {% endif %}
 
     server-state-file {{haproxy_state_file}}
-    maxconn 256
+    maxconn     4000
+    ulimit-n    9000
 
 defaults
     log     global
