@@ -191,7 +191,7 @@ if [ "$SKIP_ANSIBLE" ]
 then
     echo "Skipping ansible run"
 else
-    ansible-galaxy install -r requirements.yml || ansible-galaxy install --force -r requirements.yml
+    ansible-galaxy collection install -U -r requirements.yml || ansible-galaxy collection install --force -r requirements.yml
     echo "Starting ansible"
 
     export ANSIBLE_FORCE_COLOR=True
