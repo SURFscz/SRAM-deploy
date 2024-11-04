@@ -115,10 +115,10 @@
     - { name: "version", import_tasks: "tasks/versions.yml", tags: ["common"]  }
   roles:
     - { role: "docker_db",                    tags: ["db", "docker-db"], when: is_dev }
+    - { role: "docker_sbs",                   tags: ["sbs", "docker-sbs"] }
     - { role: "docker_pyff",                  tags: ["meta", "docker-pyff"] }
     - { role: "docker_metadata",              tags: ["meta", "docker-metadata"] }
     - { role: "docker_plsc",                  tags: ["plsc", "docker-plsc"] }
-    - { role: "docker_sbs",                   tags: ["sbs", "docker-sbs"] }
 
 - name: "container_ldap"
   hosts: "container_ldap"
