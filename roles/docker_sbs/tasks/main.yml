@@ -155,7 +155,7 @@
     mode: "{{item.mode}}"
   with_items:
     - { name: "config.yml",     mode: "0640" }
-    - { name: "alembic.ini",    mode: "0644" }
+    - { name: "alembic.ini",    mode: "0640" }
     - { name: "disclaimer.css", mode: "0644" }
   # notify: "restart sbs"
   no_log: "{{sram_ansible_nolog}}"
@@ -243,16 +243,8 @@
 #     mode: "0700"
 #   no_log: "{{sram_ansible_nolog}}"
 
-# - name: Run SBS migrations
-#   throttle: 1
-#   command:
-#     cmd: "{{ sbs_env_dir }}/bin/alembic --config migrations/alembic.ini upgrade head"
-#     chdir: "{{ sbs_work_dir }}/sbs/server"
-#   register: "result"
-#   failed_when: "result.rc != 0"
-#   changed_when: "'[alembic.runtime.migration] Running upgrade' in result.stderr"
-#   notify: "restart sbs"
 
+# TODO: move to separate role
 - name: Create redis container
   docker_container:
     name: "{{ containers.redis }}"
@@ -270,6 +262,34 @@
   community.docker.docker_image_pull:
     name: "{{ images.sbs }}"
   register: "sbs_image"
+
+- name: Run SBS migrations
+  throttle: 1
+  docker_container:
+    name: "{{ containers.sbs_migration }}"
+    image: "{{ images.sbs }}"
+    pull: "never"
+    state: "started"
+    restart_policy: "no"
+    auto_remove: false
+    detach: false
+    env:
+      REQUESTS_CA_BUNDLE: "/etc/ssl/certs/ca-certificates.crt"
+    command: |
+      bash -c "cd /opt/sbs/sbs/server && alembic --config migrations/alembic.ini upgrade head"
+    volumes:
+      - "{{ sbs_conf_dir }}:/opt/sbs/config"
+      - "{{ sbs_cert_dir }}:/opt/sbs/cert"
+      - "{{ sbs_log_dir }}:/opt/sbs/log"
+      - "sbs_static:/opt/sbs/client/build"
+    networks:
+      - name: "{{internal_network}}"
+    etc_hosts:
+      oidc-op.scz-vm.net: "172.20.1.24"
+  register: "result"
+  failed_when: "result.container.State.ExitCode != 0"
+  changed_when: "'[alembic.runtime.migration] Running upgrade' in result.container.Output"
+  notify: "Restart sbs containers"
 
 # We need to remove sram-static so it gets repopulated
 # with new SBS image static content
