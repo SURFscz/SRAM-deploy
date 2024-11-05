@@ -237,9 +237,6 @@ ldap:
   bind_account: "{{ sbs_ldap_bind_account }}"
 
 
-# A MFA login in a different flow is valid for X minutes
-mfa_sso_time_in_minutes: {{sbs_mfa_sso_minutes}}
-
 # whether to fall back to TOTP MFA
 mfa_fallback_enabled: {{sbs_mfa_fallback_enabled}}
 

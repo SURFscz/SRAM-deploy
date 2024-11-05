@@ -141,7 +141,6 @@ sbs_ssid_entityid: "\
 sbs_ssid_sso_endpoint: "\
   https://{{ sbs_surf_secure_id.sa_gw_environment }}/second-factor-only/single-sign-on"
 
-sbs_mfa_sso_minutes: 10
 sbs_mfa_fallback_enabled: true
 
 sbs_ldap_url: "ldap://ldap.example.com/dc=example,dc=com"
