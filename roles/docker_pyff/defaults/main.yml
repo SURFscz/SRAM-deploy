@@ -1,14 +1,10 @@
 ---
 metadata_basedir: "{{sram_conf_dir}}/metadata"
-# metadata_target_dir: "{{metadata_basedir}}/metadata"
-metadata_dirs:
-  web: "{{metadata_basedir}}/web"
-  feeds: "{{metadata_basedir}}/feeds"
-  src: "{{metadata_basedir}}/src"
-  certs: "{{metadata_basedir}}/certs"
-  xslt: "{{metadata_basedir}}/xslt"
 
-metadata_group: metadata
+metadata_server_name: "sram-metadata"
+
+metadata_user: "sram-metadata"
+metadata_group: "sram-metadata"
 
 # metadata_idps_source: "https://metadata.surfconext.nl/idps-metadata.xml"
 # metadata_idps_cert: |

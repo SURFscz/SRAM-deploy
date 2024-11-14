@@ -40,24 +40,24 @@ firewall_v4_incoming:
 ## Docker
 ####################################################
 containers:
-  db: sram-db
-  redis: sram-redis
-  sbs: sram-sbs
-  sbs_server: sram-sbs-server
-  ldap: sram-ldap
-  metadata: sram-metadata
-  pyff: sram-pyff
-  plsc: sram-plsc
+  db: "sram-db"
+  redis: "sram-redis"
+  sbs: "sram-sbs"
+  sbs_server: "sram-sbs-server"
+  ldap: "sram-ldap"
+  metadata: "sram-metadata"
+  pyff: "sram-pyff"
+  plsc: "sram-plsc"
 
 images:
-  db: mariadb:11
-  redis: redis:7
-  sbs: ghcr.io/surfscz/sram-sbs:main
-  sbs_server: ghcr.io/surfscz/sram-sbs-server:main
-  ldap: ghcr.io/surfscz/sram-ldap:main
-  metadata: ghcr.io/surfscz/sram-metadata:main
-  pyff: ghcr.io/surfscz/sram-pyff:main
-  plsc: ghcr.io/surfscz/sram-plsc:main
+  db: "docker.io/library/mariadb:11"
+  redis: "docker.io/library/redis:7"
+  sbs: "ghcr.io/surfscz/sram-sbs:main"
+  sbs_server: "ghcr.io/surfscz/sram-sbs-server:main"
+  ldap: "ghcr.io/surfscz/sram-ldap:main"
+  metadata: "ghcr.io/openconext/openconext-basecontainers/apache2:latest"
+  pyff: "ghcr.io/surfscz/sram-pyff:main"
+  plsc: "ghcr.io/surfscz/sram-plsc:main"
 
 traefik_network: traefik
 internal_network: sram
