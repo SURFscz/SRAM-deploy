@@ -117,7 +117,7 @@
     - { role: "docker_db",       tags: ["db",    "docker-db"      ], when: is_dev }
     - { role: "docker_redis",    tags: ["redis", "docker-redis"   ] }
     - { role: "docker_sbs",      tags: ["sbs",   "docker-sbs"     ] }
-    - { role: "docker_pyff",     tags: ["meta",  "docker-meta"    ] }
+    - { role: "docker_metadata", tags: ["meta",  "docker-meta"    ] }
     - { role: "docker_plsc",     tags: ["plsc",  "docker-plsc"    ] }
 
 - name: "container_ldap"
