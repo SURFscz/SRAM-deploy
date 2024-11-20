@@ -316,7 +316,8 @@
     restart_policy: "always"
     state: started
     env:
-      REQUESTS_CA_BUNDLE: /etc/ssl/certs/ca-certificates.crt
+      REQUESTS_CA_BUNDLE: "/etc/ssl/certs/ca-certificates.crt"
+      RUN_MIGRATIONS: "1"
     pull: "always"
     volumes:
       - "{{ sbs_conf_dir }}:/opt/sbs/config"
