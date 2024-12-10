@@ -14,4 +14,3 @@ simplesaml_group: "ssp-group"
 simplesaml_project_dir: "/opt/{{simplesaml_name}}"
 simplesaml_tmp_dir: "{{simplesaml_project_dir}}/tmp/"
 simplesaml_cert_dir: "{{simplesaml_project_dir}}/cert/"
-
