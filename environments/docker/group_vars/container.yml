@@ -52,8 +52,8 @@ containers:
 images:
   db: mariadb:11
   redis: redis:7
-  sbs: ghcr.io/surfscz/sram-sbs-client:openconext-dev
-  sbs_server: ghcr.io/surfscz/sram-sbs-server:openconext-dev
+  sbs: ghcr.io/surfscz/sram-sbs-client:main
+  sbs_server: ghcr.io/surfscz/sram-sbs-server:main
   ldap: ghcr.io/surfscz/sram-ldap:main
   metadata: ghcr.io/surfscz/sram-metadata:main
   pyff: ghcr.io/surfscz/sram-pyff:main
