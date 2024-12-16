@@ -229,7 +229,7 @@
   template:
     src: "sbs-apache.j2"
     dest: "{{ sbs_apache_conf }}"
-  notify: "Restart sbs containers"
+  # notify: "Restart sbs containers"
 
 # - name: "install nginx config"
 #   template:
@@ -273,20 +273,20 @@
 
 # We need to remove sram-static so it gets repopulated
 # with new SBS image static content
-- name: Stop and remove sbs and sbs-server containers
-  docker_container:
-    name: "{{ item }}"
-    state: absent
-  with_items:
-    - "{{ containers.sbs }}"
-    - "{{ containers.sbs_server }}"
-  when: "sbs_image is changed"
+# - name: Stop and remove sbs and sbs-server containers
+#   docker_container:
+#     name: "{{ item }}"
+#     state: absent
+#   with_items:
+#     - "{{ containers.sbs }}"
+#     - "{{ containers.sbs_server }}"
+#   when: "sbs_image is changed"
 
-- name: Remove sbs_static volume
-  community.docker.docker_volume:
-    name: sbs_static
-    state: absent
-  when: "sbs_image is changed"
+# - name: Remove sbs_static volume
+#   community.docker.docker_volume:
+#     name: sbs_static
+#     state: absent
+#   when: "sbs_image is changed"
 
 - name: Start sbs container
   docker_container:
@@ -295,28 +295,11 @@
     pull: "never"
     restart_policy: "always"
     state: "started"
-    env:
-      REQUESTS_CA_BUNDLE: /etc/ssl/certs/ca-certificates.crt
+    # env:
+    #   REQUESTS_CA_BUNDLE: /etc/ssl/certs/ca-certificates.crt
     volumes:
-      - "{{ sbs_conf_dir }}:/opt/sbs/config"
-      - "{{ sbs_cert_dir }}:/opt/sbs/cert"
-      - "{{ sbs_log_dir }}:/opt/sbs/log"
-      - "sbs_static:/opt/sbs/client/build"
-    networks:
-      - name: "{{internal_network}}"
-    etc_hosts:
-      oidc-op.scz-vm.net: "172.20.1.24"
-
-- name: Start apache container
-  docker_container:
-    name: "{{ containers.sbs_server }}"
-    image: "{{ images.sbs_server }}"
-    restart_policy: "always"
-    state: started
-    pull: "always"
-    volumes:
-      - "{{ sbs_apache_conf }}:/etc/apache2/sites-enabled/sbs.conf:ro"
-      - "sbs_static:/var/www/html"
+      - "{{ sbs_apache_conf }}:/etc/apache2/sites-enabled/apache.conf:ro"
+      # - "sbs_static:/opt/sbs/client/build"
     networks:
       - name: "{{traefik_network}}"
       - name: "{{internal_network}}"
@@ -326,3 +309,23 @@
       traefik.http.routers.sbs.rule: "Host(`{{ sbs_base_domain }}`)"
       traefik.http.routers.sbs.tls: "true"
 
+- name: Start sbs server container
+  docker_container:
+    name: "{{ containers.sbs_server }}"
+    image: "{{ images.sbs_server }}"
+    restart_policy: "always"
+    state: started
+    env:
+      REQUESTS_CA_BUNDLE: "/etc/ssl/certs/ca-certificates.crt"
+      RUN_MIGRATIONS: "1"
+    pull: "always"
+    volumes:
+      - "{{ sbs_conf_dir }}:/opt/sbs/config"
+      - "{{ sbs_cert_dir }}:/opt/sbs/cert"
+      - "{{ sbs_log_dir }}:/opt/sbs/log"
+      # - "{{ sbs_apache_conf }}:/etc/apache2/sites-enabled/sbs.conf:ro"
+      # - "sbs_static:/var/www/html"
+    networks:
+      - name: "{{internal_network}}"
+    etc_hosts:
+      oidc-op.scz-vm.net: "172.20.1.24"
