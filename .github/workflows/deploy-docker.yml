@@ -151,15 +151,15 @@ jobs:
 
       - name: Show docker logs
         run: |
-          docker exec -ti docker-docker1-1 /bin/sh -c '
-            docker ps -q | while read c; do
+          docker exec -t docker-docker1-1 /bin/sh -c '
+            for c in $(docker ps -q); do
               name=$(docker inspect --format "{{.Name}} ({{.Id}})" $c);
               echo -e "\n\n========\n== $name\n==========\n";
               docker logs -n 10 $c 2>/dev/null;
             done
           '
-          docker exec -ti docker-docker2-1 /bin/sh -c '
-            docker ps -q | while read c; do
+          docker exec -t docker-docker2-1 /bin/sh -c '
+            for c in $(docker ps -q); do
               name=$(docker inspect --format "{{.Name}} ({{.Id}})" $c);
               echo -e "\n\n========\n== $name\n==========\n";
               docker logs -n 10 $c 2>/dev/null;
