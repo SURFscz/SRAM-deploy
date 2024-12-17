@@ -24,6 +24,8 @@ RUN apt-get update -y                && \
         gnupg2                          \
         locales-all                     \
         logrotate                       \
+        lsof                            \
+        needrestart                     \
         net-tools                       \
         netcat-openbsd                  \
         nullmailer                      \
@@ -32,13 +34,15 @@ RUN apt-get update -y                && \
         python3                         \
         python3-apt                     \
         python3-setuptools              \
+        python3-venv                    \
         rsyslog                         \
         sudo                            \
         tmpreaper                       \
         unzip                           \
         vim                             \
         wget                            \
-        xz-utils                     && \
+        xz-utils                        \
+        zstd                         && \
     apt-get purge -y isc-dhcp-client && \
     apt-get clean -y                 && \
     apt-get autoremove --purge -y    && \
