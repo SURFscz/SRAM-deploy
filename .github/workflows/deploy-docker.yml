@@ -145,7 +145,7 @@ jobs:
 
       - name: Show docker status
         run: |
-          ansible -v -i environments/docker/inventory --become "docker" \
+          ansible -v -i environments/docker/inventory --become "container_infra" \
                   -m command -a "/usr/bin/docker ps -a"
         if: failure()
 
@@ -169,7 +169,7 @@ jobs:
 
       - name: Show sbs logs
         run: |
-          ansible -v -i environments/docker/inventory --become "docker" \
+          ansible -v -i environments/docker/inventory --become "container_apps" \
                   -m command -a "/bin/sh -c '
                     if test -e /opt/sram/sbs/log/sbs.log; then
                       echo ===sbs log===;
