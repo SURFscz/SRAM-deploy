@@ -90,8 +90,6 @@ else
         fi
     fi
 
-    docker ps -a
-
     # Bring up the VMs if they're not running
     echo "Bringing docker containers up"
     echo "./docker/docker-compose.yml.py $CI_OPTION $IN_CONTAINER > ./docker/docker-compose.yml"
@@ -155,8 +153,6 @@ else
         echo
     done
 fi
-
-docker ps -a
 
 
 # try to find mitogen
