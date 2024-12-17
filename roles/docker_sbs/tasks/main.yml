@@ -323,7 +323,6 @@
       - "{{ sbs_conf_dir }}:/opt/sbs/config"
       - "{{ sbs_cert_dir }}:/opt/sbs/cert"
       - "{{ sbs_log_dir }}:/opt/sbs/log"
-      - "{{ sbs_conf_dir }}/alembic.ini:/opt/sbs/server/migrations/alembic.ini:ro"
       # - "{{ sbs_apache_conf }}:/etc/apache2/sites-enabled/sbs.conf:ro"
       # - "sbs_static:/var/www/html"
     networks:
