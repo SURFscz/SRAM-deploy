@@ -158,7 +158,7 @@ fi
 # try to find mitogen
 MITOGEN_PATH=
 MITOGEN_SUBPATH=ansible_mitogen/plugins/strategy
-for p in ./mitogen /opt/mitogen /usr/local/mitogen /usr/mitogen ~/.mitogen ~/mitogen
+for p in ./mitogen /opt/mitogen /usr/local/mitogen /usr/mitogen ~/.mitogen ~/mitogen /usr/lib/python3/dist-packages/
 do
     if [ -d "$p/$MITOGEN_SUBPATH/" ]
     then

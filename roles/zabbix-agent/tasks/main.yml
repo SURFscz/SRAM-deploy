@@ -6,7 +6,7 @@
 
 - name: "Zabbix repo: install source"
   apt_repository:
-    repo: "deb http://repo.zabbix.com/zabbix/6.4/debian bullseye main"
+    repo: "deb http://repo.zabbix.com/zabbix/6.4/debian {{debian_dist}} main"
     state: present
 
 - name: "Ensure that packages are installed"
