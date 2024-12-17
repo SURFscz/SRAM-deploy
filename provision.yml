@@ -89,12 +89,6 @@
   roles:
     - { role: "backup-offsite",   tags: ["bhr11","backup-offsite"] }
 
-- name: "ci-runner"
-  hosts: "bhr12"
-  roles:
-    - { role: "http_apache", tags: ["bhr12","ci-runner"]}
-    - { role: "ci-runner",   tags: ["bhr12","ci-runner"]}
-
 - name: "container infra"
   hosts: "container_infra"
   vars_files:
@@ -207,6 +201,12 @@
     - { role: "demo-etherpad",        tags: ["demo1","demo-etherpad"]  }
     - { role: "demo-weblogin",        tags: ["demo1","demo-weblogin"]  }
     - { role: "demo-wordpress",       tags: ["demo1","demo-wordpress"]  }
+
+- name: "ci-runner"
+  hosts: "bhr12"
+  roles:
+    - { role: "http_apache", tags: ["bhr12","ci-runner"]}
+    - { role: "ci-runner",   tags: ["bhr12","ci-runner"]}
 
 # CI test docker
 - name: "test"
