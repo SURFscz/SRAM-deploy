@@ -164,11 +164,6 @@ $config = [
      *************************************/
     'authproc.idp' => [
         30 => 'core:LanguageAdaptor',
-        45 => [
-            'class'         => 'core:StatisticsWithAttribute',
-            'attributename' => 'realm',
-            'type'          => 'saml20-idp-SSO',
-        ],
         50 => 'core:AttributeLimit',
         99 => 'core:LanguageAdaptor',
     ],
