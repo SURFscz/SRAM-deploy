@@ -80,14 +80,8 @@ else
 
     # Build single docker image before docker-compose starts
     if [ -z "$REENTRANT" ]; then
-        scz_image=$(docker image list scz-base -q)
-        if [ -z "$scz_image" ]
-        then
-            echo "Building docker image"
-            time docker build -t scz-base --target=scz-base --cache-from=scz-base-cache docker/
-        else
-            echo "Docker image found"
-        fi
+        echo "Building docker image"
+        time docker build -t scz-base --target=scz-base docker/
     fi
 
     # Bring up the VMs if they're not running
