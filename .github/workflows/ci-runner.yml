@@ -34,6 +34,9 @@ jobs:
         run: |
           touch HelloWorld
           echo "Hello world ${{ github.event.inputs.foobar }}" >> HelloWorld
+          uname -a
+          lsb_release -a
+          ansible --version
 
       - name: Stop running dockers
         run: |
