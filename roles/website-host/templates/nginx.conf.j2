@@ -16,7 +16,7 @@ server {
 
 server {
     listen 443 ssl http2;
-    server_name demo-sp.sram.surf.nl;
+    server_name {{ ansible_fqdn }};
 
     ssl_certificate        {{ letsencrypt_cert_dir }}/{{ ansible_fqdn }}/fullchain.pem;
     ssl_certificate_key    {{ letsencrypt_cert_dir }}/{{ ansible_fqdn }}/privkey.pem;
