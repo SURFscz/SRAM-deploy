@@ -1,0 +1,31 @@
+---
+#########################################################
+## nginx
+#########################################################
+- include_role:
+    name: "nginx"
+
+- include_role:
+    name: "letsencrypt"
+    public: true
+  vars:
+    letsencrypt_staging: false
+    letsencrypt_hosts:
+      - "{{ ansible_fqdn }}"
+
+- name: Install nginx config
+  template:
+    src: "nginx.conf.j2"
+    dest: "/etc/nginx/sites-enabled/01-sram-{{ ansible_fqdn }}.conf"
+  notify: "restart nginx"
+
+- name: Restart nginx after certificate rollover
+  copy:
+    content: |
+      #!/bin/sh
+      echo "restarting nginx"
+      /usr/bin/systemctl reload nginx.service
+      exit 0
+    dest: "{{ letsencrypt_hooks }}/sram-{{ ansible_fqdn }}-nginx.sh"
+    mode: "0755"
+

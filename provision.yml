@@ -183,6 +183,7 @@
   tasks:
     - { name: "version", import_tasks: "tasks/versions.yml", tags: ["common"] }
   roles:
+    - { role: "website-host",         tags: ["bhr13","website"]        }
     - { role: "demo-sp",              tags: ["bhr13","demo-sp"]        }
     - { role: "test-idp",             tags: ["bhr13","test-idp"]       }
     - { role: "surfstar-idp",         tags: ["bhr13","surfstar-idp"]   }
