@@ -1,5 +1,5 @@
 ---
-- name: install journald config
+- name: "install journald config"
   template:
     src: "journald.conf.j2"
     dest: "/etc/systemd/journald.conf"
@@ -7,7 +7,7 @@
     - "restart journald"
     - "reset journal permissions"
 
-- name: install permissions for journal
+- name: "install permissions for journal"
   template:
     src: "journal-permissions.conf.j2"
     dest: "/etc/tmpfiles.d/sram-journal.conf"
@@ -15,7 +15,7 @@
     - "restart journald"
     - "reset journal permissions"
 
-- name: install required packages
+- name: "install required packages"
   apt:
     state: "present"
     name:
@@ -23,17 +23,17 @@
       - "python3-cryptography"
       - "openssl"
 
-- name: create group for journal-upload
+- name: "create group for journal-upload"
   group:
     name: "{{journal_upload_group}}"
     state: "present"
 
-- name: create override dir
+- name: "create override dir"
   file:
     path: "/etc/systemd/system/systemd-journal-upload.service.d/"
     state: "directory"
 
-- name: fix group for journal-uploader
+- name: "fix group for journal-uploader"
   copy:
     dest: "/etc/systemd/system/systemd-journal-upload.service.d/override.conf"
     content: |
@@ -49,7 +49,7 @@
     - "systemd daemon-reload"
     - "enable journal-upload"
 
-- name: install journal certs
+- name: "install journal certs"
   copy:
     dest: "{{ssl_certs_dir}}/{{item.name}}"
     content: "{{item.content}}"
@@ -58,11 +58,11 @@
     mode: "{{item.mode}}"
   no_log: "{{sram_ansible_nolog}}"
   with_items:
-    - { name: "journal-ca.crt",     mode: "0644", content: "{{journal_ca.pub}}"    }
+    - { name: "journal-ca.crt", mode: "0644", content: "{{journal_ca.pub}}" }
   notify:
     - "restart journal-upload"
 
-- name: generate a journal client private key
+- name: "generate a journal client private key"
   community.crypto.openssl_privatekey:
     path: "{{ssl_certs_dir}}/journal-client.key"
     size: 2048
@@ -73,7 +73,7 @@
   notify:
     - "restart journal-upload"
 
-- name: generate a journal client certficate request
+- name: "generate a journal client certificate request"
   community.crypto.openssl_csr:
     path: "{{ssl_certs_dir}}/journal-client.csr"
     privatekey_path: "{{ssl_certs_dir}}/journal-client.key"
@@ -82,7 +82,7 @@
     group: "root"
     mode: "0600"
 
-- name: generate a journal client certificate
+- name: "generate a journal client certificate"
   community.crypto.x509_certificate:
     path: "{{ssl_certs_dir}}/journal-client.crt"
     csr_path: "{{ssl_certs_dir}}/journal-client.csr"
@@ -96,14 +96,14 @@
   notify:
     - "restart journal-upload"
 
-- name: install journal-upload config
+- name: "install journal-upload config"
   template:
     src: "journal-upload.conf.j2"
     dest: "/etc/systemd/journal-upload.conf"
   notify:
     - "enable journal-upload"
 
-- name: install new rsyslog config
+- name: "install new rsyslog config"
   template:
     src: "rsyslog.conf.j2"
     dest: "/etc/rsyslog.conf"
