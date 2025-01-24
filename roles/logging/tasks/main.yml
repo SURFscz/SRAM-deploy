@@ -103,10 +103,29 @@
   notify:
     - "enable journal-upload"
 
-- name: "install new rsyslog config"
-  template:
-    src: "rsyslog.conf.j2"
-    dest: "/etc/rsyslog.conf"
-  notify:
-    - "restart rsyslog"
-    - "remove obsolete logfiles"
+###################
+# rsyslog
+###################
+- name: "remove rsyslog package"
+  apt:
+    state: "absent"
+    name:
+      - "rsyslog"
+
+- name: "remove rsyslog config"
+  file:
+    path: "/etc/rsyslog.conf"
+    state: "absent"
+    purge: true
+
+- name: "remove syslog files"
+  file:
+    path: "/var/log/{{ item }}"
+    state: "absent"
+  # loop over all combinations of filenames and extensions:
+  loop: >
+    {{
+    ['auth.log', 'kern.log', 'syslog']
+    | product(['', '.1', '.2.gz', '.3.gz', '.4.gz', '.5.gz', '.6.gz', '.7.gz', '.8.gz', '.9.gz'])
+    | map('join') | list
+    }}
