@@ -109,6 +109,7 @@
 - name: "remove rsyslog package"
   apt:
     state: "absent"
+    purge: true
     name:
       - "rsyslog"
 
@@ -116,7 +117,6 @@
   file:
     path: "/etc/rsyslog.conf"
     state: "absent"
-    purge: true
 
 - name: "remove syslog files"
   file:
