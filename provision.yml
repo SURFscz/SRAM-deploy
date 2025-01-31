@@ -64,16 +64,16 @@
     - { role: "logging",        tags: ["common","logging"]       }
     - { role: "firewall",       tags: ["common","firewall"],
         when: "not is_docker" }
-    - { role: ntp,            tags: ['common','ntp']           }
-    - { role: aws-cleanup,    tags: ['common','clean']         }
-    - { role: mail,           tags: ['common','mail']          }
-    - { role: backups,        tags: ['common','backups']       }
+    - { role: "ntp",            tags: ["common","ntp"]           }
+    - { role: "aws-cleanup",    tags: ["common","clean"]         }
+    - { role: "mail",           tags: ["common","mail"]          }
+    - { role: "backups",        tags: ["common","backups"]       }
 
 - name: "zabbix-agent"
   hosts: "common"
   strategy: "linear"  # disable mitogen for these roles
   roles:
-    - { role: zabbix-agent,   tags: ['common','zabbix-agent'] }
+    - { role: "zabbix-agent",   tags: ["common","zabbix-agent"] }
 
 - name: "bhr2"
   hosts: "bhr2"
