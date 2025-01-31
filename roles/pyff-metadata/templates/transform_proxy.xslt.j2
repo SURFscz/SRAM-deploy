@@ -36,7 +36,7 @@
     </xsl:template>
 
     <!-- Add RegistrationInfo and sirtfi EntityAttributes -->
-    <xsl:template match="md:IDPSSODescriptor/md:Extensions|md:SPSSODescriptor/md:Extensions">
+    <xsl:template match="md:EntityDescriptor/md:Extensions">
         <xsl:copy>
             <xsl:apply-templates select="@* | node()"/>
             <mdattr:EntityAttributes>
