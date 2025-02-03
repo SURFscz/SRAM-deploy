@@ -43,9 +43,9 @@
 - name: Create virtualenv and install pip
   pip:
     name:
-      - "pip        >=22.0.4, <23"
-      - "setuptools >=62.1,   <63"
-      - "wheel      >=0.37.1, <0.38"
+      - "pip"
+      - "setuptools"
+      - "wheel"
     state: "present"
     virtualenv: "{{ python_venv_dir }}"
     virtualenv_command: "python3 -m venv"
