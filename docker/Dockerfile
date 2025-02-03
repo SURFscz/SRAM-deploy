@@ -3,7 +3,7 @@ LABEL org.opencontainers.image.authors="SRAM team <sram-beheer@surf.nl>"
 
 ARG DEBIAN_FRONTEND=noninteractive
 ARG RUNLEVEL=1
-ENV TERM linux
+ENV TERM=linux
 
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 
