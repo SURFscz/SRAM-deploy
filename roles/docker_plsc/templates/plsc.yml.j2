@@ -14,7 +14,7 @@ ldap:
     sizelimit: 500
 sbs:
   src:
-    host: "http://{{ containers.sbs }}:8080"
+    host: "http://{{ containers.sbs_server }}:8080"
     user: "sysread"
     passwd: "{{ sbs_sysread_password }}"
     verify_ssl: {{ false if environment_name=='vm' else true }}
