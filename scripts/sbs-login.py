@@ -63,7 +63,7 @@ try:
     print(" - pressed login")
 
     # Wait for login button to disappear
-    wait.until(staleness_of(login), 'Timeout waiting for login page')
+    # wait.until(staleness_of(login), 'Timeout waiting for login page')
 
     wait.until(lambda driver: driver.current_url.startswith("https://oidc-op.scz-vm.net/authorization"))
 
@@ -122,7 +122,9 @@ try:
     print(" - pressed login")
 
     # Wait for login button to disappear
-    wait.until(staleness_of(login), 'Timeout waiting for login page')
+    # wait.until(staleness_of(login), 'Timeout waiting for login page')
+
+    wait.until(lambda driver: driver.current_url.startswith("https://oidc-op.scz-vm.net/authorization"))
 
     # Select ACR = MFA
     browser.find_element(By.ID, 'acr_password').click()
