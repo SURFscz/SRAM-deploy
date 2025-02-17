@@ -191,17 +191,17 @@
     - { role: "sram_monitor",         tags: ["bhr13","sram-monitor"]   }
     - { role: "scim_monitor",         tags: ["bhr13","scim-monitor"]   }
 
-- name: "demo clients demo1"
-  hosts: "demo1"
-  tasks:
-    - { name: "version", import_tasks: "tasks/versions.yml", tags: ["common"] }
-  roles:
-    - { role: "docker",               tags: ["demo1","demo-docker"] }
-    - { role: "demo-apache",          tags: ["demo1","demo-apache"]  }
-    - { role: "letsencrypt",          tags: ["demo1","demo-letsencrypt"] }
-    - { role: "demo-etherpad",        tags: ["demo1","demo-etherpad"]  }
-    - { role: "demo-weblogin",        tags: ["demo1","demo-weblogin"]  }
-    - { role: "demo-wordpress",       tags: ["demo1","demo-wordpress"]  }
+# - name: "demo clients demo1"
+#   hosts: "demo1"
+#   tasks:
+#     - { name: "version", import_tasks: "tasks/versions.yml", tags: ["common"] }
+#   roles:
+#     - { role: "docker",               tags: ["demo1","demo-docker"] }
+#     - { role: "demo-apache",          tags: ["demo1","demo-apache"]  }
+#     - { role: "letsencrypt",          tags: ["demo1","demo-letsencrypt"] }
+#     - { role: "demo-etherpad",        tags: ["demo1","demo-etherpad"]  }
+#     - { role: "demo-weblogin",        tags: ["demo1","demo-weblogin"]  }
+#     - { role: "demo-wordpress",       tags: ["demo1","demo-wordpress"]  }
 
 - name: "ci-runner"
   hosts: "bhr12"
