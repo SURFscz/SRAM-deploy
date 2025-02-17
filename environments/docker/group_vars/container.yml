@@ -44,6 +44,7 @@ containers:
   redis: "sram-redis"
   sbs: "sram-sbs"
   sbs_server: "sram-sbs-server"
+  sbs_migration: "sram-sbs-migration"
   ldap: "sram-ldap"
   metadata: "sram-metadata"
   pyff: "sram-pyff"

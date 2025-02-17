@@ -125,7 +125,7 @@
   throttle: 1
   docker_container:
     name: "{{ containers.sbs_migration }}"
-    image: "{{ images.sbs }}"
+    image: "{{ images.sbs_server }}"
     pull: "never"
     state: "started"
     restart_policy: "no"
@@ -136,6 +136,8 @@
       - "{{ sbs_conf_dir }}:/opt/sbs/config"
       - "{{ sbs_cert_dir }}:/opt/sbs/cert"
       - "{{ sbs_log_dir }}:/opt/sbs/log"
+    networks:
+      - name: "{{internal_network}}"
   register: "result"
   failed_when: "result.container.State.ExitCode != 0"
   changed_when: "'[alembic.runtime.migration] Running upgrade' in result.container.Output"
