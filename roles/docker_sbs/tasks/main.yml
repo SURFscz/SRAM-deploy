@@ -100,7 +100,10 @@
 
 - name: "Pull sbs image"
   community.docker.docker_image_pull:
-    name: "{{ images.sbs_server }}"
+    name: "{{ item }}"
+  with_items:
+    - "{{ images.sbs }}"
+    - "{{ images.sbs_server }}"
   register: "sbs_image"
 
 # We need to remove sram-static so it gets repopulated
