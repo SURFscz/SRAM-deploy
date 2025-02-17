@@ -29,7 +29,7 @@ $config = [
      | SECURITY CONFIGURATION OPTIONS |
      **********************************/
     'secretsalt' => '{{ simplesaml_salt.content }}',
-    'auth.adminpassword' => '{{ surfstar_idp_admin_passwd }}',
+    'auth.adminpassword' => '{{ surfstar_idp_admin_passwd | string | ansible.builtin.password_hash(hashtype="bcrypt") | replace("$2b$", "$2y$") }}',
     'admin.protectmetadata' => false,
     'admin.checkforupdates' => true,
 
@@ -150,11 +150,6 @@ $config = [
      *************************************/
     'authproc.idp' => [
         30 => 'core:LanguageAdaptor',
-        45 => [
-            'class'         => 'core:StatisticsWithAttribute',
-            'attributename' => 'realm',
-            'type'          => 'saml20-idp-SSO',
-        ],
         50 => 'core:AttributeLimit',
         99 => 'core:LanguageAdaptor',
     ],

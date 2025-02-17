@@ -34,12 +34,15 @@ jobs:
         run: |
           touch HelloWorld
           echo "Hello world ${{ github.event.inputs.foobar }}" >> HelloWorld
+          uname -a
+          lsb_release -a
+          ansible --version
 
       - name: Stop running dockers
         run: |
           ./docker/docker-compose.yml.py --ci > ./docker/docker-compose-ci.yml
           docker-compose -f docker/docker-compose-ci.yml stop
-          docker-compose -f docker/docker-compose-ci.yml rm -f sbs
+          docker-compose -f docker/docker-compose-ci.yml rm -f
 
       - name: Start CI env
         run: |
@@ -80,8 +83,3 @@ jobs:
           '"
         if: failure()
 
-      - name: Stop running dockers
-        run: |
-          ./docker/docker-compose.yml.py --ci > ./docker/docker-compose-ci.yml
-          docker-compose -f docker/docker-compose-ci.yml stop
-          docker-compose -f docker/docker-compose-ci.yml rm -f sbs

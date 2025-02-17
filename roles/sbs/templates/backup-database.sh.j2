@@ -4,8 +4,8 @@ set -e
 
 if [ $UID -ne 0 ]
 then
-	echo "Sorry, this script must run as root"
-	exit 1
+    echo "Sorry, this script must run as root"
+    exit 1
 fi
 
 BACKUP_DIR="{{sbs_backup_dir}}"
@@ -24,7 +24,6 @@ mysqldump --host="{{ sbs_db_host }}" \
           --no-tablespaces \
           --disable-keys --extended-insert \
           --databases "{{ sbs_db_name }}" \
-    > "${BACKUP_FILE}"
-zstd -qq --rm "${BACKUP_FILE}"
+    | zstd -qq -o "${BACKUP_FILE}.zst"
 
 exit 0

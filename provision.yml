@@ -64,16 +64,16 @@
     - { role: "logging",        tags: ["common","logging"]       }
     - { role: "firewall",       tags: ["common","firewall"],
         when: "not is_dev" }
-    - { role: ntp,            tags: ['common','ntp']           }
-    - { role: aws-cleanup,    tags: ['common','clean']         }
-    - { role: mail,           tags: ['common','mail']          }
-    - { role: backups,        tags: ['common','backups']       }
+    - { role: "ntp",            tags: ["common","ntp"]           }
+    - { role: "aws-cleanup",    tags: ["common","clean"]         }
+    - { role: "mail",           tags: ["common","mail"]          }
+    - { role: "backups",        tags: ["common","backups"]       }
 
 - name: "zabbix-agent"
   hosts: "common"
   strategy: "linear"  # disable mitogen for these roles
   roles:
-    - { role: zabbix-agent,   tags: ['common','zabbix-agent'] }
+    - { role: "zabbix-agent",   tags: ["common","zabbix-agent"] }
 
 - name: "bhr2"
   hosts: "bhr2"
@@ -88,12 +88,6 @@
   hosts: "bhr11"
   roles:
     - { role: "backup-offsite",   tags: ["bhr11","backup-offsite"] }
-
-- name: "ci-runner"
-  hosts: "bhr12"
-  roles:
-    - { role: "http_apache", tags: ["bhr12","ci-runner"]}
-    - { role: "ci-runner",   tags: ["bhr12","ci-runner"]}
 
 - name: "container infra"
   hosts: "container_infra"
@@ -135,19 +129,19 @@
   tasks:
     - { name: "version", import_tasks: "tasks/versions.yml", tags: ["common"] }
   roles:
-    - { role: http_redirect,   tags: ["lb","http-redirect"]    }
-    - { role: tls_letsencrypt, tags: ["lb","tls-letsencrypt"],
-        when: not use_fixed_cert }
-    - { role: tls_fixed_cert,  tags: ["lb","tls-fixedcert"],
-        when: use_fixed_cert     }
-    - { role: lb_haproxy,      tags: ["lb","haproxy"]          }
+    - { role: "http_redirect",   tags: ["lb","http-redirect"]    }
+    - { role: "tls_letsencrypt", tags: ["lb","tls-letsencrypt"],
+        when: "not use_fixed_cert" }
+    - { role: "tls_fixed_cert",  tags: ["lb","tls-fixedcert"],
+        when: "use_fixed_cert"     }
+    - { role: "lb_haproxy",      tags: ["lb","haproxy"]          }
 
 - name: "database"
   hosts: "db"
   tasks:
     - { name: "version", import_tasks: "tasks/versions.yml", tags: ["common"] }
   roles:
-    - { role: db_server,        tags: ["db", "db-server"] }
+    - { role: "db_server",        tags: ["db", "db-server"] }
 
 - name: "sbs"
   hosts: "sbs"
@@ -189,6 +183,7 @@
   tasks:
     - { name: "version", import_tasks: "tasks/versions.yml", tags: ["common"] }
   roles:
+    - { role: "website-host",         tags: ["bhr13","website"]        }
     - { role: "demo-sp",              tags: ["bhr13","demo-sp"]        }
     - { role: "test-idp",             tags: ["bhr13","test-idp"]       }
     - { role: "surfstar-idp",         tags: ["bhr13","surfstar-idp"]   }
@@ -207,6 +202,12 @@
     - { role: "demo-etherpad",        tags: ["demo1","demo-etherpad"]  }
     - { role: "demo-weblogin",        tags: ["demo1","demo-weblogin"]  }
     - { role: "demo-wordpress",       tags: ["demo1","demo-wordpress"]  }
+
+- name: "ci-runner"
+  hosts: "bhr12"
+  roles:
+    - { role: "http_apache", tags: ["bhr12","ci-runner"]}
+    - { role: "ci-runner",   tags: ["bhr12","ci-runner"]}
 
 # CI test docker
 - name: "test"

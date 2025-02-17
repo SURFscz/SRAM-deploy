@@ -1,5 +1,5 @@
 database:
-    uri: {{ sbs_db_connection_sbs }}
+  uri: {{ sbs_db_connection_sbs }}
 
 redis:
 {% if environment_name == 'tst2' %}
@@ -69,7 +69,7 @@ environment_disclaimer: "{{ sbs_disclaimer_label }}"
 # All services in the white list can be requested in the create-restricted-co API
 # The default organisation is a fallback for when the administrator has no schac_home_org
 restricted_co:
-  services_white_list: ["https://cloud"]
+  services_white_list: [ "https://cloud" ]
   default_organisation: "{{ sbs_restricted_co_default_org }}"
 
 mail:
@@ -87,7 +87,7 @@ mail:
   account_deletion_notifications_enabled: True
   send_exceptions: {{ sbs_send_exceptions }}
   send_js_exceptions: {{ sbs_send_js_exceptions }}
-  send_exceptions_recipients: ["{{ sbs_exceptions_mail }}"]
+  send_exceptions_recipients: [ "{{ sbs_exceptions_mail }}" ]
   environment: "{{ base_domain }}"
 
 manage:
@@ -138,7 +138,7 @@ metadata:
 platform_admin_notifications:
   # Do we daily check for CO join_requests and CO requests and send a summary mail to beheer_email?
   enabled: False
-  cron_hour_of_day:  {{ sbs_cron_hour_of_day }}
+  cron_hour_of_day: {{ sbs_cron_hour_of_day }}
   # How long before we include open join_requests in the summary
   outstanding_join_request_days_threshold: 7
   # How long before we include open CO requests in the summary
@@ -216,7 +216,7 @@ invitation_expirations:
 
 orphan_users:
   # Do we daily check for users that are orphans soo they can be deleted?
-  enabled:  {{ sbs_delete_orphaned }}
+  enabled: {{ sbs_delete_orphaned }}
   cron_hour_of_day: {{ sbs_cron_hour_of_day }}
   # How long after created do we delete orphan users
   delete_days_threshold: 14
@@ -235,7 +235,6 @@ scim_sweep:
 ldap:
   url: "{{ sbs_ldap_url }}"
   bind_account: "{{ sbs_ldap_bind_account }}"
-
 
 # A MFA login in a different flow is valid for X minutes
 mfa_sso_time_in_minutes: {{sbs_mfa_sso_minutes}}
@@ -261,3 +260,8 @@ excluded_user_accounts:
 {% for excluded_user in sbs_excluded_users %}
   - uid: "{{ excluded_user.uid }}"
 {% endfor %}
+
+engine_block:
+  # Either one is required, if specified both then the public_key is used
+  public_key_url: {{ sbs_engine_block_public_key_url }}
+  public_key:

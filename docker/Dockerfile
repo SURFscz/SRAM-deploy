@@ -1,9 +1,9 @@
-FROM debian:bullseye AS scz-base
+FROM debian:bookworm AS scz-base
 LABEL org.opencontainers.image.authors="SRAM team <sram-beheer@surf.nl>"
 
 ARG DEBIAN_FRONTEND=noninteractive
 ARG RUNLEVEL=1
-ENV TERM linux
+ENV TERM=linux
 
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 
@@ -24,28 +24,30 @@ RUN apt-get update -y                && \
         gnupg2                          \
         locales-all                     \
         logrotate                       \
+        lsof                            \
+        needrestart                     \
         net-tools                       \
-        netcat                          \
+        netcat-openbsd                  \
         nullmailer                      \
         openssh-server                  \
         parted                          \
         python3                         \
         python3-apt                     \
         python3-setuptools              \
+        python3-venv                    \
         rsyslog                         \
         sudo                            \
         tmpreaper                       \
         unzip                           \
         vim                             \
         wget                            \
-        xz-utils                     && \
+        xz-utils                        \
+        zstd                         && \
     apt-get purge -y isc-dhcp-client && \
     apt-get clean -y                 && \
     apt-get autoremove --purge -y    && \
     rm -rf /var/lib/apt/lists/*      && \
     rm -rf /tmp/* /var/tmp/*
-
-RUN update-locale
 
 RUN systemctl enable ssh.service                 && \
     systemctl disable systemd-timesyncd.service  && \

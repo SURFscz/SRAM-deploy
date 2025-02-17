@@ -1,5 +1,0 @@
----
-
-cw_agent_package: 'amazon-cloudwatch-agent.deb'
-cw_agent_url: "https://s3.amazonaws.com/amazoncloudwatch-agent\
-  /debian/amd64/latest/{{ cw_agent_package }}"

@@ -80,14 +80,8 @@ else
 
     # Build single docker image before docker-compose starts
     if [ -z "$REENTRANT" ]; then
-        scz_image=$(docker image list scz-base -q)
-        if [ -z "$scz_image" ]
-        then
-            echo "Building docker image"
-            time docker build -t scz-base --target=scz-base --cache-from=scz-base-cache docker/
-        else
-            echo "Docker image found"
-        fi
+        echo "Building docker image"
+        time docker build -t scz-base --target=scz-base docker/
     fi
 
     # Bring up the VMs if they're not running
@@ -158,7 +152,7 @@ fi
 # try to find mitogen
 MITOGEN_PATH=
 MITOGEN_SUBPATH=ansible_mitogen/plugins/strategy
-for p in ./mitogen /opt/mitogen /usr/local/mitogen /usr/mitogen ~/.mitogen ~/mitogen
+for p in ./mitogen /opt/mitogen /usr/local/mitogen /usr/mitogen ~/.mitogen ~/mitogen /usr/lib/python3/dist-packages/
 do
     if [ -d "$p/$MITOGEN_SUBPATH/" ]
     then
@@ -191,7 +185,7 @@ if [ "$SKIP_ANSIBLE" ]
 then
     echo "Skipping ansible run"
 else
-    ansible-galaxy collection install -U -r requirements.yml || ansible-galaxy collection install --force -r requirements.yml
+    ansible-galaxy collection install --upgrade -r requirements.yml || ansible-galaxy collection install --force -r requirements.yml
     echo "Starting ansible"
 
     export ANSIBLE_FORCE_COLOR=True

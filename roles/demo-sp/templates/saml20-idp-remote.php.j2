@@ -7,7 +7,12 @@ $metadata['https://proxy.acc.sram.eduteams.org/proxy'] = array(
         'en' => 'SRAM acc',
         'nl' => 'SRAM acc',
     ],
-    'SingleSignOnService' => 'https://proxy.acc.sram.eduteams.org/saml2sp/sso/redirect',
+    'SingleSignOnService' => [
+        [
+            'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
+            'Location' => 'https://proxy.acc.sram.eduteams.org/saml2sp/sso/redirect',
+        ],
+    ],
     'certificate' => 'eduteams-acc.pem',
 
     'authproc' => [
@@ -21,7 +26,12 @@ $metadata['https://proxy.sram.surf.nl/proxy'] = array(
         'en' => 'SRAM prod',
         'nl' => 'SRAM prod',
     ],
-    'SingleSignOnService' => 'https://proxy.sram.surf.nl/saml2sp/sso/redirect',
+    'SingleSignOnService' => [
+        [
+            'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
+            'Location' => 'https://proxy.sram.surf.nl/saml2sp/sso/redirect',
+        ],
+    ],
     'certificate' => 'eduteams-prd.pem',
 
     'authproc' => [

@@ -15,6 +15,17 @@
       - "php-ldap"
     state: "present"
 
+- name: Find php version
+  command: >
+    php -r '$v=phpversion(); echo substr($v, 0, strrpos($v, "."));'
+  register: "php_output"
+  changed_when: false
+
+- set_fact:
+    php_version={{ php_output.stdout }}
+    simplesaml_project_dir={{simplesaml_project_dir}}
+    simplesaml_cert_dir={{simplesaml_cert_dir}}
+
 - name: Create simplesaml group
   group:
     name: "{{simplesaml_group}}"
@@ -92,7 +103,6 @@
     force: false
   notify: "restart php-fpm"
 
-
 - name: Read random salt
   slurp:
     src: "{{ simplesaml_project_dir }}/config/salt"
@@ -121,19 +131,8 @@
 - name: Install fpm pool config
   template:
     src: "fpm-pool.j2"
-    dest: "/etc/php/7.4/fpm/pool.d/{{simplesaml_name}}.conf"
+    dest: "/etc/php/{{ php_version }}/fpm/pool.d/{{simplesaml_name}}.conf"
   notify: "restart php-fpm"
-
-- name: Find php version
-  command: >
-    php -r '$v=phpversion(); echo substr($v, 0, strrpos($v, "."));'
-  register: "php_output"
-  changed_when: false
-
-- set_fact:
-    php_version={{ php_output.stdout }}
-    simplesaml_project_dir={{simplesaml_project_dir}}
-    simplesaml_cert_dir={{simplesaml_cert_dir}}
 
 - name: Set php session cookie httponly
   ansible.builtin.copy:

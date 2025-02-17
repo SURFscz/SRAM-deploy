@@ -82,16 +82,6 @@
     mode: "0644"
   notify: "restart php-fpm"
 
-- name: Create RP resume.html
-  copy:
-    src: "{{ item }}"
-    dest: "{{ rp_docroot_dir }}/{{ item }}"
-    mode: "0644"
-  loop:
-    - "resume.html"
-    - "resume.js"
-  notify: "restart php-fpm"
-
 
 #########################################################
 ## nginx
