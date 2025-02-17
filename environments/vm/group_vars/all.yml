@@ -12,6 +12,7 @@ admin_email: "admin@{{base_domain}}"
 
 is_aws: false
 is_dev: true
+sram_ansible_nolog: false
 experimental_features: true
 
 servers:
