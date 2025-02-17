@@ -100,7 +100,7 @@
 
 - name: "Pull sbs image"
   community.docker.docker_image_pull:
-    name: "{{ images.sbs }}"
+    name: "{{ images.sbs_server }}"
   register: "sbs_image"
 
 # We need to remove sram-static so it gets repopulated
@@ -139,7 +139,7 @@
     networks:
       - name: "{{internal_network}}"
   register: "result"
-  failed_when: "result.container.State.ExitCode != 0"
+  failed_when: "'container' not in result or result.container.State.ExitCode != 0"
   changed_when: "'[alembic.runtime.migration] Running upgrade' in result.container.Output"
   notify: "Restart sbs containers"
 
