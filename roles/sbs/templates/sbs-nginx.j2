@@ -11,6 +11,8 @@ server {
 
     add_header Content-Security-Policy $csp;
 
+    server_tokens off;
+
     gzip  on;
     gzip_min_length 1000;
     gzip_proxied any;
