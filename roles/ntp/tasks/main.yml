@@ -33,4 +33,4 @@
         enabled: true
 
   when:
-    - "not is_docker"
+    - "not is_dev"

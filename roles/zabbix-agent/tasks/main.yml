@@ -24,7 +24,7 @@
 
 - name: "PSK handling"
   include_tasks: "psk.yml"
-  when: "not is_docker"
+  when: "not is_dev"
 
 - name: "Default configuration"
   template:
@@ -33,7 +33,7 @@
     owner: "root"
     group: "root"
     mode: "0644"
-  when: "not is_docker"
+  when: "not is_dev"
   notify: "restart zabbix-agent"
 
 # - name: "Count upgradeable packages"
@@ -57,7 +57,7 @@
     ansible_zabbix_url_path: '/'
     ansible_user: "{{zabbix_api_user}}"
     ansible_httpapi_pass: "{{zabbix_api_password}}"
-  when: "not is_docker"
+  when: "not is_dev"
   become: false
   throttle: 1
   block:

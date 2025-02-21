@@ -1,123 +1,63 @@
 ---
+- name: "Initialize database"
+  throttle: 1
+  import_tasks: "database_init.yml"
+  when: "is_dev"
 
-- name: "Install required packages"
-  apt:
-    state: "latest"
-    name:
-      - python3-pymysql
-    install_recommends: false
+- name: "Create SBS group"
+  group:
+    name: "{{ sbs_group }}"
+    state: "present"
+  register: "result"
+
+- name: "Save SBS group gid"
+  set_fact:
+    sbs_group_gid: "{{ result.gid }}"
+
+- name: "Create SBS user"
+  user:
+    name: "{{ sbs_user }}"
+    group: "{{ sbs_group }}"
+    comment: "User to run SBS service"
+    shell: "/bin/false"
+    password: "!"
+    home: "{{ sbs_conf_dir }}"
+    create_home: false
+    state: "present"
+  register: "result"
+
+- name: "Save sbs user uid"
+  set_fact:
+    sbs_user_uid: "{{ result.uid }}"
 
 - name: "Create directories"
   file:
     path: "{{item.path}}"
     state: "directory"
-    # owner: "{{sbs_file_owner}}"
-    # group: "{{sbs_group}}"
+    owner: "root"
+    group: "{{sbs_group_gid}}"
     mode: "{{item.mode}}"
   with_items:
-    - { path: "{{redis_conf_dir}}",          mode: "0755" }
     - { path: "{{sbs_work_dir}}",            mode: "0755" }
     - { path: "{{sbs_conf_dir}}",            mode: "0755" }
     - { path: "{{sbs_conf_dir}}/saml",       mode: "0755" }
     - { path: "{{sbs_log_dir}}",             mode: "0775" }
-    - { path: "{{sbs_cert_dir}}",            mode: "0775" }
+    - { path: "{{sbs_cert_dir}}",            mode: "0755" }
 
-- name: "Initialialize database"
-  throttle: 1
-  block:
-    - name: "Add SBS database"
-      community.mysql.mysql_db:
-        login_host: '{{ sbs_db_host }}'
-        login_port: '3306'
-        login_user: '{{ sbs_db_admin_user }}'
-        login_password: '{{ sbs_db_admin_password }}'
-        name: '{{ sbs_db_name }}'
-        encoding: 'utf8mb4'
-        collation: 'utf8mb4_unicode_ci'
-        ca_cert: "/etc/ssl/vm.scz-vm.net.crt"
-        check_hostname: false
-      notify: "Restart sbs containers"
-      when: environment_name!='tst2'
+- name: "Fix file permissions"
+  file:
+    path: "{{sbs_log_dir}}/{{item}}"
+    owner: "root"
+    group: "{{sbs_group_gid}}"
+    mode: "0664"
+    state: "touch"
+    modification_time: "preserve"
+    access_time: "preserve"
+  with_items:
+    - "sbs.log"
+    - "sbs_debug.log"
 
-    - name: "Add SBS user"
-      community.mysql.mysql_user:
-        login_host: '{{ sbs_db_host }}'
-        login_port: '3306'
-        login_user: '{{ sbs_db_admin_user }}'
-        login_password: '{{ sbs_db_admin_password }}'
-        name: '{{ item.user }}'
-        host: '%'  #TODO: restrict to correct vlan
-        password: '{{ item.passwd }}'
-        priv: '{{ sbs_db_name }}.*:{{ item.priv }}'
-        ca_cert: "/etc/ssl/vm.scz-vm.net.crt"
-        check_hostname: false
-        column_case_sensitive: "{{ sbs_db_user_column_case_sensitive }}"
-      with_items:
-        - user: "{{ sbs_db_user }}"
-          passwd: "{{ sbs_db_password }}"
-          priv: "SELECT,INSERT,DELETE,UPDATE,TRIGGER"
-        - user: "{{ sbs_migration_user }}"
-          passwd: "{{ sbs_migration_password }}"
-          priv: "ALL"
-        - user: "{{ sbs_dbbackup_user }}"
-          passwd: "{{ sbs_dbbackup_password }}"
-          priv: "SELECT"
-      no_log: "{{sram_ansible_nolog}}"
-      notify: "Restart sbs containers"
-  when: environment_name=='vm'
-
-# - name: "Fix file permissions"
-#   file:
-#     path: "{{sbs_log_dir}}/{{item}}"
-#     owner: "{{sbs_file_owner}}"
-#     group: "{{sbs_group}}"
-#     mode: "0664"
-#     state: "touch"
-#     modification_time: "preserve"
-#     access_time: "preserve"
-#   with_items:
-#     - "sbs.log"
-#     - "sbs_debug.log"
-
-# - name: "Download SBS build"
-#   get_url:
-#     url: "{{sbs_build_url}}"
-#     dest: "{{sbs_work_dir}}/sbs.tar.xz"
-#     force: true
-#   register: "sbs_download"
-#   # allow skipping the SBS download (for idempotency checks)
-#   when: "not (sbs_skip_download is defined and sbs_skip_download)"
-
-# - name: "Check if SBS dir exists"
-#   stat:
-#     path: "{{sbs_git_dir}}"
-#     get_attributes: false
-#     get_checksum: false
-#     get_mime: false
-#   register: "sbs_git_dir_stat"
-
-# - name: "Remove previous SBS backup"
-#   file:
-#     path: "{{ sbs_git_dir }}.old"
-#     state: "absent"
-#   when: "sbs_download.changed and sbs_git_dir_stat.stat.exists"
-
-# - name: "Save old SBS dir"
-#   command: |
-#     mv '{{ sbs_git_dir }}' '{{ sbs_git_dir }}.old'
-#   when: "sbs_download.changed and sbs_git_dir_stat.stat.exists"
-
-# - name: "Deploy SBS build"
-#   unarchive:
-#     src: "{{sbs_work_dir}}/sbs.tar.xz"
-#     dest: "{{ sbs_work_dir }}"
-#     remote_src: true
-#     owner: "{{sbs_file_owner}}"
-#     group: "{{sbs_group}}"
-#   notify: "restart sbs"
-#   when: "sbs_download.changed or not sbs_git_dir_stat.stat.exists"
-
-- name: Copy wildcard backend cert
+- name: "Copy wildcard backend cert"
   copy:
     content: "{{wildcard_backend_cert.pub}}"
     dest: "{{sbs_cert_dir}}/backend.crt"
@@ -126,7 +66,7 @@
     mode: "0644"
   notify: "Restart sbs containers"
 
-- name: Copy https cert
+- name: "Copy https cert"
   copy:
     content: "{{https_cert.cert}}"
     dest: "{{sbs_cert_dir}}/frontend.crt"
@@ -139,167 +79,93 @@
   copy:
     dest: "{{sbs_db_cert_path}}"
     content: "{{ sbs_db_tls_cert }}"
-
-- name: "Create redis config"
-  template:
-    src: "redis.conf.j2"
-    dest: "{{ redis_conf_dir }}/redis.conf"
-  notify: "Restart redis container"
+    owner: "root"
+    group: "root"
+    mode: "0644"
 
 - name: "Create SBS config files"
   template:
     src: "{{item.name}}.j2"
     dest: "{{ sbs_conf_dir }}/{{item.name}}"
-    # owner: "{{sbs_file_owner}}"
-    # group: "{{sbs_group}}"
+    owner: "root"
+    group: "{{sbs_group_gid}}"
     mode: "{{item.mode}}"
   with_items:
-    - { name: "config.yml",     mode: "0640" }
-    - { name: "alembic.ini",    mode: "0644" }
-    - { name: "disclaimer.css", mode: "0644" }
-  # notify: "restart sbs"
+    - { name: "config.yml",      mode: "0644" }
+    - { name: "alembic.ini",     mode: "0644" }
+    - { name: "disclaimer.css",  mode: "0644" }
+    - { name: "sbs-apache.conf", mode: "0644" }
   no_log: "{{sram_ansible_nolog}}"
   notify: "Restart sbs containers"
 
-# - name: "Remove obsolete JWT keys"
-#   file:
-#     path: "{{ sbs_conf_dir }}/{{ item }}"
-#     state: "absent"
-#   with_items:
-#     - "jwt_private_key"
-#     - "jwt_public_keys.json"
-
-- name: "Create SBS SURFSecureID config files"
-  template:
-    src: "saml_{{ item.name }}.j2"
-    dest: "{{ sbs_conf_dir }}/saml/{{item.name}}"
-    # owner: "{{sbs_file_owner}}"
-    # group: "{{sbs_group}}"
-    mode: "{{ item.mode }}"
-  with_items:
-    - { name: "settings.json",          mode: "0640" }
-    - { name: "advanced_settings.json", mode: "0644" }
-  # notify: "restart sbs"
-  no_log: "{{ sram_ansible_nolog }}"
-  notify: "Restart sbs containers"
-
-# - name: "Create links to config files"
-#   file:
-#     state: "link"
-#     path: "{{ sbs_git_dir }}/{{ item.path }}"
-#     src: "{{ sbs_conf_dir }}/{{ item.links_to }}"
-#     force: yes
-#   with_items:
-#     - { path: "server/config/config.yml",           links_to: "config.yml"           }
-#     - { path: "server/migrations/alembic.ini",      links_to: "alembic.ini"           }
-#     - { path: "server/config/saml",                 links_to: "saml"                 }
-#     - { path: "client/build/static/disclaimer.css", links_to: "disclaimer.css"       }
-#   notify: "restart sbs"
-
-# - name: Link log dir
-#   file:
-#     state: "link"
-#     path: "{{ sbs_git_dir }}/log"
-#     src: "{{ sbs_log_dir }}"
-#   notify: "restart sbs"
-
-# - name: Create python3 virtualenv
-#   import_role:
-#     name: "python-venv"
-#   vars:
-#     python_venv_dir: "{{ sbs_env_dir }}"
-#     python_venv_requirements: "{{ sbs_git_dir }}/server/requirements/test.txt"
-#   notify: "restart sbs"
-
-
-# - name: "Install SBS service"
-#   template:
-#     src: "sbs.service.j2"
-#     dest: "/etc/systemd/system/sram-sbs.service"
-#   notify:
-#     - "systemd daemon-reload"
-#     - "restart sbs"
-
-
-## TODO: draai SBS als non-www-data user
-# - include_role:
-#     name: "nginx"
-
-- name: "install apache config"
-  template:
-    src: "sbs-apache.j2"
-    dest: "{{ sbs_apache_conf }}"
-  # notify: "Restart sbs containers"
-
-# - name: "install nginx config"
-#   template:
-#     src: "sbs-nginx.j2"
-#     dest: "{{ sbs_nginx_conf }}"
-
-# - name: "Install database dump script"
-#   template:
-#     src: "backup-database.sh.j2"
-#     dest: "{{backup_runparts}}/backup-database.sh"
-#     mode: "0700"
-#   no_log: "{{sram_ansible_nolog}}"
-
-# - name: Run SBS migrations
-#   throttle: 1
-#   command:
-#     cmd: "{{ sbs_env_dir }}/bin/alembic --config migrations/alembic.ini upgrade head"
-#     chdir: "{{ sbs_work_dir }}/sbs/server"
-#   register: "result"
-#   failed_when: "result.rc != 0"
-#   changed_when: "'[alembic.runtime.migration] Running upgrade' in result.stderr"
-#   notify: "restart sbs"
-
-- name: Create redis container
-  docker_container:
-    name: "{{ containers.redis }}"
-    image: "{{ images.redis }}"
-    restart_policy: "always"
-    state: started
-    # pull: true
-    command: redis-server /usr/local/etc/redis/redis.conf
-    volumes:
-      - "{{ redis_conf_dir }}:/usr/local/etc/redis"
-    networks:
-      - name: "{{internal_network}}"
-
-- name: Pull sbs image
+- name: "Pull sbs image"
   community.docker.docker_image_pull:
-    name: "{{ images.sbs }}"
+    name: "{{ item }}"
+  with_items:
+    - "{{ images.sbs }}"
+    - "{{ images.sbs_server }}"
   register: "sbs_image"
 
 # We need to remove sram-static so it gets repopulated
 # with new SBS image static content
-# - name: Stop and remove sbs and sbs-server containers
-#   docker_container:
-#     name: "{{ item }}"
-#     state: absent
-#   with_items:
-#     - "{{ containers.sbs }}"
-#     - "{{ containers.sbs_server }}"
-#   when: "sbs_image is changed"
+- name: "Clean up old containers"
+  block:
+    - name: "Stop and remove sbs and sbs-server containers"
+      docker_container:
+        name: "{{ item }}"
+        state: "absent"
+      with_items:
+        - "{{ containers.sbs }}"
+        - "{{ containers.sbs_server }}"
 
-# - name: Remove sbs_static volume
-#   community.docker.docker_volume:
-#     name: sbs_static
-#     state: absent
-#   when: "sbs_image is changed"
+    - name: "Remove sbs_static volume"
+      community.docker.docker_volume:
+        name: "sbs_static"
+        state: "absent"
+  when: "sbs_image is changed"
 
-- name: Start sbs container
+- name: "Run SBS migrations"
+  throttle: 1
+  docker_container:
+    name: "{{ containers.sbs_migration }}"
+    image: "{{ images.sbs_server }}"
+    pull: "never"
+    state: "started"
+    restart_policy: "no"
+    detach: false
+    env:
+      MIGRATIONS_ONLY: "1"
+    volumes:
+      - "{{ sbs_conf_dir }}:/opt/sbs/config"
+      - "{{ sbs_cert_dir }}:/opt/sbs/cert"
+      - "{{ sbs_log_dir }}:/opt/sbs/log"
+    networks:
+      - name: "{{internal_network}}"
+  register: "result"
+  failed_when: "'container' not in result or result.container.State.ExitCode != 0"
+  changed_when: "'[alembic.runtime.migration] Running upgrade' in result.container.Output"
+  notify: "Restart sbs containers"
+
+# Remove the migration container; we can do that with auto_remove, because if we use that, ansible
+# will not save the output in result
+- name: "Remove migration container"
+  docker_container:
+    name: "{{ containers.sbs_migration }}"
+    state: "absent"
+  # TODO: fix this by only running this if "sbs_image is changed"
+  changed_when: false
+
+- name: "Start sbs container"
   docker_container:
     name: "{{ containers.sbs }}"
     image: "{{ images.sbs }}"
     pull: "never"
     restart_policy: "always"
     state: "started"
-    # env:
-    #   REQUESTS_CA_BUNDLE: /etc/ssl/certs/ca-certificates.crt
+    env:
+      RUN_MIGRATIONS: "0"
     volumes:
-      - "{{ sbs_apache_conf }}:/etc/apache2/sites-enabled/apache.conf:ro"
-      # - "sbs_static:/opt/sbs/client/build"
+      - "{{ sbs_conf_dir }}/sbs-apache.conf:/etc/apache2/sites-enabled/sbs.conf:ro"
     networks:
       - name: "{{traefik_network}}"
       - name: "{{internal_network}}"
@@ -309,15 +175,17 @@
       traefik.http.routers.sbs.rule: "Host(`{{ sbs_base_domain }}`)"
       traefik.http.routers.sbs.tls: "true"
 
-- name: Start sbs server container
+- name: "Start SBS server container"
   docker_container:
     name: "{{ containers.sbs_server }}"
     image: "{{ images.sbs_server }}"
     restart_policy: "always"
-    state: started
+    state: "started"
     env:
+      USER: "{{ sbs_user_uid }}"
+      GROUP: "{{ sbs_group_gid }}"
       REQUESTS_CA_BUNDLE: "/etc/ssl/certs/ca-certificates.crt"
-      RUN_MIGRATIONS: "1"
+      RUN_MIGRATIONS: "0"
     pull: "always"
     volumes:
       - "{{ sbs_conf_dir }}:/opt/sbs/config"
@@ -327,5 +195,6 @@
       # - "sbs_static:/var/www/html"
     networks:
       - name: "{{internal_network}}"
+    # TODO: fix this: this is only for dev
     etc_hosts:
       oidc-op.scz-vm.net: "172.20.1.24"

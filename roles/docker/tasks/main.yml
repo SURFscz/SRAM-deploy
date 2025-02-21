@@ -1,64 +1,10 @@
 ---
 - name: Install docker
-  block:
-    - name: Add Docker GPG key.
-      ansible.builtin.apt_key:
-        url: "https://download.docker.com/linux/debian/gpg"
-        state: "present"
-
-    - name: Add Docker repository.
-      ansible.builtin.apt_repository:
-        repo: "deb [arch=amd64] https://download.docker.com/linux/debian bullseye stable"
-        state: "present"
-
-    - name: Create docker config directory
-      ansible.builtin.file:
-        path: "/etc/docker"
-        state: "directory"
-        owner: "root"
-        group: "root"
-        mode: "0755"
-
-    - name: Install docker config
-      ansible.builtin.copy:
-        content: |
-          {
-            "log-driver": "journald",
-            "log-opts": {
-            }
-          }
-        dest: "/etc/docker/daemon.json"
-        owner: "root"
-        group: "root"
-        mode: "0644"
-
-    - name: Install docker
-      ansible.builtin.apt:
-        name: "docker-ce"
-        state: "present"
-      notify:
-        - "start docker"
-
-    - name: Add ansible user to docker group
-      ansible.builtin.user:
-        name: "ansible"
-        groups: "docker"
-        append: true
-
-    # hackish way to allow name resolution from the host
-    # it watches the docker daemon and updates /etc/hosts on the host
-    - name: Install name resolution container
-      docker_container:
-        name: "name-resolver"
-        image: "dvdarias/docker-hoster"
-        state: "started"
-        restart_policy: "always"
-        volumes:
-          - "/var/run/docker.sock:/tmp/docker.sock"
-          - "/etc/hosts:/tmp/hosts"
-
-  when: "environment_name=='vm'"
+  include_tasks: "docker_setup.yml"
+  when: "is_dev"
 
 - name: Create the internal network
   community.docker.docker_network:
     name: "{{internal_network}}"
+    enable_ipv6: false
+    state: "present"

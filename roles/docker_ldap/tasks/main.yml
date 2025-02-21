@@ -101,7 +101,7 @@
     remote_src: true
     dest: "{{ldap_certs_dir}}/frontend.crt"
     mode: "0644"
-  when: "is_docker"  # TODO: wrong name; we mean: "is local dev env"
+  when: "is_dev"
   notify: Restart the ldap container
 
 - name: Create the ldap container
@@ -229,7 +229,7 @@
     bind_dn: "cn=admin,cn=config"
     bind_pw: "{{ services_ldap_password }}"
     server_uri: "{{ ldap_uri }}"
-  when: "is_docker"
+  when: "is_dev"  # TODO: check this.
 
 
 # - name: Ensure the schemas are added to LDAP

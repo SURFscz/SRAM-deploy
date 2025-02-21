@@ -94,7 +94,7 @@
     path: "/etc/haproxy/errors/{{item}}.http"
   register: "st"
   failed_when: "st.stat.size > 65419"
-  loop: [400,403,408,500,502,503,504]
+  loop: [ 400, 403, 408, 500, 502, 503, 504 ]
 
 - block:
     - name: Create bin directory
@@ -127,7 +127,7 @@
         src: "ocsp-letsencrypt.j2"
         dest: "/etc/letsencrypt/renewal-hooks/post/"
         mode: '0755'
-  when: "not is_docker"
+  when: "not is_dev"
 
 - name: create override dir
   file:
