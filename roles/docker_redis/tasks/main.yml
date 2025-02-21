@@ -18,8 +18,8 @@
   file:
     path: "{{item.path}}"
     state: "directory"
-    owner: "root"
-    group: "root"
+    owner: "{{ redis_user }}"
+    group: "{{ redis_user }}"
     mode: "{{item.mode}}"
   with_items:
     - { path: "{{redis_conf_dir}}", mode: "0755" }
@@ -28,8 +28,8 @@
   template:
     src: "redis.conf.j2"
     dest: "{{ redis_conf_dir }}/redis.conf"
-    owner: "root"
-    group: "root"
+    owner: "{{ redis_user }}"
+    group: "{{ redis_user }}"
     mode: "0644"
   notify: "Restart redis container"
 
