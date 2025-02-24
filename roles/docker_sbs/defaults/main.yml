@@ -1,5 +1,4 @@
 ---
-redis_conf_dir: "{{sram_conf_dir}}/redis"
 
 sbs_openidc_timeout: 86400
 
@@ -42,8 +41,8 @@ sbs_redis_user: default
 sbs_mail_host: "{{ mail.relay_to }}"
 sbs_mail_port: "{{ mail.relay_port }}"
 
-sbs_file_owner: "root"
-sbs_group: "sram-sbs"
+sbs_user: "sbs"
+sbs_group: "sbs"
 
 sbs_session_lifetime: 1440
 sbs_secret_key_suffix: ""

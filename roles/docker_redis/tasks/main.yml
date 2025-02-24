@@ -1,0 +1,50 @@
+---
+- name: "Create Redis user"
+  user:
+    name: "{{ redis_user }}"
+    # Redis container redis user is hard-coded to 999
+    uid: 999
+    comment: "User to run SRAM Redis service"
+    shell: "/bin/false"
+    password: "!"
+    home: "{{ redis_conf_dir }}"
+    create_home: false
+    state: "present"
+  register: "result"
+
+- name: "Save redis user uid"
+  set_fact:
+    redis_user_uid: "{{ result.uid }}"
+
+- name: "Create directories"
+  file:
+    path: "{{item.path}}"
+    state: "directory"
+    owner: "{{ redis_user }}"
+    group: "{{ redis_user }}"
+    mode: "{{item.mode}}"
+  with_items:
+    - { path: "{{redis_conf_dir}}", mode: "0755" }
+
+- name: "Create redis config"
+  template:
+    src: "redis.conf.j2"
+    dest: "{{ redis_conf_dir }}/redis.conf"
+    owner: "{{ redis_user }}"
+    group: "{{ redis_user }}"
+    mode: "0644"
+  notify: "Restart redis container"
+
+- name: "Create redis container"
+  docker_container:
+    name: "{{ containers.redis }}"
+    image: "{{ images.redis }}"
+    restart_policy: "always"
+    state: "started"
+    user: "{{ redis_user_uid }}"
+    command: |
+      redis-server /usr/local/etc/redis/redis.conf
+    volumes:
+      - "{{ redis_conf_dir }}:/usr/local/etc/redis"
+    networks:
+      - name: "{{internal_network}}"

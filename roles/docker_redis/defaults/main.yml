@@ -1,0 +1,3 @@
+---
+redis_conf_dir: "{{sram_conf_dir}}/redis"
+redis_user: "sram-redis"

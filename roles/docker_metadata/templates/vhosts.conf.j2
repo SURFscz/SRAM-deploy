@@ -1,0 +1,15 @@
+<VirtualHost *:80>
+    ServerName {{ metadata_server_name }}
+    DocumentRoot {{ metadata_dirs.web }}
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-XSS-Protection "1; mode=block"
+    <Location />
+        Require all granted
+    </Location>
+    <Directory "{{ metadata_dirs.web }}">
+        Require all granted
+        Options FollowSymLinks
+        Options -MultiViews
+    </Directory>
+</VirtualHost>
