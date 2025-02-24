@@ -2,6 +2,8 @@
 - name: "Create Redis user"
   user:
     name: "{{ redis_user }}"
+    # Redis container redis user is hard-coded to 999
+    uid: 999
     comment: "User to run SRAM Redis service"
     shell: "/bin/false"
     password: "!"
