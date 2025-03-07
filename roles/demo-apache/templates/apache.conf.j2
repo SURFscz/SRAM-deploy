@@ -1,3 +1,28 @@
+# Bare IP fallbacks
+<VirtualHost *:443>
+        ServerName default
+        Redirect 404 /
+        SSLEngine on
+        SSLCertificateFile    /etc/letsencrypt/live/demo1.sram.surf.nl/fullchain.pem
+        SSLCertificateKeyFile /etc/letsencrypt/live/demo1.sram.surf.nl/privkey.pem
+        SSLProtocol           all -SSLv3 -TLSv1 -TLSv1.1
+        SSLCipherSuite        ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256
+        SSLHonorCipherOrder   on
+        SSLCompression        off
+        SSLSessionTickets     off
+</VirtualHost>
+
+<VirtualHost *:80>
+        ServerName default
+        Redirect 404 /
+</VirtualHost>
+
+# Letsencrypt fallback
+<VirtualHost *:80>
+        ServerName demo1.sram.surf.nl
+        DocumentRoot /var/www/certbot
+</VirtualHost>
+
 {% if letsencrypt_enabled %}
 SSLStaplingCache "shmcb:logs/ssl_stapling(32768)"
 <VirtualHost *:443>

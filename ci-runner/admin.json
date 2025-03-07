@@ -40,7 +40,7 @@
         "name": "Admin admin",
         "given_name": "Admin",
         "family_name": "admin",
-        "email": "martin+ci-admin@surfnet.nl",
+        "email": "admin@ci-runner.sram.surf.nl",
         "voperson_external_affiliation": [
             "member@ci-runner.sram.surf.nl",
             "affiliate@ci-runner.sram.surf.nl"
@@ -78,7 +78,7 @@
         "eduperson_assurance": [
             "http://idm.example.org/LOA1#sample"
         ],
-        "email": "martin+ci-admin@surfnet.nl",
+        "email": "admin@ci-runner.sram.surf.nl",
         "voperson_external_id": [
             "admin@ci-runner.sram.surf.nl"
         ],
@@ -115,7 +115,7 @@
         "name": "Admin admin",
         "given_name": "Admin",
         "family_name": "admin",
-        "email": "martin+ci-admin@surfnet.nl",
+        "email": "admin@ci-runner.sram.surf.nl",
         "voperson_external_affiliation": [
             "member@ci-runner.sram.surf.nl",
             "affiliate@ci-runner.sram.surf.nl"
