@@ -1,0 +1,48 @@
+---
+- name: "Install index page"
+  template:
+    src: "index.html.j2"
+    dest: "{{metadata_basedir}}/web/index.html"
+    mode: "0644"
+
+- name: "Install legacy link"
+  file:
+    src: "."
+    dest: "{{metadata_basedir}}/web/metadata"
+    state: "link"
+
+- name: "Install logos"
+  copy:
+    src: "{{item}}"
+    dest: "{{metadata_basedir}}/web"
+    mode: "0644"
+  with_items:
+    - "surf.svg"
+    - "surf.png"
+    - "surf_bimi.svg"
+
+- name: "Create the metadata-server container"
+  community.docker.docker_container:
+    name: "{{ containers.metadata }}"
+    image: "{{ images.metadata }}"
+    restart_policy: "always"
+    state: "started"
+    pull: true
+    mounts:
+      - source: "{{metadata_basedir}}/web"
+        target: "/var/www/html"
+        type: "bind"
+        read_only: true
+    networks:
+      - name: "{{traefik_network}}"
+    labels:
+      traefik.http.routers.metadata.rule: "Host(`{{ hostnames.meta }}`)"
+      traefik.http.routers.metadata.tls: "true"
+      traefik.enable: "true"
+    healthcheck:
+      test: [ "CMD", "curl", "-fail", "http://localhost/" ]
+      interval: "10s"
+      timeout: "5s"
+      retries: 3
+      start_period: "5s"
+

@@ -28,4 +28,3 @@
       exit 0
     dest: "{{ letsencrypt_hooks }}/sram-{{ ansible_fqdn }}-nginx.sh"
     mode: "0755"
-

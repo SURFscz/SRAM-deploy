@@ -1,0 +1,104 @@
+---
+- name: "create self-signed Metadata Signing SSL certs"
+  shell:
+    cmd: '
+      openssl genrsa -out "{{ metadata_basedir }}/certs/signing.key" 2048;
+      openssl req -new -nodes -x509 -subj "/C=NL/CN=signing"
+                  -days 3650 -key "{{ metadata_basedir }}/certs/signing.key"
+                  -out "{{ metadata_basedir }}/certs/signing.crt" -extensions v3_ca
+    '
+    creates: "{{ metadata_basedir }}/certs/signing.crt"
+  when: "metadata_signing_cert is not defined"
+  notify: "Restart the pyFF container"
+
+- name: "Write fixed Metadata signing certificates"
+  copy:
+    dest: "{{ metadata_basedir }}/certs/{{ item.file }}"
+    content: "{{item.contents}}"
+    mode: "{{item.mode}}"
+    owner: "root"
+    group: "{{metadata_group}}"
+  with_items:
+    - { file: "signing.key", mode: "0640", contents: "{{metadata_signing_cert.priv}}" }
+    - { file: "signing.crt", mode: "0644", contents: "{{metadata_signing_cert.pub}}"  }
+  when: "metadata_signing_cert is defined"
+  notify: "Restart the pyFF container"
+
+
+- name: "Copy source certificates"
+  copy:
+    src: "{{ item }}"
+    dest: "{{ metadata_basedir }}/certs"
+    mode: "0644"
+  with_items:
+    - "surfconext.crt"
+  notify: "Restart the pyFF container"
+
+- name: "Install IdP metadata"
+  copy:
+    content: "{{item.metadata}}"
+    dest: "{{ metadata_basedir }}/src/{{item.name}}.xml"
+    mode: "0644"
+  with_items: "{{ metadata_idps_files }}"
+  notify: "Restart the pyFF container"
+
+- name: "Copy pyFF xslt transformations"
+  copy:
+    src: "{{item}}"
+    dest: "{{metadata_basedir}}/xslt"
+    mode: "0644"
+  with_items:
+    - "transform_proxy.xslt"
+    - "transform.xslt"
+  notify: "Restart the pyFF container"
+
+- name: "Copy pyFF feeds"
+  copy:
+    src: "{{item}}"
+    dest: "{{metadata_basedir}}/feeds"
+    mode: "0644"
+  with_items:
+    - "01_idps.fd"
+    - "02_backend.fd"
+    - "03_frontend.fd"
+  notify: "Restart the pyFF container"
+
+- name: "Create the pyFF container"
+  community.docker.docker_container:
+    name: "{{ containers.pyff }}"
+    image: "{{ images.pyff }}"
+    restart_policy: "always"
+    state: "started"
+    pull: true
+    init: true
+    env:
+      USER: "{{ metadata_user_uid }}"
+      GROUP: "{{ metadata_group_gid }}"
+      SLEEP_TIME: "60s"
+    mounts:
+      - source: "{{ metadata_basedir }}/web"
+        target: "/opt/pyff/web"
+        type: "bind"
+      - source: "{{ metadata_basedir }}/feeds"
+        target: "/opt/pyff/feeds"
+        type: "bind"
+        read_only: true
+      - source: "{{ metadata_basedir }}/src"
+        target: "/opt/pyff/src"
+        type: "bind"
+        read_only: true
+      - source: "{{ metadata_basedir }}/certs"
+        target: "/opt/pyff/certs"
+        type: "bind"
+        read_only: true
+      - source: "{{ metadata_basedir }}/xslt"
+        target: "/opt/pyff/xslt"
+        type: "bind"
+        read_only: true
+    healthcheck:
+      test: >
+        [[ $(($(date +%s)-$(date -r /opt/pyff/web/idps.xml +%s))) -lt $$SLEEP_TIME ]]
+      interval: "10s"
+      timeout: "5s"
+      retries: 3
+      start_period: "5s"

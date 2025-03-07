@@ -1,14 +1,19 @@
 ---
-# - name: restart nginx
-#   service:
-#     name: nginx
-#     state: restarted
-
-# - name: "systemd daemon-reload"
+# - name: "enable pyff-metadata job"
 #   systemd:
+#     name: "pyff-metadata.timer"
+#     enabled: true
+#     state: "started"
 #     daemon_reload: true
 
-# - name: "restart zabbix-agent"
+# - name: "run pyff-metadata job"
 #   systemd:
-#     name: "zabbix-agent2.service"
-#     state: "restarted"
+#     name: "pyff-metadata.service"
+#     state: "started"
+#     daemon_reload: true
+
+- name: Restart the pyFF container
+  docker_container:
+    name: "{{ containers.pyff }}"
+    restart: true
+    state: started
