@@ -107,6 +107,7 @@
     command: "config"
     arguments: "repositories.remoteuserssl vcs https://github.com/SURFscz/remoteuserssl.git"
     working_dir: "{{ simplesaml_project_dir }}/simplesaml"
+    composer_executable: "{{ simplesaml_project_dir }}/simplesaml/bin/composer"
   environment:
     COMPOSER_AUTH: "{{composer_auth | to_json}}"
   become_user: "{{surfstar_idp_file_user}}"
@@ -117,6 +118,7 @@
     command: "require"
     arguments: "local/simplesamlphp-module-remoteuserssl @dev"
     working_dir: "{{ simplesaml_project_dir }}/simplesaml"
+    composer_executable: "{{ simplesaml_project_dir }}/simplesaml/bin/composer"
   environment:
     COMPOSER_AUTH: "{{composer_auth | to_json}}"
   become_user: "{{surfstar_idp_file_user}}"
@@ -127,6 +129,7 @@
     command: "update"
     arguments: "local/simplesamlphp-module-remoteuserssl"
     working_dir: "{{ simplesaml_project_dir }}/simplesaml"
+    composer_executable: "{{ simplesaml_project_dir }}/simplesaml/bin/composer"
   environment:
     COMPOSER_AUTH: "{{composer_auth | to_json}}"
   become_user: "{{surfstar_idp_file_user}}"
