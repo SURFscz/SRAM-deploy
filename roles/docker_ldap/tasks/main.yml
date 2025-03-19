@@ -154,11 +154,12 @@
       traefik.tcp.services.ldap.loadbalancer.server.port: "1389"
   register: "ldap_container"
 
-- name: Generate ldap.conf
-  template:
-    src: ldap.conf.j2
-    dest: "/etc/ldap/ldap.conf"
-    mode: "0644"
+# Don't write a system-wide ldap config here
+#- name: Generate ldap.conf
+#  template:
+#    src: ldap.conf.j2
+#    dest: "/etc/ldap/ldap.conf"
+#    mode: "0644"
 
 - name: Wait for LDAP initialization
   ansible.builtin.wait_for:
