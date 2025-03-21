@@ -145,17 +145,16 @@
     - "systemd daemon-reload"
     - "restart haproxy"
 
-
 - name: remove fencing scripts
   file:
-    path: "{item}"
+    path: "{{item}}"
     state: "absent"
   with_items:
     - "/opt/fence.sh"
     - "/opt/unfence.sh"
     - "/etc/systemd/system/fence.service"
 
-- name: stop fence script
+- name: stop fence service
   systemd:
     name: "fence.service"
     state: "stopped"
@@ -165,9 +164,24 @@
     fence_service_result is failed
     and 'Could not find the requested service' not in fence_service_result.msg
 
-- name: Install SBS ACL sync script
-  import_role:
-    name: "aclsync"
-  vars:
-    aclsync_aclfile: "{{ haproxy_ldap_acl_file }}"
-    aclsync_group: "{{ haproxy_ldap_acl_group }}"
+- name: remove aclsync scripts
+  file:
+    path: "{{item}}"
+    state: "absent"
+  with_items:
+    - "/opt/aclsync"
+    - "/etc/systemd/system/sram_aclsync.timer"
+    - "/etc/systemd/system/sram_aclsync.service"
+
+- name: stop aclsync service
+  systemd:
+    name: "{{item}}"
+    state: "stopped"
+    enabled: false
+  with_items:
+    - "sram_aclsync.timer"
+    - "sram_aclsync.service"
+  register: "aclsync_service_result"
+  failed_when: >
+    aclsync_service_result is failed
+    and 'Could not find the requested' not in aclsync_service_result.msg
