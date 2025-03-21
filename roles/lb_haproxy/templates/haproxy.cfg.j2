@@ -162,13 +162,12 @@ listen {{name}}
 
     {% endfor %}
 
-    acl ldap_sbs_allow src -f {{ haproxy_ldap_acl_file }}
     acl ldap_local_allow src 127.0.0.1 ::1 {{ iprange.internal }}
     acl ldap_vpn_allow src --
       {%- for ip in iprange.get("vpn", {}).values() %} {{ip}}{% endfor %}
       {%- for ip in iprange.get("vpn6",{}).values() %} {{ip}}{% endfor %}
 
-    tcp-request content reject unless ldap_sbs_allow or ldap_local_allow or ldap_vpn_allow
+    tcp-request content reject unless ldap_local_allow or ldap_vpn_allow
 
     timeout client 900s
     timeout server 901s
