@@ -99,6 +99,7 @@ sbs_oidc_token_endpoint: "http://localhost/OIDC/token"
 sbs_oidc_userinfo_endpoint: "http://localhost/OIDC/userinfo"
 sbs_oidc_jwks_endpoint: "http://localhost/OIDC/jwks.json"
 sbs_eduteams_continue_endpoint: "https://localhost/continue"
+sbs_eb_continue_endpoint: "https://engine.(.*)surfconext.nl(.*)"
 sbs_oidc_jwt_audience: "https://localhost"
 sbs_continue_eduteams_redirect_uri: "https://localhost/continue"
 

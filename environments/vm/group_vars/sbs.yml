@@ -16,6 +16,7 @@ sbs_oidc_userinfo_endpoint: "https://{{ hostnames.oidc_op }}/userinfo"
 sbs_oidc_jwks_endpoint: "https://{{ hostnames.oidc_op }}/jwks.json"
 sbs_oidc_redirect_uri: "https://{{ hostnames.sbs }}/api/users/resume-session"
 sbs_eduteams_continue_endpoint: "https://{{ hostnames.oidc_op }}/continue"
+sbs_eb_continue_endpoint: "https://engine.(.*)surfconext.nl(.*)"
 sbs_oidc_jwt_audience: "https://{{ hostnames.oidc_op }}"
 
 sbs_manage_base_enabled: False

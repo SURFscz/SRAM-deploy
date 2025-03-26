@@ -17,6 +17,7 @@ sbs_oidc_jwks_endpoint: "https://{{ hostnames.oidc_op }}/OIDC/jwks"
 sbs_oidc_redirect_uri: "https://{{ hostnames.sbs }}/api/users/resume-session"
 sbs_oidc_jwt_audience: "https://{{ hostnames.oidc_op }}"
 sbs_eduteams_continue_endpoint: "https://proxy.acc.sram.eduteams.org/continue"
+sbs_eb_continue_endpoint: "https://engine.(.*)surfconext.nl(.*)"
 
 sbs_manage_base_enabled: False
 sbs_manage_base_url: "https://manage.test2.surfconext.nl"
