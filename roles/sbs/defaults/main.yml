@@ -153,5 +153,4 @@ sbs_csp_style_hashes:
   - 'sha256-SU3XCwbQ/8qgzoGOWCYdkwIr3xRrl5rsvdFcpw8NSiE='  # on /new-service-request
   - 'sha256-WTC9gHKjIpzl5ub1eg/YrRy/k+jlzeyRojah9dxAApc='  # on /new-service-request
 
-sbs_engine_block_public_key_url: https://example.com/
 sbs_engine_block_api_token: secret
