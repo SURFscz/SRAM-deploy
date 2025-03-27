@@ -263,6 +263,4 @@ excluded_user_accounts:
 {% endfor %}
 
 engine_block:
-  # Either one is required, if specified both then the public_key is used
-  public_key_url: {{ sbs_engine_block_public_key_url }}
-  public_key:
+  api_token: {{ sbs_engine_block_api_token }}
