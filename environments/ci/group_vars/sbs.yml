@@ -45,6 +45,7 @@ sbs_admin_platform_backdoor_totp: True
 sbs_past_dates_allowed: True
 sbs_mock_scim_enabled: True
 sbs_swagger_enabled: True
+sbs_log_to_stdout: True
 
 sbs_mfa_idp_allowed:
   - schac_home: "ci-runner.sram.surf.nl"

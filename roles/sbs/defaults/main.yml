@@ -87,6 +87,7 @@ sbs_impersonation_allowed: False
 sbs_admin_platform_backdoor_totp: False
 sbs_past_dates_allowed: False
 sbs_mock_scim_enabled: False
+sbs_log_to_stdout: False
 
 sbs_delete_orphaned: True
 sbs_suspension_inactive_days: 365

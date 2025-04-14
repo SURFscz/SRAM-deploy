@@ -17,6 +17,9 @@ encryption_key: {{ sbs_encryption_key  }}
 # Lifetime of session in minutes (one day is 60 * 24)
 permanent_session_lifetime: {{ sbs_session_lifetime }}
 
+logging:
+  log_to_stdout: {{ sbs_log_to_stdout }}
+
 # Valid scopes are "READ" and "WRITE"
 api_users:
 {% for name, user in sbs_api_users.items() %}
