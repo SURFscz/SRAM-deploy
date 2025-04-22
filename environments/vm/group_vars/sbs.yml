@@ -21,6 +21,7 @@ sbs_oidc_jwt_audience: "https://{{ hostnames.oidc_op }}"
 
 sbs_manage_base_enabled: False
 sbs_manage_base_url: "https://manage.test2.surfconext.nl"
+sbs_manage_verify_peer: False
 
 sbs_ldap_url: "ldap://ldap.scz-vm.net/dc=services,dc=vnet"
 # entity_id will be replaced run-time in the client

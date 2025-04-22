@@ -106,6 +106,7 @@ sbs_continue_eduteams_redirect_uri: "https://localhost/continue"
 
 sbs_manage_base_enabled: False
 sbs_manage_base_url: "http://localhost"
+sbs_manage_verify_peer: True
 
 sbs_idp_metadata_url: "https://metadata.surfconext.nl/signed/2023/edugain-downstream-idp.xml "
 sbs_backup_dir: "{{backup_base}}/sbs"
