@@ -144,10 +144,11 @@
             mediatype: Email
             attribute: "urn:mace:dir:attribute-def:mail"
         provision_groups:
-          - name: surfconext1
-            role: Guest role
+          - name: "urn:mace:surf.nl:invite.surfconext.nl:\
+                   6853e9af-d9c1-4d37-b8fe-e68b0e31769f:tdizabbix"
+            role: "Admin role"
             user_groups:
-              - Guests
+              - "Zabbix administrators"
 
     - name: "Set authentication settings"
       community.zabbix.zabbix_authentication:
@@ -167,4 +168,3 @@
           - avoid_easy_to_guess
 
   # end of block
-
