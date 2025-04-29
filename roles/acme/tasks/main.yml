@@ -1,0 +1,221 @@
+---
+############################################
+## This role uses acme.sh to fetch certificates using acme-dns based DNS-01 challenges
+##
+## To user, include the role like this:
+## - name: "fetch certificates"
+##   include_role:
+##     name: "acme"
+##   vars:
+##     acme_certificate_list: ["host1.example.org", "host2.example.org"]
+##
+## And set the following variables in your inventory:
+## - acme_admin_email: "admin@example.org"
+## - acme_renewal_days: 60
+## - acme_server: "https://acme.harica.gr/TCS-DV/directory"
+## - acme_eab_kid: "key_id"
+## - acme_eab_hmac_key: "hmac_secret"
+## - acme_acmedns:
+##     baseurl: "https://acme-dns.example.org/api"
+##     username: "username"
+##     password: "password"
+##     subdomain: "a_subdomain"
+##     fulldomain: "a_subdomain.acme-dns.example.org"
+##
+## After including the role, two variables will be set:
+##  - acme_certificates_results: a list of results from the acme.sh command
+##  -  acme_certificates_dir: the directory where the certificates are stored
+############################################
+
+############################################
+## First set up everything we need
+############################################
+
+- name: Install dig tool
+  ansible.builtin.apt:
+    name: "bind9-dnsutils"
+    state: "present"
+    update_cache: false
+
+- name: Create acme user
+  ansible.builtin.user:
+    name: "acme"
+    state: "present"
+    system: true
+    home: "{{ acme_home }}"
+
+- name: Clone the acme.sh repo
+  ansible.builtin.git:
+    repo: "https://github.com/acmesh-official/acme.sh.git"
+    dest: "{{ acme_home }}/acmesh/"
+    version: "3.1.0"
+    update: true
+
+- name: Install the acme.sh script
+  ansible.builtin.shell:
+    cmd: |
+      sh "./acme.sh" --install
+    chdir: "{{ acme_home }}/acmesh"
+    creates: "{{ acme_home }}/.acme.sh/acme.sh"
+  become: true
+  become_user: "acme"
+
+############################################
+## Now set up the acme account
+############################################
+
+- name: Set email address in acme config
+  ansible.builtin.lineinfile:
+    path: "{{ acme_home }}/.acme.sh/account.conf"
+    line: "ACCOUNT_EMAIL='{{ acme_admin_email }}'"
+    create: true
+    owner: "acme"
+    group: "acme"
+    mode: "0600"
+
+- name: Find CA account dir
+  ansible.builtin.set_fact:
+    acme_ca_dir: "{{ acme_home }}/.acme.sh/ca/{{ acme_server | replace('https://', '') }}"
+
+- name: Create the acme account
+  ansible.builtin.command:
+    cmd: |
+      {{ acme_home }}/.acme.sh/acme.sh
+          --register-account
+          --eab-kid "{{ acme_eab_kid }}"
+          --eab-hmac-key "{{ acme_eab_hmac_key }}"
+          --server "{{ acme_server }}"
+    creates: "{{ acme_ca_dir }}/account.json"
+  become: true
+  become_user: "acme"
+
+############################################
+## Now fetch the certificates
+############################################
+
+- name: Check that acme_certificate_list is set
+  ansible.builtin.fail:
+    msg: "acme_certificate_list is not set or is not a list"
+  # ridiculous, but apparently this is the official way to check if a variable is a list:
+  # https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_tests.html#type-tests
+  when: >
+    acme_certificate_list is not defined or
+    acme_certificate_list is string or
+    acme_certificate_list is mapping or
+    acme_certificate_list is not iterable or
+    acme_certificate_list | length == 0
+
+- name: Check existence of acme CNAME records
+  ansible.builtin.command:
+    cmd: "dig +short -t CNAME '_acme-challenge.{{ item }}'"
+  register: result_acme_cname
+  failed_when: "result_acme_cname.stdout == ''"
+  changed_when: false
+  loop: "{{ acme_certificate_list }}"
+  delegate_to: "localhost"
+  become: false
+  run_once: true
+
+- name: Issue the certificates using acme
+  ansible.builtin.command:
+    cmd: >
+      {{ acme_home }}/.acme.sh/acme.sh
+        --issue
+        --keylength 2048
+        --days "{{ acme_renewal_days }}"
+        --dns dns_acmedns
+        --stateless
+        --dnssleep 3
+        --server "{{ acme_server }}"
+        --domain "{{ item }}"
+  environment:
+    ACMEDNS_BASE_URL: "{{ acme_acmedns.baseurl }}"
+    ACMEDNS_USERNAME: "{{ acme_acmedns.username }}"
+    ACMEDNS_PASSWORD: "{{ acme_acmedns.password }}"
+    ACMEDNS_SUBDOMAIN: "{{ acme_acmedns.subdomain }}"
+  loop: "{{ acme_certificate_list }}"
+  register: "acme_issue"
+  changed_when: 'acme_issue.rc != 2'
+  failed_when: >
+    acme_issue.rc not in [0,2] or
+    ( acme_issue.rc == 2 and "No such file or directory" in acme_issue.msg )
+  become_user: "acme"
+  become: true
+
+############################################
+## Deploy the certificates
+############################################
+
+- name: Create the target directory
+  ansible.builtin.file:
+    path: "{{ acme_target_dir }}"
+    state: "directory"
+    owner: "acme"
+    group: "{{ acme_cert_group }}"
+    mode: "0755"
+
+- name: Deploy the certificates
+  ansible.builtin.command:
+    cmd: >
+      {{ acme_home }}/.acme.sh/acme.sh
+        --install-cert
+        --domain "{{ item }}"
+        --key-file "{{ acme_target_dir }}/{{ item }}.key"
+        --cert-file "{{ acme_target_dir }}/{{ item }}.crt"
+        --fullchain-file "{{ acme_target_dir }}/{{ item }}.fullchain.crt"
+        {% if acme_reload_command is defined and acme_reload_command|bool %}
+        --reloadcmd "{{ acme_reload_command }}"
+        {% endif %}
+  loop: "{{ acme_certificate_list }}"
+  register: "acme_issue"
+  changed_when: 'acme_issue.rc != 2'
+  failed_when: >
+    acme_issue.rc not in [0,2] or
+    ( acme_issue.rc == 2 and "No such file or directory" in acme_issue.msg )
+  become_user: "acme"
+  become: true
+
+- name: Set permissions for the certificates
+  ansible.builtin.file:
+    path: "{{ acme_target_dir }}/{{ item }}.crt"
+    owner: "acme"
+    group: "{{ acme_cert_group }}"
+    mode: "0644"
+  loop: "{{ acme_certificate_list }}"
+
+- name: Set permissions for the certificates (fullchain)
+  ansible.builtin.file:
+    path: "{{ acme_target_dir }}/{{ item }}.fullchain.crt"
+    owner: "acme"
+    group: "{{ acme_cert_group }}"
+    mode: "0644"
+  loop: "{{ acme_certificate_list }}"
+
+- name: Set permissions for the keys
+  ansible.builtin.file:
+    path: "{{ acme_target_dir }}/{{ item }}.key"
+    owner: "acme"
+    group: "{{ acme_cert_group }}"
+    mode: "0640"
+  loop: "{{ acme_certificate_list }}"
+
+############################################
+## Set output variables
+############################################
+
+- name: Set fact with the list of certificates
+  ansible.builtin.set_fact:
+    acme_certificates_issued: >
+      {{
+        acme_certificate_list
+        | map('regex_replace', '^', '{{ acme_target_dir }}/')
+        | list
+      }}
+
+- name: Set fact with directory of certificates
+  ansible.builtin.set_fact:
+    acme_dir: "{{ acme_home }}/.acme.sh/"
+
+- name: Set fact with output directory of certificates
+  ansible.builtin.set_fact:
+    acme_certificates_dir: "{{ acme_target_dir }}"

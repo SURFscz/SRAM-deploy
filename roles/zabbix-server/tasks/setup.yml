@@ -1,0 +1,170 @@
+---
+
+# setup zabbix SSO
+- name: set paths to SAML keys
+  ansible.builtin.blockinfile:
+    path: "/etc/zabbix/web/zabbix.conf.php"
+    block: |
+      $SSO['SP_KEY']   = '/etc/zabbix/cert/sp.key';
+      $SSO['SP_CERT']  = '/etc/zabbix/cert/sp.crt';
+      $SSO['IDP_CERT'] = '/etc/zabbix/cert/surfconext.crt';
+    insertbefore: '^\?>'
+    marker: "// {mark} ANSIBLE MANAGED BLOCK"
+
+- name: "Create cert directory"
+  ansible.builtin.file:
+    path: "/etc/zabbix/cert"
+    state: "directory"
+    owner: "root"
+    group: "root"
+    mode: "0755"
+
+- name: "Copy SAML signing cert"
+  ansible.builtin.copy:
+    content: "{{ item.content }}"
+    dest: "/etc/zabbix/cert/{{ item.name }}"
+    owner: "root"
+    group: "{{ zabbix_php_fpm_conf_group }}"
+    mode: "{{ item.mode }}"
+  with_items:
+    - { name: "surfconext.crt", content: "{{ zabbix_samlcert_surfconext }}", mode: "0644" }
+    - { name: "zabbix_sp.crt",  content: "{{ zabbix_saml_signing.cert   }}", mode: "0644" }
+    - { name: "zabbix_sp.key",  content: "{{ zabbix_saml_signing.key    }}", mode: "0640" }
+
+
+# setup zabbix with correct settings
+- name: zabbix
+  vars:
+    ansible_network_os: "community.zabbix.zabbix"
+    ansible_connection: "httpapi"
+    ansible_httpapi_port: 443
+    ansible_httpapi_use_ssl: true
+    ansible_httpapi_validate_certs: "{{zabbix_validate_certs}}"
+    ansible_host: "{{zabbix_url}}"
+    ansible_zabbix_url_path: '/'
+    ansible_user: "Admin"
+    ansible_httpapi_pass: "zabbix"
+  become: false
+  block:
+    # check if we can login with the default password
+    # if so, then we need to update the Admin user below
+    - name: "check if zabbix admin user has been configured"
+      community.zabbix.zabbix_user_info:
+        username: "Admin"
+      register: "can_login"
+      failed_when: false
+
+    - name: "set zabbix admin groups"
+      community.zabbix.zabbix_user:
+        username: "Admin"
+        name: "Admin"
+        surname: "Administein"
+        passwd: "{{zabbix_admin_password}}"
+        current_passwd: "zabbix"
+        override_passwd: true
+        usrgrps:
+          - "Zabbix administrators"
+        state: "present"
+      when: "'zabbix_user' in can_login"
+
+# we need to reset the connection to zabbix after changing the password
+# to force a new login
+- name: reset connection to zabbix
+  ansible.builtin.meta: "reset_connection"
+
+- name: zabbix
+  vars:
+    ansible_network_os: "community.zabbix.zabbix"
+    ansible_connection: "httpapi"
+    ansible_httpapi_port: 443
+    ansible_httpapi_use_ssl: true
+    ansible_httpapi_validate_certs: "{{zabbix_validate_certs}}"
+    ansible_host: "{{zabbix_url}}"
+    ansible_zabbix_url_path: '/'
+    ansible_user: "Admin"
+    ansible_httpapi_pass: "{{zabbix_admin_password}}"
+  become: false
+  block:
+    # create user for client registration
+    - name: "Create user groups"
+      community.zabbix.zabbix_usergroup:
+        name: "{{ item.name }}"
+        gui_access: "{{ item.gui }}"
+        status: "{{ item.status }}"
+      loop:
+        - { name: "Host registration", gui: "disable", status: "enabled" }
+        - { name: "Disabled users",    gui: "default", status: "disabled" }
+
+    - name: Create Zabbix role
+      community.zabbix.zabbix_user_role:
+        name: "Host registration"
+        state: "present"
+        type: "Super Admin"
+        rules:
+          ui.default_access: 0
+          ui:
+            - { name: "inventory.overview", status: 1 }
+          api.access: 1
+          api.mode: 1
+          api:
+            - "host.get"
+            - "host.update"
+            - "host.create"
+            - "host.delete"
+            - "hostgroup.get"
+            - "hostgroup.update"
+            - "hostgroup.create"
+            - "hostinterface.get"
+            - "hostinterface.update"
+            - "template.get"
+
+    - name: "Create user for API access"
+      community.zabbix.zabbix_user:
+        username: "{{zabbix_api_user}}"
+        passwd: "{{zabbix_api_password}}"
+        role_name: "Host registration"
+        usrgrps: ["Host registration"]
+        state: "present"
+
+    - name: "Configure SURFconext SAML connection"
+      community.zabbix.zabbix_user_directory:
+        state: "present"
+        name: "SURFconext prod"
+        idp_type: "saml"
+        idp_entityid: "https://engine.surfconext.nl/authentication/idp/metadata"
+        sso_url: "https://engine.surfconext.nl/authentication/idp/single-sign-on/key:20230503"
+        sp_entityid: "https://zabbix.lab.surf.nl/saml"
+        username_attribute: "urn:mace:dir:attribute-def:eduPersonPrincipalName"
+        provision_status: true
+        group_name: "urn:mace:dir:attribute-def:isMemberOf"
+        user_username: "urn:mace:dir:attribute-def:givenName"
+        user_lastname: "urn:mace:dir:attribute-def:sn"
+        provision_media:
+          - name: Media1
+            mediatype: Email
+            attribute: "urn:mace:dir:attribute-def:mail"
+        provision_groups:
+          - name: "urn:mace:surf.nl:invite.surfconext.nl:\
+                   6853e9af-d9c1-4d37-b8fe-e68b0e31769f:tdizabbix"
+            role: "Admin role"
+            user_groups:
+              - "Zabbix administrators"
+
+    - name: "Set authentication settings"
+      community.zabbix.zabbix_authentication:
+        authentication_type: internal
+        http_auth_enabled: false
+        ldap_auth_enabled: false
+        saml_auth_enabled: true
+        saml_case_sensitive: true
+        ldap_jit_status: false
+        saml_jit_status: true
+        disabled_usrgroup: "Disabled users"
+        passwd_min_length: 24
+        passwd_check_rules:
+          - contain_uppercase_and_lowercase_letters
+          - contain_digits
+          - contain_special_characters
+          - avoid_easy_to_guess
+
+  # end of block
