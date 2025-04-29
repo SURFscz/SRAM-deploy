@@ -32,9 +32,6 @@
     "access_token_1":
     {
         "scope": "openid profile email offline_access eduperson_assurance eduperson_entitlement eduperson_orcid eduperson_principal_name eduperson_scoped_affiliation voperson_external_affiliation voperson_external_id voperson_id aarc ssh_public_key orcid uid openid",
-        "aud": [
-            "APP-B1F3C5AA-5514-48A9-BBA1-EBC388540BF7"
-        ],
         "client_id": "APP-B1F3C5AA-5514-48A9-BBA1-EBC388540BF7",
         "sub": "98d4d0ddd179f57c0cbbf06ae2d7094522b21eab@acc.sram.eduteams.org",
         "name": "Admin admin",
@@ -67,9 +64,6 @@
     },
     "access_token_2":
     {
-        "aud": [
-            "APP-B1F3C5AA-5514-48A9-BBA1-EBC388540BF7"
-        ],
         "client_id": "APP-B1F3C5AA-5514-48A9-BBA1-EBC388540BF7",
         "sub": "98d4d0ddd179f57c0cbbf06ae2d7094522b21eab@acc.sram.eduteams.org",
         "eduperson_principal_name": [

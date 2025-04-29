@@ -152,9 +152,12 @@ sbs_oidc_jwks_endpoint: "https://{{ hostnames.oidc_op }}/jwks.json"
 sbs_oidc_redirect_uri: "https://{{ hostnames.sbs }}/api/users/resume-session"
 sbs_eduteams_continue_endpoint: "https://{{ hostnames.oidc_op }}/continue"
 sbs_oidc_jwt_audience: "https://{{ hostnames.oidc_op }}"
+sbs_eb_continue_endpoint: "https://engine.(.*)surfconext.nl(.*)"
+sbs_oidc_verify_peer: True
 
 sbs_manage_base_enabled: False
 sbs_manage_base_url: "https://manage.test2.surfconext.nl"
+sbs_manage_verify_peer: True
 
 sbs_ldap_url: "ldap://ldap.scz-vm.net/dc=services,dc=vnet"
 # entity_id will be replaced run-time in the client

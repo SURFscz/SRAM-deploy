@@ -16,10 +16,13 @@ sbs_oidc_userinfo_endpoint: "https://{{ hostnames.oidc_op }}/userinfo"
 sbs_oidc_jwks_endpoint: "https://{{ hostnames.oidc_op }}/jwks.json"
 sbs_oidc_redirect_uri: "https://{{ hostnames.sbs }}/api/users/resume-session"
 sbs_eduteams_continue_endpoint: "https://{{ hostnames.oidc_op }}/continue"
+sbs_eb_continue_endpoint: "https://engine.(.*)surfconext.nl(.*)"
 sbs_oidc_jwt_audience: "https://{{ hostnames.oidc_op }}"
+sbs_oidc_verify_peer: False
 
 sbs_manage_base_enabled: False
 sbs_manage_base_url: "https://manage.test2.surfconext.nl"
+sbs_manage_verify_peer: False
 
 sbs_ldap_url: "ldap://ldap.scz-vm.net/dc=services,dc=vnet"
 # entity_id will be replaced run-time in the client
@@ -44,6 +47,8 @@ sbs_admin_platform_backdoor_totp: True
 sbs_past_dates_allowed: True
 sbs_mock_scim_enabled: True
 sbs_swagger_enabled: True
+sbs_log_to_stdout: True
+
 
 sbs_mfa_idp_allowed:
   - schac_home: "ci-runner.sram.surf.nl"

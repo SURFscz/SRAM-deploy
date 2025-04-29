@@ -89,6 +89,8 @@ sbs_impersonation_allowed: True
 sbs_admin_platform_backdoor_totp: True
 sbs_past_dates_allowed: True
 sbs_mock_scim_enabled: True
+sbs_log_to_stdout: True
+
 
 sbs_delete_orphaned: True
 sbs_suspension_inactive_days: 365
@@ -103,11 +105,14 @@ sbs_oidc_jwks_endpoint: "http://localhost/OIDC/jwks.json"
 sbs_oidc_redirect_uri: "https://sbs.scz-vm.net/api/users/resume-session"
 sbs_mfa_idp_allowed: false
 sbs_eduteams_continue_endpoint: "https://localhost/continue"
+sbs_eb_continue_endpoint: "https://engine.(.*)surfconext.nl(.*)"
 sbs_oidc_jwt_audience: "https://localhost"
 sbs_continue_eduteams_redirect_uri: "https://localhost/continue"
+sbs_oidc_verify_peer: False
 
 sbs_manage_base_enabled: False
 sbs_manage_base_url: "https://manage.test2.surfconext.nl"
+sbs_manage_verify_peer: False
 
 sbs_idp_metadata_url: "https://metadata.surfconext.nl/signed/2023/edugain-downstream-idp.xml "
 sbs_backup_dir: "{{backup_base}}/sbs"
@@ -156,4 +161,4 @@ sbs_csp_style_hashes:
   - 'sha256-SU3XCwbQ/8qgzoGOWCYdkwIr3xRrl5rsvdFcpw8NSiE='  # on /new-service-request
   - 'sha256-WTC9gHKjIpzl5ub1eg/YrRy/k+jlzeyRojah9dxAApc='  # on /new-service-request
 
-sbs_engine_block_public_key_url: https://example.com/
+sbs_engine_block_api_token: secret
