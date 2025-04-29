@@ -5,6 +5,6 @@ zabbix_templates_default:
   - "SRAM Systemd by Zabbix agent 2"
 zabbix_templates_extra: []
 zabbix_validate_certs: true
-zabbix_active_check: true
+zabbix_passive_check: true
 
 debian_dist: "bullseye"

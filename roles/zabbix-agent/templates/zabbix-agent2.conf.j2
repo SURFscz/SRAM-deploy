@@ -1,7 +1,9 @@
 
 
-{% if zabbix_active_check %}
+{% if zabbix_passive_check %}
 Server={{zabbix_server}}
+{% else  %}
+Server=
 {% endif %}
 ServerActive={{zabbix_server}}
 Hostname={{ inventory_hostname }}
