@@ -248,7 +248,8 @@ mfa_sso_time_in_minutes: {{sbs_mfa_sso_minutes}}
 # whether to fall back to TOTP MFA
 mfa_fallback_enabled: {{sbs_mfa_fallback_enabled}}
 
-# Lower case entity ID's allowed skipping MFA
+# Lower case entity ID's and schac_home allowed skipping MFA.
+# Note that for a login directly into SRAM only schac_home can be used as the entity_idp of the IdP is unknown
 mfa_idp_allowed: {{sbs_mfa_idp_allowed}}
 
 # Lower case schachome organisations / entity ID's where SURFSecure ID is used for step-up
