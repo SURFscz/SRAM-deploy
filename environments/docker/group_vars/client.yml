@@ -1,0 +1,12 @@
+---
+firewall_v4_incoming:
+  - { name: bastion,      src: "{{iprange.bastion}}",  dport:  "22", proto: tcp }
+  - { name: loadbalancer, src: "{{iprange.lb}}",       dport:  "80", proto: tcp }
+  - { name: loadbalancer, src: "{{iprange.lb}}",       dport:  "{{idp_test_port}}", proto: tcp }
+  - { name: loadbalancer, src: "{{iprange.lb}}",       dport:  "{{sp_test_port}}", proto: tcp }
+  - { name: loadbalancer, src: "{{iprange.lb}}",       dport:  "{{oidc_test_port}}", proto: tcp }
+  - { name: loadbalancer, src: "{{iprange.lb}}",       dport:  "{{tfa_test_port}}", proto: tcp }
+  - { name: vnet,         src: "{{iprange.internal}}", dport: "22,80,443", proto: tcp }
+
+# SimpleSAMLphp
+simplesaml_project_dir: "/opt/simplesaml"

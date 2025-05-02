@@ -1,0 +1,31 @@
+---
+- name: Create etherpad directory
+  file:
+    path: "{{ etherpad_basedir }}"
+    state: "directory"
+    mode: "0755"
+    owner: "root"
+  notify: "Restart the Etherpad container"
+
+- name: Copy settings.json
+  copy:
+    src: "settings.json5"
+    dest: "{{ etherpad_basedir }}/settings.json"
+  notify: "Restart the Etherpad container"
+
+- name: Create the Etherpad container
+  docker_container:
+    name: "{{ demo_containers.etherpad }}"
+    image: "{{ demo_images.etherpad }}"
+    restart_policy: "always"
+    state: started
+    # pull: true
+    env:
+      TRUST_PROXY: "true"
+      MINIFY: "false"
+    published_ports:
+      - 9001:9001
+    volumes:
+      - "{{ etherpad_basedir }}/settings.json:/opt/etherpad-lite/settings.json"
+    networks:
+      - name: "{{ internal_network }}"

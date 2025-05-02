@@ -21,3 +21,27 @@ $metadata['https://engine.test.surfconext.nl/authentication/sp/metadata'] = arra
     ),
     'saml20.sign.assertion' => true,
 );
+
+
+$metadata['https://engine.test2.surfconext.nl/authentication/sp/metadata'] = [
+    'entityid' => 'https://engine.test2.surfconext.nl/authentication/sp/metadata',
+    'metadata-set' => 'saml20-sp-remote',
+    'AssertionConsumerService' => [
+        [
+            'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
+            'Location' => 'https://engine.test2.surfconext.nl/authentication/sp/consume-assertion',
+            'index' => 0,
+        ],
+    ],
+    'attributes.NameFormat' => 'urn:oasis:names:tc:SAML:2.0:attrname-format:uri',
+    'keys' => [
+        [
+            'encryption' => false,
+            'signing' => true,
+            'type' => 'X509Certificate',
+            'X509Certificate' => 'MIIDYDCCAkigAwIBAgIJANN/l9DYjIVPMA0GCSqGSIb3DQEBCwUAMEUxCzAJBgNVBAYTAkFVMRMwEQYDVQQIDApTb21lLVN0YXRlMSEwHwYDVQQKDBhJbnRlcm5ldCBXaWRnaXRzIFB0eSBMdGQwHhcNMTgxMTI3MTQzMDU0WhcNMTkwMzA3MTQzMDU0WjBFMQswCQYDVQQGEwJBVTETMBEGA1UECAwKU29tZS1TdGF0ZTEhMB8GA1UECgwYSW50ZXJuZXQgV2lkZ2l0cyBQdHkgTHRkMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA+bVH25y9v+a+XK8FHKPLto2PnWbNTC/a5BlHLCoFL/JvycPuoDwgkYKaI4DLc50iMkrA7Grw10JVESdxeDANxlDUr9YS5HIRfGx6KCBGcKkvr+FK5Y3dxaEq27ADKNKxSl7e6wRg4pMwOvbw8JxUyWQcQZICNSwImSeQ2NOju+B5kE8CjS0uvBqpsXovuGeJUHvycdETYXnFpAdRKoOa3KxrnHjTP9o72QZGULBvPLu1X9KzwUli6YxRK2q8MawqMdLqONm+J022M/fa75tTicNTVoYfeRg7mITmrBw/0NT2uRtW3vClmmXh3JB3/BO/9z4v7gwhBX3tgBeBBDyZowIDAQABo1MwUTAdBgNVHQ4EFgQU9DLhS+n5J4Uw05wHlyAYk+YLSPowHwYDVR0jBBgwFoAU9DLhS+n5J4Uw05wHlyAYk+YLSPowDwYDVR0TAQH/BAUwAwEB/zANBgkqhkiG9w0BAQsFAAOCAQEAJt8KYOoJqgXTk01qGl6fc8nSNvreMNlIcc+sq71mYJ1GUlxx+vZ0Uf0NCnb3A4EQKMGh0A0eSTKjlLHHvHYVJOzrRziSu/RtAdA+2C809AG4YL7wtKg/JI2rBUI0ysZozFSNba6AnLq1K97LefC0pcniuBqV89SmMW2+So3v8yvrPzfKNXDAtR73nCkVLNuK5d8RZpOmgN4BHJ2VL34HYfMMwA/AE1JakWs8o5iu2+wlBrX0CQ/FFYxlcsLnFcv4K2+t/24IqGfNjymf3YizQ2Zs4h4dsg9Hn+HjxGR3bLOZGf3THFwP/A3VWH8tllxx9y9DKRm0eLJqg7MATah5Ag==',
+        ],
+    ],
+    'saml20.sign.assertion' => true,
+];
+

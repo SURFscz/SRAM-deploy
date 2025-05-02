@@ -3,6 +3,9 @@ set -e
 export TERM=xterm-256color
 ENV_DIR=./environments/vm
 
+
+
+
 # argument parsing from https://stackoverflow.com/a/28466267
 die() { echo "$*" >&2; exit 2; }  # complain to STDERR and exit with error
 needs_arg() { if [ -z "$OPTARG" ]; then die "No arg for --$OPT option"; fi; }
@@ -14,19 +17,32 @@ while getopts -- '-:h' OPT; do
     # support long options: https://stackoverflow.com/a/28466267/519360
     if [ "$OPT" = "-" ]; then   # long option: reformulate OPT and OPTARG
         OPT="${OPTARG%%=*}"       # extract long option name
-        OPTARG="${OPTARG#$OPT}"   # extract long option argument (may be empty)
+        OPTARG="${OPTARG#"$OPT"}"   # extract long option argument (may be empty)
         OPTARG="${OPTARG#=}"      # if long option argument, remove assigning `=`
     fi
     case "$OPT" in
         h | help )      echo "Start SRAM VMs for local testing"
                         echo "Options:"
-                        echo "  --ci : for use in CI runs"
-                        echo "  --skip-ansible : only bring up VMs, skip Ansible run"
-                        echo "  --skip-vm : skip bringing up VMs, only run Ansible"
+                        echo "  --ci: for use in CI runs"
+                        echo "  --skip-ansible: only bring up VMs, skip Ansible run"
+                        echo "  --skip-vm: skip bringing up VMs, only run Ansible"
+                        echo "  --container: Use container-in-container based deploy"
+                        echo "  --no-mitogen: Disable use of mitogen"
+                        echo "  --stop: Stop all containers"
                         exit 0
                         ;;
-        ci )            CI="--ci"
-                        ENV_DIR=./environments/ci
+        s | stop )      docker exec -ti docker-docker1-1 bash -c 'docker stop $(docker ps -q) || true'
+                        docker exec -ti docker-docker2-1 bash -c 'docker stop $(docker ps -q) || true'
+                        docker compose -f docker/docker-compose.yml stop
+                        exit 0
+                        ;;
+        ci )            CI_OPTION="--ci"
+                        ENV_DIR="./environments/ci"
+                        ;;
+        container )     IN_CONTAINER="--container"
+                        ENV_DIR="./environments/docker"
+                        ;;
+        classic )       CLASSIC="1"
                         ;;
         skip-ansible | \
         sa | no )       SKIP_ANSIBLE=1
@@ -37,11 +53,20 @@ while getopts -- '-:h' OPT; do
         no-vm | \
         sd | sv | nd | nv )       SKIP_VM=1
                         ;;
+        no-mitogen)     export NO_MITOGEN=1
+                        ;;
         * )             OPTPROCESSED=$(( $OPTPROCESSED - 1 ))
                         ;;
     esac
 done
 shift $OPTPROCESSED # remove parsed options and args from $@ list
+
+if [ -z "$IN_CONTAINER" ] && [ -z "$CI_OPTION" ] && [ -z "$CLASSIC" ]; then
+    read -p "Continue without --container? [Yes/No] " yn
+    if [[ "$yn" == [Nn]* ]]; then
+        exit 0
+    fi
+fi
 
 if [ "$SKIP_VM" ]
 then
@@ -55,24 +80,19 @@ else
 
     # Build single docker image before docker-compose starts
     if [ -z "$REENTRANT" ]; then
-        scz_image=$(docker image list scz-base -q)
-        if [ -z "$scz_image" ]
-        then
-            echo "Building docker image"
-            time docker build -t scz-base --target=scz-base --cache-from=scz-base-cache docker/
-        else
-            echo "Docker image found"
-        fi
+        echo "Building docker image"
+        time docker build -t scz-base --target=scz-base docker/
     fi
 
     # Bring up the VMs if they're not running
     echo "Bringing docker containers up"
-    ./docker/docker-compose.yml.py $CI > ./docker/docker-compose.yml
-    time docker-compose -f docker/docker-compose.yml up --no-recreate -d --remove-orphans
+    echo "./docker/docker-compose.yml.py $CI_OPTION $IN_CONTAINER > ./docker/docker-compose.yml"
+    ./docker/docker-compose.yml.py $CI_OPTION $IN_CONTAINER > ./docker/docker-compose.yml
+    time docker compose -f docker/docker-compose.yml up --no-recreate -d --remove-orphans
 
     echo "Waiting until containers have booted"
     TIMEOUT=120
-    for c in $(docker-compose -f docker/docker-compose.yml ps -q)
+    for c in $(docker compose -f docker/docker-compose.yml ps -q)
     do
         host=$(docker inspect --format='{{.Config.Hostname}}'     $c)
         printf " - %-10s" $host
@@ -102,7 +122,7 @@ else
         done
 
         # wait until ssh is running
-        if [ "$host" != "mail" -a "$host" != "redis" ]
+        if [ "$host" != "mail" ] &&  [ "$host" != "redis" ]
         then
             echo -n "."
             starttime=$(date +%s)
@@ -128,10 +148,11 @@ else
     done
 fi
 
+
 # try to find mitogen
 MITOGEN_PATH=
 MITOGEN_SUBPATH=ansible_mitogen/plugins/strategy
-for p in ./mitogen /opt/mitogen /usr/local/mitogen /usr/mitogen ~/.mitogen ~/mitogen
+for p in ./mitogen /opt/mitogen /usr/local/mitogen /usr/mitogen ~/.mitogen ~/mitogen /usr/lib/python3/dist-packages/
 do
     if [ -d "$p/$MITOGEN_SUBPATH/" ]
     then
@@ -139,7 +160,7 @@ do
         break
     fi
 done
-if [ -n "$MITOGEN_PATH" ]
+if [ -n "$MITOGEN_PATH" ] && [ "$NO_MITOGEN" != "1" ]
 then
     echo "Found Mitogen at $MITOGEN_PATH"
     export ANSIBLE_STRATEGY_PLUGINS=$MITOGEN_PATH/$MITOGEN_SUBPATH/
@@ -164,7 +185,7 @@ if [ "$SKIP_ANSIBLE" ]
 then
     echo "Skipping ansible run"
 else
-    ansible-galaxy install -r requirements.yml || ansible-galaxy install --force -r requirements.yml
+    ansible-galaxy collection install --upgrade -r requirements.yml || ansible-galaxy collection install --force -r requirements.yml
     echo "Starting ansible"
 
     export ANSIBLE_FORCE_COLOR=True
@@ -172,9 +193,8 @@ else
     ansible-playbook provision.yml \
         -i $ENV_DIR/inventory \
         $ANSIBLE_VAULT_ARG \
-        --extra-vars="secrets_file=$ENV_DIR/secrets/all.yml" \
         $EXTRA_VARS \
-        $@
+        "$@"
 fi
 
 exit 0

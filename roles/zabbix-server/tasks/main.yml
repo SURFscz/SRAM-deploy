@@ -48,7 +48,7 @@
 - name: "install zabbix TLS key"
   copy:
     content: "{{zabbix_cert.priv}}"
-    dest: "{{zabbix_nginx_tls_key}}"
+    dest: "{{zabbix_web_tls_key}}"
     owner: "root"
     group: "ssl-cert"
     mode: "0640"
@@ -56,7 +56,7 @@
 - name: "install zabbix TLS certificate"
   copy:
     content: "{{zabbix_cert.pub}}"
-    dest: "{{zabbix_nginx_tls_crt}}"
+    dest: "{{zabbix_web_tls_crt}}"
     owner: "root"
     group: "ssl-cert"
     mode: "0644"
@@ -76,92 +76,91 @@
     create: true
     line: "CacheSize=64M"
 
-# workaround for https://github.com/ansible-collections/community.zabbix/issues/425
+# workaround for https://github.com/ansible-collections/community.zabbix/pull/1227
 - name: "fix nginx access to fpm socket"
-  user:
-    name: "www-data"
-    groups: "{{zabbix_php_fpm_conf_group}}"
-    append: true
-  notify: "restart nginx"
+  lineinfile:
+    path: "/etc/php/7.4/fpm/pool.d/zabbix.conf"
+    regexp: "^listen.mode ?="
+    line: "listen.mode = 0660"
+  notify: "restart php-fpm-version"
 
-- meta: "flush_handlers"
+- name: "flush handlers"
+  meta: "flush_handlers"
 
-# check if we can login with the default password
-# if so, then we need to update the Admin user below
-- name: "check if zabbix admin user has been configured"
-  community.zabbix.zabbix_user_info:
-    server_url: "{{zabbix_api_url}}"
-    login_user: "Admin"
-    login_password: "zabbix"
-    alias: "Admin"
-    validate_certs: "{{zabbix_validate_certs}}"
-  failed_when: false
-  register: "can_login"
 
-- name: "set zabbix admin password"
-  community.zabbix.zabbix_user:
-    server_url: "{{zabbix_api_url}}"
-    login_user: "Admin"
-    login_password: "zabbix"
-    alias: "Admin"
-    name: "Admin"
-    surname: "Administein"
-    passwd: "{{zabbix_admin_password}}"
-    override_passwd: true
-    usrgrps:
-      - "Zabbix administrators"
-    state: "present"
-    validate_certs: "{{zabbix_validate_certs}}"
-  when: "'zabbix_user' in can_login"
+- name: zabbix
+  vars:
+    ansible_network_os: "community.zabbix.zabbix"
+    ansible_connection: "httpapi"
+    ansible_httpapi_port: 443
+    ansible_httpapi_use_ssl: true
+    ansible_httpapi_validate_certs: "{{zabbix_validate_certs}}"
+    ansible_host: "{{zabbix_url}}"
+    ansible_zabbix_url_path: '/'
+    ansible_user: "Admin"
+    ansible_httpapi_pass: "{{zabbix_admin_password}}"
+  become: false
+  block:
+  # check if we can login with the default password
+  # if so, then we need to update the Admin user below
+    - name: "check if zabbix admin user has been configured"
+      community.zabbix.zabbix_user_info:
+        username: "Admin"
+      register: "can_login"
+      become: false
 
-# create user for client registration
-- name: "Create user group for API access"
-  community.zabbix.zabbix_usergroup:
-    server_url: "{{zabbix_api_url}}"
-    login_user: "Admin"
-    login_password: "{{zabbix_admin_password}}"
-    name: "Host registration"
-    gui_access: "disable"
-    validate_certs: "{{zabbix_validate_certs}}"
+    - name: "set zabbix admin groups"
+      community.zabbix.zabbix_user:
+        username: "Admin"
+        name: "Admin"
+        surname: "Administein"
+        passwd: "{{zabbix_admin_password}}"
+        current_passwd: "{{zabbix_admin_password}}"
+        usrgrps:
+          - "Zabbix administrators"
+        state: "present"
+      when: "'zabbix_user' in can_login"
 
-- name: Create Zabbix role
-  zabbix_role:
-    server_url: "{{zabbix_api_url}}"
-    validate_certs: "{{ not is_docker }}"
-    login_user: "Admin"
-    login_password: "{{zabbix_admin_password}}"
-    state: "present"
-    name: "Host registration"
-    type: 3
-    rules:
-      ui.default_access: 0
-      ui:
-        - { name: "inventory.overview", status: 1 }
-      api.access: 1
-      api.mode: 1
-      api:
-        - "host.get"
-        - "host.update"
-        - "host.create"
-        - "host.delete"
-        - "hostgroup.get"
-        - "hostgroup.update"
-        - "hostgroup.create"
-        - "hostinterface.get"
-        - "hostinterface.update"
-        - "template.get"
+    # create user for client registration
+    - name: "Create user group for API access"
+      community.zabbix.zabbix_usergroup:
+        name: "Host registration"
+        gui_access: "disable"
+      become: false
 
-- name: "Create user for API access"
-  community.zabbix.zabbix_user:
-    server_url: "{{zabbix_api_url}}"
-    login_user: "Admin"
-    login_password: "{{zabbix_admin_password}}"
-    alias: "{{zabbix_api_user}}"
-    passwd: "{{zabbix_api_password}}"
-    role_name: "Host registration"
-    usrgrps: ["Host registration"]
-    state: "present"
-    validate_certs: "{{zabbix_validate_certs}}"
+    - name: Create Zabbix role
+      community.zabbix.zabbix_user_role:
+        name: "Host registration"
+        state: "present"
+        type: "Super Admin"
+        rules:
+          ui.default_access: 0
+          ui:
+            - { name: "inventory.overview", status: 1 }
+          api.access: 1
+          api.mode: 1
+          api:
+            - "host.get"
+            - "host.update"
+            - "host.create"
+            - "host.delete"
+            - "hostgroup.get"
+            - "hostgroup.update"
+            - "hostgroup.create"
+            - "hostinterface.get"
+            - "hostinterface.update"
+            - "template.get"
+
+    - name: "Create user for API access"
+      community.zabbix.zabbix_user:
+        username: "{{zabbix_api_user}}"
+        passwd: "{{zabbix_api_password}}"
+        role_name: "Host registration"
+        usrgrps: ["Host registration"]
+        state: "present"
+
+  # end of block
+
 
 - name: Install zabbix backup script
   template:

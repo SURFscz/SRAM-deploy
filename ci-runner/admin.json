@@ -5,6 +5,7 @@
             "openid",
             "profile",
             "email",
+            "offline_access",
             "eduperson_assurance",
             "eduperson_entitlement",
             "eduperson_orcid",
@@ -28,9 +29,9 @@
             "APP-B1F3C5AA-5514-48A9-BBA1-EBC388540BF7"
         ]
     },
-    "access_token":
+    "access_token_1":
     {
-        "scope": "openid profile email eduperson_assurance eduperson_entitlement eduperson_orcid eduperson_principal_name eduperson_scoped_affiliation voperson_external_affiliation voperson_external_id voperson_id aarc ssh_public_key orcid uid openid",
+        "scope": "openid profile email offline_access eduperson_assurance eduperson_entitlement eduperson_orcid eduperson_principal_name eduperson_scoped_affiliation voperson_external_affiliation voperson_external_id voperson_id aarc ssh_public_key orcid uid openid",
         "aud": [
             "APP-B1F3C5AA-5514-48A9-BBA1-EBC388540BF7"
         ],
@@ -39,7 +40,7 @@
         "name": "Admin admin",
         "given_name": "Admin",
         "family_name": "admin",
-        "email": "martin+ci-admin@surfnet.nl",
+        "email": "admin@ci-runner.sram.surf.nl",
         "voperson_external_affiliation": [
             "member@ci-runner.sram.surf.nl",
             "affiliate@ci-runner.sram.surf.nl"
@@ -64,13 +65,57 @@
         "token_class": "access_token",
         "iss": "https://proxy.acc.sram.eduteams.org"
     },
+    "access_token_2":
+    {
+        "aud": [
+            "APP-B1F3C5AA-5514-48A9-BBA1-EBC388540BF7"
+        ],
+        "client_id": "APP-B1F3C5AA-5514-48A9-BBA1-EBC388540BF7",
+        "sub": "98d4d0ddd179f57c0cbbf06ae2d7094522b21eab@acc.sram.eduteams.org",
+        "eduperson_principal_name": [
+            "admin@ci-runner.sram.surf.nl"
+        ],
+        "eduperson_assurance": [
+            "http://idm.example.org/LOA1#sample"
+        ],
+        "email": "admin@ci-runner.sram.surf.nl",
+        "voperson_external_id": [
+            "admin@ci-runner.sram.surf.nl"
+        ],
+        "name": "Admin admin",
+        "given_name": "Admin",
+        "family_name": "admin",
+        "ssh_public_key": [
+            "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDRa9pltI/Re4384pGFe0Kw1ctP83oLxmvFITcMLwDYYuVo7yzww1uumrYRmbfUNPdKsJEKjB9dGSeTFx3LauzqyLcTdxpoFJh4p7cF3T3zbO4XTcmdnRALmjvxfAoSTtdWKtXeyNZmQCWKi5UQ84b/4sup5/yAUc7UyZJa9YqluBKEbhsemXD6aCHdOIIhySFXg7WyOLktyum+5v7oiwOBstajtKgu5G5JOVuA9+v6gLbdiU/TLINxgFu+sw5FtbNH6sYoWdiz36depOC1Kz5R1UhiWnQp8m1KNnOQACwu1a0WsucWWE5Mu1cgLWHE5ISc7I7NH8Jyg/dZ/IQaS2fe4XqSm89fELRspb+o1zAaLEmq+ed8/Alw6DSQ2gfdryBuv5APtxAmWru/TnMPSbECkruNjDQk6PIdSorDfJ+d6mQURyq+zxgkbECCNiBspFCGDvTtaWf/JFkF7ySGPA9eL4l3Tz91pxXLB06wYQifFEm2eWZ3d+pK7Dx4oPiEuts= pubkey@ci-runner"
+        ],
+        "eduperson_scoped_affiliation": [
+            "member@acc.sram.eduteams.org"
+        ],
+        "voperson_id": [
+            "98d4d0ddd179f57c0cbbf06ae2d7094522b21eab@acc.sram.eduteams.org"
+        ],
+        "eduperson_entitlement": [
+            "urn:mace:surf.nl:x-sram-ci:group:ci",
+            "urn:mace:surf.nl:x-sram-ci:group:ci:cico",
+            "urn:geant:eduteams.org:acc.sram.eduteams.org:group:surf-ram#acc.sram.eduteams.org"
+        ],
+        "uid": [
+            "admin"
+        ],
+        "voperson_external_affiliation": [
+            "member@ci-runner.sram.surf.nl",
+            "affiliate@ci-runner.sram.surf.nl"
+        ],
+        "token_class": "access_token",
+        "iss": "https://proxy.acc.sram.eduteams.org"
+    },
     "user_info":
     {
         "sub": "98d4d0ddd179f57c0cbbf06ae2d7094522b21eab@acc.sram.eduteams.org",
         "name": "Admin admin",
         "given_name": "Admin",
         "family_name": "admin",
-        "email": "martin+ci-admin@surfnet.nl",
+        "email": "admin@ci-runner.sram.surf.nl",
         "voperson_external_affiliation": [
             "member@ci-runner.sram.surf.nl",
             "affiliate@ci-runner.sram.surf.nl"

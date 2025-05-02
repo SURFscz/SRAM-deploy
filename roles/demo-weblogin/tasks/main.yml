@@ -1,0 +1,26 @@
+---
+- name: Create weblogin directory
+  file:
+    path: "{{ weblogin_basedir }}"
+    state: "directory"
+    mode: "0755"
+    owner: "root"
+
+- name: Pull the Weblogin container image
+  community.docker.docker_image_pull:
+    name: "{{ demo_images.weblogin }}"
+    pull: "always"
+  notify:
+    - "run weblogin-cleanup job"
+
+# NB: cleanup script also starts container
+- name: Create weblogin-cleanup job timer
+  template:
+    src: "{{item}}.j2"
+    dest: "/etc/systemd/system/{{item}}"
+  with_items:
+    - "weblogin-cleanup.service"
+    - "weblogin-cleanup.timer"
+  notify:
+    - "enable weblogin-cleanup job"
+    - "run weblogin-cleanup job"

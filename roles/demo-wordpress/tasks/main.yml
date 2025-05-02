@@ -1,0 +1,100 @@
+---
+
+- name: create directory {{item}}
+  file:
+    dest: "{{item}}"
+    state: directory
+    mode: '0777'
+  with_items:
+    - "{{wordpress_basedir}}"
+    - "{{wordpress_content}}"
+    - "{{wordpress_content}}/wp-content/plugins"
+
+- name: install wordpress jit-user plugin
+  copy:
+    src: "jit-user.php"
+    dest: "{{wordpress_content}}/wp-content/plugins"
+
+- name: install wait-for-mysql.sh
+  copy:
+    src: "wait-for-mysql.sh"
+    dest: "{{wordpress_basedir}}/wait-for-mysql.sh"
+    mode: '0755'
+
+# - name: install additional wordpress plugins
+#   subversion:
+#     repo: "{{item.svn}}"
+#     dest: "{{wordpress_content}}/wp-plugins/{{item.name}}"
+#   with_items:
+#     - name: "disable-xml-rpc"
+#       svn: "https://plugins.svn.wordpress.org/disable-xml-rpc/tags/1.0.1/"
+#     - name: "disable-json-api"
+#       svn: "https://plugins.svn.wordpress.org/disable-json-api/tags/1.4.3/"
+
+- name: Create the Worpress DB container
+  docker_container:
+    name: "{{ demo_containers.database }}"
+    image: "{{ demo_images.database }}"
+    restart_policy: "always"
+    # restart: true
+    state: started
+    # pull: true
+    env:
+      MARIADB_DATABASE: wordpress
+      MARIADB_ROOT_PASSWORD: somewordpress
+      MARIADB_USER: wordpress
+      MARIADB_PASSWORD: wordpress
+    volumes:
+      - "wordpress-db:/var/lib/mysql"
+    networks:
+      - name: "{{ internal_network }}"
+
+
+- name: Create the Worpress container
+  docker_container:
+    name: "{{ demo_containers.wordpress }}"
+    image: "{{ demo_images.wordpress }}"
+    restart_policy: "always"
+    # restart: true
+    state: started
+    # pull: true
+    env:
+      WORDPRESS_DB_HOST: "{{ demo_containers.database }}"
+      WORDPRESS_DB_USER: "wordpress"
+      WORDPRESS_DB_PASSWORD: "wordpress"
+      WORDPRESS_DB_NAME: "wordpress"
+      WORDPRESS_CONFIG_EXTRA: |
+        define( 'WP_HOME', 'https://{{ demo_hosts.demo1 }}/wp' );
+        define( 'WP_SITEURL', 'https://{{ demo_hosts.demo1 }}/wp' );
+    published_ports:
+      - "{{ports.wordpress}}:80"
+    volumes:
+      - "{{ wordpress_content }}:/var/www/html"
+    networks:
+      - name: "{{ internal_network }}"
+
+- name: Run command in the worpress container
+  docker_container:
+    name: "{{ demo_containers.wordpress_cli }}"
+    image: "{{ demo_images.wordpress_cli }}"
+    restart_policy: "no"
+    state: "started"
+    user: 33
+    env:
+      WORDPRESS_DB_HOST: "{{ demo_containers.database }}"
+      WORDPRESS_DB_USER: "wordpress"
+      WORDPRESS_DB_PASSWORD: "wordpress"
+      WORDPRESS_DB_NAME: "wordpress"
+    command: >-
+      /bin/sh -c '
+      /wait-for-mysql.sh;
+      wp core install --url=https://{{ demo_hosts.demo1 }}/wp \
+        --title=Wordpress --admin_user=admin --admin_email=admin@example.com;
+      wp plugin activate jit-user.php;
+      '
+    volumes_from:
+      - "{{ demo_containers.wordpress }}"
+    volumes:
+      - "{{ wordpress_basedir }}/wait-for-mysql.sh:/wait-for-mysql.sh"
+    networks:
+      - name: "{{ internal_network }}"

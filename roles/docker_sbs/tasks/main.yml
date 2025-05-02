@@ -1,0 +1,200 @@
+---
+- name: "Initialize database"
+  throttle: 1
+  import_tasks: "database_init.yml"
+  when: "is_dev"
+
+- name: "Create SBS group"
+  group:
+    name: "{{ sbs_group }}"
+    state: "present"
+  register: "result"
+
+- name: "Save SBS group gid"
+  set_fact:
+    sbs_group_gid: "{{ result.gid }}"
+
+- name: "Create SBS user"
+  user:
+    name: "{{ sbs_user }}"
+    group: "{{ sbs_group }}"
+    comment: "User to run SBS service"
+    shell: "/bin/false"
+    password: "!"
+    home: "{{ sbs_conf_dir }}"
+    create_home: false
+    state: "present"
+  register: "result"
+
+- name: "Save sbs user uid"
+  set_fact:
+    sbs_user_uid: "{{ result.uid }}"
+
+- name: "Create directories"
+  file:
+    path: "{{item.path}}"
+    state: "directory"
+    owner: "root"
+    group: "{{sbs_group_gid}}"
+    mode: "{{item.mode}}"
+  with_items:
+    - { path: "{{sbs_work_dir}}",            mode: "0755" }
+    - { path: "{{sbs_conf_dir}}",            mode: "0755" }
+    - { path: "{{sbs_conf_dir}}/saml",       mode: "0755" }
+    - { path: "{{sbs_log_dir}}",             mode: "0775" }
+    - { path: "{{sbs_cert_dir}}",            mode: "0755" }
+
+- name: "Fix file permissions"
+  file:
+    path: "{{sbs_log_dir}}/{{item}}"
+    owner: "root"
+    group: "{{sbs_group_gid}}"
+    mode: "0664"
+    state: "touch"
+    modification_time: "preserve"
+    access_time: "preserve"
+  with_items:
+    - "sbs.log"
+    - "sbs_debug.log"
+
+- name: "Copy wildcard backend cert"
+  copy:
+    content: "{{wildcard_backend_cert.pub}}"
+    dest: "{{sbs_cert_dir}}/backend.crt"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+  notify: "Restart sbs containers"
+
+- name: "Copy https cert"
+  copy:
+    content: "{{https_cert.cert}}"
+    dest: "{{sbs_cert_dir}}/frontend.crt"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+  notify: "Restart sbs containers"
+
+- name: "Install database certificate"
+  copy:
+    dest: "{{sbs_db_cert_path}}"
+    content: "{{ sbs_db_tls_cert }}"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+
+- name: "Create SBS config files"
+  template:
+    src: "{{item.name}}.j2"
+    dest: "{{ sbs_conf_dir }}/{{item.name}}"
+    owner: "root"
+    group: "{{sbs_group_gid}}"
+    mode: "{{item.mode}}"
+  with_items:
+    - { name: "config.yml",      mode: "0644" }
+    - { name: "alembic.ini",     mode: "0644" }
+    - { name: "disclaimer.css",  mode: "0644" }
+    - { name: "sbs-apache.conf", mode: "0644" }
+  no_log: "{{sram_ansible_nolog}}"
+  notify: "Restart sbs containers"
+
+- name: "Pull sbs image"
+  community.docker.docker_image_pull:
+    name: "{{ item }}"
+  with_items:
+    - "{{ images.sbs }}"
+    - "{{ images.sbs_server }}"
+  register: "sbs_image"
+
+# We need to remove sram-static so it gets repopulated
+# with new SBS image static content
+- name: "Clean up old containers"
+  block:
+    - name: "Stop and remove sbs and sbs-server containers"
+      docker_container:
+        name: "{{ item }}"
+        state: "absent"
+      with_items:
+        - "{{ containers.sbs }}"
+        - "{{ containers.sbs_server }}"
+
+    - name: "Remove sbs_static volume"
+      community.docker.docker_volume:
+        name: "sbs_static"
+        state: "absent"
+  when: "sbs_image is changed"
+
+- name: "Run SBS migrations"
+  throttle: 1
+  docker_container:
+    name: "{{ containers.sbs_migration }}"
+    image: "{{ images.sbs_server }}"
+    pull: "never"
+    state: "started"
+    restart_policy: "no"
+    detach: false
+    env:
+      MIGRATIONS_ONLY: "1"
+    volumes:
+      - "{{ sbs_conf_dir }}:/opt/sbs/config"
+      - "{{ sbs_cert_dir }}:/opt/sbs/cert"
+      - "{{ sbs_log_dir }}:/opt/sbs/log"
+    networks:
+      - name: "{{internal_network}}"
+  register: "result"
+  failed_when: "'container' not in result or result.container.State.ExitCode != 0"
+  changed_when: "'[alembic.runtime.migration] Running upgrade' in result.container.Output"
+  notify: "Restart sbs containers"
+
+# Remove the migration container; we can do that with auto_remove, because if we use that, ansible
+# will not save the output in result
+- name: "Remove migration container"
+  docker_container:
+    name: "{{ containers.sbs_migration }}"
+    state: "absent"
+  # TODO: fix this by only running this if "sbs_image is changed"
+  changed_when: false
+
+- name: "Start sbs container"
+  docker_container:
+    name: "{{ containers.sbs }}"
+    image: "{{ images.sbs }}"
+    pull: "never"
+    restart_policy: "always"
+    state: "started"
+    env:
+      RUN_MIGRATIONS: "0"
+    volumes:
+      - "{{ sbs_conf_dir }}/sbs-apache.conf:/etc/apache2/sites-enabled/sbs.conf:ro"
+    networks:
+      - name: "{{traefik_network}}"
+      - name: "{{internal_network}}"
+    labels:
+      traefik.enable: "true"
+      traefik.docker.network: "{{traefik_network}}"
+      traefik.http.routers.sbs.rule: "Host(`{{ sbs_base_domain }}`)"
+      traefik.http.routers.sbs.tls: "true"
+
+- name: "Start SBS server container"
+  docker_container:
+    name: "{{ containers.sbs_server }}"
+    image: "{{ images.sbs_server }}"
+    restart_policy: "always"
+    state: "started"
+    env:
+      USER: "{{ sbs_user_uid }}"
+      GROUP: "{{ sbs_group_gid }}"
+      REQUESTS_CA_BUNDLE: "/etc/ssl/certs/ca-certificates.crt"
+      RUN_MIGRATIONS: "0"
+    pull: "always"
+    volumes:
+      - "{{ sbs_conf_dir }}:/opt/sbs/config"
+      - "{{ sbs_cert_dir }}:/opt/sbs/cert"
+      - "{{ sbs_log_dir }}:/opt/sbs/log"
+      # - "{{ sbs_apache_conf }}:/etc/apache2/sites-enabled/sbs.conf:ro"
+      # - "sbs_static:/var/www/html"
+    networks:
+      - name: "{{internal_network}}"
+    # TODO: fix this: this is only for dev
+    etc_hosts:
+      oidc-op.scz-vm.net: "172.20.1.24"

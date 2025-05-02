@@ -5,3 +5,11 @@ letsencrypt_challenge_dir: "/var/www/certbot"
 letsencrypt_account_dir: "/etc/letsencrypt/accounts"
 letsencrypt_cert_dir: "/etc/letsencrypt/live"
 letsencrypt_hooks: "/etc/letsencrypt/renewal-hooks/post"
+
+# to use a different server set the following variable
+#letsencrypt_server: "https://acme.sectigo.com/v2/GEANTOV"
+
+# to use an external account binding (EAB) set the following variables
+# NB: only supported if letsencrypt_server is set
+#letsencrypt_eab_keyid:
+#letsencrypt_eab_hmac:

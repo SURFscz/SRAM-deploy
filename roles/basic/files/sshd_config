@@ -8,7 +8,7 @@ PermitEmptyPasswords no
 
 UsePAM yes
 
-AllowAgentForwarding no
+AllowAgentForwarding yes
 AllowTcpForwarding yes
 PrintMotd no
 X11Forwarding no

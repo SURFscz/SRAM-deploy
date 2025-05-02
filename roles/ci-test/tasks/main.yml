@@ -14,20 +14,20 @@
 - name: Enable exampleauth module
   ansible.builtin.copy:
     content: ''
-    dest: "{{ simplesaml_project_dir }}/simplesaml/modules/exampleauth/enable"
+    dest: "{{ ssphp_dir }}/simplesaml/modules/exampleauth/enable"
 
 - name: SimpleSaml configuration
   template:
     src: "{{item}}.j2"
-    dest: "{{ simplesaml_project_dir }}/config/{{item}}"
+    dest: "{{ ssphp_dir }}/config/{{item}}"
   with_items:
     - "saml20-idp-hosted.php"
     - "saml20-sp-remote.php"
 
 - name: Link SimpleSaml configuration
   file:
-    src: "{{ simplesaml_project_dir }}/config/{{item.key}}"
-    path: "{{ simplesaml_project_dir }}/simplesaml/{{item.value}}/{{item.key}}"
+    src: "{{ ssphp_dir }}/config/{{item.key}}"
+    path: "{{ ssphp_dir }}/simplesaml/{{item.value}}/{{item.key}}"
     state: "link"
     force: true
   with_dict:
@@ -80,16 +80,6 @@
     src: "index.php.j2"
     dest: "{{ rp_docroot_dir }}/index.php"
     mode: "0644"
-  notify: "restart php-fpm"
-
-- name: Create RP resume.html
-  copy:
-    src: "{{ item }}"
-    dest: "{{ rp_docroot_dir }}/{{ item }}"
-    mode: "0644"
-  loop:
-    - "resume.html"
-    - "resume.js"
   notify: "restart php-fpm"
 
 

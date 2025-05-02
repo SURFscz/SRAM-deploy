@@ -11,12 +11,14 @@ curl \
     --request PUT \
     "https://{{ scim_monitor_sbs_host }}/api/scim/v2/sweep"
 
-# consolidate the separate SCIM files from the direcotry into a single file for easy comparision
+# consolidate the separate SCIM files from the directory into a single file for easy comparision
 # remove the externalID and metadata as that is internal and transient for the SCIM server
 (
     jq  '{(.externalId): del(.id,.meta)}' {{ scim_monitor_data_dir }}/Users/*                                    | jq -s '{"users": add}'  ;
     jq  '{(.externalId): del(.id,.meta)}' {{ scim_monitor_data_dir }}/Groups/* | jq 'del(.[].members[].value) '  | jq -s '{"groups": add}'
-) | jq --slurp --sort-keys --tab 'add' > $SCIMFILE
+) | jq --slurp --sort-keys 'add' \
+  | jq --tab '.groups[].members|=sort_by(.display)' \
+  > $SCIMFILE
 
 # compare the SCIM data with our reference
 DIFF=$(
@@ -24,8 +26,9 @@ DIFF=$(
 )
 
 # output to status file
-date '+%s' > $STATUSFILE
-echo -n "$DIFF" | wc -l >> $STATUSFILE
+NOW=$(date '+%s')
+DIFFNR=$(echo -n "$DIFF"| wc -l)
+echo '{"time":'$NOW',"diff":'$DIFFNR'}' > $STATUSFILE
 echo -n "$DIFF"         >> $STATUSFILE
 
 if [ -z "$DIFF" ]

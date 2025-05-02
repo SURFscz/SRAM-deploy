@@ -2,7 +2,7 @@
 
 - name: "Install required packages"
   apt:
-    state: "latest"
+    state: "present"
     name:
       - nodejs
       - python3-pymysql
@@ -17,48 +17,6 @@
     name: "sram-sbs"
     system: True
 
-- name: "Install database certificate"
-  copy:
-    dest: "{{sbs_db_cert_path}}"
-    content: "{{ sbs_db_tls_cert }}"
-
-- name: "Initialialize database"
-  throttle: 1
-  block:
-    - name: "Add SBS database"
-      community.mysql.mysql_db:
-        login_host: '{{ db_host }}'
-        login_user: '{{ db_admin_user }}'
-        login_password: '{{ db_admin_password }}'
-        name: '{{ sbs_db_name }}'
-        encoding: 'utf8mb4'
-        collation: 'utf8mb4_unicode_ci'
-        ca_cert: "{{sbs_db_cert_path}}"
-      notify: "restart sbs"
-
-    - name: "Add SBS user"
-      community.mysql.mysql_user:
-        login_host: '{{ db_host }}'
-        login_user: '{{ db_admin_user }}'
-        login_password: '{{ db_admin_password }}'
-        name: '{{ item.user }}'
-        host: '{{ ansible_default_ipv4.address }}'
-        password: '{{ item.passwd }}'
-        priv: '{{ sbs_db_name }}.*:{{ item.priv }}'
-        ca_cert: "{{sbs_db_cert_path}}"
-      with_items:
-        - user: "{{ sbs_db_user }}"
-          passwd: "{{ sbs_db_password }}"
-          priv: "SELECT,INSERT,DELETE,UPDATE,TRIGGER"
-        - user: "{{ sbs_migration_user }}"
-          passwd: "{{ sbs_migration_password }}"
-          priv: "ALL"
-        - user: "{{ sbs_dbbackup_user }}"
-          passwd: "{{ sbs_dbbackup_password }}"
-          priv: "SELECT"
-      no_log: "{{sram_ansible_nolog}}"
-      notify: "restart sbs"
-
 - name: "Create directories"
   file:
     path: "{{item.path}}"
@@ -71,6 +29,7 @@
     - { path: "{{sbs_conf_dir}}",            mode: "0755" }
     - { path: "{{sbs_conf_dir}}/saml",       mode: "0755" }
     - { path: "{{sbs_log_dir}}",             mode: "0775" }
+    - { path: "{{sbs_cert_dir}}",            mode: "0775" }
 
 - name: "Fix file permissions"
   file:
@@ -84,6 +43,49 @@
   with_items:
     - "sbs.log"
     - "sbs_debug.log"
+
+- name: "Install database certificate"
+  copy:
+    dest: "{{sbs_db_cert_path}}"
+    content: "{{ sbs_db_tls_cert }}"
+
+- name: "Initialialize database"
+  throttle: 1
+  block:
+    - name: "Add SBS database"
+      community.mysql.mysql_db:
+        login_host: '{{ sbs_db_host }}'
+        login_user: '{{ sbs_db_admin_user }}'
+        login_password: '{{ sbs_db_admin_password }}'
+        name: '{{ sbs_db_name }}'
+        encoding: 'utf8mb4'
+        collation: 'utf8mb4_unicode_ci'
+        ca_cert: "{{sbs_db_cert_path}}"
+      notify: "restart sbs"
+
+    - name: "Add SBS user"
+      community.mysql.mysql_user:
+        login_host: '{{ sbs_db_host }}'
+        login_user: '{{ sbs_db_admin_user }}'
+        login_password: '{{ sbs_db_admin_password }}'
+        name: '{{ item.user }}'
+        host: '{{ ansible_default_ipv4.address }}'
+        password: '{{ item.passwd }}'
+        priv: '{{ sbs_db_name }}.*:{{ item.priv }}'
+        ca_cert: "{{sbs_db_cert_path}}"
+        column_case_sensitive: "{{ sbs_db_user_column_case_sensitive }}"
+      with_items:
+        - user: "{{ sbs_db_user }}"
+          passwd: "{{ sbs_db_password }}"
+          priv: "SELECT,INSERT,DELETE,UPDATE,TRIGGER"
+        - user: "{{ sbs_migration_user }}"
+          passwd: "{{ sbs_migration_password }}"
+          priv: "ALL"
+        - user: "{{ sbs_dbbackup_user }}"
+          passwd: "{{ sbs_dbbackup_password }}"
+          priv: "SELECT"
+      no_log: "{{sram_ansible_nolog}}"
+      notify: "restart sbs"
 
 - name: "Download SBS build"
   get_url:
@@ -218,6 +220,9 @@
   command:
     cmd: "{{ sbs_env_dir }}/bin/alembic --config migrations/alembic.ini upgrade head"
     chdir: "{{ sbs_work_dir }}/sbs/server"
+  environment:
+    CONFIG: "config/config.yml"
+
   register: "result"
   failed_when: "result.rc != 0"
   changed_when: "'[alembic.runtime.migration] Running upgrade' in result.stderr"

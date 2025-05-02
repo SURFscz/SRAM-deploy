@@ -1,0 +1,86 @@
+---
+- name: Ensure that packages are installed
+  apt:
+    name:
+      - "python3-pymysql"
+    state: "present"
+
+- name: Ensure that a number of directories exist
+  file:
+    path: "{{ item.path }}"
+    state: "directory"
+    # owner: "{{ ldap_user }}"
+    # group: "{{ ldap_group }}"
+    mode: "{{ item.mode }}"
+  # tags: "ldap"
+  with_items:
+    - { path: "{{mariadb_conf_dir}}",  mode: "0755" }
+    - { path: "{{mariadb_cert_dir}}",  mode: "0755" }
+  notify: "Restart the database container"
+
+- name: Create wildcard backend key
+  copy:
+    content: "{{wildcard_backend_cert.priv}}"
+    dest: "{{mariadb_cert_dir}}/backend.key"
+    owner: "root"
+    group: "ssl-cert"
+    mode: "0644"
+  no_log: "{{sram_ansible_nolog}}"
+  notify: "Restart the database container"
+
+
+- name: Create wildcard backend cert
+  copy:
+    content: "{{wildcard_backend_cert.pub}}"
+    dest: "{{mariadb_cert_dir}}/backend.crt"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+  notify: "Restart the database container"
+
+- name: Install mariadb config
+  template:
+    src: "60-sram.cnf.j2"
+    dest: "{{mariadb_conf_dir}}/sram.cnf"
+  notify: "Restart the database container"
+
+- name: Create the database container
+  docker_container:
+    name: "{{ containers.db }}"
+    image: "{{ images.db }}"
+    restart_policy: "always"
+    state: "started"
+    ports:
+      - "3306:3306"
+    env:
+      MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: "1"
+      MARIADB_ROOT_PASSWORD: ""
+    mounts:
+      - type: "bind"
+        source: "{{ mariadb_conf_dir }}/sram.cnf"
+        target: "/etc/mysql/conf.d/60-sram.cnf"
+    volumes:
+      - "{{ mariadb_cert_dir }}:{{ mariadb_cert_dir }}"
+      - "{{ mariadb_data_dir }}:/var/lib/mysql:Z"
+    networks:
+      - name: "{{internal_network}}"
+
+- name: Wait for hostname to be available
+  wait_for:
+    host: "{{ sbs_db_host }}"
+    port: 3306
+    delay: 1
+    timeout: 300
+
+- name: Add admin user
+  mysql_user:
+    login_host: '{{ sbs_db_host }}'
+    login_user: 'root'
+    login_password: ''
+    check_hostname: false
+    name: '{{ db_admin_user }}'
+    host: '%'
+    password: '{{ db_admin_password }}'
+    priv: '*.*:ALL,GRANT'
+    state: "present"
+

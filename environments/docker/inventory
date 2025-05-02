@@ -1,0 +1,66 @@
+##########################################
+# VM environment
+[container_lb]
+lb.vm.scz-vm.net ansible_host=172.20.1.24
+
+[container_client]
+client.vm.scz-vm.net ansible_host=172.20.1.25
+
+[container_bhr]
+bhr.vm.scz-vm.net ansible_host=172.20.1.29
+
+[container_demo1]
+demo1.vm.scz-vm.net ansible_host=172.20.1.31
+
+[container_docker1]
+docker1.vm.scz-vm.net ansible_host=172.20.1.32
+
+[container_docker2]
+docker2.vm.scz-vm.net ansible_host=172.20.1.33
+
+[container:children]
+container_lb
+container_client
+container_bhr
+container_demo1
+container_docker1
+container_docker2
+
+##########################################
+# role-based groups
+[lb:children]
+container_lb
+
+[client:children]
+container_client
+
+[bhr:children]
+container_bhr
+
+[zabbix:children]
+container_bhr
+
+[bhr2:children]
+container_bhr
+
+[container_infra:children]
+container_docker1
+container_docker2
+
+[container_apps:children]
+container_docker1
+
+[container_ldap:children]
+container_docker1
+container_docker2
+
+[demo1:children]
+container_demo1
+
+##########################################
+# all
+[common:children]
+container
+
+[all:children]
+container

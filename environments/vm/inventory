@@ -88,5 +88,8 @@ vm_bhr
 
 ##########################################
 # all
+[common:children]
+vm
+
 [all:children]
 vm

@@ -1,0 +1,25 @@
+---
+ldap:
+  src:
+    uri: "ldap://{{ containers.ldap }}:1389/"
+    basedn: "{{ services_ldap.basedn }}"
+    binddn: "{{ services_ldap.binddn }}"
+    passwd: "{{ services_ldap_password }}"
+    sizelimit: 500
+  dst:
+    uri: "ldap://{{ containers.ldap }}:1389/"
+    basedn: "{{ services_ldap.basedn }}"
+    binddn: "{{ services_ldap.binddn }}"
+    passwd: "{{ services_ldap_password }}"
+    sizelimit: 500
+sbs:
+  src:
+    host: "http://{{ containers.sbs_server }}:8080"
+    user: "sysread"
+    passwd: "{{ sbs_sysread_password }}"
+    verify_ssl: {{ false if environment_name=='vm' else true }}
+    timeout: 60
+    retry: {{ plsc_retry }}
+pwd: "{CRYPT}!"
+uid: 1000
+gid: 1000

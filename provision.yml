@@ -1,169 +1,219 @@
 ---
-- hosts: all
+- name: "gather variables"
+  hosts: all
   serial: 20
   gather_facts: false
-  tags: always
+  tags: "always"
   become: false
   tasks:
-    - name: Read user secrets
+    - name: "Read user secrets"
       include_vars: "{{ secrets_users_file }}"
-    - name: Read vars from secrets file
+    - name: "Read vars from secrets file"
       include_vars: "{{ secrets_file }}"
-    - name: Get local git version of deploy and inventory
-      local_action:
-        module: "command"
+    - name: "Get local git version of deploy and inventory"  # noqa: run-once[task]
+      command:
         cmd: "git log --pretty=format:'%h%d' -n1"
         chdir: "{{item}}"
       with_items: ["{{playbook_dir}}","{{inventory_dir}}"]
-      register: git_version
+      delegate_to: "localhost"
+      register: "git_version"
       changed_when: false
       run_once: true
 
-- hosts: all
+- name: "get time"
+  hosts: "all"
   serial: 20
   gather_facts: true
-  tags: always
+  tags: "always"
   become: false
   tasks:
-    - name: set local time
+    - name: "set local time"  # noqa: run-once[task]
       run_once: true
       set_fact:
         local_time: "{{ansible_date_time.iso8601}}"
 
-# first gather facts from all hosts that we're actually deploying to
+# first gather facts from all hosts that we"re actually deploying to
 # TODO: this is not aggressive enough; we need to gather facts from _all_
-#       hosts, even if we're limiting the actual deployments
-- hosts: all
-  tags: always
+#       hosts, even if we"re limiting the actual deployments
+- name: "gather facts"
+  hosts: "all"
+  tags: "always"
   become: yes
   serial: 20
   no_log: "{{sram_ansible_nolog}}}"
   gather_facts: true
 
 # to run the debug target, specify --extra-vars="debug=true" / -e debug=1
-- hosts: all
+- name: "debug"
+  hosts: "all"
   gather_facts: false
   roles:
-    - role: debug
-      tags: ['debug']
-      when: "debug | default('false') | bool"
+    - role: "debug"
+      tags: ["debug"]
+      when: "debug | default(false) | bool"
 
 - name: "common"
-  hosts: all
+  hosts: "common"
   tasks:
-    - { import_tasks: "tasks/versions.yml", tags: "always"     }
+    - { name: "version", import_tasks: "tasks/versions.yml", tags: "always"     }
   roles:
-    - { role: basic,          tags: ['common','basic']                               }
-    - { role: certificates,   tags: ['common','cert']                                }
-    - { role: apt,            tags: ['common','apt']                                 }
-    - { role: users,          tags: ['common','users']                               }
-    - { role: logging,        tags: ['common','logging']                             }
-    - { role: firewall,       tags: ['common','firewall'],     when: "not is_docker" }
-    - { role: ntp,            tags: ['common','ntp']                                 }
-    - { role: aws-cleanup,    tags: ['common','clean']                               }
-    - { role: mail,           tags: ['common','mail']                                }
-    - { role: backups,        tags: ['common','backups']                             }
-    - { role: zabbix-agent,   tags: ['common','zabbix-agent'],                       }
+    - { role: "basic",          tags: ["common","basic"]         }
+    - { role: "certificates",   tags: ["common","cert"]          }
+    - { role: "apt",            tags: ["common","apt"]           }
+    - { role: "users",          tags: ["common","users"]         }
+    - { role: "logging",        tags: ["common","logging"]       }
+    - { role: "firewall",       tags: ["common","firewall"],
+        when: "not is_dev" }
+    - { role: "ntp",            tags: ["common","ntp"]           }
+    - { role: "aws-cleanup",    tags: ["common","clean"]         }
+    - { role: "mail",           tags: ["common","mail"]          }
+    - { role: "backups",        tags: ["common","backups"]       }
+
+- name: "zabbix-agent"
+  hosts: "common"
+  strategy: "linear"  # disable mitogen for these roles
+  roles:
+    - { role: "zabbix-agent",   tags: ["common","zabbix-agent"] }
 
 - name: "bhr2"
   hosts: "bhr2"
+  strategy: "linear"  # disable mitogen for these roles
   roles:
-    - { role: backup_collector,  tags: ['bhr2','backup_collector']                        }
-    - { role: logging_collector, tags: ['bhr2','logging_collector']                       }
-    - { role: zabbix-server,     tags: ['bhr2','zabbix-server'],    when: "not is_docker" }
+    - { role: "backup_collector",  tags: ["bhr2","backup-collector"]  }
+    - { role: "logging_collector", tags: ["bhr2","logging-collector"] }
+    - { role: "zabbix-server",     tags: ["bhr2","zabbix-server"],
+        when: "not is_dev" }
 
 - name: "bhr11"
   hosts: "bhr11"
   roles:
-    - { role: backup-offsite,   tags: ['bhr11','backup_offsite'] }
+    - { role: "backup-offsite",   tags: ["bhr11","backup-offsite"] }
 
-- name: "bhr1"
-  hosts: "bhr1"
+- name: "container infra"
+  hosts: "container_infra"
+  vars_files:
+    - "{{ secrets_users_file }}"
+    - "{{ secrets_file }}"
+  tasks:
+    - { name: "version", import_tasks: "tasks/versions.yml", tags: ["common"]  }
   roles:
+    - { role: "docker",                       tags: ["docker"] }
+    - { role: "docker_traefik",               tags: ["docker", "docker-traefik"] }
 
-- name: "ci-runner"
-  hosts: "bhr12"
+- name: "container_apps"
+  hosts: "container_apps"
+  vars_files:
+    - "{{ secrets_users_file }}"
+    - "{{ secrets_file }}"
+  tasks:
+    - { name: "version", import_tasks: "tasks/versions.yml", tags: ["common"]  }
   roles:
-    - { role: 'http_apache', tags: ['bhr12','ci-runner']}
-    - { role: 'ci-runner',   tags: ['bhr12','ci-runner']}
+    - { role: "docker_db",       tags: ["db",    "docker-db"      ], when: is_dev }
+    - { role: "docker_redis",    tags: ["redis", "docker-redis"   ] }
+    - { role: "docker_sbs",      tags: ["sbs",   "docker-sbs"     ] }
+    - { role: "docker_metadata", tags: ["meta",  "docker-meta"    ] }
+    - { role: "docker_plsc",     tags: ["plsc",  "docker-plsc"    ] }
+
+- name: "container_ldap"
+  hosts: "container_ldap"
+  vars_files:
+    - "{{ secrets_users_file }}"
+    - "{{ secrets_file }}"
+  tasks:
+    - { name: "version", import_tasks: "tasks/versions.yml", tags: ["common"]  }
+  roles:
+    - { role: "docker_ldap",                  tags: ["ldap", "docker-ldap"] }
 
 - name: "lb"
-  hosts: lb
+  hosts: "lb"
   tasks:
-    - { import_tasks: "tasks/versions.yml", tags: ['common'] }
+    - { name: "version", import_tasks: "tasks/versions.yml", tags: ["common"] }
   roles:
-    - { role: http_redirect,   tags: ['lb','http_redirect']                             }
-    - { role: tls_letsencrypt, tags: ['lb','tls_letsencrypt'], when: not use_fixed_cert }
-    - { role: tls_fixed_cert,  tags: ['lb','tls_fixedcert'],   when: use_fixed_cert     }
-    - { role: lb_haproxy,      tags: ['lb','haproxy']                                   }
+    - { role: "http_redirect",   tags: ["lb","http-redirect"]    }
+    - { role: "tls_letsencrypt", tags: ["lb","tls-letsencrypt"],
+        when: "not use_fixed_cert" }
+    - { role: "tls_fixed_cert",  tags: ["lb","tls-fixedcert"],
+        when: "use_fixed_cert"     }
+    - { role: "lb_haproxy",      tags: ["lb","haproxy"]          }
 
 - name: "database"
-  hosts: db
+  hosts: "db"
   tasks:
-    - { import_tasks: "tasks/versions.yml", tags: ['common'] }
+    - { name: "version", import_tasks: "tasks/versions.yml", tags: ["common"] }
   roles:
-    - { role: db_server,        tags: ['db', 'db-server'] }
+    - { role: "db_server",        tags: ["db", "db-server"] }
 
 - name: "sbs"
-  hosts: sbs
+  hosts: "sbs"
   tasks:
-    - { import_tasks: "tasks/versions.yml", tags: ['common'] }
+    - { name: "version", import_tasks: "tasks/versions.yml", tags: ["common"] }
   roles:
-    - { role: sbs,         tags: ['sbs']  }
+    - { role: "sbs",         tags: ["sbs"]  }
 
 - name: "ldap"
-  hosts: ldap
+  hosts: "ldap"
   tasks:
-    - { import_tasks: "tasks/versions.yml", tags: ['common'] }
+    - { name: "version", import_tasks: "tasks/versions.yml", tags: ["common"] }
   roles:
-    - { role: ldap,               tags: ['ldap'                 ] }
-    - { role: ldap_monitor,       tags: ['ldap', 'ldap-monitor' ] }
-#    - { role: pam_websso_daemon,  tags: ['client','websso-daemon'], when: experimental_features }
+    - { role: "ldap",               tags: ["ldap"                 ] }
+    - { role: "ldap_monitor",       tags: ["ldap", "ldap-monitor" ] }
 
 - name: "first ldap"
   hosts: "ldap_primary"
   roles:
-    - { role: plsc,               tags: ['plsc', 'ldap-plsc'     ] }
+    - { role: "plsc",               tags: ["plsc", "ldap-plsc"     ] }
 
 - name: "meta"
-  hosts: meta
+  hosts: "meta"
   tasks:
-    - { import_tasks: "tasks/versions.yml", tags: ['common'] }
+    - { name: "version", import_tasks: "tasks/versions.yml", tags: ["common"] }
   roles:
-    - { role: pyff-metadata, tags: ['meta','pyff-metadata']}
-    - { role: metadata,      tags: ['meta','metadata']     }
+    - { role: "pyff-metadata", tags: ["meta","pyff-metadata"]}
+    - { role: "metadata",      tags: ["meta","metadata"]     }
 
 - name: "client"
   hosts: client
   tasks:
-    - { import_tasks: "tasks/versions.yml", tags: ['common'] }
+    - { name: "version", import_tasks: "tasks/versions.yml", tags: ["common"] }
   roles:
-    - { role: oidc-op,              tags: ['client','oidc-op'      ] }
+    - { role: "oidc-op",              tags: ["client","oidc-op"      ] }
 
-- name: "demo clients"
-  hosts: bhr13
+- name: "demo clients bhr13"
+  hosts: "bhr13"
   tasks:
-    - { import_tasks: "tasks/versions.yml", tags: ['common'] }
+    - { name: "version", import_tasks: "tasks/versions.yml", tags: ["common"] }
   roles:
-    - { role: demo-sp,              tags: ['bhr13','demo-sp']        }
-    - { role: test-idp,             tags: ['bhr13','test-idp']       }
-    - { role: surfstar-idp,         tags: ['bhr13','surfstar-idp']   }
-    - { role: tools,                tags: ['bhr13','tools']          }
-    - { role: sram_monitor,         tags: ['bhr13','sram-monitor']   }
-    - { role: scim_monitor,         tags: ['bhr13','scim-monitor']   }
+    - { role: "website-host",         tags: ["bhr13","website"]        }
+    - { role: "demo-sp",              tags: ["bhr13","demo-sp"]        }
+    - { role: "test-idp",             tags: ["bhr13","test-idp"]       }
+    - { role: "surfstar-idp",         tags: ["bhr13","surfstar-idp"]   }
+    - { role: "tools",                tags: ["bhr13","tools"]          }
+    - { role: "sram_monitor",         tags: ["bhr13","sram-monitor"]   }
+    - { role: "scim_monitor",         tags: ["bhr13","scim-monitor"]   }
 
+# - name: "demo clients demo1"
+#   hosts: "demo1"
+#   tasks:
+#     - { name: "version", import_tasks: "tasks/versions.yml", tags: ["common"] }
+#   roles:
+#     - { role: "docker",               tags: ["demo1","demo-docker"] }
+#     - { role: "demo-apache",          tags: ["demo1","demo-apache"]  }
+#     - { role: "letsencrypt",          tags: ["demo1","demo-letsencrypt"] }
+#     - { role: "demo-etherpad",        tags: ["demo1","demo-etherpad"]  }
+#     - { role: "demo-weblogin",        tags: ["demo1","demo-weblogin"]  }
+#     - { role: "demo-wordpress",       tags: ["demo1","demo-wordpress"]  }
 
-- name: "sandbox"
-  hosts: sandbox1
-  tasks:
-    - { import_tasks: "tasks/versions.yml", tags: ['common'] }
+- name: "ci-runner"
+  hosts: "bhr12"
   roles:
-#    - { role: pam_websso,         tags: ['client','pam-websso'], when: experimental_features }
+    - { role: "http_apache", tags: ["bhr12","ci-runner"]}
+    - { role: "ci-runner",   tags: ["bhr12","ci-runner"]}
 
 # CI test docker
 - name: "test"
-  hosts: test
+  hosts: "test"
   tasks:
-    - { import_tasks: "tasks/versions.yml", tags: ['common']  }
+    - { name: "version", import_tasks: "tasks/versions.yml", tags: ["common"]  }
   roles:
-    - { role: ci-test,                      tags: ['ci-test'] }
+    - { role: "ci-test",                      tags: ["ci-test"] }
+

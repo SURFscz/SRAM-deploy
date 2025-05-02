@@ -1,0 +1,122 @@
+# Bare IP fallbacks
+<VirtualHost *:443>
+        ServerName default
+        Redirect 404 /
+        SSLEngine on
+        SSLCertificateFile    /etc/letsencrypt/live/demo1.sram.surf.nl/fullchain.pem
+        SSLCertificateKeyFile /etc/letsencrypt/live/demo1.sram.surf.nl/privkey.pem
+        SSLProtocol           all -SSLv3 -TLSv1 -TLSv1.1
+        SSLCipherSuite        ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256
+        SSLHonorCipherOrder   on
+        SSLCompression        off
+        SSLSessionTickets     off
+</VirtualHost>
+
+<VirtualHost *:80>
+        ServerName default
+        Redirect 404 /
+</VirtualHost>
+
+# Letsencrypt fallback
+<VirtualHost *:80>
+        ServerName demo1.sram.surf.nl
+        DocumentRoot /var/www/certbot
+</VirtualHost>
+
+{% if letsencrypt_enabled %}
+SSLStaplingCache "shmcb:logs/ssl_stapling(32768)"
+<VirtualHost *:443>
+{% else %}
+<VirtualHost *:80>
+{% endif %}
+        ServerName {{ demo_hosts.demo1 }}
+
+        ServerAdmin webmaster@localhost
+        DocumentRoot /var/www/html
+
+        Alias /.well-known/acme-challenge/ /var/www/certbot/.well-known/acme-challenge/
+
+        ErrorLog ${APACHE_LOG_DIR}/error.log
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+{% if letsencrypt_enabled %}
+        SSLEngine on
+        SSLCertificateFile    /etc/letsencrypt/live/{{demo_hosts.demo1}}/fullchain.pem
+        SSLCertificateKeyFile /etc/letsencrypt/live/{{demo_hosts.demo1}}/privkey.pem
+
+        SSLProtocol             all -SSLv3 -TLSv1 -TLSv1.1 -TLSv1.2
+        SSLHonorCipherOrder     off
+        SSLSessionTickets       off
+
+        SSLUseStapling On
+
+        # This breaks Etherpad and WordPress in horible ways. If anybody has a better idea, shout!
+        # Header always set Content-Security-Policy "default-src 'self'; base-uri 'self'; frame-src 'none'; form-action 'self' https://*.{{base_domain}}; frame-ancestors 'none'; block-all-mixed-content;"
+        Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload;"
+{% endif %}
+
+        # Authentication Header
+{% if letsencrypt_enabled %}
+        # Remove OIDC option when using Basic Auth
+        OIDCProviderMetadataURL https://proxy.sram.surf.nl/.well-known/openid-configuration
+        OIDCClientID {{ oidc.demo1.client_id }}
+        OIDCClientSecret {{ oidc.demo1.client_secret }}
+        OIDCResponseType "code"
+        OIDCResponseMode "query"
+        OIDCScope "openid profile uid"
+
+        OIDCRedirectURI /redirect_uri
+        OIDCCryptoPassphrase randompassword
+
+        RequestHeader unset X-Authenticated-User
+        RequestHeader unset X-Authenticated-Name
+        RequestHeader set X-Authenticated-User expr=%{ENV:OIDC_CLAIM_uid}
+        RequestHeader set X-Authenticated-Name expr=%{ENV:OIDC_CLAIM_uid}
+
+        <LocationMatch ^/(redirect_uri|ep/|wp/wp-admin|wp/wp-login.php)>
+            Require valid-user
+            AuthType openid-connect
+        </LocationMatch>
+{% else %}
+        RequestHeader set X-Authenticated-User "demo1"
+        RequestHeader set X-Authenticated-Name "Demo1"
+{% endif %}
+
+        ProxyPreserveHost on
+        RequestHeader set X-Forwarded-Proto expr=%{REQUEST_SCHEME}
+        #RequestHeader set X-Forwarded-Host expr=%{HTTP_HOST}
+        #RequestHeader set X-Forwarded-Port "443"
+
+        RewriteEngine on
+
+        # Etherpad Reverse Proxy
+        RedirectMatch 301 /ep$ /ep/
+        <LocationMatch "^/ep/(.*)">
+            RewriteCond %{HTTP:Connection} =Upgrade       [NC]
+            RewriteCond %{HTTP:Upgrade} =websocket        [NC]
+            RewriteRule /ep/(.*) ws://localhost:9001/$1   [P,L]
+            RewriteCond %{HTTP:Connection} !=Upgrade      [NC]
+            RewriteCond %{HTTP:Upgrade} !=websocket       [NC]
+            RewriteRule /ep/(.*) http://localhost:9001/$1 [P,L]
+        </LocationMatch>
+
+        # Wordpress Reverse Proxy
+        RedirectMatch 301 /wp$ /wp/
+        RedirectMatch 301 /wp/wp-admin$ /wp/wp-admin/
+        RewriteCond %{QUERY_STRING} rest_route
+        RewriteRule ^/wp /wp/
+        <LocationMatch "^/wp/(.*)">
+            ProxyPassMatch http://localhost:{{ports.wordpress}}/$1
+            ProxyPassReverse http://localhost:{{ports.wordpress}}/$1
+        </LocationMatch>
+</VirtualHost>
+
+# Letsencrypt fallback
+<VirtualHost *:80>
+        DocumentRoot /var/www/certbot
+        <Directory /var/www/certbot>
+                Options -Indexes
+                AllowOverride None
+                Require all granted
+        </Directory>
+</VirtualHost>

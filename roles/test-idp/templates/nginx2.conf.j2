@@ -1,0 +1,59 @@
+server {
+    listen 80;
+    server_name {{testidp2_hostname}};
+
+{% if letsencrypt_challenge_dir is defined %}
+    location /.well-known/acme-challenge {
+        alias /var/www/certbot/.well-known/acme-challenge;
+    }
+{% endif %}
+
+    location / {
+        rewrite ^(.*) https://{{testidp2_hostname}}/$1 permanent;
+    }
+}
+
+
+server {
+    listen 443 ssl http2;
+    server_name {{testidp2_hostname}};
+
+    ssl_certificate        /etc/letsencrypt/live/{{testidp2_hostname}}/fullchain.pem;
+    ssl_certificate_key    /etc/letsencrypt/live/{{testidp2_hostname}}/privkey.pem;
+    ssl_protocols          TLSv1.3;
+    ssl_ciphers            EECDH+AESGCM:EDH+AESGCM;
+    ssl_stapling on;
+    ssl_stapling_verify on;
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
+
+    include security_headers;
+
+    location ^~ /saml {
+        # only allow from trusted ips
+        allow 127.0.0.1;
+        allow ::1;
+{% for h in testidp_ip_allow %}
+        allow {{ h }};
+{% endfor %}
+        deny all;
+
+        alias /opt/sram-testidp/simplesaml/public;
+        index index.php;
+
+        location ~ \.php(/|$) {
+            root             /opt/sram-testidp/simplesaml/public;
+            fastcgi_pass     unix:/run/php/sram-testidp.sock;
+            fastcgi_index    index.php;
+
+            include          fastcgi_params;
+
+            fastcgi_split_path_info       ^/saml/((?U).+\.php)(/?.+)?$;
+            fastcgi_param SCRIPT_FILENAME $document_root/$fastcgi_script_name;
+            fastcgi_param SCRIPT_NAME     /simplesaml/$fastcgi_script_name;
+            fastcgi_param PATH_INFO       $fastcgi_path_info;
+        }
+    }
+
+    root /opt/sram-testidp/html;
+
+}

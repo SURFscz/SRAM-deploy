@@ -1,0 +1,2 @@
+---
+weblogin_basedir: "{{ sram_conf_dir }}/weblogin"

@@ -1,0 +1,25 @@
+---
+# - name: "systemd daemon-reload"
+#   systemd:
+#     daemon_reload: true
+
+# - name: "restart sbs"
+#   systemd:
+#     name: "sram-sbs.service"
+#     state: "restarted"
+#     enabled: true
+
+- name: Restart sbs containers
+  docker_container:
+    name: "{{ item }}"
+    state: started
+    restart: true
+  loop:
+    - "{{ containers.sbs }}"
+    - "{{ containers.sbs_server}}"
+
+- name: Restart redis container
+  docker_container:
+    name: "{{ containers.redis }}"
+    state: started
+    restart: true

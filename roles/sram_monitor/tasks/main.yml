@@ -47,11 +47,19 @@
 
 - name: Copy monitor service files
   template:
-    src: "{{item}}.j2"
-    dest: "/etc/systemd/system/{{item}}"
-  with_items:
-    - "sram-monitor.service"
-    - "sram-monitor.timer"
+    src: "sram-monitor@.service.j2"
+    dest: "/etc/systemd/system/sram-monitor@.service"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+
+- name: Copy monitor timer files
+  template:
+    src: "sram-monitor@.timer.j2"
+    dest: "/etc/systemd/system/sram-monitor@{{ item.browser }}.timer"
+  loop:
+    - { browser: "chrome",  timer: "*:00/20"}
+    - { browser: "firefox", timer: "*:10/20"}
   notify:
     - "enable monitor job"
 

@@ -42,6 +42,10 @@ a.navbar-brand {
     background-color: #e67300!important;
 }
 
+.not_found {
+    color: red;
+}
+
 .btn-primary {
     background-color: #0077c8!important;
     border-color: #0077c8!important;

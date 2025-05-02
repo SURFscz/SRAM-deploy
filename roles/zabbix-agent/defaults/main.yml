@@ -6,3 +6,5 @@ zabbix_templates_default:
 zabbix_templates_extra: []
 zabbix_validate_certs: true
 zabbix_active_check: true
+
+debian_dist: "bullseye"

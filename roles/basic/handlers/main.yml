@@ -3,6 +3,10 @@
   service:
     name: "sshd"
     state: "restarted"
+  when:
+    - 'environment_name!="vm"'
+    - 'environment_name!="ci"'
+
 
 - name: reload sysctl settings
   systemd:
@@ -10,3 +14,4 @@
     state: "restarted"
   when:
     - 'environment_name!="vm"'
+    - 'environment_name!="ci"'

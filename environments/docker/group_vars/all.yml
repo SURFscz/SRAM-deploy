@@ -1,0 +1,141 @@
+---
+
+ansible_ssh_common_args: >
+  -o StrictHostKeyChecking=false
+  -o UserKnownHostsFile={{playbook_dir}}/docker/known_hosts
+ansible_ssh_user: "ansible"
+ansible_ssh_private_key_file: "docker/ansible_key"
+
+secrets_file: "environments/docker/secrets/all.yml"
+secrets_users_file: "environments/docker/secrets/users.yml"
+
+admin_email: "admin@{{base_domain}}"
+
+is_aws: false
+is_dev: true
+sram_ansible_nolog: false
+experimental_features: true
+
+servers:
+  dns:
+    - 8.8.8.8
+  search:
+    - vm.scz-vm.net
+  ntp:
+    - 0.pool.ntp.org
+    - 1.pool.ntp.org
+    - 2.pool.ntp.org
+    - 3.pool.ntp.org
+  ping:
+    - "127.0.0.1"
+
+fake_hostnames: true
+use_logserver: false
+
+use_fixed_cert: true
+cert_dir: "/etc/ssl/scz"
+
+# onderstaande is breekbaar; ansible_default_ipv4 kan best een dhcp-ip zijn
+# dat niet in de inventory is gedefinieerd. (afhankelijk van je configuratie
+# van libvirt etc)
+iprange:
+  vm:
+    - "172.20.1.0/24"
+    - "10.0.0.0/16"
+    - "192.168.121.0/24"
+  bastion:    "172.20.1.1"
+  lb:         "172.20.1.24"
+  #comanage:   "172.20.1.21"
+  mgnt:       "172.20.1.0/24"
+  internal:   "172.20.1.0/24"
+  monitoring: "172.20.1.29/32"
+
+mail:
+  relay_host: "172.20.1.1"
+  relay_to: "mail.vm.{{base_domain}}"
+  relay_port: 1025
+  relay_for:
+    - "{{iprange.mgnt}}"
+  domain: "{{base_domain}}"
+  admin_address: "root@{{base_domain}}"
+  ticket_address: "root@{{base_domain}}"
+  admin_name: "Root User"
+  debug_address: "root@{{base_domain}}"
+
+org:
+  name: "SCZ-vm"
+  url: "https://sbs.scz-vm.net/"
+
+admin:
+  fn: "B."
+  sn: "Baas"
+  eppn: "admin@{{base_domain}}"
+  email: "{{admin_email}}"
+  sho: "{{base_domain}}"
+
+# versions
+sbs_version: "branch+main"
+plsc_version: "main"
+
+# poor man's user management
+root:
+  pw_hash: "$6$rounds=500000$AtgwpGVMAm0fyIf$g4JqeEu8O//KsklaqIEJX6UnQgEtrMTrZdNcp/v/O/G75BjISGZINC\
+            rJ0JREkKficMZV5IsdshT9cVACb0cxR1"
+users:
+  - name: SCZ
+    uid: scz
+    groups: ['scz','sudo_test','sudo_mgnt','systemd-journal']
+    # password 'scz'
+    pw_hash: "$6$rounds=500000$OOIfLX7bEQus$krZ/mSucwYN5dK25FlrvxmkMfUa4R585tXwihZFDWbXUVSJXymIeJpq\
+              pRvP88TEgaNAXrKMD9qbWYvnSLeDOe."
+    sshkey: ""
+
+removed_users: []
+
+firewall_v4_incoming:
+  - { name: bastion,  src: "{{iprange.bastion}}",    dport: "22,80,443", proto: tcp }
+  - { name: vnet,     src: "{{iprange.internal}}",   dport: "22,80,443", proto: tcp }
+  - { name: zabbix,   src: "{{iprange.monitoring}}", dport: "10050",     proto: tcp }
+
+backup_base: "/opt/backups"
+backup_runparts: "{{backup_base}}/run.d"
+
+ssl_certs_dir: "/etc/ssl"
+
+services_ldap:
+  basedn: "dc=services,dc=vnet"
+  o:      "Services"
+  binddn: "cn=admin,dc=services,dc=vnet"
+
+sbs_db_name: "sbs"
+sbs_db_user: "sbs"
+
+sbs_client_id: sbs-server
+sbs_base_url: "https://{{hostnames.sbs}}"
+
+# from manage
+sbs_manage_user: "sram"
+
+# Redis
+# sbs_redis_host: "localhost"
+sbs_redis_port: 6379
+sbs_redis_ssl: false
+
+# Docker ports
+docker_ports:
+  sbs: 8321
+
+# Enable SBS deploy
+sbs_enabled: true
+sbs_api_url: "https://{{ hostnames.sbs }}/"
+
+# No Zabbix on VM/Travis
+zabbix_enabled: false
+
+journal_upload_host: "bhr.vm.scz-vm.net"
+
+zabbix_host: "bhr.vm.scz-vm.net"
+zabbix_api_user: "ansible_api"
+zabbix_api_password: "geheim_api_password"
+zabbix_server: "bhr.vm.scz-vm.net"
+zabbix_validate_certs: no

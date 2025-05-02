@@ -1,0 +1,32 @@
+---
+log:
+  level: INFO
+entryPoints:
+  websecure:
+    address: ":443"
+  ldaps:
+    address: ":636"
+providers:
+  file:
+    filename: "/config/config/traefik.yml"
+    watch: true
+  docker:
+    endpoint: "unix:///var/run/docker.sock"
+    network: "traefik"
+    exposedByDefault: false
+ping:
+  manualRouting: true
+http:
+  routers:
+    ping:
+      entryPoints:
+        - "websecure"
+      rule: "PathPrefix(`/health`)"
+      service: "ping@internal"
+      tls: true
+tls:
+  stores:
+    default:
+      defaultCertificate:
+        certFile: "/config/certs/backend.crt"
+        keyFile: "/config/certs/backend.key"

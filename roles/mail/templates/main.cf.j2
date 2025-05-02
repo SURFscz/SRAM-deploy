@@ -43,6 +43,6 @@ smtp_sasl_password_maps = texthash:{{postfix_relay_secret_file}}
 mailbox_command = procmail -a "$EXTENSION"
 mailbox_size_limit = 0
 recipient_delimiter = +
-inet_interfaces = {% if mail.relay_for %}all{%else%}loopback-only{%endif%}
+inet_interfaces = {% if mail.relay_for %}all{% else %}loopback-only{% endif %}
 
 inet_protocols = all

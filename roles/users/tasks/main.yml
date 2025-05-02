@@ -58,9 +58,10 @@
 - name: copy ssh keys
   authorized_key:
     user: "{{item.uid}}"
-    key: "{{item.sshkey}}"
+    key: "{{ item.get('sshkey_'+inventory_hostname_short, item.sshkey) }}"
     state: present
-    manage_dir: yes
+    exclusive: true
+    manage_dir: true
   with_items: "{{users}}"
 
 - name: remove default users

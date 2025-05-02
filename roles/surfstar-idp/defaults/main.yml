@@ -6,6 +6,7 @@ surfstar_idp_group: "surfstar-idp"
 surfstar_idp_name: "surfstar-idp"
 
 surfstar_idp_dir: "/opt/{{surfstar_idp_name}}"
+surfstar_idp_cafile: "{{surfstar_idp_dir}}/geant_ca.pem"
 surfstar_idp_html_dir: "{{surfstar_idp_dir}}/html"
 surfstar_idp_hostname: "surfstar-idp.example.org"
 surfstar_idp_entityid: "https://{{surfstar_idp_hostname}}"

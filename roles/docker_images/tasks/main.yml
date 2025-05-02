@@ -1,0 +1,22 @@
+---
+
+- name: "Install required packages"
+  apt:
+    state: "latest"
+    name:
+      - build-essential
+    install_recommends: false
+
+- name: >
+    fetch SRAM Container from {{ sram_containers_repo_url }}, version {{ sram_containers_version }}
+  git:
+    repo: "{{ sram_containers_repo_url }}"
+    dest: "{{ sram_containers_dir }}"
+    version: "{{ sram_containers_version }}"
+    accept_hostkey: "yes"
+    force: "yes"
+
+- name: Create images
+  ansible.builtin.command: "make build"
+  args:
+    chdir: "{{ sram_containers_dir }}"

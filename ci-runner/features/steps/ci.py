@@ -26,7 +26,7 @@ def step_impl(context, idp):
 
     # Wait for IdP to appear
     search = context.wait.until(presence_of_element_located(
-        (By.XPATH, "//ul[@id='ds-search-list']/a[contains(@class,'identityprovider')]")),
+        (By.XPATH, "//ul[@id='ds-search-list']/li[contains(@class,'identityprovider')]")),
         'Timeout waiting for result')
 
     context.browser.find_element(By.XPATH, f"//div[@class='text-truncate label primary' and text()='{idp}']").click()
@@ -76,8 +76,10 @@ def step_impl(context, file):
 
     # Test user attributes
     id_token = json.loads(context.browser.find_element(By.ID, 'id_token').text)
-    access_token = json.loads(context.browser.find_element(By.ID, 'access_token').text)
-    user_info = json.loads(context.browser.find_element(By.ID, 'user_info').text)
+    access_token_1 = json.loads(context.browser.find_element(By.ID, 'access_token_1').text)
+    access_token_2 = json.loads(context.browser.find_element(By.ID, 'access_token_2').text)
+    user_info_1 = json.loads(context.browser.find_element(By.ID, 'user_info_1').text)
+    user_info_2 = json.loads(context.browser.find_element(By.ID, 'user_info_2').text)
 
     with open(file) as f:
         user_claims = json.load(f)
@@ -88,14 +90,22 @@ def step_impl(context, file):
         else:
             assert(id_token[claim] == value), f"id_token {claim} did not contain {value}"
 
-    for claim, value in user_claims['access_token'].items():
+    for claim, value in user_claims['access_token_1'].items():
         if type(value) is list:
-            assert(set(access_token[claim]) == set(value)), f"access_token {claim} did not contain {value}"
+            assert(set(access_token_1[claim]) == set(value)), f"access_token_1 {claim} did not contain {value}"
         else:
-            assert(access_token[claim] == value), f"access_token {claim} did not contain {value}"
+            assert(access_token_1[claim] == value), f"access_token_1 {claim} did not contain {value}"
+
+    for claim, value in user_claims['access_token_2'].items():
+        if type(value) is list:
+            assert(set(access_token_2[claim]) == set(value)), f"access_token_2 {claim} did not contain {value}"
+        else:
+            assert(access_token_2[claim] == value), f"access_token_2 {claim} did not contain {value}"
 
     for claim, value in user_claims['user_info'].items():
         if type(value) is list:
-            assert(set(user_info[claim]) == set(value)), f"user_info {claim} did not contain {value}"
+            assert(set(user_info_1[claim]) == set(value)), f"user_info_1 {claim} did not contain {value}"
+            assert(set(user_info_2[claim]) == set(value)), f"user_info_2 {claim} did not contain {value}"
         else:
-            assert(user_info[claim] == value), f"user_info {claim} did not contain {value}"
+            assert(user_info_1[claim] == value), f"user_info_1 {claim} did not contain {value}"
+            assert(user_info_2[claim] == value), f"user_info_2 {claim} did not contain {value}"

@@ -1,8 +1,8 @@
 #!/bin/bash
 set -e
 
-ENV=test
-LOGDIR=logs
+ENV="test"
+LOGDIR="logs"
 
 RED=$(tput setaf 1)
 GREEN=$(tput setaf 2)
@@ -22,17 +22,17 @@ ARG=${1#--}
 if [ "$ARG" = "bhr" -o "$ARG" = "beheer" ]
 then
     ENV=bhr
-    CONFDIR=./environments/aws_bhr/
-    EXTRA="${EXTRA} --ask-vault-pass"
+    CONFDIR=./environments/aws_bhr
+    EXTRA="${EXTRA} --ask-become --ask-vault-pass"
     STRICT=0
     shift
 elif [ "$ARG" = "prd" -o "$ARG" = "prod" ]
 then
     ENV=prd
     CONFDIR=./environments/aws_prd/
-    EXTRA="${EXTRA} --ask-vault-pass"
+    EXTRA="${EXTRA} --ask-become --ask-vault-pass"
     echo -n 'Are you sure you want to deploy to production?  Type "prod" to confirm: '
-    read confirm
+    read -r confirm
     if [ "$confirm" != "prod" ]
     then
         echo "Ok, exiting..."
@@ -42,14 +42,21 @@ then
 elif [ "$ARG" = "acc" ]
 then
     ENV=acc
-    CONFDIR=./environments/aws_acc/
-    EXTRA="${EXTRA} --ask-vault-pass"
+    CONFDIR=./environments/aws_acc
+    EXTRA="${EXTRA} --ask-become --ask-vault-pass"
     shift
 elif [ "$ARG" = "tst" -o "$ARG" = "test" ]
 then
     ENV=tst
-    CONFDIR=./environments/aws_tst/
-    EXTRA="${EXTRA}"
+    CONFDIR=./environments/aws_tst
+    EXTRA="${EXTRA} --ask-become"
+    STRICT=0
+    shift
+elif [ "$ARG" = "tst2" -o "$ARG" = "test2" ]
+then
+    ENV=test2
+    CONFDIR=./environments/surf_test2
+    EXTRA="${EXTRA} "
     STRICT=0
     shift
 else
@@ -59,68 +66,67 @@ fi
 
 LOG=$LOGDIR/deploy-${ENV}.$(date '+%Y%m%d_%H%M').log
 date >> $LOG
-echo "$0 $@" >> $LOG
+echo "$0 $*" >> $LOG
 
 # TODO: all output in log files
 
 # first check that deploy and config repos are clean and are using the same version
 # deploy
-echo -n "Checking if SRAM-deploy is clean... "
-if ! git diff-index --quiet HEAD --
-then
-    echo -e "$FAIL"
-    git status | sed 's/^/  > /'
-    echo
-    WARNING=1
-else
-    echo -e "$OK"
-fi
-branch_deploy=$(git symbolic-ref HEAD 2> /dev/null || git describe --exact)
+ echo -n "Checking if SRAM-deploy is clean... "
+ if ! git diff-index --quiet HEAD --
+ then
+     echo -e "$FAIL"
+     git status | sed 's/^/  > /'
+     echo
+     WARNING=1
+ else
+     echo -e "$OK"
+ fi
+ branch_deploy=$(git symbolic-ref HEAD 2> /dev/null || git describe --exact)
 
-# config
-cwd=$(pwd)
-cd "$CONFDIR"
-echo -en "Checking if Environment repo is clean... "
-if ! git diff-index --quiet HEAD --
-then
-    echo -e "$FAIL"
-    git status | sed "s/^/  > /"
-    echo
-    WARNING=1
-else
-    echo -e "$OK"
-fi
-branch_config=$(git symbolic-ref HEAD 2> /dev/null || git describe --exact)
-cd "$cwd"
+ # config
+ cwd=$(pwd)
+ cd "$CONFDIR"
+ echo -en "Checking if Environment repo is clean... "
+ if ! git diff-index --quiet HEAD --
+ then
+     echo -e "$FAIL"
+     git status | sed "s/^/  > /"
+     echo
+     WARNING=1
+ else
+     echo -e "$OK"
+ fi
+ branch_config=$(git symbolic-ref HEAD 2> /dev/null || git describe --exact)
+ cd "$cwd"
 
-echo -n "Checking whether deploy and config are in sync... "
-if [ "$branch_deploy" != "$branch_config" ]
-then
-    echo -e "$FAIL"
-    echo "  > Deploy branch: ${RED}'$branch_deploy'${RESET}"
-    echo "  > Config branch: ${RED}'$branch_config'${RESET}"
-    echo
-    WARNING=1
-else
-    echo -e "$OK ($branch_deploy)"
-fi
+ echo -n "Checking whether deploy and config are in sync... "
+ if [ "$branch_deploy" != "$branch_config" ]
+ then
+     echo -e "$FAIL"
+     echo "  > Deploy branch: ${RED}'$branch_deploy'${RESET}"
+     echo "  > Config branch: ${RED}'$branch_config'${RESET}"
+     echo
+     WARNING=1
+ else
+     echo -e "$OK ($branch_deploy)"
+ fi
 
-if [ "$WARNING" != "0" ]
-then
-    if [ "$STRICT" != "0" ]
-    then
-        echo "Warnings encountered, refusing to deploy in strict mode"
-        exit 1
-    fi
-    echo
-    read -p "Warning encountered, are you sure you want to continue (yes/no)? " result
-    if [ "$result" != "yes" ]
-    then
-        echo "Exiting..."
-        exit 1
-    fi
-fi
-
+ if [ "$WARNING" != "0" ]
+ then
+     if [ "$STRICT" != "0" ]
+     then
+         echo "Warnings encountered, refusing to deploy in strict mode"
+         exit 1
+     fi
+     echo
+     read -p "Warning encountered, are you sure you want to continue (yes/no)? " result
+     if [ "$result" != "yes" ]
+     then
+         echo "Exiting..."
+         exit 1
+     fi
+ fi
 
 # try to find mitogen
 MITOGEN_PATH=
@@ -133,7 +139,7 @@ do
         break
     fi
 done
-if [ -n "$MITOGEN_PATH" ]
+if [ -n "$MITOGEN_PATH" -a "$NO_MITOGEN" != "1" ]
 then
     echo "Found Mitogen at $MITOGEN_PATH"
     export ANSIBLE_STRATEGY_PLUGINS=$MITOGEN_PATH/$MITOGEN_SUBPATH/
@@ -145,11 +151,10 @@ fi
 CMD="ansible-playbook provision.yml \
     -i "$CONFDIR/inventory" \
     --limit=${ENV} \
-    --ask-become \
     --diff \
     ${EXTRA} \
-    "$@"
-"
+    ""$@"
+
 
 CMD=$( echo $CMD | sed 's/\s\+/ /g' )
 

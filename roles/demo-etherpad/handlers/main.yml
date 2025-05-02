@@ -1,0 +1,11 @@
+---
+# - name: restart apache
+#   systemd:
+#     name: apache2
+#     state: restarted
+
+- name: Restart the Etherpad container
+  docker_container:
+    name: "{{ demo_containers.etherpad }}"
+    restart: true
+    state: started

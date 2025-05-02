@@ -4,8 +4,8 @@ set -e
 
 if [ $UID -ne 0 ]
 then
-	echo "Sorry, this script must run as root"
-	exit 1
+    echo "Sorry, this script must run as root"
+    exit 1
 fi
 
 BACKUP_DIR="{{sbs_backup_dir}}"
@@ -15,7 +15,7 @@ BACKUP_FILE="$BACKUP_DIR/db_sbs_$(/bin/date +%Y-%m-%d_%H:%M).sql"
 mkdir -p -m 0755 "$BACKUP_DIR"
 
 export MYSQL_PWD="{{ sbs_dbbackup_password }}"
-mysqldump --host="{{ db_host }}" \
+mysqldump --host="{{ sbs_db_host }}" \
           --user="{{ sbs_dbbackup_user }}" \
           --ssl-ca="{{sbs_db_cert_path}}" \
           --single-transaction \
@@ -24,7 +24,6 @@ mysqldump --host="{{ db_host }}" \
           --no-tablespaces \
           --disable-keys --extended-insert \
           --databases "{{ sbs_db_name }}" \
-    > "${BACKUP_FILE}"
-bzip2 "${BACKUP_FILE}"
+    | zstd -qq -o "${BACKUP_FILE}.zst"
 
 exit 0

@@ -1,0 +1,10 @@
+---
+- name: Install docker
+  include_tasks: "docker_setup.yml"
+  when: "is_dev"
+
+- name: Create the internal network
+  community.docker.docker_network:
+    name: "{{internal_network}}"
+    enable_ipv6: false
+    state: "present"

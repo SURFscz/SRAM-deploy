@@ -1,5 +1,0 @@
----
-- name: restart sshd
-  systemd:
-    name: 'ssh.service'
-    state: restarted

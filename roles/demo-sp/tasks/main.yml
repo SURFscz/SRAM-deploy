@@ -61,9 +61,14 @@
 
 - name: Install JumboJett OIDC PHP module
   community.general.composer:
-    command: require
-    arguments: jumbojett/openid-connect-php
+    command: "require"
+    arguments: "jumbojett/openid-connect-php"
     working_dir: "{{ demosp_dir}}"
+    no_scripts: true
+    no_plugins: true
+  environment:
+    # TODO: fix this; create a separate user that own the files and can run composer
+    COMPOSER_ALLOW_SUPERUSER: "1"
   notify: "restart php-fpm"
 
 - name: Install OIDC RP config

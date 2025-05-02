@@ -3,12 +3,16 @@
   command:
     cmd: >
       /usr/bin/certbot certonly --noninteractive
+                                {% if letsencrypt_server is defined %}
+                                  --server '{{letsencrypt_server}}'
+                                {% endif %}
                                 --keep-until-expiring
                                 --renew-with-new-domains
                                 --domains={{item}}
   register: result
   changed_when: "'Your certificate and chain have been saved' in result.stdout"
   with_items: "{{ letsencrypt_hosts }}"
+  when: "letsencrypt_enabled and letsencrypt_hosts is defined"
   notify: "renew letsencrypt certificates again"
 
 # we need to renew directly in order to run the post renewal hooks...
@@ -16,10 +20,14 @@
   command:
     cmd: >
       /usr/bin/certbot renew --noninteractive
+                             {% if letsencrypt_server is defined %}
+                               --server '{{letsencrypt_server}}'
+                             {% endif %}
                              --no-random-sleep-on-renew
                              --force-renewal
                              --cert-name={{item}}
-    creates: '{{certbot_cert_dir}}/{{item}}/priv+fullchain.pem'
+    creates: '{{letsencrypt_cert_dir}}/{{item}}/priv+fullchain.pem'
   register: result
   changed_when: '"Your certificate and chain have been saved" in result.stdout'
+  when: "letsencrypt_enabled and letsencrypt_hosts is defined"
   with_items: "{{ letsencrypt_hosts }}"

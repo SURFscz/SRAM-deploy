@@ -31,6 +31,8 @@ global
 {% endif %}
 
     server-state-file {{haproxy_state_file}}
+    maxconn     4000
+    ulimit-n    9000
 
 defaults
     log     global
@@ -73,9 +75,8 @@ frontend fe_https
 
     # generic security headers
     http-response set-header X-Frame-Options "sameorigin"
-    http-response set-header X-XSS-Protection "1; mode=block"
     http-response set-header X-Content-Type-Options "nosniff"
-    http-response set-header Referrer-Policy "strict-origin-when-cross-origin"
+    http-response set-header Referrer-Policy "same-origin"
 
     # diable  mime type sniffing
     http-response set-header X-Content-Type-Options "nosniff"
@@ -103,7 +104,7 @@ frontend fe_https
     acl url_static path_beg /api/images
     http-request track-sc1 url32+src table proxy_req_rates unless url_static
     acl exceeds_limit sc_gpc0_rate(0) gt 50
-    acl network_allowed src {{ iprange.internal }}
+    acl network_allowed src -- {{ haproxy_internal_hosts | join(' ') }}
     http-request sc-inc-gpc0(0) if { sc_http_req_rate(1) eq 1 } !exceeds_limit
     http-request deny deny_status 429 if exceeds_limit !network_allowed
 {% endif %}
@@ -132,7 +133,7 @@ backend {{host.name}}
     mode http
 {% if host.options is defined %}
 {% for option, value in host.options.items() %}
-    option {{option}} {{value}}
+    {{option}} {{value}}
 {% endfor %}
 {% endif %}
     {% for be_server in host.backend_hosts -%}
@@ -146,7 +147,7 @@ backend {{host.name}}
 {% endfor %}
 
 {% for host in lb_ldap %}
-{% set name = "{}{}".format(host.hostname.split('.')[0], "" if loop.index==1 else "{}".format(loop.index)) -%}
+{% set name = "{}".format(host.hostname.split('.')[0]) -%}
 listen {{name}}
     no option dontlognull
     bind    *:{{host.frontend_port}} ssl crt {{host.hostname}}/priv+fullchain.pem transparent
@@ -157,7 +158,7 @@ listen {{name}}
                     "green" if "green" in groups and be_server in groups["green"] else
                     "server" -%}
     {% set server_name = "{}-{}".format(colour, loop.index) -%}
-    server {{server_name}} {{be_server}}:{{host.backend_port}} ssl check weight 10 {% if loop.index==1 %}on-marked-up shutdown-backup-sessions{%else%}backup{%endif%}
+    server {{server_name}} {{be_server}}:{{host.backend_port}} ssl check weight 10 {% if loop.index==1 %}on-marked-up shutdown-backup-sessions{% else %}backup{% endif %}
 
     {% endfor %}
 

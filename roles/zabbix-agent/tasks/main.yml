@@ -6,13 +6,13 @@
 
 - name: "Zabbix repo: install source"
   apt_repository:
-    repo: "deb http://repo.zabbix.com/zabbix/5.4/debian bullseye main"
+    repo: "deb http://repo.zabbix.com/zabbix/6.4/debian {{debian_dist}} main"
     state: present
 
 - name: "Ensure that packages are installed"
   apt:
     name: "zabbix-agent2"
-    state: "present"
+    state: "latest"
     install_recommends: false
 
 - name: "Make sure the zabbix user can read journald entries"
@@ -22,12 +22,18 @@
     append: true
   notify: "restart zabbix-agent"
 
-- include_tasks: "psk.yml"
+- name: "PSK handling"
+  include_tasks: "psk.yml"
+  when: "not is_dev"
 
 - name: "Default configuration"
   template:
     src: "zabbix-agent2.conf.j2"
     dest: "/etc/zabbix/zabbix_agent2.d/zabbix-sram.conf"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+  when: "not is_dev"
   notify: "restart zabbix-agent"
 
 # - name: "Count upgradeable packages"
@@ -40,43 +46,39 @@
 #     - "restart_kernel"
 #     - "restart_services"
 
-- block:
+- name: "Zabbix registration"
+  vars:
+    ansible_network_os: "community.zabbix.zabbix"
+    ansible_connection: "httpapi"
+    ansible_httpapi_port: 443
+    ansible_httpapi_use_ssl: true
+    ansible_httpapi_validate_certs: "{{zabbix_validate_certs}}"
+    ansible_host: "{{zabbix_host}}"
+    ansible_zabbix_url_path: '/'
+    ansible_user: "{{zabbix_api_user}}"
+    ansible_httpapi_pass: "{{zabbix_api_password}}"
+  when: "not is_dev"
+  become: false
+  throttle: 1
+  block:
 
     - name: "Register host group"
-      throttle: 1
-      local_action:
-        module: "zabbix_group"
-        server_url: "{{zabbix_api_url}}"
-        login_user: "{{zabbix_api_user}}"
-        login_password: "{{zabbix_api_password}}"
+      community.zabbix.zabbix_group:
         host_groups:
           - "sram"
           - "sram-{{environment_name}}"
         state: "present"
-        validate_certs: "{{zabbix_validate_certs}}"
-      become: false
 
     # dumb workaround: the zabbix_host module doesn't actually update the PSK when
     # it has changed;  So remove and recreate the host if that happens.
     - name: "Delete host"
-      local_action:
-        module: "zabbix_host"
-        server_url: "{{zabbix_api_url}}"
-        validate_certs: "{{zabbix_validate_certs}}"
-        login_user: "{{zabbix_api_user}}"
-        login_password: "{{zabbix_api_password}}"
+      community.zabbix.zabbix_host:
         host_name: "{{inventory_hostname}}"
         state: "absent"
-      become: false
-      when: "psk_file_write.changed"
+      when: "psk_file_write.changed"  # noqa: no-handler
 
     - name: "Register host"
-      local_action:
-        module: "zabbix_host"
-        server_url: "{{zabbix_api_url}}"
-        validate_certs: "{{zabbix_validate_certs}}"
-        login_user: "{{zabbix_api_user}}"
-        login_password: "{{zabbix_api_password}}"
+      community.zabbix.zabbix_host:
         host_name: "{{inventory_hostname}}"
         host_groups:
           - "sram"
@@ -94,22 +96,15 @@
             ip: "{{ansible_default_ipv4.address}}"
             dns: ""
             port: "10050"
-      register: "zabbix_host"
-      become: false
+      register: "host_register"
 
     - name: "Set PSK setting for host"
-      local_action:
-        module: "zabbix_host"
-        server_url: "{{zabbix_api_url}}"
-        validate_certs: "{{zabbix_validate_certs}}"
-        login_user: "{{zabbix_api_user}}"
-        login_password: "{{zabbix_api_password}}"
+      community.zabbix.zabbix_host:
         host_name: "{{inventory_hostname}}"
         tls_psk_identity: "{{inventory_hostname}}"
         tls_psk: "{{zabbix_agent_psk}}"
         tls_accept: "2"
         tls_connect: "2"
       become: false
-      when: "psk_file_write.changed or zabbix_host.changed"
+      when: "psk_file_write.changed or host_register.changed"
 
-  when: "not is_docker"

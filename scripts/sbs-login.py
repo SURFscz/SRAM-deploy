@@ -3,25 +3,32 @@
 import time
 import json
 import traceback
-from selenium.webdriver import Chrome
-from selenium.webdriver.chrome.options import Options
+
+from selenium import webdriver
+from selenium import __version__ as selenium_version
+from selenium.webdriver.chrome.service import Service as ChromeService
+from webdriver_manager.chrome import ChromeDriverManager
+
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support.expected_conditions import staleness_of, presence_of_element_located
 from selenium.webdriver.common.by import By
 
-
-class CustomChrome(Chrome):
-    def get(self, url) -> None:
-        print(f"Fetching page '{url}'")
-        return super(CustomChrome, self).get(url)
+# check that we have selenium version 4
+assert selenium_version.startswith('4.'), f"Expected selenium version 4.x.x, got {selenium_version}"
 
 
-options = Options()
+class CustomChrome(webdriver.Chrome):
+    def get(self, get_url) -> None:
+        print(f"Fetching page '{get_url}'")
+        return super(CustomChrome, self).get(get_url)
+
+
+options = webdriver.chrome.options.Options()
 options.add_argument('--headless')
 options.add_argument('ignore-certificate-errors')
 options.set_capability('goog:loggingPrefs', {'browser': 'ALL'})
 
-browser = CustomChrome(options=options)
+browser = CustomChrome(service=ChromeService(ChromeDriverManager().install()), options=options)
 wait = WebDriverWait(browser, timeout=3)
 
 send_command = ('POST', '/session/$sessionId/chromium/send_command')
@@ -39,7 +46,7 @@ try:
     status = ""
     while status != "UP":
         browser.get(health)
-        state = json.loads(browser.find_element(By.XPATH, "//pre").text)
+        state = json.loads(browser.find_element(By.TAG_NAME, "body").text)
         status = state.get("status")
         time.sleep(1)
 
@@ -56,7 +63,9 @@ try:
     print(" - pressed login")
 
     # Wait for login button to disappear
-    wait.until(staleness_of(login), 'Timeout waiting for login page')
+    # wait.until(staleness_of(login), 'Timeout waiting for login page')
+
+    wait.until(lambda driver: driver.current_url.startswith("https://oidc-op.scz-vm.net/authorization"))
 
     # Select ACR = MFA
     browser.find_element(By.ID, 'acr_mfa').click()
@@ -75,6 +84,7 @@ try:
     print(" - accepted AUP")
 
     # Wait for landing page
+    wait.until(lambda driver: driver.current_url.startswith("https://sbs.scz-vm.net"))
     wait.until(presence_of_element_located((By.XPATH, xpath_logo)),
                'Timeout waiting for logo')
     print(" - landing page")
@@ -90,8 +100,8 @@ try:
 
     # Test admin attributes
     attributes = browser.find_elements(By.XPATH, "//table[@class='my-attributes']/*/*/*")
-    # for a in attributes:
-    #     print(f"a.text: {a.text}")
+    # for attr in attributes:
+    #     print(f"attr.text: {attr.text}")
     assert ('SCZ Admin' in [a.text for a in attributes]), "No valid admin profile found"
     print(" - profile ok")
 
@@ -112,7 +122,9 @@ try:
     print(" - pressed login")
 
     # Wait for login button to disappear
-    wait.until(staleness_of(login), 'Timeout waiting for login page')
+    # wait.until(staleness_of(login), 'Timeout waiting for login page')
+
+    wait.until(lambda driver: driver.current_url.startswith("https://oidc-op.scz-vm.net/authorization"))
 
     # Select ACR = MFA
     browser.find_element(By.ID, 'acr_password').click()
@@ -153,6 +165,7 @@ except Exception as e:
     print("  ", tr.line)
 
     from bs4 import BeautifulSoup
+
     page = BeautifulSoup(browser.page_source, 'html.parser').prettify()
     with open("page.html", "w") as f:
         f.write(page)

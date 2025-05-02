@@ -15,15 +15,30 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
-  build:
+  deploy_classic:
     # The type of runner that the job will run on
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-24.04"
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Checkout $GITHUB_WORKSPACE
         uses: actions/checkout@v4
+
+      # Run errands
+      - name: Run errands
+        run: |
+          sudo rm -f /opt/pipx_bin/ansible*
+          sudo apt -q update
+          sudo apt -y install ansible bridge-utils apparmor-utils wget \
+                              python3-pip python3-setuptools python3-wheel \
+                              python3-venv yamllint python3-jinja2 python3-yaml \
+                              python3-selenium python3-requests python3-bs4
+          sudo pip3 install --break-system-packages webdriver-manager
+          git clone https://github.com/dw/mitogen.git ~/mitogen
+          cat docker/hosts | sudo tee -a /etc/hosts
+          wget --quiet https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+          sudo apt install ./google-chrome-stable_current_amd64.deb
 
       # Create date output to seconds
       - name: Get Date
@@ -33,25 +48,11 @@ jobs:
       # Restore cache based no fake time key (allways miss)
       - name: Setup cache
         id: cache-docker
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/docker-save
           key: docker-save-${{ steps.get-date.outputs.date }}
           restore-keys: docker-save-
-
-      # Run errands
-      - name: Run errands
-        run: |
-          sudo rm -f /opt/pipx_bin/ansible*
-          sudo rm -rf /etc/apt/sources.list.d/*
-          sudo add-apt-repository --yes --no-update ppa:ansible/ansible-5
-          sudo apt -q update
-          sudo apt -y purge ansible
-          sudo apt -y install ansible bridge-utils apparmor-utils
-          sudo pip3 install --upgrade wheel yamllint jinja2 pyyaml selenium \
-                                      zabbix-api requests bs4
-          git clone https://github.com/dw/mitogen.git ~/mitogen
-          cat docker/hosts | sudo tee -a /etc/hosts
 
       # Useful for debugging
       - name: Show versions
@@ -62,23 +63,21 @@ jobs:
       # apparmor is by default enabled for binaries _in_ the containers and is restricting
       # mysql from reading tls keys
       - name: Disable apparmor
-        run: >
+        run: |
           sudo aa-status --json | jq '
-            .profiles
-            | to_entries
+            .profiles | to_entries
             | map( select( (.key | startswith("/") ) and .value=="enforce") | .key )
             | .[]
-          ' | xargs sudo aa-complain
+          ' | grep -vE 'totem|pidgin|passt' | \
+          while read -r profile; do
+            sudo aa-complain "$profile" || true
+          done
 
       # Install Ansible modules
       - name: Install Ansible modules
         run: |
           ansible-galaxy role install -r requirements.yml
           ansible-galaxy collection install -r requirements.yml
-
-      # Run Syntax check
-      - name: Run Syntax check
-        run: ./scripts/check-syntax
 
       # Restore docker cache
       - name: Restore docker cache
@@ -96,7 +95,7 @@ jobs:
         shell: bash
         env:
           SKIP_ANSIBLE: 1
-        run: "./start-vm"
+        run: "./start-vm --classic"
 
       # Clean  up old docker cruft
       - name: Clean  up old docker cruft
@@ -104,6 +103,7 @@ jobs:
           docker system prune -f --all
           docker image  prune -f --all
           docker volume prune -f
+          docker buildx prune -f
 
       # Get scz-base ImageID
       - name: Get scz-base ImageID
@@ -125,13 +125,13 @@ jobs:
       # Deploy components
       - name: Run start-vm
         shell: bash
-        run: "./start-vm"
+        run: "./start-vm --classic"
 
       # Deploy components again for idempotency
       - name: Run start-vm --diff
         env:
           REEANTRANT: 1
-        run: "./start-vm --diff"
+        run: "./start-vm --classic --diff"
 
       - name: Run idempotency check...
         run: /usr/bin/python3 ./scripts/check-idempotency-status
@@ -141,7 +141,7 @@ jobs:
         run: /usr/bin/python3 ./scripts/sbs-login.py
 
       - name: Save screenshot of error
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: "sbs-logintest"
           path: |
@@ -171,12 +171,7 @@ jobs:
       - name: Show sbs output
         run: >
           ansible -v -i environments/vm/inventory --become "sbs" -m command -a "/bin/sh -c '
-            if [ -e /opt/sbs/sbs/log/sbs.log ]; then
-              echo ===sbs log===;
-              cat /opt/sbs/log/sbs_debug.log
-            fi;
-            echo ===apt log===; cat /var/log/apt/term.log
-            echo ===netstat===; netstat -lnp
+            journalctl -u sram-sbs
           '"
         if: failure()
 
@@ -197,10 +192,9 @@ jobs:
       # Setup tmate session
       - name: Setup tmate session
         env:
-          ACTIONS_STEP_DEBUG: "${{ secrets.ACTIONS_STEP_DEBUG}}"
-        if: "${{ env.ACTIONS_STEP_DEBUG}}"
+          ACTIONS_STEP_DEBUG: ${{ secrets.ACTIONS_STEP_DEBUG}}
+        if: ${{ failure() && env.ACTIONS_STEP_DEBUG == 'true' }}
         uses: mxschmitt/action-tmate@v3
         with:
           limit-access-to-actor: true
-        timeout-minutes: 15
-
+        timeout-minutes: 60

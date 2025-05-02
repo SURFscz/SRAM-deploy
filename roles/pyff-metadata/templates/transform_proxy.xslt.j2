@@ -26,26 +26,30 @@
 
     <!-- Add ContactPerson -->
     <xsl:template match="md:EntityDescriptor">
-      <xsl:copy>
-        <xsl:apply-templates select="@* | node()"/>
-          <md:ContactPerson xmlns:remd="http://refeds.org/metadata" contactType="other" remd:contactType="http://refeds.org/metadata/contactType/security">
-            <md:GivenName>Security Response Team</md:GivenName>
-            <md:EmailAddress>mailto:securityincident@surf.nl</md:EmailAddress>
-          </md:ContactPerson>
-      </xsl:copy>
+        <xsl:copy>
+            <xsl:apply-templates select="@* | node()"/>
+            <md:ContactPerson xmlns:remd="http://refeds.org/metadata" contactType="other" remd:contactType="http://refeds.org/metadata/contactType/security">
+                <md:GivenName>Security Response Team</md:GivenName>
+                <md:EmailAddress>mailto:securityincident@surf.nl</md:EmailAddress>
+            </md:ContactPerson>
+        </xsl:copy>
     </xsl:template>
 
     <!-- Add RegistrationInfo and sirtfi EntityAttributes -->
-    <xsl:template match="md:IDPSSODescriptor/md:Extensions|md:SPSSODescriptor/md:Extensions">
-      <xsl:copy>
-        <xsl:apply-templates select="@* | node()"/>
-           <mdattr:EntityAttributes>
-             <saml:Attribute NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" Name="urn:oasis:names:tc:SAML:attribute:assurance-certification">
-               <saml:AttributeValue>https://refeds.org/sirtfi2</saml:AttributeValue>
-               <saml:AttributeValue>https://refeds.org/sirtfi</saml:AttributeValue>
-             </saml:Attribute>
-           </mdattr:EntityAttributes>
-      </xsl:copy>
+    <xsl:template match="md:EntityDescriptor/md:Extensions">
+        <xsl:copy>
+            <xsl:apply-templates select="@* | node()"/>
+            <mdattr:EntityAttributes>
+                <saml:Attribute Name="urn:oasis:names:tc:SAML:attribute:assurance-certification" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                    <saml:AttributeValue>https://refeds.org/sirtfi2</saml:AttributeValue>
+                    <saml:AttributeValue>https://refeds.org/sirtfi</saml:AttributeValue>
+                </saml:Attribute>
+                <saml:Attribute Name="http://macedir.org/entity-category" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                    <saml:AttributeValue>http://refeds.org/category/research-and-scholarship</saml:AttributeValue>
+                    <saml:AttributeValue>http://www.geant.net/uri/dataprotection-code-of-conduct/v1</saml:AttributeValue>
+                </saml:Attribute>
+            </mdattr:EntityAttributes>
+        </xsl:copy>
     </xsl:template>
 
 </xsl:stylesheet>

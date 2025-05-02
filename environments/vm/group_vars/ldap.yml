@@ -9,5 +9,5 @@ pam_host: "0.0.0.0"
 pam_clients_port: 8087
 
 # LDAP services monitor
-ldap_monitor_service: "https://cloud"
+ldap_monitor_service: "110751a9-b0b4-4c7d-8728-f323101147c0"
 ldap_monitor_reference: "ldap_cloud_ref"

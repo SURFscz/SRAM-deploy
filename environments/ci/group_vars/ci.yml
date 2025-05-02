@@ -17,4 +17,4 @@ sbs_backend_port: 90
 ci_rp_backend_port: 8443
 ci_idp_backend_port: 8444
 
-sram_ansible_nolog: true
+sram_ansible_nolog: false

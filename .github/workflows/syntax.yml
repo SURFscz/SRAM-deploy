@@ -1,0 +1,29 @@
+---
+name: "Syntax checks"
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  syntax:
+    name: Syntax
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Update and install stuff
+        run: |
+          sudo apt -y install ansible yamllint python3-jinja2 python3-yaml
+
+      - name: Install Ansible modules
+        run: |
+          ansible-galaxy role install -r requirements.yml
+          ansible-galaxy collection install -r requirements.yml
+
+      - name: Run Syntax check
+        run: ./scripts/check-syntax
+

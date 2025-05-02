@@ -1,0 +1,13 @@
+[Unit]
+Description=SRAM Monitor (%I)
+
+[Service]
+User={{sram_monitor_user}}
+Type=oneshot
+
+Environment="PATH={{sram_monitor_dir}}/venv/bin/:/usr/bin:/bin"
+PassEnvironment=PATH
+WorkingDirectory={{sram_monitor_dir}}
+
+ExecStart={{sram_monitor_dir}}/run_sram_monitoring.sh prd %i
+ExecStart={{sram_monitor_dir}}/run_sram_monitoring.sh acc %i

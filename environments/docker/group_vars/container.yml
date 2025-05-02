@@ -1,0 +1,180 @@
+---
+sudo_groups:
+  - "sudo_cont"
+log_groups:
+  - "log_reader"
+
+ldap_admin_group: ldap_vm
+
+environment_name: vm
+environment_string: "SCZ Container"
+base_domain: "scz-vm.net"
+internal_base_domain: "vm.scz-vm.net"
+
+sram_conf_dir: "/opt/sram"
+
+# externally visible!
+hostnames:
+  sbs:      sbs.{{base_domain}}
+  meta:     meta.{{base_domain}}
+  ldap:     ldap.{{base_domain}}
+  ldap1:    ldap1.{{base_domain}}
+  ldap2:    ldap2.{{base_domain}}
+  oidc:     oidc-test.{{base_domain}}
+  sp:       sp-test.{{base_domain}}
+  idp:      idp-test.{{base_domain}}
+  oidc_op:  oidc-op.{{base_domain}}
+
+idp_test_port: 8444
+sp_test_port: 82
+oidc_test_port: 83
+oidc_op_port: 93
+
+firewall_v4_incoming:
+  - name: loadbalancer
+    src: "{{lb_ip}}"
+    dport:  "{{sbs_server_port}}"
+    proto: tcp
+
+####################################################
+## Docker
+####################################################
+containers:
+  db: "sram-db"
+  redis: "sram-redis"
+  sbs: "sram-sbs"
+  sbs_server: "sram-sbs-server"
+  sbs_migration: "sram-sbs-migration"
+  ldap: "sram-ldap"
+  metadata: "sram-metadata"
+  pyff: "sram-pyff"
+  plsc: "sram-plsc"
+
+images:
+  db: "docker.io/library/mariadb:11"
+  redis: "docker.io/library/redis:7"
+  sbs: "ghcr.io/surfscz/sram-sbs-client:main"
+  sbs_server: "ghcr.io/surfscz/sram-sbs-server:main"
+  ldap: "ghcr.io/surfscz/sram-ldap:main"
+  metadata: "ghcr.io/openconext/openconext-basecontainers/apache2:latest"
+  pyff: "ghcr.io/surfscz/sram-pyff:main"
+  plsc: "ghcr.io/surfscz/sram-plsc:main"
+
+traefik_network: traefik
+internal_network: sram
+
+####################################################
+## LDAP
+####################################################
+ldap_uri: "ldap://localhost/"
+ldap_rids:
+  101: ldaps://ldap1.scz-vm.net/
+  102: ldaps://ldap2.scz-vm.net/
+ldap_hosts:
+  ldap1.scz-vm.net: "{{ iprange.lb }}"
+  ldap2.scz-vm.net: "{{ iprange.lb }}"
+
+####################################################
+## haproxy
+####################################################
+loadbalancer:
+  - name: "sbs"
+    hostname: "{{hostnames.sbs}}"
+    protocol: http
+    backend_hosts: "{{groups['container_docker1']}}"
+    backend_port: 443
+    options:
+      option: "httpchk GET /health"
+      http-check: "send ver HTTP/2 hdr Host {{hostnames.sbs}}"
+  - name: "meta"
+    hostname: "{{hostnames.meta}}"
+    protocol: http
+    backend_hosts: "{{groups['container_docker1']}}"
+    backend_port: 443
+  - name: "client_oidc"
+    hostname: "{{hostnames.oidc}}"
+    protocol: http
+    backend_hosts: "{{groups['client']}}"
+    backend_port: "{{oidc_test_port}}"
+  - name: "client_sp"
+    hostname: "{{hostnames.sp}}"
+    protocol: http
+    backend_hosts: "{{groups['client']}}"
+    backend_port: "{{sp_test_port}}"
+  - name: "client_idp"
+    hostname: "{{hostnames.idp}}"
+    protocol: http
+    backend_hosts: "{{groups['client']}}"
+    backend_port: "{{idp_test_port}}"
+  - name: "client_oidc_op"
+    hostname: "{{hostnames.oidc_op}}"
+    protocol: http
+    backend_hosts: "{{groups['client']}}"
+    backend_port: "{{oidc_op_port}}"
+  - name: "client_ldap"
+    hostname: "{{hostnames.ldap}}"
+    protocol: ldap
+    frontend_port: 636
+    backend_hosts: "{{groups['container_docker1']}}"
+    backend_port: 636
+  - name: "client_ldap1"
+    hostname: "{{hostnames.ldap1}}"
+    protocol: ldap
+    frontend_port: 636
+    backend_hosts: "{{groups['container_docker1']}}"
+    backend_port: 636
+  - name: "client_ldap2"
+    hostname: "{{hostnames.ldap2}}"
+    protocol: ldap
+    frontend_port: 636
+    backend_hosts: "{{groups['container_docker2']}}"
+    backend_port: 636
+
+
+####################################################
+## SBS
+####################################################
+db_host: "docker1.vm.scz-vm.net"
+sbs_db_host: "{{ containers.db }}"
+sbs_db_admin_user: "{{ db_admin_user }}"
+sbs_db_admin_password: "{{ db_admin_password }}"
+
+sbs_redis_host: "{{ containers.redis }}"
+
+sbs_base_domain: "{{ hostnames.sbs }}"
+sbs_base_url: "https://{{sbs_base_domain}}"
+sbs_api_url: "https://{{sbs_base_domain}}/"
+
+sbs_oidc_authz_endpoint: "https://{{ hostnames.oidc_op }}/authorization"
+sbs_oidc_token_endpoint: "https://{{ hostnames.oidc_op }}/token"
+sbs_oidc_userinfo_endpoint: "https://{{ hostnames.oidc_op }}/userinfo"
+sbs_oidc_jwks_endpoint: "https://{{ hostnames.oidc_op }}/jwks.json"
+sbs_oidc_redirect_uri: "https://{{ hostnames.sbs }}/api/users/resume-session"
+sbs_eduteams_continue_endpoint: "https://{{ hostnames.oidc_op }}/continue"
+sbs_oidc_jwt_audience: "https://{{ hostnames.oidc_op }}"
+sbs_eb_continue_endpoint: "https://engine.(.*)surfconext.nl(.*)"
+
+sbs_manage_base_enabled: False
+sbs_manage_base_url: "https://manage.test2.surfconext.nl"
+
+sbs_ldap_url: "ldap://ldap.scz-vm.net/dc=services,dc=vnet"
+# entity_id will be replaced run-time in the client
+sbs_ldap_bind_account: "cn=admin,dc=entity_id,dc=services,dc=vnet"
+
+sbs_db_tls_cert: "{{wildcard_backend_cert.pub}}"
+
+sbs_mfa_idp_allowed:
+  - schac_home: "ci-runner.sram.surf.nl"
+    entity_id: "https://idp.scz-vm.net/saml/saml2/idp/metadata.php"
+
+sbs_ssid_identity_providers:
+  - schac_home: "ssid.org"
+    entity_id: "https://ssid.org"
+
+sbs_notifications_enabled: True
+sbs_cron_hour_of_day: "4"
+
+# Any last_login_date in the past triggers suspension notification
+sbs_suspension_inactive_days: 0
+# Second suspension cron will suspend notified users
+sbs_suspension_reminder_days: -1

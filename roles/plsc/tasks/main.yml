@@ -21,8 +21,8 @@
 - name: Make sure clients sync directory exists
   file:
     path: "{{ plsc_dir }}"
-    state: directory
-    mode: 0755
+    state: "directory"
+    mode: "0755"
 
 - name: fetch plsc from {{ plsc_repo_url }}, version {{ plsc_version }}
   git:

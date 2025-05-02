@@ -10,19 +10,18 @@ RateLimitBurst=10000
 
 # Keep a maximum of 1GB on disk storage
 SystemMaxUse=1G
-SystemKeepFree=
-SystemMaxFileSize=100M
+SystemMaxFileSize={{journal_max_filesize}}
 SystemMaxFiles=100
 
 # split files every day, and keep message for max 2 weeks
-MaxFileSec=1h
+MaxFileSec={{journal_max_filetime}}
 MaxRetentionSec={{journal_retention}}
 SyncIntervalSec=1m
 
 # we only forward to syslog and tty1
 # TODO: check if we can get rid of syslog altogether
 ReadKMsg=yes
-ForwardToSyslog=yes
+ForwardToSyslog=no
 ForwardToKMsg=no
 ForwardToConsole=yes
 ForwardToWall=no
