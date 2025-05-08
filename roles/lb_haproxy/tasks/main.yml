@@ -87,6 +87,9 @@
   template:
     src: "error_sram_down.html.j2"
     dest: "/etc/haproxy/errors/503.http"
+    mode: "0644"
+    owner: "root"
+    group: "root"
   notify: "restart haproxy"
 
 - name: check error pages for max file size
@@ -107,6 +110,8 @@
         src: ocsp.sh
         dest: "{{haproxy_oscp_bin_dir}}"
         mode: "0755"
+        owner: "root"
+        group: "root"
       notify:
         - "run ocsp update"
 
@@ -133,11 +138,17 @@
   file:
     path: "/etc/systemd/system/haproxy.service.d/"
     state: "directory"
+    mode: "0755"
+    owner: "root"
+    group: "root"
 
 - name: haproxy systemd override files
   copy:
     src: "{{item}}"
     dest: "/etc/systemd/system/haproxy.service.d/"
+    mode: "0644"
+    owner: "root"
+    group: "root"
   with_items:
     - "haproxy-log-bindmount.conf"
     - "haproxy-state.conf"
