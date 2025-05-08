@@ -81,6 +81,11 @@
   roles:
     - { role: "backup_collector",  tags: ["bhr2","backup-collector"]  }
     - { role: "logging_collector", tags: ["bhr2","logging-collector"] }
+
+- name: "zabbix"
+  hosts: "zabbix"
+  strategy: "linear"  # disable mitogen for these roles
+  roles:
     - { role: "zabbix-server",     tags: ["bhr2","zabbix-server"],
         when: "not is_dev" }
 

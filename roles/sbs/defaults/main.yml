@@ -87,6 +87,7 @@ sbs_impersonation_allowed: False
 sbs_admin_platform_backdoor_totp: False
 sbs_past_dates_allowed: False
 sbs_mock_scim_enabled: False
+sbs_log_to_stdout: False
 
 sbs_delete_orphaned: True
 sbs_suspension_inactive_days: 365
@@ -102,9 +103,11 @@ sbs_eduteams_continue_endpoint: "https://localhost/continue"
 sbs_eb_continue_endpoint: "https://engine.(.*)surfconext.nl(.*)"
 sbs_oidc_jwt_audience: "https://localhost"
 sbs_continue_eduteams_redirect_uri: "https://localhost/continue"
+sbs_oidc_verify_peer: True
 
 sbs_manage_base_enabled: False
 sbs_manage_base_url: "http://localhost"
+sbs_manage_verify_peer: True
 
 sbs_idp_metadata_url: "https://metadata.surfconext.nl/signed/2023/edugain-downstream-idp.xml "
 sbs_backup_dir: "{{backup_base}}/sbs"

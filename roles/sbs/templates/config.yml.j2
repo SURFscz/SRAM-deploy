@@ -17,6 +17,9 @@ encryption_key: {{ sbs_encryption_key  }}
 # Lifetime of session in minutes (one day is 60 * 24)
 permanent_session_lifetime: {{ sbs_session_lifetime }}
 
+logging:
+  log_to_stdout: {{ sbs_log_to_stdout }}
+
 # Valid scopes are "READ" and "WRITE"
 api_users:
 {% for name, user in sbs_api_users.items() %}
@@ -29,6 +32,7 @@ oidc:
   client_id: "{{ sbs_client_id }}"
   client_secret: "{{ sbs_client_secret }}"
   audience: "{{ sbs_oidc_jwt_audience }}"
+  verify_peer:  {{ sbs_oidc_verify_peer }}
   authorization_endpoint: "{{ sbs_oidc_authz_endpoint}}"
   token_endpoint: "{{ sbs_oidc_token_endpoint }}"
   userinfo_endpoint: "{{ sbs_oidc_userinfo_endpoint }}"
@@ -96,6 +100,7 @@ manage:
   base_url: "{{ sbs_manage_base_url }}"
   user: "{{ sbs_manage_user }}"
   password: "{{ sbs_manage_password }}"
+  verify_peer: {{ sbs_manage_verify_peer }}
 
 aup:
   version: 1
@@ -243,7 +248,8 @@ mfa_sso_time_in_minutes: {{sbs_mfa_sso_minutes}}
 # whether to fall back to TOTP MFA
 mfa_fallback_enabled: {{sbs_mfa_fallback_enabled}}
 
-# Lower case entity ID's allowed skipping MFA
+# Lower case entity ID's and schac_home allowed skipping MFA.
+# Note that for a login directly into SRAM only schac_home can be used as the entity_idp of the IdP is unknown
 mfa_idp_allowed: {{sbs_mfa_idp_allowed}}
 
 # Lower case schachome organisations / entity ID's where SURFSecure ID is used for step-up
