@@ -56,15 +56,6 @@
   notify:
     - "restart haproxy"
 
-- name: Create LDAP ACL file
-  copy:
-    content: ""
-    dest: "{{haproxy_ldap_acl_file}}"
-    force: false
-    owner: "root"
-    group: "haproxy"
-    mode: "0660"
-
 - name: install haproxy certificate list
   template:
     src: "crt-list.txt.j2"
