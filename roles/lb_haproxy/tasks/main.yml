@@ -56,15 +56,6 @@
   notify:
     - "restart haproxy"
 
-- name: Create LDAP ACL file
-  copy:
-    content: ""
-    dest: "{{haproxy_ldap_acl_file}}"
-    force: false
-    owner: "root"
-    group: "haproxy"
-    mode: "0660"
-
 - name: install haproxy certificate list
   template:
     src: "crt-list.txt.j2"
@@ -87,6 +78,9 @@
   template:
     src: "error_sram_down.html.j2"
     dest: "/etc/haproxy/errors/503.http"
+    mode: "0644"
+    owner: "root"
+    group: "root"
   notify: "restart haproxy"
 
 - name: check error pages for max file size
@@ -107,6 +101,8 @@
         src: ocsp.sh
         dest: "{{haproxy_oscp_bin_dir}}"
         mode: "0755"
+        owner: "root"
+        group: "root"
       notify:
         - "run ocsp update"
 
@@ -133,11 +129,17 @@
   file:
     path: "/etc/systemd/system/haproxy.service.d/"
     state: "directory"
+    mode: "0755"
+    owner: "root"
+    group: "root"
 
 - name: haproxy systemd override files
   copy:
     src: "{{item}}"
     dest: "/etc/systemd/system/haproxy.service.d/"
+    mode: "0644"
+    owner: "root"
+    group: "root"
   with_items:
     - "haproxy-log-bindmount.conf"
     - "haproxy-state.conf"
@@ -145,29 +147,28 @@
     - "systemd daemon-reload"
     - "restart haproxy"
 
+- name: check for service file existence
+  stat:
+    path: "/etc/systemd/system/{{item}}"
+  loop:
+    - "sram_aclsync.timer"
+    - "sram_aclsync.service"
+  register: "aclsync_service_files"
 
-- name: remove fencing scripts
-  file:
-    path: "{item}"
-    state: "absent"
-  with_items:
-    - "/opt/fence.sh"
-    - "/opt/unfence.sh"
-    - "/etc/systemd/system/fence.service"
-
-- name: stop fence script
+- name: stop aclsync service
   systemd:
-    name: "fence.service"
+    name: "{{ item.item }}"
     state: "stopped"
     enabled: false
-  register: "fence_service_result"
-  failed_when: >
-    fence_service_result is failed
-    and 'Could not find the requested service' not in fence_service_result.msg
+  loop: "{{aclsync_service_files.results}}"
+  when: item.stat.exists
 
-- name: Install SBS ACL sync script
-  import_role:
-    name: "aclsync"
-  vars:
-    aclsync_aclfile: "{{ haproxy_ldap_acl_file }}"
-    aclsync_group: "{{ haproxy_ldap_acl_group }}"
+- name: remove aclsync files
+  file:
+    path: "{{item}}"
+    state: "absent"
+  with_items:
+    - "/etc/haproxy/acl_ldap_sbs.cfg"
+    - "/etc/systemd/system/sram_aclsync.timer"
+    - "/etc/systemd/system/sram_aclsync.service"
+    - "/opt/aclsync"

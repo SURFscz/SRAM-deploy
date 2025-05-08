@@ -2,6 +2,9 @@
 # custom config for yamllint
 # vim:ft=yaml:expandtab:sw=2
 
+ignore: |
+  .ansible/
+
 extends: default
 
 rules:
