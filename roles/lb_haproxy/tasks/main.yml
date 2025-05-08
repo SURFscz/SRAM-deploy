@@ -156,26 +156,28 @@
     - "systemd daemon-reload"
     - "restart haproxy"
 
+- name: check for service file existence
+  stat:
+    path: "/etc/systemd/system/{{item}}"
+  loop:
+    - "sram_aclsync.timer"
+    - "sram_aclsync.service"
+  register: "aclsync_service_files"
 
+- name: stop aclsync service
+  systemd:
+    name: "{{ item.item }}"
+    state: "stopped"
+    enabled: false
+  loop: "{{aclsync_service_files.results}}"
+  when: item.stat.exists
 
-- name: remove aclsync scripts
+- name: remove aclsync files
   file:
     path: "{{item}}"
     state: "absent"
   with_items:
-    - "/opt/aclsync"
+    - "/etc/haproxy/acl_ldap_sbs.cfg"
     - "/etc/systemd/system/sram_aclsync.timer"
     - "/etc/systemd/system/sram_aclsync.service"
-
-- name: stop aclsync service
-  systemd:
-    name: "{{item}}"
-    state: "stopped"
-    enabled: false
-  with_items:
-    - "sram_aclsync.timer"
-    - "sram_aclsync.service"
-  register: "aclsync_service_result"
-  failed_when: >
-    aclsync_service_result is failed
-    and 'Could not find the requested' not in aclsync_service_result.msg
+    - "/opt/aclsync"
