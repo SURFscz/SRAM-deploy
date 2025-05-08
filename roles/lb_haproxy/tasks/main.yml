@@ -145,24 +145,7 @@
     - "systemd daemon-reload"
     - "restart haproxy"
 
-- name: remove fencing scripts
-  file:
-    path: "{{item}}"
-    state: "absent"
-  with_items:
-    - "/opt/fence.sh"
-    - "/opt/unfence.sh"
-    - "/etc/systemd/system/fence.service"
 
-- name: stop fence service
-  systemd:
-    name: "fence.service"
-    state: "stopped"
-    enabled: false
-  register: "fence_service_result"
-  failed_when: >
-    fence_service_result is failed
-    and 'Could not find the requested service' not in fence_service_result.msg
 
 - name: remove aclsync scripts
   file:
