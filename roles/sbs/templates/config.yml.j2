@@ -45,20 +45,7 @@ oidc:
   totp_token_name: "{{ sbs_totp_token_name }}"
   # The service_id in the proxy_authz endpoint when logging into SBS. Most likely to equal the oidc.client_id
   sram_service_entity_id: "{{ sbs_client_id }}"
-  scopes:
-    - profile
-    - eduperson_scoped_affiliation
-    - voperson_external_affiliation
-    - email
-    - ssh_public_key
-    - eduperson_orcid
-    - uid
-    - voperson_external_id
-    - eduperson_entitlement
-    - eduperon_assurance
-    - openid
-    - eduperson_principal_name
-    - voperson_id
+  scopes: {{ sbs_oidc_scopes }}
 
 base_scope: "{{ base_domain }}"
 entitlement_group_namespace: "{{ sbs_urn_namespace }}"
