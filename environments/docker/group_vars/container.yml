@@ -154,6 +154,20 @@ sbs_eduteams_continue_endpoint: "https://{{ hostnames.oidc_op }}/continue"
 sbs_oidc_jwt_audience: "https://{{ hostnames.oidc_op }}"
 sbs_eb_continue_endpoint: "https://engine.(.*)surfconext.nl(.*)"
 sbs_oidc_verify_peer: True
+sbs_oidc_scopes:
+  - openid
+  - profile
+  - eduperson_scoped_affiliation
+  - voperson_external_affiliation
+  - email
+  - ssh_public_key
+  - eduperson_orcid
+  - uid
+  - voperson_external_id
+  - eduperson_entitlement
+  - eduperon_assurance
+  - eduperson_principal_name
+  - voperson_id
 
 sbs_manage_base_enabled: False
 sbs_manage_base_url: "https://manage.test2.surfconext.nl"

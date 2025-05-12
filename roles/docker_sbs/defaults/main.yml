@@ -109,6 +109,8 @@ sbs_eb_continue_endpoint: "https://engine.(.*)surfconext.nl(.*)"
 sbs_oidc_jwt_audience: "https://localhost"
 sbs_continue_eduteams_redirect_uri: "https://localhost/continue"
 sbs_oidc_verify_peer: False
+sbs_oidc_scopes:
+  - openid
 
 sbs_manage_base_enabled: False
 sbs_manage_base_url: "https://manage.test2.surfconext.nl"
