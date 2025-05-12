@@ -49,6 +49,7 @@
   with_items:
     - "eduteams-prd.pem"
     - "eduteams-acc.pem"
+    - "sram-test2.pem"
 
 #########################################################
 ## OIDC RP

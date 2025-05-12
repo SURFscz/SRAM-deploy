@@ -10,7 +10,7 @@
 session_start();
 
 # supported environments; should correspond to configured SPs
-$ENVS = array("test","acc","prd");
+$ENVS = array("test","test2", "acc","prd");
 $FORMATS = array("table", "json", "raw");
 
 $SUPPORTED = array(

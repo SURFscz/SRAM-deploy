@@ -47,7 +47,7 @@ server {
 
     root {{demosp_html_dir}};
 
-    location ~ ^/auth/(test|acc|prd)$ {
+    location ~ ^/auth/(test|test2|acc|prd)$ {
         fastcgi_pass     unix:/run/php/{{demosp_name}}.sock;
 
         include          fastcgi_params;
@@ -58,7 +58,7 @@ server {
         fastcgi_param PATH_INFO       $fastcgi_path_info;
     }
 
-    location ~ /rp/(test|acc|prd)$ {
+    location ~ /rp/(test|test2|acc|prd)$ {
         fastcgi_pass     unix:/run/php/sram-demosp.sock;
 
         include          fastcgi_params;
