@@ -18,6 +18,16 @@ $config['test'] = array(
         'description' => [ 'en' => 'SURF Research Access Management demo SP For TEST' ],
 );
 
+$config['test2'] = array(
+        'saml:SP',
+        'entityID' => 'https://demo-sp.sram.surf.nl/saml/module.php/saml/sp/metadata.php/test2',
+        'certificate' => "saml.pem",
+        'privatekey' => "saml.key",
+        'idp' => "https://engine.test2.surfconext.nl/authentication/idp/metadata",
+        'name' => [ 'en' => 'SRAM Test2 Demo SP' ],
+        'description' => [ 'en' => 'SURF Research Access Management demo SP For TEST2' ],
+);
+
 $config['acc'] = array(
         'saml:SP',
         'entityID' => 'https://demo-sp.sram.surf.nl/saml/module.php/saml/sp/metadata.php/acc',

@@ -3,10 +3,12 @@
 $config = array();
 
 $metadata['https://proxy.acc.sram.eduteams.org/proxy'] = array(
+    'entityid' => 'https://proxy.acc.sram.eduteams.org/proxy',
      'name' => [
         'en' => 'SRAM acc',
         'nl' => 'SRAM acc',
     ],
+    'metadata-set' => 'saml20-idp-remote',
     'SingleSignOnService' => [
         [
             'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
@@ -22,10 +24,12 @@ $metadata['https://proxy.acc.sram.eduteams.org/proxy'] = array(
     ],
 );
 $metadata['https://proxy.sram.surf.nl/proxy'] = array(
+    'entityid' => 'https://proxy.sram.surf.nl/proxy',
      'name' => [
         'en' => 'SRAM prod',
         'nl' => 'SRAM prod',
     ],
+    'metadata-set' => 'saml20-idp-remote',
     'SingleSignOnService' => [
         [
             'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
@@ -40,3 +44,20 @@ $metadata['https://proxy.sram.surf.nl/proxy'] = array(
       ],
     ],
 );
+
+$metadata['https://engine.test2.surfconext.nl/authentication/idp/metadata'] = [
+    'entityid' => 'https://engine.test2.surfconext.nl/authentication/idp/metadata',
+    'name' => [
+        'nl' => 'SURFconext TEST2 EngineBlock',
+        'en' => 'SURFconext TEST2 EngineBlock',
+    ],
+    'metadata-set' => 'saml20-idp-remote',
+    'SingleSignOnService' => [
+        [
+            'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
+            'Location' => 'https://engine.test2.surfconext.nl/authentication/idp/single-sign-on',
+        ],
+    ],
+    'SingleLogoutService' => [],
+    'certificate' => 'sram-test2.pem',
+];
