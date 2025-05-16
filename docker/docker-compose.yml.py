@@ -37,7 +37,7 @@ ip_lookup = {
 if args.ci and args.container:
     raise ValueError("Cannot generate a docker-compose.yml file for both CI and SCZ")
 elif args.ci and not args.container:
-    hosts = ['db', 'redis', 'sbs', 'test']
+    hosts = ['docker1']
 elif not args.ci and args.container:
     hosts = ['bhr', 'client', 'mail', 'lb', 'demo1', 'docker1', 'docker2']
 else:  # classic, non-ci, non-containerized setup
@@ -178,6 +178,11 @@ def create_compose() -> Dict[str, Any]:
             compose['services'][h] = redis_config(ip, h)
         else:
             compose['services'][h] = host_config(ip, h)
+
+    if args.ci:
+        # Add volume for docker '/var/lib/docker'
+        compose.setdefault('volumes', {})['docker_volume'] = {'driver': 'local'}
+        compose['services']['docker1'].setdefault('volumes', []).append('docker_volume:/var/lib/docker1')
 
     if args.container:
         # Add volume for docker '/var/lib/docker'
