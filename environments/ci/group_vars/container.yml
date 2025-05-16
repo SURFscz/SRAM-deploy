@@ -6,29 +6,24 @@ log_groups:
 
 ldap_admin_group: ldap_vm
 
-environment_name: vm
-environment_string: "SCZ Container"
-base_domain: "scz-vm.net"
+environment_name: ci
+environment_string: "SCZ CI"
+base_domain: "ci-runner.sram.surf.nl"
 internal_base_domain: "vm.scz-vm.net"
 
 sram_conf_dir: "/opt/sram"
 
 # externally visible!
 hostnames:
+  idp:      idp.{{base_domain}}
   sbs:      sbs.{{base_domain}}
-  meta:     meta.{{base_domain}}
-  ldap:     ldap.{{base_domain}}
-  ldap1:    ldap1.{{base_domain}}
-  ldap2:    ldap2.{{base_domain}}
-  oidc:     oidc-test.{{base_domain}}
-  sp:       sp-test.{{base_domain}}
-  idp:      idp-test.{{base_domain}}
-  oidc_op:  oidc-op.{{base_domain}}
+  oidc_op:  proxy.acc.sram.eduteams.org
 
-idp_test_port: 8444
-sp_test_port: 82
-oidc_test_port: 83
-oidc_op_port: 93
+sbs_backend_port: 90
+ci_rp_backend_port: 8443
+ci_idp_backend_port: 8444
+
+sram_ansible_nolog: false
 
 firewall_v4_incoming:
   - name: loadbalancer

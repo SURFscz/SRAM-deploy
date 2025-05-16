@@ -46,7 +46,7 @@ jobs:
 
       - name: Start CI env
         run: |
-          ./start-vm --ci --tags docker-db,docker-redis,docker-sbs,ci-test
+          ./start-vm --ci
 
       - name: Output SBS version
         run: |
