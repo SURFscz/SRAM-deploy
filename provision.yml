@@ -195,6 +195,7 @@
     - { role: "tools",                tags: ["bhr13","tools"]          }
     - { role: "sram_monitor",         tags: ["bhr13","sram-monitor"]   }
     - { role: "scim_monitor",         tags: ["bhr13","scim-monitor"]   }
+    - { role: "zabbix-backup",        tags: ["bhr13","zabbix-backup"]  }
 
 # - name: "demo clients demo1"
 #   hosts: "demo1"
@@ -221,4 +222,3 @@
     - { name: "version", import_tasks: "tasks/versions.yml", tags: ["common"]  }
   roles:
     - { role: "ci-test",                      tags: ["ci-test"] }
-

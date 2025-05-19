@@ -1,0 +1,3 @@
+---
+zabbix_backup_dir: "{{backup_base}}/zabbix"
+zabbix_backup_api_url: "https://{{zabbix_server}}/api_jsonrpc.php"

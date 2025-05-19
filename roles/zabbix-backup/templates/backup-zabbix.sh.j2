@@ -1,0 +1,68 @@
+#!/bin/bash
+
+set -e
+set -o pipefail
+
+if [ $UID -ne 0 ]
+then
+    echo "Sorry, this script must run as root"
+    exit 1
+fi
+
+BACKUP_DIR="{{zabbix_backup_dir}}"
+BACKUP_FILE="$BACKUP_DIR/zabbix_templates_$(/bin/date +%Y-%m-%d_%H:%M).json"
+mkdir -p -m 0755 "$BACKUP_DIR"
+
+
+URL="{{zabbix_backup_api_url}}"
+HB="Authorization: Bearer {{zabbix_backup_api_secret}}"
+HCT="Content-type: application/json-rpc"
+
+JSON='{
+        "jsonrpc": "2.0",
+        "method": "templategroup.get",
+        "params": {
+            "output": "extend",
+            "filter": {
+                "name": ["SRAM"]
+            }
+        },
+        "id": 0
+}'
+template_groupid=$(curl -s -d "$JSON" -H "$HCT" -H "$HB" "$URL" | jq '.result[0].groupid')
+if [ "$template_groupid" = "null" ]
+then
+    echo "ERROR while fetching template groups!"
+    curl -s -d "$JSON" -H "$HCT" -H "$HB" "$URL" | jq
+    exit 1
+fi
+
+JSON='{
+        "jsonrpc": "2.0",
+        "method": "template.get",
+        "params": {
+            "output": "extend",
+            "groupids": '$template_groupid'
+        },
+        "id": 0
+}'
+template_ids=$(curl -s -d "$JSON" -H "$HCT" -H "$HB" "$URL" | jq '[.result[].templateid]')
+if [ "$template_ids" = "null" ]
+then
+    echo "ERROR while fetching template ids!"
+    curl -s -d "$JSON" -H "$HCT" -H "$HB" "$URL" | jq
+    exit 1
+fi
+
+JSON='{
+        "jsonrpc": "2.0",
+        "method": "configuration.export",
+        "params": {
+            "format": "json",
+            "options": { "templates": '$template_ids' }
+        },
+        "id": 0
+}'
+curl -s -d "$JSON" -H "$HCT" -H "$HB" "$URL" | jq '.result' | jq 'fromjson' > "$BACKUP_FILE"
+
+exit 0

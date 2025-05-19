@@ -1,0 +1,8 @@
+---
+- name: "Install zabbix backup script"
+  template:
+    src: "backup-zabbix.sh.j2"
+    dest: "{{backup_runparts}}/backup-zabbix.sh"
+    owner: "root"
+    mode: "0700"
+  no_log: "{{sram_ansible_nolog}}"
