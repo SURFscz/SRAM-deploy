@@ -7,6 +7,8 @@ environment_string: "SCZ CI"
 base_domain: "ci-runner.sram.surf.nl"
 internal_base_domain: "vm.scz-vm.net"
 
+sram_conf_dir: "/opt/sram"
+
 # externally visible!
 hostnames:
   idp:      idp.{{base_domain}}
@@ -18,3 +20,94 @@ ci_rp_backend_port: 8443
 ci_idp_backend_port: 8444
 
 sram_ansible_nolog: false
+
+####################################################
+## Docker
+####################################################
+containers:
+  db: "sram-db"
+  redis: "sram-redis"
+  sbs: "sram-sbs"
+  sbs_server: "sram-sbs-server"
+  sbs_migration: "sram-sbs-migration"
+  ldap: "sram-ldap"
+  metadata: "sram-metadata"
+  pyff: "sram-pyff"
+  plsc: "sram-plsc"
+
+images:
+  db: "docker.io/library/mariadb:11"
+  redis: "docker.io/library/redis:7"
+  sbs: "ghcr.io/surfscz/sram-sbs-client:main"
+  sbs_server: "ghcr.io/surfscz/sram-sbs-server:main"
+  ldap: "ghcr.io/surfscz/sram-ldap:main"
+  metadata: "ghcr.io/openconext/openconext-basecontainers/apache2:latest"
+  pyff: "ghcr.io/surfscz/sram-pyff:main"
+  plsc: "ghcr.io/surfscz/sram-plsc:main"
+
+traefik_network: traefik
+internal_network: sram
+
+####################################################
+## SBS
+####################################################
+db_host: "docker1.vm.scz-vm.net"
+sbs_db_host: "{{ containers.db }}"
+sbs_db_admin_user: "{{ db_admin_user }}"
+sbs_db_admin_password: "{{ db_admin_password }}"
+
+sbs_redis_host: "{{ containers.redis }}"
+
+sbs_base_domain: "{{ hostnames.sbs }}"
+sbs_base_url: "https://{{sbs_base_domain}}"
+sbs_api_url: "https://{{sbs_base_domain}}/"
+
+sbs_oidc_authz_endpoint: "https://{{ hostnames.oidc_op }}/authorization"
+sbs_oidc_token_endpoint: "https://{{ hostnames.oidc_op }}/token"
+sbs_oidc_userinfo_endpoint: "https://{{ hostnames.oidc_op }}/userinfo"
+sbs_oidc_jwks_endpoint: "https://{{ hostnames.oidc_op }}/jwks.json"
+sbs_oidc_redirect_uri: "https://{{ hostnames.sbs }}/api/users/resume-session"
+sbs_eduteams_continue_endpoint: "https://{{ hostnames.oidc_op }}/continue"
+sbs_oidc_jwt_audience: "https://{{ hostnames.oidc_op }}"
+sbs_eb_continue_endpoint: "https://engine.(.*)surfconext.nl(.*)"
+sbs_oidc_verify_peer: True
+sbs_oidc_scopes:
+  - openid
+  - profile
+  - eduperson_scoped_affiliation
+  - voperson_external_affiliation
+  - email
+  - ssh_public_key
+  - eduperson_orcid
+  - uid
+  - voperson_external_id
+  - eduperson_entitlement
+  - eduperon_assurance
+  - eduperson_principal_name
+  - voperson_id
+
+sbs_manage_base_enabled: False
+sbs_manage_base_url: "https://manage.test2.surfconext.nl"
+sbs_manage_verify_peer: True
+
+sbs_ldap_url: "ldap://ldap.scz-vm.net/dc=services,dc=vnet"
+# entity_id will be replaced run-time in the client
+sbs_ldap_bind_account: "cn=admin,dc=entity_id,dc=services,dc=vnet"
+
+sbs_db_tls_cert: "{{wildcard_backend_cert.pub}}"
+
+sbs_mfa_idp_allowed:
+  - schac_home: "ci-runner.sram.surf.nl"
+    entity_id: "https://idp.scz-vm.net/saml/saml2/idp/metadata.php"
+
+sbs_ssid_identity_providers:
+  - schac_home: "ssid.org"
+    entity_id: "https://ssid.org"
+
+sbs_notifications_enabled: True
+sbs_cron_hour_of_day: "4"
+
+# Any last_login_date in the past triggers suspension notification
+sbs_suspension_inactive_days: 0
+# Second suspension cron will suspend notified users
+sbs_suspension_reminder_days: -1
