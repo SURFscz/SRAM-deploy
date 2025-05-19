@@ -26,6 +26,9 @@ test.vm.scz-vm.net ansible_host=172.20.1.30
 [container_docker1]
 docker1.vm.scz-vm.net ansible_host=172.20.1.32
 
+[container_infra:children]
+container_docker1
+
 [container_apps:children]
 container_docker1
 
