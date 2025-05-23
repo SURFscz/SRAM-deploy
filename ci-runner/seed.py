@@ -1,4 +1,4 @@
-#!/opt/sbs/sbs-env/bin/python
+#!/usr/local/bin/python
 import sys
 import base64
 import datetime
@@ -13,8 +13,8 @@ from sqlalchemy import text
 from sqlalchemy.exc import OperationalError
 from munch import munchify
 
-if "/opt/sbs/sbs" not in sys.path:
-  sys.path.insert(0, "/opt/sbs/sbs")
+if "/opt/sbs" not in sys.path:
+  sys.path.insert(0, "/opt/sbs")
 
 from server.db.audit_mixin import metadata
 from server.db.db import db, db_migrations
