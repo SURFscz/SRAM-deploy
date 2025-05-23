@@ -15,7 +15,7 @@ hostnames:
   sbs:      sbs.{{base_domain}}
   oidc_op:  proxy.acc.sram.eduteams.org
 
-sbs_backend_port: 90
+sbs_backend_port: 8080
 ci_rp_backend_port: 8443
 ci_idp_backend_port: 8444
 
