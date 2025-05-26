@@ -59,7 +59,7 @@ jobs:
 
       - name: Seed SBS
         run: |
-          docker exec docker-sbs-1 /tmp/ci-runner/seed.py
+          docker exec docker-docker1-1 docker exec sram-sbs-server /tmp/ci-runner/seed.py
 
       - name: Run tests
         run: |

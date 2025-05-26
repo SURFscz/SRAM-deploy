@@ -15,19 +15,25 @@
 [ci_sandbox1]
 
 [ci_sbs]
-sbs.vm.scz-vm.net ansible_host=172.20.1.27
 
 [ci_db]
-db.vm.scz-vm.net ansible_host=172.20.1.28
 
 [ci_bhr]
 
 [ci_test]
 test.vm.scz-vm.net ansible_host=172.20.1.30
 
+[container_docker1]
+docker1.vm.scz-vm.net ansible_host=172.20.1.32
+
+[container_infra:children]
+container_docker1
+
+[container_apps:children]
+container_docker1
+
 [ci:children]
-ci_sbs
-ci_db
+container_apps
 ci_test
 
 ##########################################
@@ -43,10 +49,8 @@ ci_test
 [sandbox1:children]
 
 [sbs:children]
-ci_sbs
 
 [db:children]
-ci_db
 
 [bhr:children]
 

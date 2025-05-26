@@ -37,7 +37,7 @@ ip_lookup = {
 if args.ci and args.container:
     raise ValueError("Cannot generate a docker-compose.yml file for both CI and SCZ")
 elif args.ci and not args.container:
-    hosts = ['db', 'redis', 'sbs', 'test']
+    hosts = ['docker1', 'test']
 elif not args.ci and args.container:
     hosts = ['bhr', 'client', 'mail', 'lb', 'demo1', 'docker1', 'docker2']
 else:  # classic, non-ci, non-containerized setup
@@ -119,9 +119,7 @@ def host_config(num: int, name: str) -> Dict[str, Any]:
         data['extra_hosts'] = [f'{h}.{domain}:{subnet}.{hosts["lb"]}' for h in logical_hosts]
 
     if args.ci:
-        if name == 'sbs':
-            data['depends_on'] = ['db', 'redis', 'test']
-            data['volumes'] += ['../ci-runner:/tmp/ci-runner']
+        data['volumes'] += ['../ci-runner:/tmp/ci-runner']
 
     return data
 
