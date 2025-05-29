@@ -36,6 +36,7 @@ sbs_oidc_scopes:
 
 sbs_manage_base_enabled: False
 sbs_manage_base_url: "https://manage.test2.surfconext.nl"
+sram_rp_entity_id: "sbs.test2.sram.surf.nl"
 sbs_manage_verify_peer: False
 
 sbs_ldap_url: "ldap://ldap.scz-vm.net/dc=services,dc=vnet"

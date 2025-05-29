@@ -85,6 +85,8 @@ mail:
 
 manage:
   enabled: {{ sbs_manage_base_enabled }}
+  # The entity_id of the SRAM RP in Manage for API retrieval, e.g "sbs.test2.sram.surf.nl"
+  sram_rp_entity_id: "{{ sbs_manage_sram_rp_entity_id }}"
   base_url: "{{ sbs_manage_base_url }}"
   user: "{{ sbs_manage_user }}"
   password: "{{ sbs_manage_password }}"

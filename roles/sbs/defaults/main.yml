@@ -109,6 +109,7 @@ sbs_oidc_scopes:
 
 sbs_manage_base_enabled: False
 sbs_manage_base_url: "http://localhost"
+sram_rp_entity_id: "sbs.test2.sram.surf.nl"
 sbs_manage_verify_peer: True
 
 sbs_idp_metadata_url: "https://metadata.surfconext.nl/signed/2023/edugain-downstream-idp.xml "
