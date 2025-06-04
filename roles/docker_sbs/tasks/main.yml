@@ -134,6 +134,8 @@
     restart_policy: "no"
     detach: false
     env:
+      RUNAS_UID: "{{ sbs_user_uid }}"
+      RUNAS_GID: "{{ sbs_group_gid }}"
       MIGRATIONS_ONLY: "1"
     # don't actually run the server
     command: "/bin/true"
@@ -184,8 +186,9 @@
     restart_policy: "always"
     state: "started"
     env:
-      USER: "{{ sbs_user_uid }}"
-      GROUP: "{{ sbs_group_gid }}"
+      RUNAS_UID: "{{ sbs_user_uid }}"
+      RUNAS_GID: "{{ sbs_group_gid }}"
+      CONFIG: "/opt/sbs/config/config.yml"
       REQUESTS_CA_BUNDLE: "/etc/ssl/certs/ca-certificates.crt"
       RUN_MIGRATIONS: "0"
     pull: "always"
