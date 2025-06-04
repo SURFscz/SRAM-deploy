@@ -135,6 +135,8 @@
     detach: false
     env:
       MIGRATIONS_ONLY: "1"
+    # don't actually run the server
+    command: "/bin/true"
     volumes:
       - "{{ sbs_conf_dir }}:/opt/sbs/config"
       - "{{ sbs_cert_dir }}:/opt/sbs/cert"
