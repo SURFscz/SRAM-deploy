@@ -13,7 +13,7 @@ if (!in_array($env, $ENVS)) {
     die();
 }
 
-# include th oidc config
+# include the oidc config
 include("{{demosp_dir}}/rp_config.php");
 
 $oidc_op = $client[$env]['op'];
@@ -21,12 +21,13 @@ $client_id = $client[$env]['id'];
 $client_secret = $client[$env]['secret'];
 $redirect_url = $_SERVER['REQUEST_SCHEME'] . "://" . $_SERVER['SERVER_NAME'] . "/rp/" . $env;
 $response_type = 'code';
-if ($env == "test2") {
-    $scopes = array('profile', 'email');
-} else {
-    $scopes = array('profile', 'email', 'uid',
-                'eduperson_assurance eduperson_entitlement eduperson_orcid eduperson_principal_name eduperson_scoped_affiliation voperson_external_affiliation voperson_external_id voperson_id aarc ssh_public_key orcid');
+$scopes = array('profile', 'openid');
+if ($env != "test2") {
+    array_push($scopes, 'email', 'uid', 'eduperson_assurance', 'eduperson_entitlement',
+               'eduperson_orcid', 'eduperson_principal_name', 'eduperson_scoped_affiliation',
+               'voperson_external_affiliation', 'voperson_external_id', 'voperson_id', 'aarc', 'ssh_public_key', 'orcid');
 }
+array_push($scopes, 'offline_access');
 $claims = '';
 
 $oidc = new OpenIDConnectClient($oidc_op, $client_id, $client_secret);
@@ -39,12 +40,17 @@ $oidc->setRedirectURL($redirect_url);
 $oidc->setResponseTypes(array($response_type));
 #$oidc->setAllowImplicitFlow(true);
 #$oidc->addAuthParam(array('response_mode' => 'form_post'));
+$oidc->addAuthParam(array('prompt' => 'consent'));
 if ($scopes) $oidc->addScope($scopes);
 if ($claims) $oidc->addAuthParam(array('claims' => $claims));
 
 $error = '';
 try {
     $oidc->authenticate();
+    $refreshToken = $oidc->getRefreshToken();
+    $userinfo_1 = $oidc->requestUserInfo();
+    $oidc->refreshToken($refreshToken);
+    $userinfo_2 = $oidc->requestUserInfo();
 } catch (Exception $e) {
     $error = htmlspecialchars(json_encode($e->getMessage(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 }
@@ -63,9 +69,10 @@ if ($error) {
   $claims = $oidc->getVerifiedClaims();
   echo "id_token:\n";
   echo "<pre id=claims>" . htmlspecialchars(json_encode($claims, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)) . "</pre>\n";
-  $userinfo = $oidc->requestUserInfo();
   echo "userinfo:\n";
-  echo "<pre id=data>" . htmlspecialchars(json_encode($userinfo, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)) . "</pre>\n";
+  echo "<pre id=data>" . htmlspecialchars(json_encode($userinfo_1, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)) . "</pre>\n";
+  echo "userinfo refresh:\n";
+  echo "<pre id=data>" . htmlspecialchars(json_encode($userinfo_2, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)) . "</pre>\n";
 }
 ?>
 </body></html>
