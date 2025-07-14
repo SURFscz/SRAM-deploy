@@ -136,12 +136,14 @@
     env:
       RUNAS_UID: "{{ sbs_user_uid }}"
       RUNAS_GID: "{{ sbs_group_gid }}"
+      # CONFIG: "../config/config.yml"
+      CONFIG: "/opt/sbs/server/config/config.yml"
       MIGRATIONS_ONLY: "1"
     # don't actually run the server
     command: "/bin/true"
     volumes:
-      - "{{ sbs_conf_dir }}:/opt/sbs/config"
-      - "{{ sbs_cert_dir }}:/opt/sbs/cert"
+      - "{{ sbs_conf_dir }}:/sbs-config"
+      - "{{ sbs_cert_dir }}:/sbs-config/cert"
       - "{{ sbs_log_dir }}:/opt/sbs/log"
     networks:
       - name: "{{internal_network}}"
@@ -188,13 +190,13 @@
     env:
       RUNAS_UID: "{{ sbs_user_uid }}"
       RUNAS_GID: "{{ sbs_group_gid }}"
-      CONFIG: "/opt/sbs/config/config.yml"
+      CONFIG: "/opt/sbs/server/config/config.yml"
       REQUESTS_CA_BUNDLE: "/etc/ssl/certs/ca-certificates.crt"
       RUN_MIGRATIONS: "0"
     pull: "always"
     volumes:
-      - "{{ sbs_conf_dir }}:/opt/sbs/config"
-      - "{{ sbs_cert_dir }}:/opt/sbs/cert"
+      - "{{ sbs_conf_dir }}:/sbs-config"
+      - "{{ sbs_cert_dir }}:/sbs-config/cert"
       - "{{ sbs_log_dir }}:/opt/sbs/log"
       # - "{{ sbs_apache_conf }}:/etc/apache2/sites-enabled/sbs.conf:ro"
       # - "sbs_static:/var/www/html"
