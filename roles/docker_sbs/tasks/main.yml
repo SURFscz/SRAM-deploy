@@ -136,7 +136,6 @@
     env:
       RUNAS_UID: "{{ sbs_user_uid }}"
       RUNAS_GID: "{{ sbs_group_gid }}"
-      # CONFIG: "../config/config.yml"
       CONFIG: "/opt/sbs/server/config/config.yml"
       MIGRATIONS_ONLY: "1"
     # don't actually run the server

@@ -169,7 +169,7 @@ sbs_oidc_scopes:
   - eduperson_principal_name
   - voperson_id
 
-sbs_manage_base_enabled: False
+sbs_manage_base_enabled: True
 sbs_manage_base_url: "https://manage.test2.surfconext.nl"
 sbs_manage_sram_rp_entity_id: "sbs.test2.sram.surf.nl"
 sbs_manage_verify_peer: True
@@ -195,3 +195,7 @@ sbs_cron_hour_of_day: "4"
 sbs_suspension_inactive_days: 0
 # Second suspension cron will suspend notified users
 sbs_suspension_reminder_days: -1
+
+sbs_send_exceptions: True
+sbs_send_js_exceptions: True
+sbs_exceptions_mail: sram-beheer@{{base_domain}}
