@@ -1,24 +1,25 @@
-#!/opt/sbs/sbs-env/bin/python
+#!/usr/local/bin/python
 import sys
 import base64
-import datetime
-import hashlib
 import os
 import uuid
 import yaml
+import time
 from flask import Flask
 from flask_migrate import Migrate
-from secrets import token_urlsafe
 from sqlalchemy import text
 from sqlalchemy.exc import OperationalError
 from munch import munchify
 
-if "/opt/sbs/sbs" not in sys.path:
-  sys.path.insert(0, "/opt/sbs/sbs")
+if "/opt/sbs" not in sys.path:
+    sys.path.insert(0, "/opt/sbs")
 
 from server.db.audit_mixin import metadata
 from server.db.db import db, db_migrations
-from server.db.domain import User, Organisation, OrganisationMembership, Service, Collaboration, CollaborationMembership, SshKey, Aup, SchacHomeOrganisation
+from server.db.domain import (
+    User, Organisation, OrganisationMembership, Service, Collaboration,
+    CollaborationMembership, SshKey, Aup, SchacHomeOrganisation
+)
 from server.tools import read_file
 
 config_file_location = os.environ.get("CONFIG", "config/config.yml")
@@ -40,9 +41,10 @@ with app.app_context():
             with db.engine.connect() as conn:
                 result = conn.execute(text("SELECT 1"))
         except OperationalError:
-            logger.info("Waiting for the database...")
+            print("Waiting for the database...")
             time.sleep(1)
 db_migrations(config.database.uri)
+
 
 def read_image(file_name):
     file = f"/tmp/ci-runner/{file_name}"

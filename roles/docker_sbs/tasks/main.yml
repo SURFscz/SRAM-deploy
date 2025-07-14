@@ -197,6 +197,7 @@
       - "{{ sbs_conf_dir }}:/sbs-config"
       - "{{ sbs_cert_dir }}:/sbs-config/cert"
       - "{{ sbs_log_dir }}:/opt/sbs/log"
+      - "/tmp/ci-runner:/tmp/ci-runner"
       # - "{{ sbs_apache_conf }}:/etc/apache2/sites-enabled/sbs.conf:ro"
       # - "sbs_static:/var/www/html"
     networks:

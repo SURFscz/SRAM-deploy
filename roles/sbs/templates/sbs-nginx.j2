@@ -37,6 +37,7 @@ server {
     location ~ /(api|pam-weblogin|flasgger_static|swagger|health|config|info) {
         include proxy_params;
         proxy_pass http://127.0.0.1:8080;
+        proxy_read_timeout {{sbs_backend_timeout}}s;
 
         proxy_hide_header Content-Security-Policy;
         add_header Content-Security-Policy $csp;
