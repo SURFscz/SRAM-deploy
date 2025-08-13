@@ -18,7 +18,7 @@ sbs:
     user: "sysread"
     passwd: "{{ sbs_sysread_password }}"
     verify_ssl: {{ false if environment_name=='vm' else true }}
-    timeout: 60
+    timeout: 180
     retry: {{ plsc_retry }}
 pwd: "{CRYPT}!"
 uid: 1000
