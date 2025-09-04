@@ -10,8 +10,11 @@
     public: true
   vars:
     letsencrypt_staging: false
-    letsencrypt_hosts:
-      - "{{ ansible_fqdn }}"
+    letsencrypt_hosts: ["{{ ansible_fqdn }}"]
+    letsencrypt_server: "{{ bhr13_acme_server_url }}"
+    letsencrypt_eab: true
+    letsencrypt_eab_keyid: "{{ bhr13_acme_eab_keyid }}"
+    letsencrypt_eab_hmac: "{{ bhr13_acme_hmac_key }}"
 
 - name: Install nginx config
   template:
