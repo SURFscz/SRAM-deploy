@@ -10,7 +10,7 @@
                                 --renew-with-new-domains
                                 --domains={{item}}
   register: result
-  changed_when: "'Your certificate and chain have been saved' in result.stdout"
+  changed_when: "'Certificate is saved at' in result.stdout"
   with_items: "{{ letsencrypt_hosts }}"
   when: "letsencrypt_enabled and letsencrypt_hosts is defined"
   notify: "renew letsencrypt certificates again"
@@ -26,8 +26,7 @@
                              --no-random-sleep-on-renew
                              --force-renewal
                              --cert-name={{item}}
-    creates: '{{letsencrypt_cert_dir}}/{{item}}/priv+fullchain.pem'
   register: result
-  changed_when: '"Your certificate and chain have been saved" in result.stdout'
+  changed_when: '"Congratulations, all renewals succeeded" in result.stdout'
   when: "letsencrypt_enabled and letsencrypt_hosts is defined"
   with_items: "{{ letsencrypt_hosts }}"

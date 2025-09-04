@@ -51,6 +51,21 @@
       notify: "renew letsencrypt certificates"
       when: "letsencrypt_server is defined"
 
+    - name: check if server of current cert matches current letsencrypt server
+      lineinfile:
+        path: "{{letsencrypt_account_dir}}/../renewal/{{item}}.conf"
+        regexp: "^server *= *{{ letsencrypt_server | regex_escape() }}"
+        state: "absent"
+      check_mode: true
+      changed_when: false
+      loop: "{{letsencrypt_hosts}}"
+      register: "letsencrypt_server_match"
+
+    # set var to true of if any of the hosts has a new acme server
+    - set_fact:
+        letsencrypt_server_changed: |
+          {{ ( letsencrypt_server_match.results | map(attribute='found', default=0) | min ) == 0 }}
+
     - name: check for new certs to generate
       stat:
         path: "{{letsencrypt_cert_dir}}/{{item}}"
@@ -59,18 +74,27 @@
       with_items: "{{letsencrypt_hosts}}"
       notify: "renew letsencrypt certificates"
 
-    - name: generate letsencrypt certificates
+    - name: generate acme certificates
       command:
         cmd: >
           /usr/bin/certbot certonly --noninteractive
                                     {% if letsencrypt_server is defined %}
                                       --server '{{letsencrypt_server}}'
                                     {% endif %}
-                                    --keep-until-expiring
+                                    --force-renewal
                                     --renew-with-new-domains
                                     --domains={{item}}
       register: result
-      changed_when: "'Your certificate and chain have been saved' in result.stdout"
+      changed_when: "'Certificate is saved at' in result.stdout"
       with_items: "{{ letsencrypt_hosts }}"
-      when: "no_cert_yet.changed"
+      when: "letsencrypt_server_changed or no_cert_yet.changed"
       notify: "renew letsencrypt certificates again"
+
+    - name: set renewal time for harica cert
+      lineinfile:
+        path: "{{letsencrypt_account_dir}}/../renewal/{{item}}.conf"
+        regex: "^#? *renew_before_expiry *="
+        line: "renew_before_expiry = 330 days"
+        state: "present"
+      when: "'harica' in letsencrypt_server"
+      loop: "{{letsencrypt_hosts}}"
