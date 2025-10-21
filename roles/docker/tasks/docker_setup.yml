@@ -2,16 +2,6 @@
 # this role is used to install docker on the host
 # only used on dev hosts
 
-- name: Add Docker GPG key.
-  ansible.builtin.apt_key:
-    url: "https://download.docker.com/linux/debian/gpg"
-    state: "present"
-
-- name: Add Docker repository.
-  ansible.builtin.apt_repository:
-    repo: "deb [arch=amd64] https://download.docker.com/linux/debian bullseye stable"
-    state: "present"
-
 - name: Create docker config directory
   ansible.builtin.file:
     path: "/etc/docker"
@@ -35,7 +25,7 @@
 
 - name: Install docker
   ansible.builtin.apt:
-    name: "docker-ce"
+    name: "docker.io"
     state: "present"
   notify:
     - "start docker"
@@ -45,15 +35,3 @@
     name: "ansible"
     groups: "docker"
     append: true
-
-# hackish way to allow name resolution from the host
-# it watches the docker daemon and updates /etc/hosts on the host
-- name: Install name resolution container
-  docker_container:
-    name: "name-resolver"
-    image: "dvdarias/docker-hoster"
-    state: "started"
-    restart_policy: "always"
-    volumes:
-      - "/var/run/docker.sock:/tmp/docker.sock"
-      - "/etc/hosts:/tmp/hosts"

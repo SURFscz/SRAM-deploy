@@ -122,7 +122,7 @@ else
         done
 
         # wait until ssh is running
-        if [ "$host" != "mail" ] &&  [ "$host" != "redis" ]
+        if [ -z "$IN_CONTAINER" ] && [ "$host" != "mail" ] &&  [ "$host" != "redis" ]
         then
             echo -n "."
             starttime=$(date +%s)
@@ -152,7 +152,7 @@ fi
 # try to find mitogen
 MITOGEN_PATH=
 MITOGEN_SUBPATH=ansible_mitogen/plugins/strategy
-for p in ./mitogen /opt/mitogen /usr/local/mitogen /usr/mitogen ~/.mitogen ~/mitogen /usr/lib/python3/dist-packages/
+for p in ./mitogen /opt/mitogen /usr/local/mitogen /usr/mitogen ~/.mitogen ~/mitogen /usr/lib/python3/dist-packages/ ./.venv/lib/python*/site-packages/
 do
     if [ -d "$p/$MITOGEN_SUBPATH/" ]
     then
@@ -185,12 +185,14 @@ if [ "$SKIP_ANSIBLE" ]
 then
     echo "Skipping ansible run"
 else
-    ansible-galaxy collection install --upgrade -r requirements.yml || ansible-galaxy collection install --force -r requirements.yml
+    export SSL_CERT_FILE=/Users/kodde001/Projects/SRAM-deploy/.venv/lib/python3.13/site-packages/certifi/cacert.pem
+    export REQUESTS_CA_BUNDLE=/Users/kodde001/Projects/SRAM-deploy/.venv/lib/python3.13/site-packages/certifi/cacert.pem
+    /Users/kodde001/Projects/SRAM-deploy/.venv/bin/ansible-galaxy collection install --upgrade -r requirements.yml || /Users/kodde001/Projects/SRAM-deploy/.venv/bin/ansible-galaxy collection install --force -r requirements.yml
     echo "Starting ansible"
 
     export ANSIBLE_FORCE_COLOR=True
     time \
-    ansible-playbook provision.yml \
+    /Users/kodde001/Projects/SRAM-deploy/.venv/bin/ansible-playbook provision.yml \
         -i $ENV_DIR/inventory \
         $ANSIBLE_VAULT_ARG \
         $EXTRA_VARS \

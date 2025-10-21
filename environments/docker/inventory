@@ -1,22 +1,22 @@
 ##########################################
 # VM environment
 [container_lb]
-lb.vm.scz-vm.net ansible_host=172.20.1.24
+lb.vm.scz-vm.net ansible_connection=docker ansible_host=docker-lb-1 ansible_user=root ansible_remote_tmp=/root/.ansible/tmp ansible_python_interpreter=/usr/bin/python3
 
 [container_client]
-client.vm.scz-vm.net ansible_host=172.20.1.25
+client.vm.scz-vm.net ansible_connection=docker ansible_host=docker-client-1 ansible_user=root ansible_remote_tmp=/root/.ansible/tmp ansible_python_interpreter=/usr/bin/python3
 
 [container_bhr]
-bhr.vm.scz-vm.net ansible_host=172.20.1.29
+bhr.vm.scz-vm.net ansible_connection=docker ansible_host=docker-bhr-1 ansible_user=root ansible_remote_tmp=/root/.ansible/tmp ansible_python_interpreter=/usr/bin/python3
 
 [container_demo1]
-demo1.vm.scz-vm.net ansible_host=172.20.1.31
+demo1.vm.scz-vm.net ansible_connection=docker ansible_host=docker-demo1-1 ansible_user=root ansible_remote_tmp=/root/.ansible/tmp ansible_python_interpreter=/usr/bin/python3
 
 [container_docker1]
-docker1.vm.scz-vm.net ansible_host=172.20.1.32
+docker1.vm.scz-vm.net ansible_connection=docker ansible_host=docker-docker1-1 ansible_user=root ansible_remote_tmp=/root/.ansible/tmp ansible_python_interpreter=/usr/bin/python3
 
 [container_docker2]
-docker2.vm.scz-vm.net ansible_host=172.20.1.33
+docker2.vm.scz-vm.net ansible_connection=docker ansible_host=docker-docker2-1 ansible_user=root ansible_remote_tmp=/root/.ansible/tmp ansible_python_interpreter=/usr/bin/python3
 
 [container:children]
 container_lb
