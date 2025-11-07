@@ -57,6 +57,14 @@
     upgrade: "--upgrade"
   when: "python_venv_upgrade | default(false)"
 
+- name: Upgrade pip in virtualenv
+  pip:
+    name: pip
+    state: latest
+    virtualenv: "{{ python_venv_dir }}"
+  become: "{{ python_venv_become }}"
+  become_user: "{{ python_venv_user }}"
+
 - name: Install requirements
   pip:
     requirements: "{{ python_venv_requirements }}"
