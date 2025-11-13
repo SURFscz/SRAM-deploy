@@ -72,8 +72,8 @@
     pull: true
     init: true
     env:
-      USER: "{{ metadata_user_uid }}"
-      GROUP: "{{ metadata_group_gid }}"
+      USER: "{{ metadata_user_uid | string }}"
+      GROUP: "{{ metadata_group_gid | string }}"
       SLEEP_TIME: "60s"
     mounts:
       - source: "{{ metadata_basedir }}/web"
