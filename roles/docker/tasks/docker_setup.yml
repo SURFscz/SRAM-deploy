@@ -50,6 +50,11 @@
 
 # hackish way to allow name resolution from the host
 # it watches the docker daemon and updates /etc/hosts on the host
+- name: Build name resolution image
+  docker_image_build:
+    name: "docker-hoster"
+    path: "docker/docker-hoster"
+
 - name: Install name resolution container
   community.docker.docker_container:
     name: "{{ containers.docker_hoster }}"
