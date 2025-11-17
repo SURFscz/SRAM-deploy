@@ -51,7 +51,7 @@
 - name: Build name resolution image
   community.docker.docker_image_build:
     name: "docker-hoster"
-    path: "docker/docker-hoster"
+    path: "./docker/docker-hoster"
 
 - name: Install name resolution container
   community.docker.docker_container:
