@@ -50,8 +50,8 @@
 # it watches the docker daemon and updates /etc/hosts on the host
 - name: Install name resolution container
   community.docker.docker_container:
-    name: "{{ containers.docker-hoster }}"
-    image: "{{ images.docker-hoster }}"
+    name: "{{ containers.docker_hoster }}"
+    image: "{{ images.docker_hoster }}"
     state: "started"
     restart_policy: "always"
     volumes:

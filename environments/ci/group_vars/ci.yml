@@ -40,7 +40,7 @@ containers:
   metadata: "sram-metadata"
   pyff: "sram-pyff"
   plsc: "sram-plsc"
-  docker-hoster: "name-resolver"
+  docker_hoster: "name-resolver"
 
 images:
   db: "docker.io/library/mariadb:11"
@@ -51,7 +51,7 @@ images:
   metadata: "ghcr.io/openconext/openconext-basecontainers/apache2:latest"
   pyff: "ghcr.io/surfscz/sram-pyff:main"
   plsc: "ghcr.io/surfscz/sram-plsc:main"
-  docker-hoster: "ghcr.io/surfscz/sram-docker-hoster:main"
+  docker_hoster: "ghcr.io/surfscz/sram-docker-hoster:main"
 
 traefik_network: traefik
 internal_network: sram
