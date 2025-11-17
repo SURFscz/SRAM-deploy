@@ -48,10 +48,15 @@
 
 # hackish way to allow name resolution from the host
 # it watches the docker daemon and updates /etc/hosts on the host
+- name: Build name resolution image
+  docker_image_build:
+    name: "docker-hoster"
+    path: "docker/docker-hoster"
+
 - name: Install name resolution container
   docker_container:
     name: "name-resolver"
-    image: "2fd71532d310"
+    image: "docker-hoster"
     state: "started"
     restart_policy: "always"
     volumes:
