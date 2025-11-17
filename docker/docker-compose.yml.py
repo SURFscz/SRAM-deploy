@@ -177,18 +177,19 @@ def create_compose() -> Dict[str, Any]:
         else:
             compose['services'][h] = host_config(ip, h)
 
+    # Add volume for docker '/var/lib/docker' and '/var/lib/containerd'
+    compose.setdefault('volumes', {})['docker_volume'] = {'driver': 'local'}
+    compose.setdefault('volumes', {})['docker_containerd'] = {'driver': 'local'}
+
     if args.ci:
-        # Add volume for docker '/var/lib/docker'
-        compose.setdefault('volumes', {})['docker_volume'] = {'driver': 'local'}
-        compose.setdefault('volumes', {})['docker_containerd'] = {'driver': 'local'}
         compose['services']['docker1'].setdefault('volumes', []).append('docker_volume:/var/lib/docker')
         compose['services']['docker1'].setdefault('volumes', []).append('docker_containerd:/var/lib/containerd')
 
     if args.container:
-        # Add volume for docker '/var/lib/docker'
-        compose.setdefault('volumes', {})['docker_volume'] = {'driver': 'local'}
         compose['services']['docker1'].setdefault('volumes', []).append('docker_volume:/var/lib/docker')
+        compose['services']['docker1'].setdefault('volumes', []).append('docker_containerd:/var/lib/containerd')
         compose['services']['docker2'].setdefault('volumes', []).append('docker_volume:/var/lib/docker')
+        compose['services']['docker2'].setdefault('volumes', []).append('docker_containerd:/var/lib/containerd')
 
     # Add mail test host on .99
     return compose
