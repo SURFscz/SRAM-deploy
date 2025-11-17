@@ -177,6 +177,11 @@ def create_compose() -> Dict[str, Any]:
         else:
             compose['services'][h] = host_config(ip, h)
 
+    if args.ci:
+        # Add volume for docker '/var/lib/docker'
+        compose.setdefault('volumes', {})['docker_volume'] = {'driver': 'local'}
+        compose['services']['docker1'].setdefault('volumes', []).append('docker_volume:/var/lib/docker1')
+
     if args.container:
         # Add volume for docker '/var/lib/docker'
         compose.setdefault('volumes', {})['docker_volume'] = {'driver': 'local'}

@@ -46,7 +46,6 @@
     groups: "docker"
     append: true
 
-
 - name: Start Hello World container
   docker_container:
     name: "hello-world"
