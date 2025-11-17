@@ -51,7 +51,7 @@
 - name: Install name resolution container
   docker_container:
     name: "name-resolver"
-    image: "docker-hoster:latest"
+    image: "2fd71532d310"
     state: "started"
     restart_policy: "always"
     volumes:
