@@ -51,7 +51,7 @@
 - name: Install name resolution container
   docker_container:
     name: "name-resolver"
-    image: "solipsist01/docker-hoster"
+    image: "docker-hoster:latest"
     state: "started"
     restart_policy: "always"
     volumes:
