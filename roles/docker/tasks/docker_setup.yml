@@ -48,13 +48,6 @@
     groups: "docker"
     append: true
 
-- name: Start Hello World container
-  docker_container:
-    name: "hello-world"
-    image: "hello-world"
-    state: "started"
-    restart_policy: "always"
-
 # hackish way to allow name resolution from the host
 # it watches the docker daemon and updates /etc/hosts on the host
 - name: Install name resolution container
