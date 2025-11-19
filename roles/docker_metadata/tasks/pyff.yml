@@ -99,7 +99,7 @@
         - "CMD"
         - "bash"
         - "-c"
-        - "[[ $(($(date +%s)-$(date -r /opt/pyff/web/idps.xml +%s))) -lt 120 ]]"
+        - "[[ $(($(date +%s)-$(date -r /opt/pyff/web/idps.xml +%s))) -lt 400 ]]"
       interval: "10s"
       timeout: "5s"
       retries: 3
