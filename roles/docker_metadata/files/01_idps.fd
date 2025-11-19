@@ -1,5 +1,6 @@
 - load fail_on_error True:
-    - "https://metadata.test.surfconext.nl/idps-metadata.xml verify certs/surfconext.crt"
+    #- "https://metadata.test.surfconext.nl/idps-metadata.xml verify certs/surfconext.crt"
+    - "https://metadata.test.surfconext.nl/idps-metadata.xml
     - "src/"
 - select:
     - "https://idp.diy.surfconext.nl/saml2/idp/metadata.php"

@@ -33,7 +33,7 @@ jobs:
                               python3-venv yamllint python3-jinja2 python3-yaml \
                               python3-selenium python3-requests python3-bs4
           sudo pip3 install --break-system-packages webdriver-manager
-          # git clone https://github.com/dw/mitogen.git ~/mitogen
+          git clone https://github.com/dw/mitogen.git ~/mitogen
           wget --quiet https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
           sudo apt install ./google-chrome-stable_current_amd64.deb
 
