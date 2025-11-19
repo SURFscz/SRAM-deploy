@@ -96,8 +96,11 @@
         type: "bind"
         read_only: true
     healthcheck:
-      test: >
-        ["CMD", "bash", "-c", "[[ $(($(date +%s)-$(date -r /opt/pyff/web/idps.xml +%s))) -lt $$SLEEP_TIME ]]"]
+      test:
+        - "CMD"
+        - "bash"
+        - "-c"
+        - "[[ $(($(date +%s)-$(date -r /opt/pyff/web/idps.xml +%s))) -lt $$SLEEP_TIME ]]"
       interval: "10s"
       timeout: "5s"
       retries: 3
