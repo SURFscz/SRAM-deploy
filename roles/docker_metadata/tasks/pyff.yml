@@ -94,13 +94,13 @@
         target: "/opt/pyff/xslt"
         type: "bind"
         read_only: true
-      interval: "10s"
-      timeout: "5s"
-      retries: 3
-      start_period: "5s"
     # healthcheck:
     #   test:
     #     - "CMD"
     #     - "bash"
     #     - "-c"
     #     - "[[ $(($(date +%s)-$(date -r /opt/pyff/web/idps.xml +%s))) -lt 400 ]]"
+    #   interval: "10s"
+    #   timeout: "5s"
+    #   retries: 3
+    #   start_period: "5s"
