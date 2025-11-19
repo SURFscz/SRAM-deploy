@@ -74,7 +74,7 @@
     env:
       USER: "{{ metadata_user_uid | string }}"
       GROUP: "{{ metadata_group_gid | string }}"
-      SLEEP_TIME: "60s"
+      SLEEP_TIME: "60"
     mounts:
       - source: "{{ metadata_basedir }}/web"
         target: "/opt/pyff/web"
@@ -97,7 +97,7 @@
         read_only: true
     healthcheck:
       test: >
-        [[ $(($(date +%s)-$(date -r /opt/pyff/web/idps.xml +%s))) -lt $$SLEEP_TIME ]]
+        ["CMD", "bash", "-c", "[[ $(($(date +%s)-$(date -r /opt/pyff/web/idps.xml +%s))) -lt $$SLEEP_TIME ]]"]
       interval: "10s"
       timeout: "5s"
       retries: 3
