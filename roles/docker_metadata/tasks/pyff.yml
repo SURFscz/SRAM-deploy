@@ -5,7 +5,8 @@
       openssl genrsa -out "{{ metadata_basedir }}/certs/signing.key" 2048;
       openssl req -new -nodes -x509 -subj "/C=NL/CN=signing"
                   -days 3650 -key "{{ metadata_basedir }}/certs/signing.key"
-                  -out "{{ metadata_basedir }}/certs/signing.crt" -extensions v3_ca
+                  -out "{{ metadata_basedir }}/certs/signing.crt" -extensions v3_ca;
+      chown {{metadata_user}}:{{metadata_group}} {{ metadata_basedir }}/certs/*;
     '
     creates: "{{ metadata_basedir }}/certs/signing.crt"
   when: "metadata_signing_cert is not defined"
@@ -16,8 +17,8 @@
     dest: "{{ metadata_basedir }}/certs/{{ item.file }}"
     content: "{{item.contents}}"
     mode: "{{item.mode}}"
-    uid: "{{metadata_user_uid}}"
-    gid: "{{metadata_group_gid}}"
+    owner: "{{metadata_user}}"
+    group: "{{metadata_group}}"
   with_items:
     - { file: "signing.key", mode: "0640", contents: "{{metadata_signing_cert.priv}}" }
     - { file: "signing.crt", mode: "0644", contents: "{{metadata_signing_cert.pub}}"  }
