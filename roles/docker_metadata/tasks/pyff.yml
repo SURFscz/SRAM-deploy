@@ -16,14 +16,13 @@
     dest: "{{ metadata_basedir }}/certs/{{ item.file }}"
     content: "{{item.contents}}"
     mode: "{{item.mode}}"
-    owner: "root"
-    group: "{{metadata_group}}"
+    uid: "{{metadata_user_uid}}"
+    gid: "{{metadata_group_gid}}"
   with_items:
     - { file: "signing.key", mode: "0640", contents: "{{metadata_signing_cert.priv}}" }
     - { file: "signing.crt", mode: "0644", contents: "{{metadata_signing_cert.pub}}"  }
   when: "metadata_signing_cert is defined"
   notify: "Restart the pyFF container"
-
 
 - name: "Copy source certificates"
   copy:
