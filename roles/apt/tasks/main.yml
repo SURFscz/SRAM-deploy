@@ -19,7 +19,7 @@
     dest: "/etc/apt/apt.conf.d/00-scz-update"
   when: "not is_dev"
 
-- name: remove unneccessary packages
+- name: remove unnecessary packages
   apt:
     state: "absent"
     purge: true
@@ -85,4 +85,3 @@
   register: "result"
   changed_when: "'0 upgraded, 0 newly installed, 0 to remove' not in result.stdout"
   when: "not is_dev"
-
