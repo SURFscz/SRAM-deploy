@@ -9,6 +9,7 @@ http_hosts:
   - "{{base_domain}}"
   - "sbs.{{base_domain}}"
   - "meta.{{base_domain}}"
+  - "mailpit.{{base_domain}}"
 
 zabbix_templates_extra:
   - "HAProxy by Zabbix agent"
