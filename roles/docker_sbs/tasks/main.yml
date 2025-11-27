@@ -33,7 +33,7 @@
 - name: "Stop SBS containers"
   docker_container:
     name: "{{ item }}"
-    state: "stopped"
+    state: "absent"
   with_items:
     - "{{ containers.sbs }}"
     - "{{ containers.sbs_server }}"
