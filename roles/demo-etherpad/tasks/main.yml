@@ -14,7 +14,7 @@
   notify: "Restart the Etherpad container"
 
 - name: Create the Etherpad container
-  docker_container:
+  community.docker.docker_container:
     name: "{{ demo_containers.etherpad }}"
     image: "{{ demo_images.etherpad }}"
     restart_policy: "always"

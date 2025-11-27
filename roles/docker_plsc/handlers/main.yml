@@ -12,7 +12,7 @@
 #     state: "restarted"
 
 - name: Restart the plsc container
-  docker_container:
+  community.docker.docker_container:
     name: "{{ containers.plsc }}"
     restart: true
     state: started

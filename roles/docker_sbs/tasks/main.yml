@@ -31,7 +31,7 @@
     sbs_user_uid: "{{ result.uid }}"
 
 - name: "Stop SBS containers"
-  docker_container:
+  community.docker.docker_container:
     name: "{{ item }}"
     state: "absent"
   with_items:
@@ -119,7 +119,7 @@
 - name: "Clean up old containers"
   block:
     - name: "Stop and remove sbs and sbs-server containers"
-      docker_container:
+      community.docker.docker_container:
         name: "{{ item }}"
         state: "absent"
       with_items:
@@ -134,7 +134,7 @@
 
 - name: "Run SBS migrations"
   throttle: 1
-  docker_container:
+  community.docker.docker_container:
     name: "{{ containers.sbs_migration }}"
     image: "{{ images.sbs_server }}"
     pull: "never"
@@ -162,14 +162,14 @@
 # Remove the migration container; we can do that with auto_remove, because if we use that, ansible
 # will not save the output in result
 - name: "Remove migration container"
-  docker_container:
+  community.docker.docker_container:
     name: "{{ containers.sbs_migration }}"
     state: "absent"
   # TODO: fix this by only running this if "sbs_image is changed"
   changed_when: false
 
 - name: "Start sbs container"
-  docker_container:
+  community.docker.docker_container:
     name: "{{ containers.sbs }}"
     image: "{{ images.sbs }}"
     pull: "never"
@@ -189,7 +189,7 @@
       traefik.http.routers.sbs.tls: "true"
 
 - name: "Start SBS server container"
-  docker_container:
+  community.docker.docker_container:
     name: "{{ containers.sbs_server }}"
     image: "{{ images.sbs_server }}"
     restart_policy: "always"
