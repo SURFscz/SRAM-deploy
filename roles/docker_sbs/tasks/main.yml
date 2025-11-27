@@ -31,7 +31,7 @@
     sbs_user_uid: "{{ result.uid }}"
 
 - name: "Stop SBS containers"
-  docker_container:
+  community.docker.docker_container:
     name: "{{ item }}"
     state: "absent"
   with_items:
