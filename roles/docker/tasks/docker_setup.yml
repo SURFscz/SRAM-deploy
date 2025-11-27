@@ -35,7 +35,9 @@
 
 - name: Install docker
   ansible.builtin.apt:
-    name: "docker-ce"
+    # TODO We want to stay away from docker 29 for now, but
+    # apt does not support <5:29 syntax
+    name: "docker-ce=5:28.*"
     state: "present"
   notify:
     - "start docker"
