@@ -30,6 +30,14 @@
   set_fact:
     sbs_user_uid: "{{ result.uid }}"
 
+- name: "Stop SBS containers"
+  docker_container:
+    name: "{{ item }}"
+    state: "stopped"
+  with_items:
+    - "{{ containers.sbs }}"
+    - "{{ containers.sbs_server }}"
+
 - name: "Create directories"
   file:
     path: "{{item.path}}"
