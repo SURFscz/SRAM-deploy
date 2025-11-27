@@ -105,7 +105,7 @@
   notify: Restart the ldap container
 
 - name: Create the ldap container
-  docker_container:
+  community.docker.docker_container:
     name: "{{ containers.ldap }}"
     image: "{{ images.ldap }}"
     restart_policy: "always"

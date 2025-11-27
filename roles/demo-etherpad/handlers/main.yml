@@ -5,7 +5,7 @@
 #     state: restarted
 
 - name: Restart the Etherpad container
-  docker_container:
+  community.docker.docker_container:
     name: "{{ demo_containers.etherpad }}"
     restart: true
     state: started

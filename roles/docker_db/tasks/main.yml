@@ -45,7 +45,7 @@
   notify: "Restart the database container"
 
 - name: Create the database container
-  docker_container:
+  community.docker.docker_container:
     name: "{{ containers.db }}"
     image: "{{ images.db }}"
     restart_policy: "always"
