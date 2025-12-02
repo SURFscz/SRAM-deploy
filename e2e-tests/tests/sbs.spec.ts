@@ -65,3 +65,25 @@ test('admin: update org settings and create new co', async ({ page }) => {
   await page.getByRole('link', { name: 'Academia Franekerensis' }).click();
   await expect(page.getByRole('link', { name: 'test collab' })).toBeVisible();
 })
+
+test('co-admin: accept invite and request access to application', async ({ page }) => {
+  await page.goto('http://localhost:8025/');
+  await page.getByRole('link').filter({ hasText: 'Invitation to join collaboration test collab' }).nth(0).click();
+  const page1Promise = page.waitForEvent('popup');
+  await page.locator('#preview-html').contentFrame().getByRole('link', { name: 'Join this collaboration' }).click();
+  const page1 = await page1Promise;
+  await page1.getByRole('button', { name: 'Log in to accept the invite' }).click();
+  await page1.waitForLoadState('networkidle');
+  await page1.waitForLoadState('load');
+  await page1.waitForLoadState('domcontentloaded');
+  await page1.waitForTimeout(1000);
+  await expect(page1.getByRole('heading', { name: 'Testing MFA log in' })).toBeVisible();
+  await page1.locator('#username').fill('user1');
+  await page1.locator('#password').fill('user1');
+  await page1.getByRole('button', { name: 'Get me in secure!' }).click();
+  await page1.getByText('I hereby certify that I have').click();
+  await page1.getByRole('button', { name: 'Onwards' }).click();
+  await page1.getByText('I agree to the organisation acceptable use policy').click();
+  await page1.getByRole('button', { name: 'Proceed to test collab' }).click();
+  await expect(page1.getByRole('link', { name: 'SCZ User One' })).toBeVisible();
+})
