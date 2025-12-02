@@ -67,23 +67,62 @@ test('admin: update org settings and create new co', async ({ page }) => {
 })
 
 test('co-admin: accept invite and request access to application', async ({ page }) => {
+  // Open mailpit and accept invite
   await page.goto('http://localhost:8025/');
   await page.getByRole('link').filter({ hasText: 'Invitation to join collaboration test collab' }).nth(0).click();
   const page1Promise = page.waitForEvent('popup');
   await page.locator('#preview-html').contentFrame().getByRole('link', { name: 'Join this collaboration' }).click();
-  const page1 = await page1Promise;
-  await page1.getByRole('button', { name: 'Log in to accept the invite' }).click();
-  await page1.waitForLoadState('networkidle');
-  await page1.waitForLoadState('load');
-  await page1.waitForLoadState('domcontentloaded');
-  await page1.waitForTimeout(1000);
-  await expect(page1.getByRole('heading', { name: 'Testing MFA log in' })).toBeVisible();
-  await page1.locator('#username').fill('user1');
-  await page1.locator('#password').fill('user1');
-  await page1.getByRole('button', { name: 'Get me in secure!' }).click();
-  await page1.getByText('I hereby certify that I have').click();
-  await page1.getByRole('button', { name: 'Onwards' }).click();
-  await page1.getByText('I agree to the organisation acceptable use policy').click();
-  await page1.getByRole('button', { name: 'Proceed to test collab' }).click();
-  await expect(page1.getByRole('link', { name: 'SCZ User One' })).toBeVisible();
+  const sramPage = await page1Promise;
+
+  // Log in to SRAM to accept invite
+  await sramPage.getByRole('button', { name: 'Log in to accept the invite' }).click();
+  await expect(sramPage.getByRole('heading', { name: 'Testing MFA log in' })).toBeVisible();
+  await sramPage.locator('#username').fill('user1');
+  await sramPage.locator('#password').fill('user1');
+  await sramPage.getByRole('button', { name: 'Get me in secure!' }).click();
+  await sramPage.getByText('I hereby certify that I have').click();
+  await sramPage.getByRole('button', { name: 'Onwards' }).click();
+  await sramPage.getByText('I agree to the organisation acceptable use policy').click();
+  await sramPage.getByRole('button', { name: 'Proceed to test collab' }).click();
+  await expect(sramPage.getByRole('link', { name: 'SCZ User One' })).toBeVisible();
+
+  // Request access to application
+  await sramPage.getByRole('button', { name: 'Applications' }).click();
+  await sramPage.getByRole('link', { name: 'Available applications' }).click();
+  await sramPage.getByRole('button', { name: 'Request' }).nth(1).click();
+  await sramPage.getByRole('textbox', { name: 'Your motivation to request an application connection' }).fill('for testing purposes');
+  await sramPage.getByRole('button', { name: 'Send' }).click();
+  await sramPage.getByRole('link', { name: 'Connections' }).click();
+  await expect(sramPage.getByRole('button', { name: 'Pending' })).toBeVisible();
 })
+
+test('admin: approve application access request', async ({ page }) => {
+  // Open mailpit and click on request link
+  await page.goto('http://localhost:8025/');
+  await page.getByRole('link').filter({ hasText: 'Request for new service' }).nth(0).click();
+  const page1Promise = page.waitForEvent('popup');
+  await page.locator('#preview-html').contentFrame().getByRole('link', { name: 'Login to process this request' }).click();
+  const sramPage = await page1Promise;
+
+  await expect(sramPage.getByRole('heading', { name: 'Testing MFA log in' })).toBeVisible();
+  await sramPage.locator('#username').fill('admin');
+  await sramPage.locator('#password').fill('admin');
+  await sramPage.getByRole('button', { name: 'Get me in secure!' }).click();
+  await sramPage.getByRole('cell', { name: 'test collab' }).click();
+  await sramPage.getByRole('button', { name: 'Accept' }).click();
+  await sramPage.getByRole('button', { name: 'Confirm' }).click();
+})
+
+test('co-admin: verify application access approved', async ({ page }) => {
+  // Log in to SRAM
+  await page.goto('https://sbs.scz-vm.net/');
+  await page.getByRole('button', { name: 'Log in' }).click();
+  await page.locator('#username').fill('user1');
+  await page.locator('#password').fill('user1');
+  await page.getByRole('button', { name: 'Get me in secure!' }).click();
+
+  // Verify application access approved
+  await page.getByRole('button', { name: 'Open' }).click();
+  await page.getByRole('button', { name: 'Applications' }).click();
+  await expect(page.getByRole('button', { name: 'Disconnect' })).toBeVisible();
+});
