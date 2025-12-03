@@ -68,6 +68,7 @@ sbs_log_to_stdout: True
 sbs_mfa_idp_allowed:
   - schac_home: "ci-runner.sram.surf.nl"
     entity_id: "https://idp.scz-vm.net/saml/saml2/idp/metadata.php"
+  - entity_id: "issuer.com"
 
 sbs_ssid_identity_providers:
   - schac_home: "ssid.org"
