@@ -1,4 +1,7 @@
 import { test, expect } from '@playwright/test';
+import axios from 'axios';
+import https from 'https';
+
 
 test.use({
   ignoreHTTPSErrors: true,
@@ -64,7 +67,7 @@ test('admin: update org settings and create new co', async ({ page }) => {
   await page.getByRole('searchbox', { name: 'Search organisations...' }).fill('Academia Franekerensis');
   await page.getByRole('link', { name: 'Academia Franekerensis' }).click();
   await expect(page.getByRole('link', { name: 'test collab' })).toBeVisible();
-})
+});
 
 test('co-admin: accept invite and request access to application', async ({ page }) => {
   // Open mailpit and accept invite
@@ -94,7 +97,7 @@ test('co-admin: accept invite and request access to application', async ({ page 
   await sramPage.getByRole('button', { name: 'Send' }).click();
   await sramPage.getByRole('link', { name: 'Connections' }).click();
   await expect(sramPage.getByRole('button', { name: 'Pending' })).toBeVisible();
-})
+});
 
 test('admin: approve application access request', async ({ page }) => {
   // Open mailpit and click on request link
@@ -111,7 +114,7 @@ test('admin: approve application access request', async ({ page }) => {
   await sramPage.getByRole('cell', { name: 'test collab' }).click();
   await sramPage.getByRole('button', { name: 'Accept' }).click();
   await sramPage.getByRole('button', { name: 'Confirm' }).click();
-})
+});
 
 test('co-admin: verify application access approved', async ({ page }) => {
   // Log in to SRAM
@@ -125,4 +128,34 @@ test('co-admin: verify application access approved', async ({ page }) => {
   await page.getByRole('button', { name: 'Open' }).click();
   await page.getByRole('button', { name: 'Applications' }).click();
   await expect(page.getByRole('button', { name: 'Disconnect' })).toBeVisible();
+});
+
+test('user: login to web application', async () => {
+  const agent = new https.Agent({ rejectUnauthorized: false });
+
+  let response = null;
+
+  try {
+    response = await axios.post('https://sbs.scz-vm.net/api/users/proxy_authz', {
+      user_id: 'user1',
+      service_id: 'https://cloud',
+      issuer_id: 'issuer.com',
+    }, {
+      headers: {
+        // Use username and password as defined in environments/vm/secrets/all.yml
+        'Authorization': 'Basic ' + Buffer.from('sysadmin:changethispassword').toString('base64')
+      },
+      httpsAgent: agent
+    });
+  } catch(error) {
+    console.error('Error during API request:', error);
+  }
+
+  console.log(response?.data);
+  expect(response).not.toBeNull();
+  expect(response?.data).toHaveProperty('attributes');
+  expect(response?.data?.attributes).toHaveProperty('eduPersonEntitlement');
+  expect(response?.data?.attributes.eduPersonEntitlement).toContain('urn:mace:surf.nl:x-sram-vm:group:ufra:testcollab');
+  expect(response?.data?.attributes.eduPersonEntitlement).toContain('urn:mace:surf.nl:x-sram-vm:label:ufra:testcollab:new label');
+  expect(response?.data?.attributes.eduPersonEntitlement).toContain('urn:mace:surf.nl:x-sram-vm:label:ufra:testcollab:new label for cloud unit');
 });
