@@ -5,7 +5,8 @@
       openssl genrsa -out "{{ metadata_basedir }}/certs/signing.key" 2048;
       openssl req -new -nodes -x509 -subj "/C=NL/CN=signing"
                   -days 3650 -key "{{ metadata_basedir }}/certs/signing.key"
-                  -out "{{ metadata_basedir }}/certs/signing.crt" -extensions v3_ca
+                  -out "{{ metadata_basedir }}/certs/signing.crt" -extensions v3_ca;
+      chown {{metadata_user}}:{{metadata_group}} {{ metadata_basedir }}/certs/*;
     '
     creates: "{{ metadata_basedir }}/certs/signing.crt"
   when: "metadata_signing_cert is not defined"
@@ -16,14 +17,13 @@
     dest: "{{ metadata_basedir }}/certs/{{ item.file }}"
     content: "{{item.contents}}"
     mode: "{{item.mode}}"
-    owner: "root"
+    owner: "{{metadata_user}}"
     group: "{{metadata_group}}"
   with_items:
     - { file: "signing.key", mode: "0640", contents: "{{metadata_signing_cert.priv}}" }
     - { file: "signing.crt", mode: "0644", contents: "{{metadata_signing_cert.pub}}"  }
   when: "metadata_signing_cert is defined"
   notify: "Restart the pyFF container"
-
 
 - name: "Copy source certificates"
   copy:
@@ -72,9 +72,8 @@
     pull: true
     init: true
     env:
-      USER: "{{ metadata_user_uid }}"
-      GROUP: "{{ metadata_group_gid }}"
-      SLEEP_TIME: "60s"
+      USER: "{{ metadata_user_uid | string }}"
+      GROUP: "{{ metadata_group_gid | string }}"
     mounts:
       - source: "{{ metadata_basedir }}/web"
         target: "/opt/pyff/web"
@@ -96,8 +95,11 @@
         type: "bind"
         read_only: true
     healthcheck:
-      test: >
-        [[ $(($(date +%s)-$(date -r /opt/pyff/web/idps.xml +%s))) -lt $$SLEEP_TIME ]]
+      test:
+        - "CMD"
+        - "bash"
+        - "-c"
+        - "[[ $(($(date +%s)-$(date -r /opt/pyff/web/idps.xml +%s))) -lt 400 ]]"
       interval: "10s"
       timeout: "5s"
       retries: 3

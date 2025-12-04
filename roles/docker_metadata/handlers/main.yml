@@ -13,7 +13,7 @@
 #     daemon_reload: true
 
 - name: Restart the pyFF container
-  docker_container:
+  community.docker.docker_container:
     name: "{{ containers.pyff }}"
     restart: true
     state: started

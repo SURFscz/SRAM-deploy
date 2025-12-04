@@ -32,7 +32,7 @@
 #       svn: "https://plugins.svn.wordpress.org/disable-json-api/tags/1.4.3/"
 
 - name: Create the Worpress DB container
-  docker_container:
+  community.docker.docker_container:
     name: "{{ demo_containers.database }}"
     image: "{{ demo_images.database }}"
     restart_policy: "always"
@@ -51,7 +51,7 @@
 
 
 - name: Create the Worpress container
-  docker_container:
+  community.docker.docker_container:
     name: "{{ demo_containers.wordpress }}"
     image: "{{ demo_images.wordpress }}"
     restart_policy: "always"
@@ -74,7 +74,7 @@
       - name: "{{ internal_network }}"
 
 - name: Run command in the worpress container
-  docker_container:
+  community.docker.docker_container:
     name: "{{ demo_containers.wordpress_cli }}"
     image: "{{ demo_images.wordpress_cli }}"
     restart_policy: "no"

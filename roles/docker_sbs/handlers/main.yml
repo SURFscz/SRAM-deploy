@@ -10,7 +10,7 @@
 #     enabled: true
 
 - name: Restart sbs containers
-  docker_container:
+  community.docker.docker_container:
     name: "{{ item }}"
     state: started
     restart: true
@@ -19,7 +19,7 @@
     - "{{ containers.sbs_server}}"
 
 - name: Restart redis container
-  docker_container:
+  community.docker.docker_container:
     name: "{{ containers.redis }}"
     state: started
     restart: true
