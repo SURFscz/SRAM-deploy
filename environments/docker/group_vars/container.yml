@@ -4,8 +4,6 @@ sudo_groups:
 log_groups:
   - "log_reader"
 
-ldap_admin_group: ldap_vm
-
 environment_name: vm
 environment_string: "SCZ Container"
 base_domain: "scz-vm.net"
@@ -68,13 +66,29 @@ internal_network: sram
 ####################################################
 ## LDAP
 ####################################################
+ldap_admin_group: ldap_vm
+# ldap_base_dn: "dc=scz-vm,dc=net"
+ldap_base_dn: "{{ (10*['dc=']) | zip(base_domain.split('.')) | list | map('join', '') | list | join(',') }}"
+
+services_ldap:
+  basedn: "dc=services,{{ ldap_base_dn }}"
+  o:      "Services"
+  binddn: "cn=admin,{{ ldap_base_dn }}"
+
 ldap_uri: "ldap://localhost/"
-ldap_rids:
-  101: ldaps://ldap1.scz-vm.net/
-  102: ldaps://ldap2.scz-vm.net/
+
+# ldap_rids:
+#   # TODO restore ldaps connection when TLS works
+#   101: "ldap://ldap1.{{ base_domain }}/"
+#   102: "ldap://ldap2.{{ base_domain }}/"
+ldap_rid_prefix: "ldap://"
+
+# Can we parametrize the base_domain part of these keys?
+# These hosts are added to the /etc/hosts file of the
+# LDAP containers
 ldap_hosts:
-  ldap1.scz-vm.net: "{{ iprange.lb }}"
-  ldap2.scz-vm.net: "{{ iprange.lb }}"
+  ldap1: "{{ iprange.docker1 }}"
+  ldap2: "{{ iprange.docker2 }}"
 
 ####################################################
 ## haproxy
