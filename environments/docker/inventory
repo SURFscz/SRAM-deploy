@@ -50,6 +50,9 @@ container_docker2
 [container_apps:children]
 container_docker1
 
+[ldap_primary:children]
+container_docker1
+
 [container_ldap:children]
 container_docker1
 container_docker2
