@@ -1,12 +1,12 @@
 ---
 # SimpleSAMLphp
-simplesaml_version: "2.4.0"
+simplesaml_version: "2.4.4"
 
 
 simplesaml_download_url: "https://github.com/simplesamlphp/simplesamlphp/releases/download/\
                           v{{ simplesaml_version }}/\
                           simplesamlphp-{{ simplesaml_version }}-full.tar.gz"
-simplesaml_checksum: "sha256:5c333f6bf19ed67c27bb15d52145b54c94ee294b6594af0100e857e845b088f5"
+simplesaml_checksum: "sha256:01e198e67f32b4bbf8946740a93737e790b7d113da425e05146f2ee80ab24f32"
 
 simplesaml_name: "ssp"
 simplesaml_user: "ssp-user"
