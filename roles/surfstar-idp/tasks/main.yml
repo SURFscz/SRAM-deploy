@@ -95,12 +95,32 @@
     - "vendor/"
     - "modules/"
 
-- name: Find RemoteUserSSL repository
+- name: Check if RemoteUserSSL is installed
   ansible.builtin.command:
-    cmd: jq .repositories.remoteuserssl composer.json
+    cmd: |
+      jq '.require["local/simplesamlphp-module-remoteuserssl"]' composer.json
     chdir: "{{ simplesaml_project_dir }}/simplesaml"
   register: repo
   changed_when: false
+
+- name: Check if symfony/options-resolver is installed
+  ansible.builtin.command:
+    cmd: |
+      jq '.require["symfony/options-resolver"]' composer.json
+    chdir: "{{ simplesaml_project_dir }}/simplesaml"
+  register: optionsresolver
+  changed_when: false
+
+- name: Pin symfony/options-resolver version to 7.3 (otherwise php 8.4 is required)
+  community.general.composer:
+    command: "require"
+    arguments: "symfony/options-resolver ^7.3"
+    working_dir: "{{ simplesaml_project_dir }}/simplesaml"
+    composer_executable: "{{ simplesaml_project_dir }}/simplesaml/bin/composer"
+  environment:
+    COMPOSER_AUTH: "{{composer_auth | to_json}}"
+  become_user: "{{surfstar_idp_file_user}}"
+  when: "optionsresolver.stdout=='null' and php_version is version('8.4', '<')"
 
 - name: Add RemoteUserSSL repo to composer.json
   community.general.composer:
