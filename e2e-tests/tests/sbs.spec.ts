@@ -1,10 +1,15 @@
 import { test, expect } from '@playwright/test';
-import callSramForUserLogin from '../helpers/auth';
+import callSramForUserLogin from '../helpers/callSramApi';
 
 
 test.use({
   ignoreHTTPSErrors: true,
 });
+
+// See SBS/server/test/seed.py
+const cloudApp = {
+  url: 'https://cloud',
+};
 
 test.describe.serial('SBS end-to-end tests', () => {
   test('admin: update org settings and create new co', async ({ page }) => {
@@ -110,6 +115,7 @@ test.describe.serial('SBS end-to-end tests', () => {
   });
   
   test('admin: approve application access request', async ({ page }) => {
+    await page.waitForTimeout(1000);
     // Open mailpit and click on request link
     await page.goto('http://localhost:8025/');
     await page.getByRole('link').filter({ hasText: 'Request for new service' }).nth(0).click();
@@ -141,10 +147,13 @@ test.describe.serial('SBS end-to-end tests', () => {
   });
   
   test('user: login to web application', async () => {  
-    const response = await callSramForUserLogin('user1', 'https://cloud');
-  
+    const response = await callSramForUserLogin('user3', cloudApp.url);
+    
+    expect(response?.status === 200)
     expect(response?.data?.attributes.eduPersonEntitlement).toContain('urn:mace:surf.nl:x-sram-vm:group:ufra:testcollab');
     expect(response?.data?.attributes.eduPersonEntitlement).toContain('urn:mace:surf.nl:x-sram-vm:label:ufra:testcollab:new label');
     expect(response?.data?.attributes.eduPersonEntitlement).toContain('urn:mace:surf.nl:x-sram-vm:label:ufra:testcollab:new label for cloud unit');
   });
 });
+
+
