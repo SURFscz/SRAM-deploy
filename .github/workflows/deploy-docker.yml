@@ -50,7 +50,7 @@ jobs:
       # See https://github.com/actions/cache/blob/main/tips-and-workarounds.md#update-a-cache
       - name: Setup cache
         id: cache-docker
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/docker-save
           key: docker-save-${{ github.run_id }}
