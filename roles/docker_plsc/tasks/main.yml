@@ -60,7 +60,7 @@
 #     python_venv_requirements: "{{ plsc_dir }}/requirements.txt"
 
 - name: Create the plsc container
-  docker_container:
+  community.docker.docker_container:
     name: "{{ containers.plsc }}"
     image: "{{ images.plsc }}"
     restart_policy: "always"

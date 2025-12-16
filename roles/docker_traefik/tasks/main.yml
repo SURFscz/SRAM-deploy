@@ -50,6 +50,8 @@
           - "0.0.0.0:636:636"
         pull: true
         restart_policy: "always"
+        state: started
+        restart: true
         networks:
           - name: "{{traefik_network}}"
         command: "--configFile=/config/config/traefik.yml"

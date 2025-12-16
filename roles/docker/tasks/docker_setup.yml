@@ -35,7 +35,9 @@
 
 - name: Install docker
   ansible.builtin.apt:
-    name: "docker-ce"
+    # TODO We want to stay away from docker 29 for now, but
+    # apt does not support <5:29 syntax
+    name: "docker-ce=5:28.*"
     state: "present"
   notify:
     - "start docker"
@@ -49,9 +51,9 @@
 # hackish way to allow name resolution from the host
 # it watches the docker daemon and updates /etc/hosts on the host
 - name: Install name resolution container
-  docker_container:
-    name: "name-resolver"
-    image: "dvdarias/docker-hoster"
+  community.docker.docker_container:
+    name: "{{ containers.docker_hoster }}"
+    image: "{{ images.docker_hoster }}"
     state: "started"
     restart_policy: "always"
     volumes:

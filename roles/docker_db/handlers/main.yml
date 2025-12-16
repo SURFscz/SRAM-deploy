@@ -7,7 +7,7 @@
 #     enabled: true
 
 - name: Restart the database container
-  docker_container:
+  community.docker.docker_container:
     name: "{{ containers.db }}"
     restart: true
     state: started
