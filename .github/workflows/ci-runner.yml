@@ -15,6 +15,10 @@ on:
         required: true
         default: 'myBar'
 
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   test:
     if: "github.actor!='dependabot[bot]'"
