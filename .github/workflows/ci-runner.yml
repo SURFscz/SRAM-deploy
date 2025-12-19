@@ -5,6 +5,7 @@ name: CI-runner
 
 on:
   push:
+    branches: ["main"]
   pull_request:
   # Triggers the workflow manually
   workflow_dispatch:
