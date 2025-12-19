@@ -129,6 +129,8 @@ jobs:
       - name: Run idempotency check...
         run: /usr/bin/python3 ./scripts/check-idempotency-status
 
+      - uses: ./.github/actions/playwright
+
       # Run SBS logintest
       - name: Run SBS logintest
         run: /usr/bin/python3 ./scripts/sbs-login.py
@@ -187,6 +189,7 @@ jobs:
           limit-access-to-actor: true
         timeout-minutes: 60
         if: failure()
+
 
 
 #        env:
