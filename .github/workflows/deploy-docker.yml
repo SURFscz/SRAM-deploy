@@ -5,7 +5,8 @@ name: "deploy-docker"
 
 # Controls when the action will run.
 on:
-  # Triggers the workflow on pull request events and pushes to main (only to main to prevent double pipelines for every PR event)
+  # Triggers the workflow on pull request events and pushes to main
+  # (only to main to prevent double pipelines for every PR event)
   push:
     branches: ["main"]
   pull_request:
@@ -190,8 +191,6 @@ jobs:
           limit-access-to-actor: true
         timeout-minutes: 60
         if: failure()
-
-
 
 #        env:
 #          ACTIONS_STEP_DEBUG: ${{ secrets.ACTIONS_STEP_DEBUG }}
