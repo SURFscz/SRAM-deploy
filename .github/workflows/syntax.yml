@@ -2,7 +2,7 @@
 name: "Syntax checks"
 
 on:
-  push:
+  push: ["main"]
   pull_request:
   workflow_dispatch:
 
