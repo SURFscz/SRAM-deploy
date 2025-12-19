@@ -5,8 +5,9 @@ name: "VM-deploy"
 
 # Controls when the action will run.
 on:
-  # Triggers the workflow on push or pull request events
+  # Triggers the workflow on pull request events and pushes to main (only to main to prevent double pipelines for every PR event)
   push:
+    branches: ["main"]
   pull_request:
 
   # Allows you to run this workflow manually from the Actions tab
