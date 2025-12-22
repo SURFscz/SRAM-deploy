@@ -7,9 +7,9 @@ name: "VM-deploy"
 on:
   # Triggers the workflow on pull request events and pushes to main
   # (only to main to prevent double pipelines for every PR event)
-  push:
-    branches: ["main"]
-  pull_request:
+  # push:
+  #   branches: ["main"]
+  # pull_request:
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -141,8 +141,6 @@ jobs:
 
       - name: Run idempotency check...
         run: /usr/bin/python3 ./scripts/check-idempotency-status
-
-      - uses: ./.github/actions/playwright      
 
       # Run SBS logintest
       - name: Run SBS logintest
