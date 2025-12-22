@@ -1,24 +1,112 @@
 ---
 name: Playwright Tests
-runs:
-  using: 'composite'
-  steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
-      with:
-        node-version: lts/*
-    - name: Install dependencies
-      working-directory: ./e2e-tests
-      run: npm install -g yarn && yarn
-    - name: Install Playwright Browsers
-      working-directory: ./e2e-tests
-      run: yarn playwright install --with-deps
-    - name: Run Playwright tests
-      working-directory: ./e2e-tests
-      run: yarn playwright test
-    - uses: actions/upload-artifact@v4
-      if: ${{ !cancelled() }}
-      with:
-        name: playwright-report
-        path: playwright-report/
-        retention-days: 30
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout $GITHUB_WORKSPACE
+        uses: actions/checkout@v4
+
+      # Run errands
+      - name: Run errands
+        run: |
+          sudo rm -f /opt/pipx_bin/ansible*
+          sudo apt -q update
+          sudo apt -y install ansible bridge-utils apparmor-utils wget \
+                              python3-pip python3-setuptools python3-wheel \
+                              python3-venv yamllint python3-jinja2 python3-yaml \
+                              python3-selenium python3-requests python3-bs4
+          sudo pip3 install --break-system-packages webdriver-manager
+          git clone https://github.com/dw/mitogen.git ~/mitogen
+          cat docker/hosts | sudo tee -a /etc/hosts
+          wget --quiet https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+          sudo apt install ./google-chrome-stable_current_amd64.deb
+
+      # Create date output to seconds
+      - name: Get Date
+        id: get-date
+        run: echo "date=$(/bin/date -u '+%Y%m%d%k%M%S')" >> $GITHUB_OUTPUT
+
+      # Restore cache based no fake time key (allways miss)
+      - name: Setup cache
+        id: cache-docker
+        uses: actions/cache@v4
+        with:
+          path: ~/docker-save
+          key: docker-save-${{ steps.get-date.outputs.date }}
+          restore-keys: docker-save-
+
+      # Useful for debugging
+      - name: Show versions
+        run: |
+          python3 --version
+          ansible --version
+
+      # apparmor is by default enabled for binaries _in_ the containers and is restricting
+      # mysql from reading tls keys
+      - name: Disable apparmor
+        run: |
+          sudo aa-status --json | jq '
+            .profiles | to_entries
+            | map( select( (.key | startswith("/") ) and .value=="enforce") | .key )
+            | .[]
+          ' | grep -vE 'totem|pidgin|passt' | \
+          while read -r profile; do
+            sudo aa-complain "$profile" || true
+          done
+
+      # Install Ansible modules
+      - name: Install Ansible modules
+        run: |
+          ansible-galaxy role install -r requirements.yml
+          ansible-galaxy collection install -r requirements.yml
+
+      # Restore docker cache
+      - name: Restore docker cache
+        run: docker load -i ~/docker-save/scz-base-cache.tar || true
+
+      # Get scz-base-cache ImageID
+      - name: Get scz-base-cache ImageID
+        id: scz-base-cache-id
+        run: >
+          ID=$(docker image list scz-base-cache -q)
+          echo "ID=$ID" >> $GITHUB_OUTPUT
+
+      # Start containers without deploy
+      - name: Start containers
+        shell: bash
+        env:
+          SKIP_ANSIBLE: 1
+        run: "./start-vm --classic"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+        working-directory: ./e2e-tests
+      - name: Install dependencies
+        run: npm install -g yarn && yarn
+        working-directory: ./e2e-tests
+      - name: Install Playwright Browsers
+        run: yarn playwright install --with-deps
+        working-directory: ./e2e-tests
+      - name: Run Playwright tests
+        run: yarn playwright test
+        working-directory: ./e2e-tests
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
