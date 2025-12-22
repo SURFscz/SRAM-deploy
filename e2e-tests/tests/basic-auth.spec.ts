@@ -22,9 +22,12 @@ test.describe.serial('Basic Authentication E2E test', () => {
   test('admin: create new co', async ({ page }) => {
     try {      
       await page.goto('https://sbs.scz-vm.net/');
+      await page.screenshot({ path: 'start-screenshot.png', fullPage: true });
     
       await loginAsPlatformAdmin(page);
-      const html = await page.content();
+      await page.screenshot({ path: 'loggedin-screenshot.png', fullPage: true });
+      
+      const html = await page.locator('body').innerHTML();
       console.log('Current HTML:', html);
       await seedDatabase(page);
       await createCollaboration(page);
