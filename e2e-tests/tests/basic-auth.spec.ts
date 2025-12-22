@@ -20,13 +20,20 @@ const cloudApp = {
 
 test.describe.serial('Basic Authentication E2E test', () => {
   test('admin: create new co', async ({ page }) => {
-    await page.goto('https://sbs.scz-vm.net/');
+    try {      
+      await page.goto('https://sbs.scz-vm.net/');
+    
+      await loginAsPlatformAdmin(page);
+      const html = await page.content();
+      console.log('Current HTML:', html);
+      await seedDatabase(page);
+      await createCollaboration(page);
   
-    await loginAsPlatformAdmin(page);
-    await seedDatabase(page);
-    await createCollaboration(page);
-
-    await expect(page.getByRole('link', { name: 'test collab' })).toBeVisible();
+      await expect(page.getByRole('link', { name: 'test collab' })).toBeVisible();
+    } catch (error) {
+      await page.screenshot({ path: 'debug-screenshot.png', fullPage: true });
+      throw error;
+    }
   });
   
   test('co-admin: accept invite and request access to application', async ({ page }) => {
