@@ -91,6 +91,45 @@ jobs:
           SKIP_ANSIBLE: 1
         run: "./start-vm --classic"
 
+      # Clean  up old docker cruft
+      - name: Clean  up old docker cruft
+        run: |
+          docker system prune -f --all
+          docker image  prune -f --all
+          docker volume prune -f
+          docker buildx prune -f
+
+      # Get scz-base ImageID
+      - name: Get scz-base ImageID
+        id: scz-base-id
+        run: >
+          ID=$(docker image list scz-base -q) &&
+          echo "ID=$ID" >> $GITHUB_OUTPUT
+
+
+      # Save docker cache
+      - name: Save docker cache
+        run: >
+          mkdir -p ~/docker-save &&
+          docker tag scz-base scz-base-cache &&
+          docker save scz-base-cache -o ~/docker-save/scz-base-cache.tar &&
+          ls -lh ~/docker-save || true
+        if: steps.scz-base-cache-id.outputs.ID != steps.scz-base-id.outputs.ID
+
+      # Deploy components
+      - name: Run start-vm
+        shell: bash
+        run: "./start-vm --classic"
+
+      # Deploy components again for idempotency
+      - name: Run start-vm --diff
+        env:
+          REEANTRANT: 1
+        run: "./start-vm --classic --diff"
+
+      - name: Run idempotency check...
+        run: /usr/bin/python3 ./scripts/check-idempotency-status
+
       - uses: actions/setup-node@v4
         with:
           node-version: lts/*
