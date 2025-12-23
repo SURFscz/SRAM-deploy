@@ -47,7 +47,7 @@ images:
   redis: "docker.io/library/redis:7"
   sbs: "ghcr.io/surfscz/sram-sbs-client:main"
   sbs_server: "ghcr.io/surfscz/sram-sbs-server:main"
-  ldap: "ghcr.io/surfscz/sram-ldap:main"
+  ldap: "ghcr.io/surfscz/sram-ldap-legacy:main"
   metadata: "ghcr.io/openconext/openconext-basecontainers/apache2:latest"
   pyff: "ghcr.io/surfscz/sram-pyff:main"
   plsc: "ghcr.io/surfscz/sram-plsc:main"
