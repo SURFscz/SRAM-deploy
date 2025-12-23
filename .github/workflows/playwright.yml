@@ -142,7 +142,7 @@ jobs:
         run: yarn playwright install --with-deps
         working-directory: ./e2e-tests
       - name: Run Playwright tests
-        run: yarn playwright test --project firefox
+        run: yarn playwright test --project chromium
         working-directory: ./e2e-tests
       - uses: actions/upload-artifact@v4
         if: always()
