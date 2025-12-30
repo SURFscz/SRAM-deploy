@@ -25,13 +25,8 @@ test.describe.serial('Basic Authentication E2E test', () => {
   test('platform-admin: seed db', async ({ page }) => {
     try {
       await page.goto('https://sbs.scz-vm.net/');
-      // await page.screenshot({ path: 'start-screenshot.png', fullPage: true });
     
       await loginOnHomePage(page, 'admin', 'admin');
-      // await page.screenshot({ path: 'loggedin-screenshot.png', fullPage: true });
-      
-      // const html = await page.locator('body').innerHTML();
-      // console.log('Current HTML:', html);
       await page.getByRole('link', { name: 'Research Access Management' }).waitFor({ state: 'visible' });
       await seedDatabase(page);
       await inviteOrgAdmin(page);
