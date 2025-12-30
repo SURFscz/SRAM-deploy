@@ -1,4 +1,5 @@
 import { Page } from "@playwright/test";
+import { login } from "../../helpers/login"
 
 export default async function acceptCoInviteAsUser(page: Page): Promise<Page> {
     await page.getByRole('link').filter({ hasText: 'Invitation to join collaboration test collab' }).nth(0).click();
@@ -7,9 +8,7 @@ export default async function acceptCoInviteAsUser(page: Page): Promise<Page> {
     const sramPage = await page1Promise;
     await sramPage.getByRole('button', { name: 'Log in to accept the invite' }).click();
     await sramPage.getByRole('heading', { name: 'Testing MFA log in' }).waitFor({ state: 'visible' });
-    await sramPage.locator('#username').fill('user3');
-    await sramPage.locator('#password').fill('user3');
-    await sramPage.getByRole('button', { name: 'Get me in secure!' }).click();
+    await login(sramPage, 'user3', 'user3');
     await sramPage.getByText('I agree to the organisation acceptable use policy').click();
     await sramPage.getByRole('button', { name: 'Proceed to test collab' }).click();
     return sramPage;

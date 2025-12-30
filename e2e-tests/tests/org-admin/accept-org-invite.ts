@@ -1,4 +1,5 @@
 import { Page } from "@playwright/test";
+import { login } from "../../helpers/login";
 
 export default async function acceptOrgAdminInvite(page: Page): Promise<Page> {
     await page.goto('http://localhost:8025/');
@@ -8,9 +9,7 @@ export default async function acceptOrgAdminInvite(page: Page): Promise<Page> {
     const sramPage = await page1Promise;
     await sramPage.getByRole('button', { name: 'Log in to accept the invite' }).click();
     await sramPage.getByRole('heading', { name: 'Testing MFA log in' }).waitFor({ state: 'visible' });
-    await sramPage.locator('#username').fill('user1');
-    await sramPage.locator('#password').fill('user1');
-    await sramPage.getByRole('button', { name: 'Get me in secure!' }).click();
+    await login(sramPage, 'user1', 'user1');
     await sramPage.getByText('I hereby certify that I have').click();
     await sramPage.getByRole('button', { name: 'Onwards' }).click();
     await sramPage.getByText('Accept, show me the organisation').click();
