@@ -4,9 +4,8 @@
 name: CI-runner
 
 on:
-  # push:
-  #   branches: ["main"]
-  # pull_request:
+  push:
+  pull_request:
   # Triggers the workflow manually
   workflow_dispatch:
     inputs:
@@ -14,10 +13,6 @@ on:
         description: 'my Foobar'
         required: true
         default: 'myBar'
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
 
 jobs:
   test:
