@@ -96,9 +96,9 @@
 
 - name: "container infra"
   hosts: "container_infra"
-  # vars_files:
-  #   - "{{ secrets_users_file }}"
-  #   - "{{ secrets_file }}"
+  vars_files:
+    - "{{ secrets_users_file }}"
+    - "{{ secrets_file }}"
   tasks:
     - { name: "version", import_tasks: "tasks/versions.yml", tags: ["common"]  }
   roles:
@@ -107,9 +107,9 @@
 
 - name: "container_apps"
   hosts: "container_apps"
-  # vars_files:
-  #   - "{{ secrets_users_file }}"
-  #   - "{{ secrets_file }}"
+  vars_files:
+    - "{{ secrets_users_file }}"
+    - "{{ secrets_file }}"
   tasks:
     - { name: "version", import_tasks: "tasks/versions.yml", tags: ["common"]  }
   roles:
@@ -124,9 +124,9 @@
 
 - name: "container_ldap"
   hosts: "container_ldap"
-  # vars_files:
-  #   - "{{ secrets_users_file }}"
-  #   - "{{ secrets_file }}"
+  vars_files:
+    - "{{ secrets_users_file }}"
+    - "{{ secrets_file }}"
   tasks:
     - { name: "version", import_tasks: "tasks/versions.yml", tags: ["common"]  }
   roles:
