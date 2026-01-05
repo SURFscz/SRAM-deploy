@@ -433,9 +433,9 @@
     ldap_rids: {}
   set_fact:
     ldap_rids: >-
-      {{ ldap_rids | combine({ rid.key |
-      format(start): rid.value | format(item.key) }) }}
-    start: "{{ start + 1 }}"
+      {{ ldap_rids | combine({ rid.key | format(start|int):
+      rid.value | format(item.key) }) }}
+    start: "{{ start|int + 1 }}"
   with_dict: "{{ ldap_hosts }}"
 
 - name: Setup rids
