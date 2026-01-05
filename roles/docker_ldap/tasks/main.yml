@@ -119,7 +119,9 @@
       value: "%s"
     etc_hosts: {}
   set_fact:
-    etc_hosts: "{{ etc_hosts | combine({ host.key | format(item.key): host.value | format(item.value) }) }}"
+    etc_hosts: >-
+      {{ etc_hosts |
+      combine({ host.key | format(item.key): host.value | format(item.value) }) }}
   with_dict: "{{ ldap_hosts }}"
 
 - name: Create the ldap container
@@ -430,7 +432,9 @@
       value: "{{ ldap_rid_prefix }}%s.{{ base_domain }}/"
     ldap_rids: {}
   set_fact:
-    ldap_rids: "{{ ldap_rids | combine({ rid.key | format(start): rid.value | format(item.key) }) }}"
+    ldap_rids: >-
+      {{ ldap_rids | combine({ rid.key |
+      format(start): rid.value | format(item.key) }) }}
     start: "{{ start + 1 }}"
   with_dict: "{{ ldap_hosts }}"
 

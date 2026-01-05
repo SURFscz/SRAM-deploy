@@ -68,7 +68,9 @@ internal_network: sram
 ####################################################
 ldap_admin_group: ldap_vm
 # ldap_base_dn: "dc=scz-vm,dc=net"
-ldap_base_dn: "{{ ((base_domain.split('.')|length)*['dc=']) | zip(base_domain.split('.')) | list | map('join', '') | list | join(',') }}"
+ldap_base_dn: >-
+  {{ ((base_domain.split('.')|length)*['dc=']) |
+  zip(base_domain.split('.')) | list | map('join', '') | list | join(',') }}
 
 services_ldap:
   basedn: "dc=services,{{ ldap_base_dn }}"
