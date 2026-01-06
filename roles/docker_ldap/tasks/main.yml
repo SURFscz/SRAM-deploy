@@ -138,7 +138,7 @@
     #   - 636:1636
     env:
       LDAP_ORGANISATION: "{{ environment_string }}"
-      LDAP_DOMAIN: "{{ base_domain }}"
+      LDAP_DOMAIN: "{{ ldap_base_domain }}"
       LDAP_ROOTPASS: "{{ services_ldap_password }}"
       # LDAP_ROOT: "{{ services_ldap.basedn }}"
       # LDAP_ADMIN_USERNAME: admin
