@@ -373,7 +373,8 @@
 #     ldap_rids: >-
 #       {%- set result = {} %}
 #       {%- for host in (ldap_hosts | dict2items | sort(attribute='key')) %}
-#       {%-   set _ = result.update({(101 + loop.index0)|string: ldap_rid_prefix ~ host.key ~ '.' ~ base_domain ~ '/'}) %}
+#       {%-   set _ = result.update({(101 + loop.index0)|string: \
+#         ldap_rid_prefix ~ host.key ~ '.' ~ base_domain ~ '/'}) %}
 #       {%- endfor %}
 #       {{ result }}
 
