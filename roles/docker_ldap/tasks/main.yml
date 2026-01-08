@@ -369,7 +369,7 @@
       {{ ldap_rids | combine({ rid.key | format(start|int):
       rid.value | format(item.key) }) }}
     start: "{{ start|int + 1 }}"
-  with_dict: "{{ ldap_hosts }}"
+  with_dict: "{{ ldap_hosts | dict2items | sort(attribute='key') }}"
 
 # Voor toekomstige Claude gebruikers: onderstaande construct levert aan het eind
 # een string representatie van de dict op, die niet meer gebruikt kan worden
