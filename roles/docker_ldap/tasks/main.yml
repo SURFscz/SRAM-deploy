@@ -4,12 +4,9 @@
   apt:
     state: "present"
     name:
-      # - "slapd"
-      # - "ldap-utils"
       - "python3-ldap"  # for ansible ldap modules
     install_recommends: false
-#   notify: "restart LDAP"
-#
+
 # - name: remove obsolete logging config
 #   file:
 #     path: "{{ item }}"
@@ -125,48 +122,22 @@
   with_dict: "{{ ldap_hosts }}"
 
 - name: Create the ldap container
-  # ignore_errors: yes
   community.docker.docker_container:
     name: "{{ containers.ldap }}"
     image: "{{ images.ldap }}"
     restart_policy: "always"
     state: started
-    # pull: true
-    pull: false
+    pull: true
     ports:
       - 0.0.0.0:389:389
-    #   - 636:1636
     env:
       LDAP_ORGANISATION: "{{ environment_string }}"
       LDAP_DOMAIN: "{{ ldap_base_domain }}"
       LDAP_ROOTPASS: "{{ services_ldap_password }}"
-      # LDAP_ROOT: "{{ services_ldap.basedn }}"
-      # LDAP_ADMIN_USERNAME: admin
-      # LDAP_ADMIN_PASSWORD: "{{ services_ldap_password }}"
-      # LDAP_CONFIG_ADMIN_USERNAME: admin
-      # LDAP_CONFIG_ADMIN_PASSWORD: "{{ services_ldap_password }}"
-      # LDAP_CONFIG_ADMIN_ENABLED: "yes"
-      # LDAP_CUSTOM_SCHEMA_DIR: "/opt/ldap/schema"
-      # # LDAP_EXTRA_SCHEMAS: "cosine,inetorgperson,nis,dyngroup"
-      # LDAP_SKIP_DEFAULT_TREE: "yes"
-      # # LDAP_USERS: ""
-      # # LDAP_PASSWORDS: ""
-      # LDAP_ENABLE_SYNCPROV: "yes"
-      # # LDAP_ENABLE_TLS: "yes"
-      # LDAP_ENABLE_TLS: "no"
-      # # TLS settings (including CA) are discarded if LDAP_ENABLE_TLS=no
-      # # LDAP_REQUIRE_TLS: "no"
-      # # LDAP_LDAPS_PORT_NUMBER: 1636
-      # # LDAP_TLS_CERT_FILE: "/opt/ldap/certs/backend.crt"
-      # # LDAP_TLS_KEY_FILE:  "/opt/ldap/certs/backend.key"
-      # # LDAP_TLS_CA_FILE:   "/opt/ldap/certs/frontend.crt"
-      # # LDAP_TLS_DH_PARAMS_FILE: "{{ ldap_certs_dir }}/dh_params"
     etc_hosts: "{{ etc_hosts }}"
     volumes:
       # For now the target side /opt/ldap is hard-coded
       - "{{ ldap_dir }}:/opt/ldap"
-      # - "{{ ldap_certs_dir }}:/opt/ldap/certs"
-      # - "{{ ldap_data_dir }}:/var/lib/ldap"
     networks:
       - name: "{{internal_network}}"
       - name: "{{traefik_network}}"
@@ -176,17 +147,8 @@
       traefik.tcp.routers.ldap.entrypoints: "ldaps"
       traefik.tcp.routers.ldap.rule: "HostSNI(`*`)"
       traefik.tcp.routers.ldap.tls: "true"
-      # traefik.tcp.routers.ldap.service: "ldap"
       traefik.tcp.services.ldap.loadbalancer.server.port: "389"
   register: "ldap_container"
-  # failed_when: false
-
-# Don't write a system-wide ldap config here
-#- name: Generate ldap.conf
-#  template:
-#    src: ldap.conf.j2
-#    dest: "/etc/ldap/ldap.conf"
-#    mode: "0644"
 
 - name: Wait for LDAP initialization
   ansible.builtin.wait_for:
@@ -283,48 +245,9 @@
       olcModuleLoad:
         - syncprov
         - dynlist.so
-        # - back_monitor
-        # - memberof.so
-        # - refint.so
     bind_dn: "cn=admin,cn=config"
     bind_pw: "{{ services_ldap_password }}"
     server_uri: "{{ ldap_uri }}"
-
-# - name: Setup Monitor
-#   community.general.ldap_entry:
-#     dn: olcdatabase=monitor,cn=config
-#     objectClass: olcDatabaseConfig
-#     attributes:
-#       olcRootDN: "cn=admin,cn=Monitor"
-#       olcRootPW: "{{ '%s' | format(monitor_ldap_password) |  slapd_hash }}"
-#
-
-# - name: Setup MemberOf(1)
-#   community.general.ldap_entry:
-#     dn: olcOverlay=memberof,olcDatabase={2}mdb,cn=config
-#     objectClass:
-#       - olcOverlayConfig
-#       - olcMemberOf
-#     attributes:
-#       olcMemberOfRefInt: "TRUE"
-#       olcMemberOfGroupOC: groupOfMembers
-#       olcMemberOfMemberAD: member
-#       olcMemberOfMemberOfAD: memberOf
-#     bind_dn: "cn=admin,cn=config"
-#     bind_pw: "{{ services_ldap_password }}"
-#     server_uri: "{{ ldap_uri }}"
-#
-# - name: Setup MemberOf(2)
-#   community.general.ldap_entry:
-#     dn: olcOverlay=refint,olcDatabase={2}mdb,cn=config
-#     objectClass:
-#       - olcOverlayConfig
-#       - olcRefintConfig
-#     attributes:
-#       olcRefintAttribute: memberof member
-#     bind_dn: "cn=admin,cn=config"
-#     bind_pw: "{{ services_ldap_password }}"
-#     server_uri: "{{ ldap_uri }}"
 
 - name: Setup Dynlist
   community.general.ldap_entry:
@@ -351,6 +274,10 @@
     bind_pw: "{{ services_ldap_password }}"
     server_uri: "{{ ldap_uri }}"
 
+# Leave this here in case we do want to build our own
+# root database from scratch instead of relying on the
+# domain based Debian slapd package setup
+#
 # - name: Setup main database
 #   community.general.ldap_attrs:
 #     dn: olcDatabase={1}mdb,cn=config
@@ -438,6 +365,18 @@
     start: "{{ start|int + 1 }}"
   with_dict: "{{ ldap_hosts }}"
 
+# Voor toekomstige Claude gebruikers: onderstaande construct levert aan het eind
+# een string representatie van de dict op, die niet meer gebruikt kan worden
+# in de hieropvolgende 'Setup rids' task...
+# - name: Set rids
+#   set_fact:
+#     ldap_rids: >-
+#       {%- set result = {} %}
+#       {%- for host in (ldap_hosts | dict2items | sort(attribute='key')) %}
+#       {%-   set _ = result.update({(101 + loop.index0)|string: ldap_rid_prefix ~ host.key ~ '.' ~ base_domain ~ '/'}) %}
+#       {%- endfor %}
+#       {{ result }}
+
 - name: Setup rids
   vars:
     rid: >-
@@ -454,7 +393,7 @@
     rids: []
   set_fact:
     rids: "{{ rids  + [ rid.format(item.key, item.value) ] }}"
-  with_dict: "{{ ldap_rids }}"
+  with_dict: "{{ dict(ldap_rids) }}"
 
 - name: Setup Syncrepl
   community.general.ldap_attrs:
@@ -462,11 +401,9 @@
     attributes:
       olcSyncrepl: "{{ rids }}"
       olcMultiProvider: "TRUE"
-    # state: exact
     bind_dn: "cn=admin,cn=config"
     bind_pw: "{{ services_ldap_password }}"
     server_uri: "{{ ldap_uri }}"
-#  when: inventory_hostname in groups['ldap_secondary']
 
 # We now have Syncrepl in place, so only write to primary
 - name: Initialize DIT
@@ -491,9 +428,3 @@
   include_tasks: "admins.yml"
   when: >
       inventory_hostname in groups['ldap_primary']
-#
-# - name: Install backup script
-#   template:
-#     src: "ldap-backup.sh.j2"
-#     dest: "{{backup_runparts}}/ldap-backup.sh"
-#     mode: "0755"

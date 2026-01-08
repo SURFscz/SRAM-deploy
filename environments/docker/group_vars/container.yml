@@ -67,8 +67,16 @@ internal_network: sram
 ## LDAP
 ####################################################
 ldap_admin_group: ldap_vm
+
 # ldap_base_domain: {{ base_domain }}
 ldap_base_domain: "vnet"
+
+# This template translates the dotted ldab_base_domain to it's
+# dc=foo,dc=bar counter representation
+# The reason is that non-interactive Debian slapd configuration takes a domain as
+# input to bootstrap the intial domain components of the initial MDB.
+# We do it here, and not in the role because we need ldap_base_dn in
+# services_ldap below
 ldap_base_dn: >-
   {{ ((ldap_base_domain.split('.')|length)*['dc=']) |
   zip(ldap_base_domain.split('.')) | list | map('join', '') | list | join(',') }}
