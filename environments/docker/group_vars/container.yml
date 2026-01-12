@@ -142,7 +142,7 @@ loadbalancer:
     hostname: "{{hostnames.ldap}}"
     protocol: ldap
     frontend_port: 636
-    backend_hosts: "{{groups['container_docker1']}}"
+    backend_hosts: "{{groups['container_ldap']}}"
     backend_port: 636
   - name: "client_ldap1"
     hostname: "{{hostnames.ldap1}}"
