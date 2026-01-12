@@ -5,10 +5,6 @@
     state: "present"
   register: "result"
 
-- name: "Save mailpit group gid"
-  set_fact:
-    mailpit_group_gid: "{{ result.gid }}"
-
 - name: "Create mailpit user"
   user:
     name: "{{ mailpit_user }}"
