@@ -4,8 +4,6 @@ sudo_groups:
 log_groups:
   - "log_reader"
 
-ldap_admin_group: ldap_vm
-
 environment_name: vm
 environment_string: "SCZ Container"
 base_domain: "scz-vm.net"
@@ -56,7 +54,7 @@ images:
   redis: "docker.io/library/redis:7"
   sbs: "ghcr.io/surfscz/sram-sbs-client:main"
   sbs_server: "ghcr.io/surfscz/sram-sbs-server:main"
-  ldap: "ghcr.io/surfscz/sram-ldap-legacy:main"
+  ldap: "ghcr.io/surfscz/sram-ldap:main"
   metadata: "ghcr.io/openconext/openconext-basecontainers/apache2:latest"
   pyff: "ghcr.io/surfscz/sram-pyff:main"
   plsc: "ghcr.io/surfscz/sram-plsc:main"
@@ -68,13 +66,40 @@ internal_network: sram
 ####################################################
 ## LDAP
 ####################################################
+ldap_admin_group: ldap_vm
+
+# ldap_base_domain: {{ base_domain }}
+ldap_base_domain: "vnet"
+
+# This template translates the dotted ldab_base_domain to it's
+# dc=foo,dc=bar counter representation
+# The reason is that non-interactive Debian slapd configuration takes a domain as
+# input to bootstrap the intial domain components of the initial MDB.
+# We do it here, and not in the role because we need ldap_base_dn in
+# services_ldap below
+ldap_base_dn: >-
+  {{ ((ldap_base_domain.split('.')|length)*['dc=']) |
+  zip(ldap_base_domain.split('.')) | list | map('join', '') | list | join(',') }}
+
+services_ldap:
+  basedn: "dc=services,{{ ldap_base_dn }}"
+  o:      "Services"
+  binddn: "cn=admin,{{ ldap_base_dn }}"
+
 ldap_uri: "ldap://localhost/"
-ldap_rids:
-  101: ldaps://ldap1.scz-vm.net/
-  102: ldaps://ldap2.scz-vm.net/
+
+# ldap_rids:
+#   # TODO restore ldaps connection when TLS works
+#   101: "ldap://ldap1.{{ base_domain }}/"
+#   102: "ldap://ldap2.{{ base_domain }}/"
+ldap_rid_prefix: "ldap://"
+
+# Can we parametrize the base_domain part of these keys?
+# These hosts are added to the /etc/hosts file of the
+# LDAP containers
 ldap_hosts:
-  ldap1.scz-vm.net: "{{ iprange.lb }}"
-  ldap2.scz-vm.net: "{{ iprange.lb }}"
+  ldap1: "{{ iprange.docker1 }}"
+  ldap2: "{{ iprange.docker2 }}"
 
 ####################################################
 ## haproxy
@@ -117,7 +142,7 @@ loadbalancer:
     hostname: "{{hostnames.ldap}}"
     protocol: ldap
     frontend_port: 636
-    backend_hosts: "{{groups['container_docker1']}}"
+    backend_hosts: "{{groups['container_ldap']}}"
     backend_port: 636
   - name: "client_ldap1"
     hostname: "{{hostnames.ldap1}}"

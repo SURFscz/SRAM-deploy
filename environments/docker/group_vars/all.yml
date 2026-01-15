@@ -49,6 +49,8 @@ iprange:
   mgnt:       "172.20.1.0/24"
   internal:   "172.20.1.0/24"
   monitoring: "172.20.1.29/32"
+  docker1:    "172.20.1.32"
+  docker2:    "172.20.1.33"
 
 mail:
   relay_host: "172.20.1.1"
@@ -101,11 +103,6 @@ backup_base: "/opt/backups"
 backup_runparts: "{{backup_base}}/run.d"
 
 ssl_certs_dir: "/etc/ssl"
-
-services_ldap:
-  basedn: "dc=services,dc=vnet"
-  o:      "Services"
-  binddn: "cn=admin,dc=services,dc=vnet"
 
 sbs_db_name: "sbs"
 sbs_db_user: "sbs"

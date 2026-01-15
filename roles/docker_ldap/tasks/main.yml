@@ -4,12 +4,9 @@
   apt:
     state: "present"
     name:
-      # - "slapd"
-      # - "ldap-utils"
       - "python3-ldap"  # for ansible ldap modules
     install_recommends: false
-#   notify: "restart LDAP"
-#
+
 # - name: remove obsolete logging config
 #   file:
 #     path: "{{ item }}"
@@ -66,6 +63,14 @@
     - sramPerson.ldif
   notify: Restart the ldap container
 
+- name: Copying ldap-add script
+  copy:
+    src: "{{ item }}"
+    dest: "{{ ldap_dir }}/{{ item }}"
+    mode: "0755"
+  with_items:
+    - ldap-add
+
 # - name: Copy DH params
 #   copy:
 #     src: "{{ item }}"
@@ -104,43 +109,35 @@
   when: "is_dev"
   notify: Restart the ldap container
 
+- name: Setup ldap hosts
+  vars:
+    host:
+      key: "%s.{{ base_domain }}"
+      value: "%s"
+    etc_hosts: {}
+  set_fact:
+    etc_hosts: >-
+      {{ etc_hosts |
+      combine({ host.key | format(item.key): host.value | format(item.value) }) }}
+  with_dict: "{{ ldap_hosts }}"
+
 - name: Create the ldap container
   community.docker.docker_container:
     name: "{{ containers.ldap }}"
     image: "{{ images.ldap }}"
     restart_policy: "always"
     state: started
-    # pull: true
+    pull: true
     ports:
-      - 127.0.0.1:389:1389
-    #   - 636:1636
+      - 0.0.0.0:389:389
     env:
-      LDAP_ROOT: "{{ services_ldap.basedn }}"
-      LDAP_ADMIN_USERNAME: admin
-      LDAP_ADMIN_PASSWORD: "{{ services_ldap_password }}"
-      LDAP_CONFIG_ADMIN_USERNAME: admin
-      LDAP_CONFIG_ADMIN_PASSWORD: "{{ services_ldap_password }}"
-      LDAP_CONFIG_ADMIN_ENABLED: "yes"
-      LDAP_CUSTOM_SCHEMA_DIR: "/opt/ldap/schema"
-      # LDAP_EXTRA_SCHEMAS: "cosine,inetorgperson,nis,dyngroup"
-      LDAP_SKIP_DEFAULT_TREE: "yes"
-      # LDAP_USERS: ""
-      # LDAP_PASSWORDS: ""
-      LDAP_ENABLE_SYNCPROV: "yes"
-      # LDAP_ENABLE_TLS: "yes"
-      LDAP_ENABLE_TLS: "no"
-      # TLS settings (including CA) are discarded if LDAP_ENABLE_TLS=no
-      # LDAP_REQUIRE_TLS: "no"
-      # LDAP_LDAPS_PORT_NUMBER: 1636
-      # LDAP_TLS_CERT_FILE: "/opt/ldap/certs/backend.crt"
-      # LDAP_TLS_KEY_FILE:  "/opt/ldap/certs/backend.key"
-      # LDAP_TLS_CA_FILE:   "/opt/ldap/certs/frontend.crt"
-      # LDAP_TLS_DH_PARAMS_FILE: "{{ ldap_certs_dir }}/dh_params"
-    etc_hosts: "{{ ldap_hosts }}"
+      LDAP_ORGANISATION: "{{ environment_string }}"
+      LDAP_DOMAIN: "{{ ldap_base_domain }}"
+      LDAP_ROOTPASS: "{{ services_ldap_password }}"
+    etc_hosts: "{{ etc_hosts }}"
     volumes:
-      - "{{ ldap_ldif_dir }}:/opt/ldap/schema"
-      - "{{ ldap_certs_dir }}:/opt/ldap/certs"
-      - "{{ ldap_data_dir }}:/bitnami/openldap"
+      # For now the target side /opt/ldap is hard-coded
+      - "{{ ldap_dir }}:/opt/ldap"
     networks:
       - name: "{{internal_network}}"
       - name: "{{traefik_network}}"
@@ -150,30 +147,45 @@
       traefik.tcp.routers.ldap.entrypoints: "ldaps"
       traefik.tcp.routers.ldap.rule: "HostSNI(`*`)"
       traefik.tcp.routers.ldap.tls: "true"
-      # traefik.tcp.routers.ldap.service: "ldap"
-      traefik.tcp.services.ldap.loadbalancer.server.port: "1389"
+      traefik.tcp.services.ldap.loadbalancer.server.port: "389"
+    healthcheck:
+      test:
+        - "CMD"
+        - "bash"
+        - "-c"
+        - "[[ -S /var/run/slapd/ldapi ]]"
   register: "ldap_container"
-
-# Don't write a system-wide ldap config here
-#- name: Generate ldap.conf
-#  template:
-#    src: ldap.conf.j2
-#    dest: "/etc/ldap/ldap.conf"
-#    mode: "0644"
 
 - name: Wait for LDAP initialization
   ansible.builtin.wait_for:
-    path: "{{ ldap_data_dir }}/slapd.d/cn=config/olcDatabase={0}config.ldif"
-    search_regex: olcRootDN
+    port: 389
+    delay: 5
 
 - name: Wait for 5 seconds
   ansible.builtin.wait_for:
     timeout: 5
   when: "ldap_container is changed"
 
+- name: Ensure the schemas are added to LDAP
+  ansible.builtin.shell:
+    # For now the target side /opt/ldap is hard-coded
+    cmd: "docker exec {{ containers.ldap }} /opt/ldap/ldap-add /opt/ldap/schema/{{ item }}"
+  register: "result"
+  failed_when: "result.rc not in [0,80]"
+  changed_when: "result.rc != 80"
+  become: true
+  loop:
+    - "sczGroup.ldif"
+    - "groupOfMembers.ldif"
+    - "eduPerson.ldif"
+    - "ldapPublicKey.ldif"
+    - "eduMember.ldif"
+    - "voPerson.ldif"
+    - "sramPerson.ldif"
+
 - name: Set indices
   community.general.ldap_attrs:
-    dn: "olcDatabase={2}mdb,cn=config"
+    dn: "olcDatabase={1}mdb,cn=config"
     attributes:
       olcDbIndex: "{{item}}"
     state: "present"
@@ -232,75 +244,20 @@
     server_uri: "{{ ldap_uri }}"
   when: "is_dev"  # TODO: check this.
 
-
-# - name: Ensure the schemas are added to LDAP
-#   ansible.builtin.script: "scripts/ldap-add {{ ldap_ldif_dir }}/{{ item }}"
-#   register: "result"
-#   failed_when: "result.rc not in [0,80]"
-#   changed_when: "result.rc != 80"
-#   loop:
-#     - "sczGroup.ldif"
-#     - "groupOfMembers.ldif"
-#     - "eduPerson.ldif"
-#     - "ldapPublicKey.ldif"
-#     - "eduMember.ldif"
-#     - "voPerson.ldif"
-#     - "sramPerson.ldif"
-#
-
 - name: Setup Modules
   community.general.ldap_attrs:
-    dn: cn=module{1},cn=config
+    dn: cn=module{0},cn=config
     attributes:
       olcModuleLoad:
-        # - syncprov
-        # - back_monitor
-        # - memberof.so
-        # - refint.so
+        - syncprov
         - dynlist.so
     bind_dn: "cn=admin,cn=config"
     bind_pw: "{{ services_ldap_password }}"
     server_uri: "{{ ldap_uri }}"
 
-# - name: Setup Monitor
-#   community.general.ldap_entry:
-#     dn: olcdatabase=monitor,cn=config
-#     objectClass: olcDatabaseConfig
-#     attributes:
-#       olcRootDN: "cn=admin,cn=Monitor"
-#       olcRootPW: "{{ '%s' | format(monitor_ldap_password) |  slapd_hash }}"
-#
-
-# - name: Setup MemberOf(1)
-#   community.general.ldap_entry:
-#     dn: olcOverlay=memberof,olcDatabase={2}mdb,cn=config
-#     objectClass:
-#       - olcOverlayConfig
-#       - olcMemberOf
-#     attributes:
-#       olcMemberOfRefInt: "TRUE"
-#       olcMemberOfGroupOC: groupOfMembers
-#       olcMemberOfMemberAD: member
-#       olcMemberOfMemberOfAD: memberOf
-#     bind_dn: "cn=admin,cn=config"
-#     bind_pw: "{{ services_ldap_password }}"
-#     server_uri: "{{ ldap_uri }}"
-#
-# - name: Setup MemberOf(2)
-#   community.general.ldap_entry:
-#     dn: olcOverlay=refint,olcDatabase={2}mdb,cn=config
-#     objectClass:
-#       - olcOverlayConfig
-#       - olcRefintConfig
-#     attributes:
-#       olcRefintAttribute: memberof member
-#     bind_dn: "cn=admin,cn=config"
-#     bind_pw: "{{ services_ldap_password }}"
-#     server_uri: "{{ ldap_uri }}"
-
 - name: Setup Dynlist
   community.general.ldap_entry:
-    dn: olcOverlay=dynlist,olcDatabase={2}mdb,cn=config
+    dn: olcOverlay=dynlist,olcDatabase={1}mdb,cn=config
     objectClass:
       - olcOverlayConfig
       - olcDynamicList
@@ -312,7 +269,7 @@
 
 - name: Setup Syncprov
   community.general.ldap_entry:
-    dn: olcOverlay=syncprov,olcDatabase={2}mdb,cn=config
+    dn: olcOverlay=syncprov,olcDatabase={1}mdb,cn=config
     objectClass:
       - olcOverlayConfig
       - olcSyncProvConfig
@@ -323,6 +280,10 @@
     bind_pw: "{{ services_ldap_password }}"
     server_uri: "{{ ldap_uri }}"
 
+# Leave this here in case we do want to build our own
+# root database from scratch instead of relying on the
+# domain based Debian slapd package setup
+#
 # - name: Setup main database
 #   community.general.ldap_attrs:
 #     dn: olcDatabase={1}mdb,cn=config
@@ -364,7 +325,7 @@
 
 - name: Set ACLs
   community.general.ldap_attrs:
-    dn: "olcDatabase={2}mdb,cn=config"
+    dn: "olcDatabase={1}mdb,cn=config"
     attributes:
       olcAccess:
         - >-
@@ -396,6 +357,33 @@
 #   101: ldaps://ldap1.scz-vm.net/
 #   102: ldaps://ldap2.scz-vm.net/
 
+- name: Set rids
+  vars:
+    start: 101
+    rid:
+      key: "%d"
+      value: "{{ ldap_rid_prefix }}%s.{{ base_domain }}/"
+    ldap_rids: {}
+  set_fact:
+    ldap_rids: >-
+      {{ ldap_rids | combine({ rid.key | format(start|int):
+      rid.value | format(item.key) }) }}
+    start: "{{ start|int + 1 }}"
+  with_dict: "{{ ldap_hosts | dict2items | sort(attribute='key') }}"
+
+# Voor toekomstige Claude gebruikers: onderstaande construct levert aan het eind
+# een string representatie van de dict op, die niet meer gebruikt kan worden
+# in de hieropvolgende 'Setup rids' task...
+# - name: Set rids
+#   set_fact:
+#     ldap_rids: >-
+#       {%- set result = {} %}
+#       {%- for host in (ldap_hosts | dict2items | sort(attribute='key')) %}
+#       {%-   set _ = result.update({(101 + loop.index0)|string: \
+#         ldap_rid_prefix ~ host.key ~ '.' ~ base_domain ~ '/'}) %}
+#       {%- endfor %}
+#       {{ result }}
+
 - name: Setup rids
   vars:
     rid: >-
@@ -412,19 +400,19 @@
     rids: []
   set_fact:
     rids: "{{ rids  + [ rid.format(item.key, item.value) ] }}"
-  with_dict: "{{ ldap_rids }}"
+  with_dict: "{{ dict(ldap_rids) }}"
 
 - name: Setup Syncrepl
   community.general.ldap_attrs:
-    dn: olcDatabase={2}mdb,cn=config
+    dn: olcDatabase={1}mdb,cn=config
     attributes:
       olcSyncrepl: "{{ rids }}"
-      olcMirrorMode: "TRUE"
+      olcMultiProvider: "TRUE"
     bind_dn: "cn=admin,cn=config"
     bind_pw: "{{ services_ldap_password }}"
     server_uri: "{{ ldap_uri }}"
-#  when: inventory_hostname in groups['ldap_secondary']
 
+# We now have Syncrepl in place, so only write to primary
 - name: Initialize DIT
   community.general.ldap_entry:
     dn: "{{ services_ldap.basedn }}"
@@ -439,16 +427,11 @@
     bind_dn: "{{ services_ldap.binddn }}"
     bind_pw: "{{ services_ldap_password }}"
     server_uri: "{{ ldap_uri }}"
-  # when: >
-  #     inventory_hostname in groups['ldap_primary']
+  when: >
+      inventory_hostname in groups['ldap_primary']
 
+# We now have Syncrepl in place, so only write to primary
 - name: Add ldap admins
   include_tasks: "admins.yml"
-  # when: >
-  #     inventory_hostname in groups['ldap_primary']
-#
-# - name: Install backup script
-#   template:
-#     src: "ldap-backup.sh.j2"
-#     dest: "{{backup_runparts}}/ldap-backup.sh"
-#     mode: "0755"
+  when: >
+      inventory_hostname in groups['ldap_primary']

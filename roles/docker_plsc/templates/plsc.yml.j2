@@ -1,13 +1,13 @@
 ---
 ldap:
   src:
-    uri: "ldap://{{ containers.ldap }}:1389/"
+    uri: "ldap://{{ containers.ldap }}:389/"
     basedn: "{{ services_ldap.basedn }}"
     binddn: "{{ services_ldap.binddn }}"
     passwd: "{{ services_ldap_password }}"
     sizelimit: 500
   dst:
-    uri: "ldap://{{ containers.ldap }}:1389/"
+    uri: "ldap://{{ containers.ldap }}:389/"
     basedn: "{{ services_ldap.basedn }}"
     binddn: "{{ services_ldap.binddn }}"
     passwd: "{{ services_ldap_password }}"
