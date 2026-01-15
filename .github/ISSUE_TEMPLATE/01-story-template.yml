@@ -6,7 +6,7 @@ body:
   - type: markdown
     attributes:
       value: >
-        Please use the title field to name the story and the below 
+        Please use the title field to name the story and the below
         fields to provide necessary details.
 
   - type: textarea
