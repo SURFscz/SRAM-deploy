@@ -1,35 +1,23 @@
 ---
-# This is a basic workflow to help you get started with Actions
+name: Playwright Tests
 
-name: "VM-deploy"
-
-# Controls when the action will run.
 on:
-  # Triggers the workflow on pull request events and pushes to main
-  # (only to main to prevent double pipelines for every PR event)
-  # push:
-  #   branches: ["main"]
-  # pull_request:
-
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
+  push:
+    branches: ["main"]
+  pull_request:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  deploy_classic:
-    # The type of runner that the job will run on
-    runs-on: "ubuntu-24.04"
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
+  test:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Checkout $GITHUB_WORKSPACE
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       # Run errands
       - name: Run errands
@@ -54,7 +42,7 @@ jobs:
       # Restore cache based no fake time key (allways miss)
       - name: Setup cache
         id: cache-docker
-        uses: actions/cache@v5
+        uses: actions/cache@v4
         with:
           path: ~/docker-save
           key: docker-save-${{ steps.get-date.outputs.date }}
@@ -142,65 +130,22 @@ jobs:
       - name: Run idempotency check...
         run: /usr/bin/python3 ./scripts/check-idempotency-status
 
-      # Run SBS logintest
-      - name: Run SBS logintest
-        run: /usr/bin/python3 ./scripts/sbs-login.py
-
-      - name: Save screenshot of error
-        uses: actions/upload-artifact@v6
+      - uses: actions/setup-node@v4
         with:
-          name: "sbs-logintest"
-          path: |
-            screenshot.png
-            page.html
-            console.txt
-        if: failure()
-
-      - name: Show journal output
-        run: >
-          ansible -v -i environments/vm/inventory --become "all" -m command -a "/bin/sh -c '
-            echo ====journal===;
-            journalctl -n200;
-          '"
-        if: failure()
-
-      - name: Show apache output
-        run: >
-          ansible -v -i environments/vm/inventory --become "all" -m command -a "/bin/sh -c '
-            if [ -e /var/log/apache2/error.log ]; then
-              echo ===apache errorlog===;
-              cat /var/log/apache2/error.log;
-            fi;
-          '"
-        if: failure()
-
-      - name: Show sbs output
-        run: >
-          ansible -v -i environments/vm/inventory --become "sbs" -m command -a "/bin/sh -c '
-            journalctl -u sram-sbs
-          '"
-        if: failure()
-
-      - name: Show apt output
-        run: >
-          ansible -v -i environments/vm/inventory --become "all" -m command -a "/bin/sh -c '
-            echo ===apt log===; cat /var/log/apt/term.log
-          '"
-        if: failure()
-
-      - name: Show netstat output
-        run: >
-          ansible -v -i environments/vm/inventory --become "all" -m command -a "/bin/sh -c '
-            echo ===netstat===; netstat -lnp
-          '"
-        if: failure()
-
-      # Setup tmate session
-      - name: Setup tmate session
-        env:
-          ACTIONS_STEP_DEBUG: ${{ secrets.ACTIONS_STEP_DEBUG}}
-        if: ${{ failure() && env.ACTIONS_STEP_DEBUG == 'true' }}
-        uses: mxschmitt/action-tmate@v3
+          node-version: lts/*
+          cache: 'npm'
+          cache-dependency-path: './e2e-tests/package.json'
+      - name: Install dependencies
+        run: npm install -g yarn && yarn
+        working-directory: ./e2e-tests
+      - name: Install Playwright Browsers
+        run: yarn playwright install --with-deps
+        working-directory: ./e2e-tests
+      - name: Run Playwright tests
+        run: yarn playwright test --project chromium
+        working-directory: ./e2e-tests
+      - uses: actions/upload-artifact@v4
+        if: always()
         with:
-          limit-access-to-actor: true
-        timeout-minutes: 60
+          name: playwright-screenshots
+          path: '**/*.png'
