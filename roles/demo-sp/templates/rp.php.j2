@@ -21,9 +21,9 @@ $client_id = $client[$env]['id'];
 $client_secret = $client[$env]['secret'];
 $redirect_url = $_SERVER['REQUEST_SCHEME'] . "://" . $_SERVER['SERVER_NAME'] . "/rp/" . $env;
 $response_type = 'code';
-$scopes = array('profile', 'openid');
+$scopes = array('profile', 'openid', 'email');
 if ($env != "test2") {
-    array_push($scopes, 'email', 'uid', 'eduperson_assurance', 'eduperson_entitlement',
+    array_push($scopes, 'uid', 'eduperson_assurance', 'eduperson_entitlement',
                'eduperson_orcid', 'eduperson_principal_name', 'eduperson_scoped_affiliation',
                'voperson_external_affiliation', 'voperson_external_id', 'voperson_id', 'aarc', 'ssh_public_key', 'orcid');
 }
