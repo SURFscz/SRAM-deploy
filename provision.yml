@@ -117,7 +117,8 @@
         when: is_dev }
     - { role: "docker_redis",    tags: ["redis",   "docker-redis"   ] }
     - { role: "docker_sbs",      tags: ["sbs",     "docker-sbs"     ] }
-    - { role: "docker_mailpit",  tags: ["mailpit", "docker-mailpit" ] }
+    - { role: "docker_mailpit",  tags: ["mailpit", "docker-mailpit" ],
+        when: "environment_name!='ci'" }
     - { role: "docker_metadata", tags: ["meta",    "docker-meta"    ],
         when: "environment_name!='ci'" }
     - { role: "docker_plsc",     tags: ["plsc",    "docker-plsc"    ],
