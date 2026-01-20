@@ -31,6 +31,6 @@ rules:
     indent-sequences: true
     check-multi-line-strings: false
   line-length:
-    max: 100
+    max: 200
     allow-non-breakable-words: false
   truthy: disable
