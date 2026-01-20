@@ -1,0 +1,38 @@
+---
+
+name: User Story
+description: Use this template for new user stories.
+title: "As a [role], I want to [goal] so that [reason]"
+type: "feature"
+body:
+  - type: markdown
+    attributes:
+      value: >
+        Please use the title field to name the story and the below
+        fields to provide necessary details.
+
+  - type: textarea
+    attributes:
+      label: Description
+      description: Provide a brief description of the story.
+
+  - type: textarea
+    attributes:
+      label: Task Overview
+      description: List the tasks need to complete this story.
+      placeholder: |
+        - [ ] Task 1
+        - [ ] Task 2
+
+  - type: textarea
+    attributes:
+      label: Acceptance Criteria
+      description: List the criteria to consider this story complete.
+      placeholder: |
+        - [ ] Criterion 1
+        - [ ] Criterion 2
+
+  - type: textarea
+    attributes:
+      label: Notes
+      description: Any additional notes or context.
