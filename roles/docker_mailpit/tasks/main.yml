@@ -35,6 +35,6 @@
     labels:
       traefik.enable: "true"
       traefik.docker.network: "{{traefik_network}}"
-      traefik.http.routers.mailpit.rule: "Host(`{{ hostnames.mailpit }}`)"
+      traefik.http.routers.mailpit.rule: "Host(`{{ hostnames.mail }}`)"
       traefik.http.routers.mailpit.tls: "true"
       traefik.http.services.mailpit.loadbalancer.server.port: 8025

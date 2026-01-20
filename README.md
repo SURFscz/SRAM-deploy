@@ -69,7 +69,7 @@ To get started, do the following:
   
   # SURFnet SRAM
   172.20.1.24 cm.scz-vm.net sp-test.scz-vm.net comanage.scz-vm.net idp-test.scz-vm.net meta.scz-vm.net proxy.scz-vm.net ldap.scz-vm.net mdq.scz-vm.net oidc-test.scz-vm.net sbs.scz-vm.net
-  172.20.1.24 google-test.scz-vm.net pam.scz-vm.net orcid-test.scz-vm.net ms-test.scz-vm.net oidc-op.scz-vm.net ldap1.scz-vm.net ldap2.scz-vm.net mailpit.scz-vm.net
+  172.20.1.24 google-test.scz-vm.net pam.scz-vm.net orcid-test.scz-vm.net ms-test.scz-vm.net oidc-op.scz-vm.net ldap1.scz-vm.net ldap2.scz-vm.net mail.scz-vm.net
   172.20.1.20 ldap1.vm.scz-vm.net
   172.20.1.21 ldap2.vm.scz-vm.net
   172.20.1.22 proxy.vm.scz-vm.net

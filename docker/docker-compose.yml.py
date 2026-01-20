@@ -39,7 +39,7 @@ if args.ci and args.container:
 elif args.ci and not args.container:
     hosts = ['docker1', 'test']
 elif not args.ci and args.container:
-    hosts = ['bhr', 'client', 'mail', 'lb', 'demo1', 'docker1', 'docker2']
+    hosts = ['bhr', 'client', 'lb', 'demo1', 'docker1', 'docker2']
 else:  # classic, non-ci, non-containerized setup
     hosts = ['bhr', 'client', 'lb', 'redis', 'mail', 'sandbox1', 'db', 'sbs', 'ldap1', 'ldap2', 'meta', 'demo1']
 
