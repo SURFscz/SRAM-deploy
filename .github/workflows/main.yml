@@ -141,7 +141,7 @@ jobs:
         run: /usr/bin/python3 ./scripts/sbs-login.py
 
       - name: Save screenshot of error
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: "sbs-logintest"
           path: |
