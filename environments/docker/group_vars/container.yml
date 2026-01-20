@@ -22,7 +22,7 @@ hostnames:
   sp:       sp-test.{{base_domain}}
   idp:      idp-test.{{base_domain}}
   oidc_op:  oidc-op.{{base_domain}}
-  mailpit:  mailpit.{{base_domain}}
+  mailpit:  mail.{{base_domain}}
 
 idp_test_port: 8444
 sp_test_port: 82
