@@ -185,6 +185,7 @@ if [ "$SKIP_ANSIBLE" ]
 then
     echo "Skipping ansible run"
 else
+    ansible-galaxy role install -r requirements.yml
     ansible-galaxy collection install --upgrade -r requirements.yml || ansible-galaxy collection install --force -r requirements.yml
     echo "Starting ansible"
 

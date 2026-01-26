@@ -56,7 +56,7 @@ To get started, do the following:
 
     ```
     ansible-galaxy install -r requirements.yml
-    ansible-galaxy collection install -r requirements.yml
+    ansible-galaxy collection install --upgrade -r requirements.yml || ansible-galaxy collection install --force -r requirements.yml
     ```
 
 - Add the hardcoded docker hosts (from `./docker/hosts`) to your own `/etc/hosts` file:
