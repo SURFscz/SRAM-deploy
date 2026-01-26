@@ -54,7 +54,12 @@ iprange:
 
 mail:
   relay_host: "172.20.1.1"
-  relay_to: "mail.vm.{{base_domain}}"
+
+  # This is so that we don't have to open up an SMTP port
+  # on the loadbalancer, but it restricts SBS outgoing mail
+  # to a container on the same docker host:
+  relay_to: "sram-mailpit"
+
   relay_port: 1025
   relay_for:
     - "{{iprange.mgnt}}"
