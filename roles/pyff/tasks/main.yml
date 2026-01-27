@@ -30,7 +30,7 @@
     - { path: "{{pyff_cert_dir}}",     group: "{{pyff_group}}", mode: "0755" }
 
 # requirements.txt can be generated from virtualenv/bin/pip freeze
-- name: Generate requirements.txt.j2 from template
+- name: Generate requirements.txt from template
   template:
     src: "requirements.txt.j2"
     dest: "{{ pyff_project_dir }}/requirements.txt"
