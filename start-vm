@@ -26,9 +26,10 @@ while getopts -- '-:h' OPT; do
                         echo "  --ci: for use in CI runs"
                         echo "  --skip-ansible: only bring up VMs, skip Ansible run"
                         echo "  --skip-vm: skip bringing up VMs, only run Ansible"
+                        echo "  --classic: Use classic VM (in containers) deploy"
                         echo "  --container: Use container-in-container based deploy"
                         echo "  --no-mitogen: Disable use of mitogen"
-                        echo "  --stop: Stop all containers"
+                        echo "  --stop: Stop all containers (in containers)"
                         exit 0
                         ;;
         s | stop )      docker exec -ti docker-docker1-1 bash -c 'docker stop $(docker ps -q) || true'
