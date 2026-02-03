@@ -10,4 +10,11 @@ testidp2_hostname: "test-idp-2.sram.surf.nl"
 
 testidp_employee_passwd: "employee"
 testidp_student_passwd: "student"
+testidp_orgAdmin_passwd: "orgAdmin"
+testidp_orgManager_passwd: "orgManager"
+testidp_unitManager_passwd: "unitManager"
+testidp_serviceAdmin_passwd: "serviceAdmin"
+testidp_serviceManager_passwd: "serviceManager"
+testidp_coAdmin_passwd: "coAdmin"
+testidp_normalUser_passwd: "normalUser"
 testidp_extra_users: []
