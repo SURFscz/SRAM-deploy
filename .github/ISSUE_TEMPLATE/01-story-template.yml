@@ -15,6 +15,7 @@ body:
     attributes:
       label: Description
       description: Provide a brief description of the story.
+      value: "As a [role], I want to [goal] so that [reason]"
 
   - type: textarea
     attributes:
