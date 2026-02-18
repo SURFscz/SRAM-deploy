@@ -2,7 +2,7 @@
 
 name: User Story
 description: Use this template for new user stories.
-title: "As a [role], I want to [goal] so that [reason]"
+title: ""
 type: "feature"
 body:
   - type: markdown
@@ -15,6 +15,7 @@ body:
     attributes:
       label: Description
       description: Provide a brief description of the story.
+      value: "As a [role], I want to [goal] so that [reason]"
 
   - type: textarea
     attributes:
