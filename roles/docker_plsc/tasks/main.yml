@@ -65,7 +65,7 @@
     image: "{{ images.plsc }}"
     restart_policy: "always"
     state: started
-    # pull: true
+    pull: true
     # volumes:
     #   - "{{ plsc_dir }}:{{ plsc_dir }}"
     mounts:
