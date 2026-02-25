@@ -7,11 +7,13 @@
       debug:
         var: backup_collector_ssh_key
     - name: Set variable
-      set_fact: vault_decrypted=true
+      ansible.builtin.set_fact:
+        vault_decrypted: true
   rescue:
     - meta: noop
     - name: Set variable
-      set_fact: vault_decrypted=false
+      ansible.builtin.set_fact:
+        vault_decrypted: false
 
 - name: Install tmpreaper
   apt:
