@@ -10,7 +10,7 @@ import createCollaboration from './org-admin/create-co';
 import inviteUserToCo from './co-admin/invite-user';
 import acceptCoInviteAsUser from './normal-user/accept-invite';
 import { loginOnHomePage } from '../helpers/login';
-import acceptAup from './normal-user/accept-aup';
+import acceptAup from '../helpers/accept-aup';
 
 test.use({
   ignoreHTTPSErrors: true,
@@ -27,6 +27,9 @@ test.describe.serial('Basic Authentication E2E test', () => {
       await page.goto('https://sbs.scz-vm.net/');
     
       await loginOnHomePage(page, 'admin', 'admin');
+      if (await page.getByText('I hereby certify that I have').isVisible()) {
+        await acceptAup(page);
+      }
       await page.getByRole('link', { name: 'Research Access Management' }).waitFor({ state: 'visible' });
       await seedDatabase(page);
       await inviteOrgAdmin(page);
