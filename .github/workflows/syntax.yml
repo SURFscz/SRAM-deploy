@@ -3,8 +3,13 @@ name: "Syntax checks"
 
 on:
   push:
+    branches: ["main"]
   pull_request:
   workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   syntax:
