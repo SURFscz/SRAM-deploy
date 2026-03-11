@@ -43,7 +43,7 @@
 - name: install smarthost relay_credentials
   copy:
     content: |
-      [{{mail.relay_to}}]:{{mail.relay_port}} {{mail_relay_username}}:{{mail_relay_password}}
+      [{{mail.relay_to}}]:{{mail.relay_port}}
     dest: "{{postfix_relay_secret_file}}"
     owner: "root"
     mode: "0600"
