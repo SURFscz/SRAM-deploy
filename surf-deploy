@@ -60,7 +60,7 @@ then
     STRICT=0
     shift
 else
-    echo "Please specify an environment to deploy (bhr, prod, acc, test)"
+    echo "Please specify an environment to deploy (bhr, prod, acc, test, test2)"
     exit 1
 fi
 
