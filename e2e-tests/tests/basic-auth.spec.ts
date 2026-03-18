@@ -27,6 +27,7 @@ test.describe.serial('Basic Authentication E2E test', () => {
       await page.goto('https://sbs.scz-vm.net/');
     
       await loginOnHomePage(page, 'admin', 'admin');
+      await page.getByRole('link', { name: 'Research Access Management' }).waitFor({ state: 'visible' });
       if (await page.getByText('I hereby certify that I have').isVisible()) {
         await acceptAup(page);
       }
