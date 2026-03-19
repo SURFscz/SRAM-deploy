@@ -168,9 +168,9 @@
     force: yes
   with_items:
     - { path: "server/config/config.yml",           links_to: "config.yml"           }
-    - { path: "server/migrations/alembic.ini",      links_to: "alembic.ini"           }
+    - { path: "server/migrations/alembic.ini",      links_to: "alembic.ini"          }
     - { path: "server/config/saml",                 links_to: "saml"                 }
-    - { path: "client/build/static/disclaimer.css", links_to: "disclaimer.css"       }
+    - { path: "client/dist/disclaimer.css",         links_to: "disclaimer.css"       }
   notify: "restart sbs"
 
 - name: Link log dir
