@@ -5,7 +5,7 @@ server {
     ssl_certificate     {{ ssl_certs_dir }}/{{ internal_base_domain }}.crt;
     ssl_certificate_key {{ ssl_certs_dir }}/{{ internal_base_domain }}.key;
 
-    root /opt/sbs/sbs/client/build;
+    root /opt/sbs/sbs/client/dist;
 
     set $csp "default-src 'none'; base-uri 'self'; connect-src 'self'; script-src 'self'; style-src 'self' {%- for h in sbs_csp_style_hashes %} '{{h}}'{%endfor%}; img-src 'self' data:; font-src 'self'; frame-src 'none'; form-action 'self' https://*.{{base_domain}}; frame-ancestors 'none'; block-all-mixed-content;";
 
