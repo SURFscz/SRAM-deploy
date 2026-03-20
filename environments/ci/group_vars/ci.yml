@@ -33,7 +33,7 @@ sram_ansible_nolog: false
 containers:
   db: "sram-db"
   redis: "sram-redis"
-  sbs: "sram-sbs"
+  sbs_client: "sram-sbs-client"
   sbs_server: "sram-sbs-server"
   sbs_migration: "sram-sbs-migration"
   ldap: "sram-ldap"
@@ -45,7 +45,7 @@ containers:
 images:
   db: "docker.io/library/mariadb:11"
   redis: "docker.io/library/redis:7"
-  sbs: "ghcr.io/surfscz/sram-sbs-client:main"
+  sbs_client: "ghcr.io/surfscz/sram-sbs-client:main"
   sbs_server: "ghcr.io/surfscz/sram-sbs-server:main"
   ldap: "ghcr.io/surfscz/sram-ldap-legacy:main"
   metadata: "ghcr.io/openconext/openconext-basecontainers/apache2:latest"
