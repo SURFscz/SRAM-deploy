@@ -102,7 +102,7 @@
   community.docker.docker_image_pull:
     name: "{{ item }}"
   with_items:
-    - "{{ images.sbs }}"
+    - "{{ images.sbs_client }}"
     - "{{ images.sbs_server }}"
   register: "sbs_image"
 
@@ -115,7 +115,7 @@
         name: "{{ item }}"
         state: "absent"
       with_items:
-        - "{{ containers.sbs }}"
+        - "{{ containers.sbs_client }}"
         - "{{ containers.sbs_server }}"
 
     - name: "Remove sbs_static volume"
@@ -162,8 +162,8 @@
 
 - name: "Start sbs container"
   community.docker.docker_container:
-    name: "{{ containers.sbs }}"
-    image: "{{ images.sbs }}"
+    name: "{{ containers.sbs_client }}"
+    image: "{{ images.sbs_client }}"
     pull: "never"
     restart_policy: "always"
     state: "started"
@@ -171,6 +171,7 @@
       RUN_MIGRATIONS: "0"
     volumes:
       - "{{ sbs_conf_dir }}/sbs-apache.conf:/etc/apache2/sites-enabled/sbs.conf:ro"
+      - "{{ sbs_conf_dir }}/disclaimer.css:/opt/sbs/client/dist/disclaimer.css:ro"
     networks:
       - name: "{{traefik_network}}"
       - name: "{{internal_network}}"
@@ -192,7 +193,7 @@
       CONFIG: "/opt/sbs/server/config/config.yml"
       REQUESTS_CA_BUNDLE: "/etc/ssl/certs/ca-certificates.crt"
       RUN_MIGRATIONS: "0"
-    pull: "always"
+    pull: "never"
     volumes:
       - "{{ sbs_conf_dir }}:/sbs-config"
       - "{{ sbs_cert_dir }}:/sbs-config/cert"
