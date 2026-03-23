@@ -171,7 +171,7 @@
     #   RUN_MIGRATIONS: "0"
     volumes:
       - "{{ sbs_conf_dir }}/sbs-apache.conf:/etc/apache2/sites-enabled/sbs.conf:ro"
-      - "{{ sbs_conf_dir }}/disclaimer.css:/opt/sbs/client/dist/disclaimer.css:ro"
+      # - "{{ sbs_conf_dir }}/disclaimer.css:/opt/sbs/client/dist/disclaimer.css:ro"
     networks:
       - name: "{{traefik_network}}"
       - name: "{{internal_network}}"
