@@ -118,10 +118,10 @@
         - "{{ containers.sbs_client }}"
         - "{{ containers.sbs_server }}"
 
-    - name: "Remove sbs_static volume"
-      community.docker.docker_volume:
-        name: "sbs_static"
-        state: "absent"
+    # - name: "Remove sbs_static volume"
+    #   community.docker.docker_volume:
+    #     name: "sbs_static"
+    #     state: "absent"
   when: "sbs_image is changed"
 
 - name: "Run SBS migrations"
