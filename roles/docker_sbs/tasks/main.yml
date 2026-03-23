@@ -34,7 +34,7 @@
   file:
     path: "{{item.path}}"
     state: "directory"
-    owner: "root"
+    owner: "{{sbs_user_uid}}"
     group: "{{sbs_group_gid}}"
     mode: "{{item.mode}}"
   with_items:
@@ -47,7 +47,7 @@
 - name: "Fix file permissions"
   file:
     path: "{{sbs_log_dir}}/{{item}}"
-    owner: "root"
+    owner: "{{sbs_user_uid}}"
     group: "{{sbs_group_gid}}"
     mode: "0664"
     state: "touch"
@@ -87,7 +87,7 @@
   template:
     src: "{{item.name}}.j2"
     dest: "{{ sbs_conf_dir }}/{{item.name}}"
-    owner: "root"
+    owner: "{{sbs_user_uid}}"
     group: "{{sbs_group_gid}}"
     mode: "{{item.mode}}"
   with_items:
@@ -160,7 +160,7 @@
   # TODO: fix this by only running this if "sbs_image is changed"
   changed_when: false
 
-- name: "Start sbs container"
+- name: "Start sbs client container"
   community.docker.docker_container:
     name: "{{ containers.sbs_client }}"
     image: "{{ images.sbs_client }}"
@@ -170,8 +170,8 @@
     # env:
     #   RUN_MIGRATIONS: "0"
     volumes:
-      - "{{ sbs_conf_dir }}/sbs-apache.conf:/etc/apache2/sites-enabled/sbs.conf:ro"
-      # - "{{ sbs_conf_dir }}/disclaimer.css:/opt/sbs/client/dist/disclaimer.css:ro"
+      - "{{ sbs_conf_dir }}/sbs-apache.conf:/etc/apache2/sites-enabled/sbs.conf"
+      # - "{{ sbs_conf_dir }}/disclaimer.css:/opt/sbs/client/dist/disclaimer.css"
     networks:
       - name: "{{traefik_network}}"
       - name: "{{internal_network}}"
