@@ -41,8 +41,8 @@ jobs:
       - name: Stop running dockers
         run: |
           ./docker/docker-compose.yml.py --ci > ./docker/docker-compose-ci.yml
-          docker compose -f docker/docker-compose-ci.yml stop
-          docker compose -f docker/docker-compose-ci.yml rm -f
+          docker exec -ti docker-docker1-1 bash -c 'docker stop $(docker ps -q) || true'
+          docker exec -ti docker-docker1-1 bash -c 'docker system prune -af || true'
 
       - name: Start CI env
         run: |
