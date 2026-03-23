@@ -44,7 +44,8 @@ jobs:
           docker exec docker-docker1-1 bash -c 'docker stop $(docker ps -q)' || true
           docker exec docker-docker1-1 bash -c 'docker rm $(docker ps -qa)' || true
           # docker exec docker-docker1-1 bash -c 'docker system prune -af || true'
-          # docker compose -f docker/docker-compose-ci.yml down -v
+          # docker compose -f docker/docker-compose-ci.yml stop
+          # docker compose -f docker/docker-compose-ci.yml rm -f
 
       - name: Start CI env
         run: |
