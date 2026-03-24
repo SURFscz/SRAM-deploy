@@ -136,7 +136,7 @@
     # don't actually run the server
     command: "/bin/true"
     volumes:
-      - "{{ sbs_conf_dir }}:/sbs-config:ro"
+      - "{{ sbs_conf_dir }}:/sbs-config"
       - "{{ sbs_cert_dir }}:/sbs-config/cert:ro"
       - "{{ sbs_log_dir }}:/opt/sbs/log"
     networks:
@@ -188,7 +188,7 @@
       RUN_MIGRATIONS: "0"
     pull: "never"
     volumes:
-      - "{{ sbs_conf_dir }}:/sbs-config:ro"
+      - "{{ sbs_conf_dir }}:/sbs-config"
       - "{{ sbs_cert_dir }}:/sbs-config/cert:ro"
       - "{{ sbs_log_dir }}:/opt/sbs/log"
       - "/tmp/ci-runner:/tmp/ci-runner"
