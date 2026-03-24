@@ -136,8 +136,8 @@
     # don't actually run the server
     command: "/bin/true"
     volumes:
-      - "{{ sbs_conf_dir }}:/sbs-config"
-      - "{{ sbs_cert_dir }}:/sbs-config/cert"
+      - "{{ sbs_conf_dir }}:/sbs-config:ro"
+      - "{{ sbs_cert_dir }}:/sbs-config/cert:ro"
       - "{{ sbs_log_dir }}:/opt/sbs/log"
     networks:
       - name: "{{internal_network}}"
@@ -163,8 +163,8 @@
     restart_policy: "always"
     state: "started"
     volumes:
-      - "{{ sbs_conf_dir }}/sbs-apache.conf:/etc/apache2/sites-enabled/sbs.conf"
-      - "{{ sbs_conf_dir }}/disclaimer.css:/opt/sbs/client/dist/disclaimer.css"
+      - "{{ sbs_conf_dir }}/sbs-apache.conf:/etc/apache2/sites-enabled/sbs.conf:ro"
+      - "{{ sbs_conf_dir }}/disclaimer.css:/opt/sbs/client/dist/disclaimer.css:ro"
     networks:
       - name: "{{traefik_network}}"
       - name: "{{internal_network}}"
@@ -188,8 +188,8 @@
       RUN_MIGRATIONS: "0"
     pull: "never"
     volumes:
-      - "{{ sbs_conf_dir }}:/sbs-config"
-      - "{{ sbs_cert_dir }}:/sbs-config/cert"
+      - "{{ sbs_conf_dir }}:/sbs-config:ro"
+      - "{{ sbs_cert_dir }}:/sbs-config/cert:ro"
       - "{{ sbs_log_dir }}:/opt/sbs/log"
       - "/tmp/ci-runner:/tmp/ci-runner"
     networks:
