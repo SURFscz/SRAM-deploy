@@ -41,6 +41,8 @@ jobs:
       - name: Stop running dockers
         run: |
           ./docker/docker-compose.yml.py --ci > ./docker/docker-compose-ci.yml
+          docker exec docker-docker1-1 bash -c 'docker stop $(docker ps -q)' || true
+          docker exec docker-docker1-1 bash -c 'docker rm $(docker ps -qa)' || true
           docker compose -f docker/docker-compose-ci.yml stop
           docker compose -f docker/docker-compose-ci.yml rm -f
 

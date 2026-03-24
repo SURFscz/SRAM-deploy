@@ -51,7 +51,7 @@ sbs_oidc_crypto_password: "CHANGEME"
 sbs_uid_attribute: "sub"
 
 sbs_disclaimer_color: "#a29c13"
-sbs_disclaimer_label: wsgi
+sbs_disclaimer_label: cntnr
 
 sbs_urn_namespace: "urn:example:sbs"
 sbs_eppn_scope: "sbs.example.edu"

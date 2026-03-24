@@ -41,7 +41,7 @@ firewall_v4_incoming:
 containers:
   db: "sram-db"
   redis: "sram-redis"
-  sbs: "sram-sbs"
+  sbs_client: "sram-sbs-client"
   sbs_server: "sram-sbs-server"
   sbs_migration: "sram-sbs-migration"
   ldap: "sram-ldap"
@@ -54,7 +54,7 @@ containers:
 images:
   db: "docker.io/library/mariadb:11"
   redis: "docker.io/library/redis:7"
-  sbs: "ghcr.io/surfscz/sram-sbs-client:main"
+  sbs_client: "ghcr.io/surfscz/sram-sbs-client:main"
   sbs_server: "ghcr.io/surfscz/sram-sbs-server:main"
   ldap: "ghcr.io/surfscz/sram-ldap:main"
   metadata: "ghcr.io/openconext/openconext-basecontainers/apache2:latest"
@@ -174,6 +174,7 @@ sbs_db_host: "{{ containers.db }}"
 sbs_db_admin_user: "{{ db_admin_user }}"
 sbs_db_admin_password: "{{ db_admin_password }}"
 
+sbs_disclaimer_label: CNTNR
 sbs_redis_host: "{{ containers.redis }}"
 
 sbs_base_domain: "{{ hostnames.sbs }}"

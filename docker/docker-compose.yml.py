@@ -178,10 +178,6 @@ def create_compose() -> Dict[str, Any]:
             compose['services'][h] = host_config(ip, h)
 
     # Add volume for docker '/var/lib/docker' and '/var/lib/containerd'
-    # compose.setdefault('volumes', {})['docker1_volume'] = {'driver': 'local'}
-    # compose.setdefault('volumes', {})['docker2_volume'] = {'driver': 'local'}
-    # compose.setdefault('volumes', {})['docker1_containerd'] = {'driver': 'local'}
-    # compose.setdefault('volumes', {})['docker2_containerd'] = {'driver': 'local'}
     compose.setdefault('volumes', {})['docker1_volume'] = {}
     compose.setdefault('volumes', {})['docker2_volume'] = {}
     compose.setdefault('volumes', {})['docker1_containerd'] = {}

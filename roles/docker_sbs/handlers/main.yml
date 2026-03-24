@@ -15,7 +15,7 @@
     state: started
     restart: true
   loop:
-    - "{{ containers.sbs }}"
+    - "{{ containers.sbs_client }}"
     - "{{ containers.sbs_server}}"
 
 - name: Restart redis container
