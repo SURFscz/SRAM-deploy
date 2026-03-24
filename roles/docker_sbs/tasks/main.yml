@@ -118,10 +118,6 @@
         - "{{ containers.sbs_client }}"
         - "{{ containers.sbs_server }}"
 
-    # - name: "Remove sbs_static volume"
-    #   community.docker.docker_volume:
-    #     name: "sbs_static"
-    #     state: "absent"
   when: "sbs_image is changed"
 
 - name: "Run SBS migrations"
@@ -136,7 +132,6 @@
     env:
       RUNAS_UID: "{{ sbs_user_uid | string }}"
       RUNAS_GID: "{{ sbs_group_gid | string }}"
-      # CONFIG: "/opt/sbs/server/config/config.yml"
       MIGRATIONS_ONLY: "1"
     # don't actually run the server
     command: "/bin/true"
@@ -167,11 +162,9 @@
     pull: "never"
     restart_policy: "always"
     state: "started"
-    # env:
-    #   RUN_MIGRATIONS: "0"
     volumes:
       - "{{ sbs_conf_dir }}/sbs-apache.conf:/etc/apache2/sites-enabled/sbs.conf"
-      # - "{{ sbs_conf_dir }}/disclaimer.css:/opt/sbs/client/dist/disclaimer.css"
+      - "{{ sbs_conf_dir }}/disclaimer.css:/opt/sbs/client/dist/disclaimer.css"
     networks:
       - name: "{{traefik_network}}"
       - name: "{{internal_network}}"
@@ -199,8 +192,6 @@
       - "{{ sbs_cert_dir }}:/sbs-config/cert"
       - "{{ sbs_log_dir }}:/opt/sbs/log"
       - "/tmp/ci-runner:/tmp/ci-runner"
-      # - "{{ sbs_apache_conf }}:/etc/apache2/sites-enabled/sbs.conf:ro"
-      # - "sbs_static:/var/www/html"
     networks:
       - name: "{{internal_network}}"
     # TODO: fix this: this is only for dev
