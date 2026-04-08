@@ -48,7 +48,7 @@
     owner: "root"
     mode: "0600"
   no_log: true
-  when: "mail_relay is true"
+  when: "mail_relay is true and mail_relay_password is defined "
   notify:
     - "restart postfix"
 
@@ -63,4 +63,3 @@
     src: "/etc/postfix/aliases"
     state: "link"
     force: true
-
