@@ -107,8 +107,14 @@
     - "auth.css"
     - "auth.php"
     - "demosp.css"
-    - "bootstrap.min.css"
   notify: "restart php-fpm"
+
+- name: Install Bootstrap
+  get_url:
+    url: "{{demosp_bootstrap_url}}"
+    dest: "{{demosp_html_dir}}/bootstrap.min.css"
+    mode: "0644"
+    checksum: "{{demosp_bootstrap_chksum}}"
 
 #########################################################
 ## nginx

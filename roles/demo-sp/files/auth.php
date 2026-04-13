@@ -2,8 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <link href="/auth.css" rel="stylesheet">
-    <title>SRAM Demo SP</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="/bootstrap.min.css" rel="stylesheet">
+    <link href="/demosp.css" rel="stylesheet">
+
+    <title>SURF Research Access Management Demo SP</title>
 </head>
 <body>
 <?php
@@ -13,7 +18,7 @@ session_start();
 $ENVS = array("test","test2", "acc","prd");
 $FORMATS = array("table", "json", "raw");
 
-$SUPPORTED = array(
+$ATTRIBUTES = array(
     'cn',
     'displayName',
     'givenName',
@@ -29,11 +34,6 @@ $SUPPORTED = array(
     'voPersonExternalAffiliation',
     'eduPersonEntitlement',
     'sshPublicKey',
-);
-
-$UNSUPPORTED = array(
-    'eduPersonAssurance',
-    'schacHomeOrganization',
 );
 
 # sanitize user input
@@ -74,12 +74,18 @@ if(!$as->isAuthenticated()) {
 $user_attr = $as->getAttributes();
 
 if ($format=="raw") {
+    print('<pre id="data">');
+    print(json_encode($user_attr, JSON_PRETTY_PRINT));
+    print('</pre>');
+    print('</body></html>');
+    exit();
     print('<div id="raw">');
     print('<h1>Raw attributes</h1>');
     print('<code style="white-space: pre;">');
     print_r($user_attr);
     print('</code>');
     print('</div>');
+    print('</body></html>');
     exit();
 }
 
@@ -87,17 +93,32 @@ if ($format=="json") {
     print('<pre id="data">');
     print(json_encode($user_attr, JSON_PRETTY_PRINT));
     print('</pre>');
+    print('</body></html>');
     exit();
 }
+?>
+<nav class="navbar navbar-light bg-light">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/">SRAM Demo SP</a>
+    </div>
+</nav>
+<main>
+<div class="container">
 
-print('<div id="known">');
-print('<h1>Known attributes</h1>');
-print('<table class="redTable">');
+<a href="auth.php?format=json" class="btn button-primary">Get as JSON</a>
+
+<div class="card mt-4">
+    <div class="card-header">Supported attributes</div>
+    <div class="card-body d-flex flex-column">
+<?php
+
+print('<div class="table-responsive">');
+print('<table class="table">');
 print('<thead><tr><th>Attribute</th><th>Value</th></thead>'); print("\n");
-foreach ($SUPPORTED as $attr) {
+foreach ($ATTRIBUTES as $attr) {
     print('<tr>');
-    print("<td>{$attr}</td>"); print("\n");
-    print('<td>');
+    print("<th>{$attr}</th>"); print("\n");
+    print('<td class="font-monospace text-nowrap">');
     if (array_key_exists($attr, $user_attr)) {
         sort($user_attr[$attr]);
         foreach ($user_attr[$attr] as $val) {
@@ -113,64 +134,44 @@ foreach ($SUPPORTED as $attr) {
 }
 print('</table>');
 print('</div>');
-
-
-print('<div id="unsupported">');
-print('<h1>Unsupported attributes</h1>');
-print('<table class="redTable">');
-print('<thead><tr><th>Attribute</th><th>Value</th></thead>'); print("\n");
-foreach ($UNSUPPORTED as $attr) {
-    print('<tr>');
-    print("<td>{$attr}</td>"); print("\n");
-    print('<td>');
-    if (array_key_exists($attr, $user_attr)) {
-        sort($user_attr[$attr]);
-        foreach ($user_attr[$attr] as $val) {
-            print('<div class="attr_val">');
-            print($val);
-            print('</div>');
-        }
-    } else {
-        print('<span class="not_found">not present</span>');
-    }
-    print('</td>'); print("\n");
-    print('</tr>'); print("\n");
-}
-print('</table>');
-print('</div>');
-
-$known_attr = array_merge(
-    $SUPPORTED,
-    $UNSUPPORTED,
-);
-
-$unknown_attr = array_diff( array_keys($user_attr), $known_attr );
-if ( !empty($unknown_attr) ) {
-    print('<div id="unknown">');
-    print('<h1>Unknown attributes</h1>');
-    print('<table class="redTable">');
-    print('<thead><tr><th>Attribute</th><th>Value</th></thead>'); print("\n");
-    foreach ($unknown_attr as $attr) {
-        print('<tr>');
-        print("<td>{$attr}</td>"); print("\n");
-        print('<td>');
-        foreach ($user_attr[$attr] as $val) {
-            sort($user_attr[$attr]);
-            print('<span class="attr_val">');
-            print($val);
-            print('</span>');
-        }
-        print('</td>'); print("\n");
-        print('</tr>'); print("\n");
-    }
-    print('</table>');
-    print('</div>');
-}
-
-echo("<br>\n");
-$url = $as->getLogoutURL("/");
-printf('<div><a href="%1$s">logout</a></div>', htmlspecialchars($url));
 
 ?>
+</div>
+</div>
+
+<div class="card mt-4">
+    <div class="card-header">Unsupported attributes</div>
+    <div class="card-body d-flex flex-column">
+<?php
+
+$unknown_attr = array_diff( array_keys($user_attr), $ATTRIBUTES);
+print('<div class="table-responsive">');
+print('<table class="table">');
+print('<thead><tr><th>Attribute</th><th>Value</th></thead>'); print("\n");
+foreach ($unknown_attr as $attr) {
+    print('<tr>');
+    print("<th>{$attr}</th>"); print("\n");
+    print('<td class="font-monospace text-nowrap">');
+    foreach ($user_attr[$attr] as $val) {
+        sort($user_attr[$attr]);
+        print('<div class="attr_val">');
+        print($val);
+        print('</span>');
+    }
+    print('</td>'); print("\n");
+    print('</tr>'); print("\n");
+}
+print('</table>');
+print('</div>');
+?>
+</div>
+</div>
+
+<?php
+$url = $as->getLogoutURL("/");
+printf('<div class="mt-4"><a href="%1$s" class="btn btn-primary">logout</a></div>', htmlspecialchars($url));
+?>
+</div></div>
+</main>
 </body>
 </html>
