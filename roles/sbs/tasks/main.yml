@@ -185,9 +185,8 @@
     name: "python-venv"
   vars:
     python_venv_dir: "{{ sbs_env_dir }}"
-    python_venv_requirements: "{{ sbs_git_dir }}/server/requirements/test.txt"
+    python_venv_package: "{{ sbs_git_dir }}/server[test]"
   notify: "restart sbs"
-
 
 - name: "Install SBS service"
   template:
