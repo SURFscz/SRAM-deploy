@@ -76,13 +76,13 @@
   become_user: "{{python_venv_user}}"
   when: python_venv_requirements is defined
 
-# Install dependencies from a pyproject.toml (editable install)
-- name: Install requirements (editable package)
+# Install dependencies from a pyproject.toml
+- name: Install requirements (pyproject.toml)
   pip:
     name: "{{ python_venv_package }}"
     virtualenv: "{{ python_venv_dir }}"
     state: "present"
-    extra_args: "{{ upgrade | default('') }} -e"
+    extra_args: "{{ upgrade | default('') }}"
   become: "{{ python_venv_become }}"
   become_user: "{{ python_venv_user }}"
   when: python_venv_package is defined
