@@ -85,4 +85,4 @@
     extra_args: "{{ upgrade | default('') }}"
   become: "{{ python_venv_become }}"
   become_user: "{{ python_venv_user }}"
-  when: python_venv_package is defined
+  when: python_venv_package is defined and python_venv_requirements is not defined
