@@ -8,6 +8,8 @@ from enum import Enum
 # amount of non-idempotent tests doen't increase
 WHITELIST = {
     # YES, finally an empty list!
+    'sbs': 1,
+    'python-venv': 1
 }
 
 

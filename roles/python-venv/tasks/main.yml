@@ -67,7 +67,7 @@
 
 # Install dependencies from a requirements.txt file
 - name: Install requirements (file)
-  pip:
+  ansible.builtin.pip:
     requirements: "{{ python_venv_requirements }}"
     virtualenv: "{{ python_venv_dir }}"
     state: "present"
@@ -78,7 +78,7 @@
 
 # Install dependencies from a pyproject.toml
 - name: Install requirements (pyproject.toml)
-  pip:
+  ansible.builtin.pip:
     name: "{{ python_venv_package }}"
     virtualenv: "{{ python_venv_dir }}"
     state: "present"
