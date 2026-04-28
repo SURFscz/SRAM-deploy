@@ -10,3 +10,15 @@ Use like this:
     python_venv_dir: ""
     python_venv_requirements: ""
 ```
+
+
+Or like this for .toml file:
+
+```yaml
+- name: Create python3 virtualenv
+  import_role:
+    name: "python-venv"
+  vars:
+    python_venv_dir: ""
+    python_venv_package: ""
+```
