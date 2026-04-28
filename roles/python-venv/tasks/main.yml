@@ -65,11 +65,24 @@
   become: "{{ python_venv_become }}"
   become_user: "{{ python_venv_user }}"
 
-- name: Install requirements
-  pip:
+# Install dependencies from a requirements.txt file
+- name: Install requirements (file)
+  ansible.builtin.pip:
     requirements: "{{ python_venv_requirements }}"
     virtualenv: "{{ python_venv_dir }}"
     state: "present"
     extra_args: "{{ upgrade | default() }}"
   become: "{{python_venv_become}}"
   become_user: "{{python_venv_user}}"
+  when: python_venv_requirements is defined
+
+# Install dependencies from a pyproject.toml
+- name: Install requirements (pyproject.toml)
+  ansible.builtin.pip:
+    name: "{{ python_venv_package }}"
+    virtualenv: "{{ python_venv_dir }}"
+    state: "present"
+    extra_args: "{{ upgrade | default('') }}"
+  become: "{{ python_venv_become }}"
+  become_user: "{{ python_venv_user }}"
+  when: python_venv_package is defined and python_venv_requirements is not defined
