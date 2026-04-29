@@ -60,4 +60,10 @@ $metadata['https://engine.test2.surfconext.nl/authentication/idp/metadata'] = [
     ],
     'SingleLogoutService' => [],
     'certificate' => 'sram-test2.pem',
+
+    'authproc' => [
+      50 => [
+        'class' => 'core:AttributeMap', 'oid2name', 'urn2name',
+      ],
+    ],
 ];
