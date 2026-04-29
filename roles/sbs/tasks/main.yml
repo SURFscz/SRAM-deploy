@@ -186,6 +186,7 @@
   vars:
     python_venv_dir: "{{ sbs_env_dir }}"
     python_venv_package: "{{ sbs_git_dir }}/server[test]"
+    python_venv_editable: true
   notify: "restart sbs"
 
 - name: "Install SBS service"

@@ -71,7 +71,7 @@
     requirements: "{{ python_venv_requirements }}"
     virtualenv: "{{ python_venv_dir }}"
     state: "present"
-    extra_args: "{{ upgrade | default() }}"
+    extra_args: "{{ upgrade | default('') }}"
   become: "{{python_venv_become}}"
   become_user: "{{python_venv_user}}"
   when: python_venv_requirements is defined
@@ -83,6 +83,7 @@
     virtualenv: "{{ python_venv_dir }}"
     state: "present"
     extra_args: "{{ upgrade | default('') }}"
+    editable: "{{ python_venv_editable | default(false) }}"
   become: "{{ python_venv_become }}"
   become_user: "{{ python_venv_user }}"
   when: python_venv_package is defined and python_venv_requirements is not defined
