@@ -8,6 +8,9 @@
   template:
     src: "certbot.conf.j2"
     dest: "/etc/letsencrypt/cli.ini"
+    owner: "root"
+    group: "root"
+    mode: "0644"
   notify: "renew letsencrypt certificates"
 
 - name: create webroot for acme challenges
@@ -65,6 +68,24 @@
     - set_fact:
         letsencrypt_server_changed: |
           {{ ( letsencrypt_server_match.results | map(attribute='found', default=0) | min ) == 0 }}
+
+    - name: create deploy hook dir
+      file:
+        path: "/etc/letsencrypt/renewal-hooks/deploy"
+        state: "directory"
+        owner: "root"
+        mode: "0755"
+
+    - name: install deploy hooks
+      copy:
+        dest: "/etc/letsencrypt/renewal-hooks/deploy/hook_{{ idx }}"
+        content: "#!/bin/sh\n{{ item }}"
+        owner: "root"
+        mode: "0755"
+      loop: "{{ letsencrypt_deploy_hooks }}"
+      loop_control:
+        index_var: "idx"
+
 
     - name: check for new certs to generate
       stat:

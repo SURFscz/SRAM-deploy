@@ -163,7 +163,7 @@
         --key-file "{{ acme_target_dir }}/{{ item }}.key"
         --cert-file "{{ acme_target_dir }}/{{ item }}.crt"
         --fullchain-file "{{ acme_target_dir }}/{{ item }}.fullchain.crt"
-        {% if acme_reload_command is defined and acme_reload_command|bool %}
+        {% if acme_reload_command is defined and acme_reload_command!="" %}
         --reloadcmd "{{ acme_reload_command }}"
         {% endif %}
   loop: "{{ acme_certificate_list }}"

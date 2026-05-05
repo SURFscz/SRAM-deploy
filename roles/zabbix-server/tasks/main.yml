@@ -41,36 +41,34 @@
     - "{{zabbix_php_fpm_conf_user}}"
     - "{{zabbix_web_conf_web_user}}"
 
-- set_fact:
-    fast: true
-
-- name: "Fetch ACME cert for Zabbix"
-  include_role:
-    name: "acme"
+- include_role:
+    name: "letsencrypt"
+    public: true
   vars:
-    acme_admin_email: "{{ admin_email }}"
-    acme_certificate_list: ['{{ zabbix_url }}']
-    acme_target_dir: "/etc/ssl/zabbix"
-    acme_reload_command: "systemctl reload nginx"
-  when: not fast
+    letsencrypt_enabled: true
+    letsencrypt_staging: false
+    letsencrypt_hosts: ['{{ zabbix_url }}']
+    letsencrypt_server: "{{ bhr14_acme_server_url }}"
+    letsencrypt_eab: true
+    letsencrypt_eab_keyid: "{{ bhr14_acme_eab_keyid }}"
+    letsencrypt_eab_hmac: "{{ bhr14_acme_hmac_key }}"
+    letsencrypt_deploy_hooks:
+      - "/usr/bin/systemctl reload nginx"
 
 - name: Install Zabbix Server
   include_role:
     name: "community.zabbix.zabbix_server"
-  when: not fast
 
 - name: Install nginx
   include_role:
     name: "nginx"
-  when: not fast
 
 - name: Install Zabbix Web interface
   include_role:
     name: "community.zabbix.zabbix_web"
   vars:
-    zabbix_web_tls_key: "/etc/ssl/zabbix/{{zabbix_url}}.key"
-    zabbix_web_tls_crt: "/etc/ssl/zabbix/{{zabbix_url}}.fullchain.crt"
-  when: not fast
+    zabbix_web_tls_key: "/etc/letsencrypt/live/{{zabbix_url}}/privkey.pem"
+    zabbix_web_tls_crt: "/etc/letsencrypt/live/{{zabbix_url}}/fullchain.pem"
 
 - name: Allow Zabbix fpm user to access config file
   ansible.posix.acl:
@@ -100,3 +98,14 @@
     src: "backup.j2"
     dest: "/opt/backups/run.d/sram-zabbix-server.sh"
     mode: "0700"
+
+## setup zabbix SSO
+#- name: set paths to SAML keys
+#  ansible.builtin.blockinfile:
+#    path: "/etc/zabbix/web/zabbix.conf.php"
+#    block: |
+#      $SSO['SP_KEY']   = '/etc/zabbix/cert/sp.key';
+#      $SSO['SP_CERT']  = '/etc/zabbix/cert/sp.crt';
+#      $SSO['IDP_CERT'] = '/etc/zabbix/cert/surfconext.crt';
+#    insertbefore: '^\?>'
+#    marker: "// {mark} ANSIBLE MANAGED BLOCK"
