@@ -7,7 +7,11 @@
     "@playwright/test": "^1.57.0",
     "@types/node": "^24.10.1"
   },
-  "scripts": {},
+  "scripts": {
+    "test:local": "PLAYWRIGHT_INCLUDE_LOCAL=1 SBS_LOCAL_BASE_URL=http://localhost:3000 playwright test --project=chromium --reporter=list",
+    "test:local:ui": "PLAYWRIGHT_INCLUDE_LOCAL=1 SBS_LOCAL_BASE_URL=http://localhost:3000 playwright test --project=chromium --ui",
+    "postinstall": "playwright install"
+  },
   "dependencies": {
     "axios": "^1.13.2"
   }
