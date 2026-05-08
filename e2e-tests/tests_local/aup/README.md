@@ -47,15 +47,23 @@ SBS_LOCAL_BASE_URL=http://localhost:3001 yarn test:local
 
 ## Manual AUP Test
 
+With the normal local frontend (`yarn dev`) SBS automatically logs in as the hardcoded local user `John Doe` from `SBS/client/src/api/index.js`. Logging out does not help, because opening the app logs `John Doe` back in.
+
+If `John Doe` already accepted the current AUP version, `/aup` redirects away immediately and the AUP page cannot be tested manually in that session. Use the Playwright test for the normal refactor safety check.
+
+To manually see the AUP page anyway, first make sure the local auto-login user has not accepted the current AUP version. For example:
+
+1. Use a local database where `John Doe` has not accepted the current AUP version.
+2. Or temporarily change the hardcoded local user in `SBS/client/src/api/index.js` from `urn:john` to a new user, such as `urn:aup_manual_test`.
+
+Then:
+
 1. Start the SBS backend with `ALLOW_MOCK_USER_API=1`.
 2. Start the SBS frontend on `http://localhost:3000`.
-3. Open the app in a fresh browser session or clear the current local session.
-4. In local mode SBS automatically logs in as the hardcoded local user `John Doe`. Logging out does not help for this manual test, because opening the app again logs `John Doe` back in.
-5. If `John Doe` already accepted the AUP, `/aup` redirects away immediately. To manually see the AUP page again, use a database where `John Doe` has not accepted the current AUP version, or change the hardcoded local user in `SBS/client/src/api/index.js` temporarily.
-6. Go to `http://localhost:3000/aup`.
-7. Verify the page says hi to the user and shows the acceptable use policy link.
-8. Verify the `Onwards` button is disabled.
-9. Check `I hereby certify that I have read the acceptable use policy and that I accept it`.
-10. Verify the `Onwards` button becomes enabled.
-11. Click `Onwards`.
-12. Verify the user lands on the home page.
+3. Go to `http://localhost:3000/aup`.
+4. Verify the page says hi to the user and shows the acceptable use policy link.
+5. Verify the `Onwards` button is disabled.
+6. Check `I hereby certify that I have read the acceptable use policy and that I accept it`.
+7. Verify the `Onwards` button becomes enabled.
+8. Click `Onwards`.
+9. Verify the user leaves the AUP page and lands on the configured home page.
