@@ -139,7 +139,7 @@
       CONFIG: "/opt/sbs/server/config/config.yml"
       MIGRATIONS_ONLY: "1"
     # don't actually run the server
-    command: "/bin/true"
+    command: "/usr/bin/true"
     volumes:
       - "{{ sbs_conf_dir }}:/sbs-config"
       - "{{ sbs_cert_dir }}:/sbs-config/cert"
