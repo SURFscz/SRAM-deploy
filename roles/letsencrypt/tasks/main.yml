@@ -115,7 +115,7 @@
       lineinfile:
         path: "{{letsencrypt_account_dir}}/../renewal/{{item}}.conf"
         regex: "^#? *renew_before_expiry *="
-        line: "renew_before_expiry = 330 days"
+        line: "renew_before_expiry = 170 days"
         state: "present"
       when: "'harica' in letsencrypt_server"
       loop: "{{letsencrypt_hosts}}"
