@@ -32,6 +32,7 @@ server {
 
     location @index {
         rewrite ^ /index.html;
+        add_header Cache-Control "nocache, private";
     }
 
     location ~ /(api|pam-weblogin|flasgger_static|swagger|health|config|info) {
