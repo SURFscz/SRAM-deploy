@@ -1,16 +1,5 @@
 ---
 
-# setup zabbix SSO
-- name: set paths to SAML keys
-  ansible.builtin.blockinfile:
-    path: "/etc/zabbix/web/zabbix.conf.php"
-    block: |
-      $SSO['SP_KEY']   = '/etc/zabbix/cert/sp.key';
-      $SSO['SP_CERT']  = '/etc/zabbix/cert/sp.crt';
-      $SSO['IDP_CERT'] = '/etc/zabbix/cert/surfconext.crt';
-    insertbefore: '^\?>'
-    marker: "// {mark} ANSIBLE MANAGED BLOCK"
-
 - name: "Create cert directory"
   ansible.builtin.file:
     path: "/etc/zabbix/cert"
@@ -22,15 +11,14 @@
 - name: "Copy SAML signing cert"
   ansible.builtin.copy:
     content: "{{ item.content }}"
-    dest: "/etc/zabbix/cert/{{ item.name }}"
+    dest: "{{ item.name }}"
     owner: "root"
     group: "{{ zabbix_php_fpm_conf_group }}"
     mode: "{{ item.mode }}"
   with_items:
-    - { name: "surfconext.crt", content: "{{ zabbix_samlcert_surfconext }}", mode: "0644" }
-    - { name: "zabbix_sp.crt",  content: "{{ zabbix_saml_signing.cert   }}", mode: "0644" }
-    - { name: "zabbix_sp.key",  content: "{{ zabbix_saml_signing.key    }}", mode: "0640" }
-
+    - { name: "{{zabbix_saml_idp_crt}}", content: "{{ zabbix_samlcert_surfconext }}", mode: "0644" }
+    - { name: "{{zabbix_saml_sp_crt}}",  content: "{{ zabbix_saml_signing.cert   }}", mode: "0644" }
+    - { name: "{{zabbix_saml_sp_key}}",  content: "{{ zabbix_saml_signing.key    }}", mode: "0640" }
 
 # setup zabbix with correct settings
 - name: zabbix
@@ -144,8 +132,8 @@
             mediatype: Email
             attribute: "urn:mace:dir:attribute-def:mail"
         provision_groups:
-          - name: "urn:mace:surf.nl:invite.surfconext.nl:\
-                   6853e9af-d9c1-4d37-b8fe-e68b0e31769f:tdizabbix"
+          # full role attribute is too for Zabbix, prefix is removed by AM
+          - name: "6853e9af-d9c1-4d37-b8fe-e68b0e31769f:tdizabbix"
             role: "Admin role"
             user_groups:
               - "Zabbix administrators"

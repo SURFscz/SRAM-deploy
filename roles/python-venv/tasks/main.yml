@@ -38,7 +38,7 @@
     - "lib"
     - "share"
     - "pyvenv.cfg"
-  when: 'python_venv_version_diff.stdout != "identical"'
+  when: 'python_venv_version_diff.stdout != "identical" and not ansible_check_mode'
 
 - name: Create virtualenv and install pip
   pip:

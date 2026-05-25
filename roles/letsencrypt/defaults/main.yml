@@ -6,6 +6,8 @@ letsencrypt_account_dir: "/etc/letsencrypt/accounts"
 letsencrypt_cert_dir: "/etc/letsencrypt/live"
 letsencrypt_hooks: "/etc/letsencrypt/renewal-hooks/post"
 
+letsencrypt_deploy_hooks: []
+
 # to use a different server set the following variable
 #letsencrypt_server: "https://acme.sectigo.com/v2/GEANTOV"
 
