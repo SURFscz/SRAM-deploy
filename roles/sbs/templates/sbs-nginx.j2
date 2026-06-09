@@ -32,7 +32,10 @@ server {
 
     location @index {
         rewrite ^ /index.html;
-        add_header Cache-Control "nocache, private";
+    }
+
+    location /index.html {
+         add_header Cache-Control "no-store";
     }
 
     location ~ /(api|pam-weblogin|flasgger_static|swagger|health|config|info) {
@@ -43,7 +46,7 @@ server {
         proxy_hide_header Content-Security-Policy;
         add_header Content-Security-Policy $csp;
         proxy_hide_header Cache-Control;
-        add_header Cache-Control "nocache, private";
+        add_header Cache-Control "nocache, private";  # should be "no-cache" ("nocache" is silently ignored)
     }
 
     location ^~ /api/images {
