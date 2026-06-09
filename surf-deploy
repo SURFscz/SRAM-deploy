@@ -82,7 +82,7 @@ echo "$0 $*" >> $LOG
  else
      echo -e "$OK"
  fi
- branch_deploy=$(git symbolic-ref HEAD 2> /dev/null || git describe --exact)
+ branch_deploy=$(git symbolic-ref HEAD 2> /dev/null || git tag --points-at HEAD)
 
  # config
  cwd=$(pwd)
@@ -97,7 +97,7 @@ echo "$0 $*" >> $LOG
  else
      echo -e "$OK"
  fi
- branch_config=$(git symbolic-ref HEAD 2> /dev/null || git describe --exact)
+ branch_config=$(git symbolic-ref HEAD 2> /dev/null || git tag --points-at HEAD)
  cd "$cwd"
 
  echo -n "Checking whether deploy and config are in sync... "
