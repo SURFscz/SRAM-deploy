@@ -23,6 +23,7 @@ server {
 
     location / {
         try_files $uri @index;
+        add_header Content-Security-Policy $csp;
     }
 
     location /static {
@@ -35,7 +36,8 @@ server {
     }
 
     location /index.html {
-         add_header Cache-Control "no-store";
+        add_header Cache-Control "no-store";
+        add_header Content-Security-Policy $csp;
     }
 
     location ~ /(api|pam-weblogin|flasgger_static|swagger|health|config|info) {
