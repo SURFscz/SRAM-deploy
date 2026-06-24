@@ -23,6 +23,7 @@ server {
 
     location / {
         try_files $uri @index;
+        add_header Content-Security-Policy $csp;
     }
 
     location /static {
@@ -34,6 +35,11 @@ server {
         rewrite ^ /index.html;
     }
 
+    location /index.html {
+        add_header Cache-Control "no-store";
+        add_header Content-Security-Policy $csp;
+    }
+
     location ~ /(api|pam-weblogin|flasgger_static|swagger|health|config|info) {
         include proxy_params;
         proxy_pass http://127.0.0.1:8080;
@@ -42,7 +48,7 @@ server {
         proxy_hide_header Content-Security-Policy;
         add_header Content-Security-Policy $csp;
         proxy_hide_header Cache-Control;
-        add_header Cache-Control "nocache, private";
+        add_header Cache-Control "nocache, private";  # should be "no-cache" ("nocache" is silently ignored)
     }
 
     location ^~ /api/images {
