@@ -161,3 +161,4 @@ sbs_csp_style_hashes:
   - 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU='  # after vite migration
 
 sbs_engine_block_api_token: secret
+sbs_engine_block_entity_id: ""
