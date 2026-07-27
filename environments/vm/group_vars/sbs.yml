@@ -75,3 +75,4 @@ sbs_ssid_identity_providers:
     entity_id: "https://ssid.org"
 
 sbs_encryption_key: secret
+sbs_cron_job_responsible: True
