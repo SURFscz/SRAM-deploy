@@ -29,7 +29,7 @@ api_users:
     scopes: "[ {{ user.scopes | join(', ') }} ]"
 {% endfor %}
 
-oidc:
+oidc_et:
   client_id: "{{ sbs_client_id }}"
   client_secret: "{{ sbs_client_secret }}"
   audience: "{{ sbs_oidc_jwt_audience }}"
@@ -47,6 +47,28 @@ oidc:
   # The service_id in the proxy_authz endpoint when logging into SBS. Most likely to equal the oidc.client_id
   sram_service_entity_id: "{{ sbs_client_id }}"
   scopes: {{ sbs_oidc_scopes }}
+
+oidc_eb:
+  client_id: "{{ sbs_client_id_eb }}"
+  client_secret: "{{ sbs_client_secret_eb }}"
+  audience: "{{ sbs_oidc_jwt_audience_eb }}"
+  verify_peer:  {{ sbs_oidc_verify_peer }}
+  authorization_endpoint: "{{ sbs_oidc_authz_endpoint_eb }}"
+  token_endpoint: "{{ sbs_oidc_token_endpoint_eb }}"
+  userinfo_endpoint: "{{ sbs_oidc_userinfo_endpoint_eb }}"
+  jwks_endpoint: "{{ sbs_oidc_jwks_endpoint_eb }}"
+  #Note that the paths for these  uri's is hardcoded and only domain and port differ per environment
+  redirect_uri: "{{ sbs_oidc_redirect_uri }}"
+  continue_eduteams_redirect_uri: "{{ sbs_eduteams_continue_endpoint }}"
+  continue_eb_redirect_uri: "{{ sbs_eb_continue_endpoint }}"
+  second_factor_authentication_required: {{ sbs_second_factor_authentication_required }}
+  totp_token_name: "{{ sbs_totp_token_name }}"
+  # The service_id in the proxy_authz endpoint when logging into SBS. Most likely to equal the oidc.client_id
+  sram_service_entity_id: "{{ sbs_client_id }}"
+  scopes: {{ sbs_oidc_scopes_eb }}
+
+oidc: 
+  <<: *oidc_et
 
 base_scope: "{{ base_domain }}"
 entitlement_group_namespace: "{{ sbs_urn_namespace }}"
