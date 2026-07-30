@@ -29,7 +29,7 @@ api_users:
     scopes: "[ {{ user.scopes | join(', ') }} ]"
 {% endfor %}
 
-oidc_et:
+oidc_et: &oidc_et
   client_id: "{{ sbs_client_id }}"
   client_secret: "{{ sbs_client_secret }}"
   audience: "{{ sbs_oidc_jwt_audience }}"
@@ -48,7 +48,7 @@ oidc_et:
   sram_service_entity_id: "{{ sbs_client_id }}"
   scopes: {{ sbs_oidc_scopes }}
 
-oidc_eb:
+oidc_eb: &oidc_eb
   client_id: "{{ sbs_client_id_eb }}"
   client_secret: "{{ sbs_client_secret_eb }}"
   audience: "{{ sbs_oidc_jwt_audience_eb }}"
