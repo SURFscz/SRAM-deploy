@@ -40,6 +40,7 @@
     shell: "/usr/sbin/nologin"
     system: true
     password: "!"
+    state: "present"
 
 - name: Create simplesaml project dirs
   file:
