@@ -52,6 +52,7 @@ base_scope: "{{ base_domain }}"
 entitlement_group_namespace: "{{ sbs_urn_namespace }}"
 eppn_scope: " {{ sbs_eppn_scope }}"
 scim_schema_sram: "urn:mace:surf.nl:sram:scim:extension"
+id_scope: "{{ sbs_id_scope }}"
 collaboration_creation_allowed_entitlement: "urn:mace:surf.nl:sram:allow-create-co"
 
 {% if environment_name == "prd" %}
