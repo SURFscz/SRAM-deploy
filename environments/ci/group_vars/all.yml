@@ -13,7 +13,7 @@ admin_email: "admin@{{base_domain}}"
 is_aws: false
 is_dev: true
 experimental_features: true
-debian_dist: "bookworm"  # CI needs bookworm because of SSP
+debian_dist: "bookworm"
 
 servers:
   dns:

@@ -14,6 +14,7 @@ is_aws: false
 is_dev: true
 sram_ansible_nolog: false
 experimental_features: true
+debian_dist: "bookworm"
 
 servers:
   dns:
