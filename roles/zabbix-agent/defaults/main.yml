@@ -1,4 +1,5 @@
 ---
+zabbix_version: "7.4"
 zabbix_psk_file: "/etc/zabbix/zabbix-agent2.psk"
 zabbix_templates_default:
   - "Linux by Zabbix agent active"
