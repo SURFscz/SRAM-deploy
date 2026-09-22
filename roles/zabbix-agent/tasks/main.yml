@@ -21,6 +21,7 @@
     - "5_4"
     - "6_2"
     - "6_4"
+    - "7_2"
 
 - name: "Zabbix repo: install source"
   apt_repository:
@@ -32,6 +33,7 @@
     name: "zabbix-agent2"
     state: "latest"
     install_recommends: false
+    update_cache: true
 
 - name: "Make sure the zabbix user can read journald entries"
   ansible.builtin.user:
