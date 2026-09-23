@@ -1,4 +1,5 @@
 ---
+zabbix_version: "7.4"
 zabbix_psk_file: "/etc/zabbix/zabbix-agent2.psk"
 zabbix_templates_default:
   - "Linux by Zabbix agent active"
@@ -7,4 +8,4 @@ zabbix_templates_extra: []
 zabbix_validate_certs: true
 zabbix_passive_check: true
 
-debian_dist: "bullseye"
+# debian_dist: "bookworm"
