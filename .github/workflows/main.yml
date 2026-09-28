@@ -190,6 +190,7 @@ jobs:
         if: failure()
 
       # Setup tmate session
+      - uses: actions/checkout@v4
       - name: Setup tmate session
         env:
           ACTIONS_STEP_DEBUG: ${{ secrets.ACTIONS_STEP_DEBUG}}

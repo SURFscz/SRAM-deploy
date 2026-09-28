@@ -51,7 +51,6 @@ oidc:
 base_scope: "{{ base_domain }}"
 entitlement_group_namespace: "{{ sbs_urn_namespace }}"
 eppn_scope: " {{ sbs_eppn_scope }}"
-scim_schema_sram: "urn:mace:surf.nl:sram:scim:extension"
 collaboration_creation_allowed_entitlement: "urn:mace:surf.nl:sram:allow-create-co"
 
 {% if environment_name == "prd" %}
@@ -124,7 +123,6 @@ feature:
   sbs_swagger_enabled: {{ sbs_swagger_enabled }}
   admin_platform_backdoor_totp: {{ sbs_admin_platform_backdoor_totp }}
   past_dates_allowed: {{ sbs_past_dates_allowed }}
-  mock_scim_enabled: {{ sbs_mock_scim_enabled }}
 
 metadata:
   idp_url: "{{sbs_idp_metadata_url}}"
@@ -226,11 +224,15 @@ open_requests:
   enabled: {{ sbs_open_requests_enabled }}
   cron_day_of_week: 1
 
-scim_sweep:
-  # Do we enable scim sweeps?
-  enabled: {{ sbs_scim_sweep }}
-  # How often do we check if scim sweeps are needed per service
-  cron_minutes_expression: "*/15"
+scim:
+  id_scope: "{{ sbs_id_scope }}"
+  schema_sram: "urn:mace:surf.nl:sram:scim:extension"
+  mock_scim_enabled: {{ sbs_mock_scim_enabled }}
+  sweep:
+    # Do we enable scim sweeps?
+    enabled: {{ sbs_scim_sweep }}
+    # How often do we check if scim sweeps are needed per service
+    cron_minutes_expression: "*/15"
 
 ldap:
   url: "{{ sbs_ldap_url }}"

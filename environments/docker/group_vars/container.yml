@@ -236,3 +236,5 @@ sbs_send_exceptions: True
 sbs_send_js_exceptions: True
 sbs_exceptions_mail: sram-beheer@{{base_domain}}
 sbs_cron_job_responsible: True
+
+sbs_id_scope: "scz-vm.net"

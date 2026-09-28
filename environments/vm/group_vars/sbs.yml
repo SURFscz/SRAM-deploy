@@ -76,3 +76,5 @@ sbs_ssid_identity_providers:
 
 sbs_encryption_key: secret
 sbs_cron_job_responsible: True
+
+sbs_id_scope: "scz-vm.net"

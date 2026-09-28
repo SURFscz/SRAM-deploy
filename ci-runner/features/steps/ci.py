@@ -1,19 +1,22 @@
 import json
 
-from behave import *
+from behave import given, when, then
 from selenium.webdriver.support.expected_conditions import staleness_of, title_is, presence_of_element_located
 from selenium.webdriver.common.by import By
+
 
 @given('we visit {url}')
 def step_impl(context, url):
     context.last_sub = None
     context.browser.get(url)
 
+
 @given('we choose {idp}')
 def step_impl(context, idp):
     # Wait for DS to load
-    context.wait.until(title_is('SURF Research Access Management (Acceptance environment)'),
-                       'Timeout waiting for landing page')
+    context.wait.until(presence_of_element_located(
+        (By.ID, "add_button")),
+        'Timeout waiting for Add another institution')
 
     # Click "Add another institution"
     add_button = context.browser.find_element(By.ID, 'add_button')
@@ -32,16 +35,18 @@ def step_impl(context, idp):
     context.browser.find_element(By.XPATH, f"//div[@class='text-truncate label primary' and text()='{idp}']").click()
     context.wait.until(staleness_of(search))
 
+
 @given('we arrive at {url}')
 def step_impl(context, url):
     # Wait for IdP to load
-    assert(url in context.browser.current_url), "Error loading URL"
+    assert (url in context.browser.current_url), "Error loading URL"
+
 
 @when('we login as {user}')
 def step_impl(context, user):
     # Login as user
     context.wait.until(presence_of_element_located(
-        (By.XPATH, f"//form")),
+        (By.XPATH, "//form")),
         'Timeout waiting for result')
     test = user.split(':')
     username = test[0]
@@ -49,6 +54,7 @@ def step_impl(context, user):
     context.browser.find_element(By.ID, 'username').send_keys(username)
     context.browser.find_element(By.ID, 'password').send_keys(password)
     context.browser.find_element(By.XPATH, '//button[@type="submit"]').click()
+
 
 @then('sub is {sub}')
 def step_impl(context, sub):
@@ -63,7 +69,8 @@ def step_impl(context, sub):
     output = json.loads(context.browser.find_element(By.ID, 'id_token').text)
 
     token_sub = output.get('sub', None)
-    assert(token_sub == sub), "No valid identifier found"
+    assert (token_sub == sub), "No valid identifier found"
+
 
 @then('tokens are {file}')
 def step_impl(context, file):
@@ -72,7 +79,7 @@ def step_impl(context, file):
 
     # Test RP title
     title = context.browser.title
-    assert(title == "Test RP"), "Error loading OP return url"
+    assert (title == "Test RP"), "Error loading OP return url"
 
     # Test user attributes
     id_token = json.loads(context.browser.find_element(By.ID, 'id_token').text)
@@ -86,26 +93,26 @@ def step_impl(context, file):
 
     for claim, value in user_claims['id_token'].items():
         if type(value) is list:
-            assert(set(id_token[claim]) == set(value)), f"id_token {claim} did not contain {value}"
+            assert (set(id_token[claim]) == set(value)), f"id_token {claim} did not contain {value}"
         else:
-            assert(id_token[claim] == value), f"id_token {claim} did not contain {value}"
+            assert (id_token[claim] == value), f"id_token {claim} did not contain {value}"
 
     for claim, value in user_claims['access_token_1'].items():
         if type(value) is list:
-            assert(set(access_token_1[claim]) == set(value)), f"access_token_1 {claim} did not contain {value}"
+            assert (set(access_token_1[claim]) == set(value)), f"access_token_1 {claim} did not contain {value}"
         else:
-            assert(access_token_1[claim] == value), f"access_token_1 {claim} did not contain {value}"
+            assert (access_token_1[claim] == value), f"access_token_1 {claim} did not contain {value}"
 
     for claim, value in user_claims['access_token_2'].items():
         if type(value) is list:
-            assert(set(access_token_2[claim]) == set(value)), f"access_token_2 {claim} did not contain {value}"
+            assert (set(access_token_2[claim]) == set(value)), f"access_token_2 {claim} did not contain {value}"
         else:
-            assert(access_token_2[claim] == value), f"access_token_2 {claim} did not contain {value}"
+            assert (access_token_2[claim] == value), f"access_token_2 {claim} did not contain {value}"
 
     for claim, value in user_claims['user_info'].items():
         if type(value) is list:
-            assert(set(user_info_1[claim]) == set(value)), f"user_info_1 {claim} did not contain {value}"
-            assert(set(user_info_2[claim]) == set(value)), f"user_info_2 {claim} did not contain {value}"
+            assert (set(user_info_1[claim]) == set(value)), f"user_info_1 {claim} did not contain {value}"
+            assert (set(user_info_2[claim]) == set(value)), f"user_info_2 {claim} did not contain {value}"
         else:
-            assert(user_info_1[claim] == value), f"user_info_1 {claim} did not contain {value}"
-            assert(user_info_2[claim] == value), f"user_info_2 {claim} did not contain {value}"
+            assert (user_info_1[claim] == value), f"user_info_1 {claim} did not contain {value}"
+            assert (user_info_2[claim] == value), f"user_info_2 {claim} did not contain {value}"
