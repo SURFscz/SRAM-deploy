@@ -3,20 +3,6 @@
   systemd:
     daemon_reload: true
 
-- name: "enable ocsp job"
-  systemd:
-    name: "ocsp.timer"
-    state: "started"
-    enabled: true
-  when: "not is_dev"
-
-- name: "run ocsp update"
-  listen: "cert updated"
-  systemd:
-    name: "ocsp.service"
-    state: "started"
-  when: "not is_dev"
-
 - name: "restart haproxy"
   listen: "cert updated"
   systemd:

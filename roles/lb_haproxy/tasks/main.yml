@@ -90,40 +90,28 @@
   failed_when: "st.stat.size > 65419"
   loop: [ 400, 403, 408, 500, 502, 503, 504 ]
 
-- block:
-    - name: Create bin directory
-      file:
-        path: "{{haproxy_oscp_bin_dir}}"
-        state: "directory"
+- name: disable ocsp job
+  systemd:
+    name: "ocsp.timer"
+    state: "stopped"
+    enabled: false
+  register: "ocsp_timer_result"
+  failed_when:
+    - "ocsp_timer_result.failed"
+    - "'Could not find the requested service ocsp.timer' not in (ocsp_timer_result.msg | default(''))"
 
-    - name: Copy ocsp script
-      copy:
-        src: ocsp.sh
-        dest: "{{haproxy_oscp_bin_dir}}"
-        mode: "0755"
-        owner: "root"
-        group: "root"
-      notify:
-        - "run ocsp update"
-
-    - name: Copy ocsp service files
-      template:
-        src: "{{item}}.j2"
-        dest: "/etc/systemd/system/{{item}}"
-      with_items:
-        - "ocsp.service"
-        - "ocsp.timer"
-      notify:
-        - "systemd daemon-reload"
-        - "enable ocsp job"
-        - "run ocsp update"
-
-    - name: Copy ocsp service files for certbot/letsencrypt
-      template:
-        src: "ocsp-letsencrypt.j2"
-        dest: "/etc/letsencrypt/renewal-hooks/post/"
-        mode: '0755'
-  when: "not is_dev"
+- name: Remove obsolete ocsp service files
+  file:
+    path: "{{ item }}"
+    state: "absent"
+  with_items:
+    - "{{ haproxy_oscp_bin_dir }}/ocsp.sh"
+    - "/etc/systemd/system/ocsp.service"
+    - "/etc/systemd/system/ocsp.timer"
+    - "/etc/letsencrypt/renewal-hooks/post/ocsp-letsencrypt"
+    - "{{cert_dir}}/priv+fullchain.pem.ocsp"
+  notify:
+    - "systemd daemon-reload"
 
 - name: create override dir
   file:
