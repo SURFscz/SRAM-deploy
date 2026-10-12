@@ -4,7 +4,7 @@ require '{{ demosp_dir}}/vendor/autoload.php';
 use Jumbojett\OpenIDConnectClient;
 
 # supported environments; should correspond to configured SPs
-$ENVS = array("test","test2", "acc","prd");
+$ENVS = array("test","acc","prd","ebtest2","ebtest");
 
 # sanitize user input
 $env = $_SERVER['PATH_INFO'];
@@ -22,7 +22,7 @@ $client_secret = $client[$env]['secret'];
 $redirect_url = $_SERVER['REQUEST_SCHEME'] . "://" . $_SERVER['SERVER_NAME'] . "/rp/" . $env;
 $response_type = 'code';
 $scopes = array('profile', 'openid', 'email');
-if ($env != "test2") {
+if (!str_starts_with($env, "eb")) {
     array_push($scopes, 'uid', 'eduperson_assurance', 'eduperson_entitlement',
                'eduperson_orcid', 'eduperson_principal_name', 'eduperson_scoped_affiliation',
                'voperson_external_affiliation', 'voperson_external_id', 'voperson_id', 'aarc', 'ssh_public_key', 'orcid');

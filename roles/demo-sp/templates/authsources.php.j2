@@ -18,16 +18,6 @@ $config['test'] = array(
         'description' => [ 'en' => 'SURF Research Access Management demo SP For TEST' ],
 );
 
-$config['test2'] = array(
-        'saml:SP',
-        'entityID' => 'https://demo-sp.sram.surf.nl/saml/module.php/saml/sp/metadata.php/test2',
-        'certificate' => "saml.pem",
-        'privatekey' => "saml.key",
-        'idp' => "https://engine.test2.surfconext.nl/authentication/idp/metadata",
-        'name' => [ 'en' => 'SRAM Test2 Demo SP' ],
-        'description' => [ 'en' => 'SURF Research Access Management demo SP For TEST2' ],
-);
-
 $config['acc'] = array(
         'saml:SP',
         'entityID' => 'https://demo-sp.sram.surf.nl/saml/module.php/saml/sp/metadata.php/acc',
@@ -46,6 +36,26 @@ $config['prd'] = array(
         'idp' => "https://proxy.sram.surf.nl/proxy",
         'name' => [ 'en' => 'SRAM Prod Demo SP' ],
         'description' => [ 'en' => 'SURF Research Access Management demo SP For PROD' ],
+);
+
+$config['ebtest2'] = array(
+        'saml:SP',
+        'entityID' => 'https://demo-sp.sram.surf.nl/saml/module.php/saml/sp/metadata.php/ebtest2',
+        'certificate' => "saml.pem",
+        'privatekey' => "saml.key",
+        'idp' => "https://engine.test2.surfconext.nl/authentication/idp/metadata",
+        'name' => [ 'en' => 'SRAM EB Test2 Demo SP' ],
+        'description' => [ 'en' => 'SURF Research Access Management demo SP For EB TEST2' ],
+);
+
+$config['ebtest'] = array(
+        'saml:SP',
+        'entityID' => 'https://demo-sp.sram.surf.nl/saml/module.php/saml/sp/metadata.php/ebtest',
+        'certificate' => "saml.pem",
+        'privatekey' => "saml.key",
+        'idp' => "https://engine.test.surfconext.nl/authentication/idp/metadata",
+        'name' => [ 'en' => 'SRAM EB Test Demo SP' ],
+        'description' => [ 'en' => 'SURF Research Access Management demo SP For EB TEST' ],
 );
 
 #        'signature.algorithm' => 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256',
