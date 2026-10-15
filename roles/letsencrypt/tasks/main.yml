@@ -55,8 +55,10 @@
       when: "letsencrypt_server is defined"
 
     - name: check if server of current cert matches current letsencrypt server
+      vars:
+        host: "{% if item is mapping %}{{ item | first }}{% else %}{{ item }}{% endif %}"
       lineinfile:
-        path: "{{letsencrypt_account_dir}}/../renewal/{{item}}.conf"
+        path: "{{letsencrypt_account_dir}}/../renewal/{{host}}.conf"
         regexp: "^server *= *{{ letsencrypt_server | regex_escape() }}"
         state: "absent"
       check_mode: true
@@ -88,14 +90,19 @@
 
 
     - name: check for new certs to generate
+      vars:
+        host: "{% if item is mapping %}{{ item | first }}{% else %}{{ item }}{% endif %}"
       stat:
-        path: "{{letsencrypt_cert_dir}}/{{item}}"
+        path: "{{letsencrypt_cert_dir}}/{{host}}"
       register: "no_cert_yet"
       changed_when: "not no_cert_yet.stat.exists"
-      with_items: "{{letsencrypt_hosts}}"
+      loop: "{{letsencrypt_hosts}}"
       notify: "renew letsencrypt certificates"
 
     - name: generate acme certificates
+      vars:
+        host: "{% if item is mapping %}{{ item | first }}{% else %}{{ item }}{% endif %}"
+        sans: "{% if item is mapping %}{% for key,value in item.items() %}{{ key }},{{ value | join(',') }}{% endfor %}{% else %}{{item}}{% endif %}"
       command:
         cmd: >
           /usr/bin/certbot certonly --noninteractive
@@ -104,16 +111,19 @@
                                     {% endif %}
                                     --force-renewal
                                     --renew-with-new-domains
-                                    --domains={{item}}
+                                    --cert-name {{host}}
+                                    --domains {{sans}}
       register: result
       changed_when: "'Certificate is saved at' in result.stdout"
-      with_items: "{{ letsencrypt_hosts }}"
+      loop: "{{ letsencrypt_hosts }}"
       when: "letsencrypt_server_changed or no_cert_yet.changed"
       notify: "renew letsencrypt certificates again"
 
     - name: set renewal time for harica cert
+      vars:
+        host: "{% if item is mapping %}{{ item | first }}{% else %}{{ item }}{% endif %}"
       lineinfile:
-        path: "{{letsencrypt_account_dir}}/../renewal/{{item}}.conf"
+        path: "{{letsencrypt_account_dir}}/../renewal/{{host}}.conf"
         regex: "^#? *renew_before_expiry *="
         line: "renew_before_expiry = 170 days"
         state: "present"
