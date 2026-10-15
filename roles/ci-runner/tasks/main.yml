@@ -88,6 +88,14 @@
     shell: "/usr/sbin/nologin"
     system: true
 
+- include_role:
+    name: "letsencrypt"
+  vars:
+    letsencrypt_hosts: "{{ cirunner_hostnames }}"
+    letsencrypt_server: "{{ bhr12_acme_server_url }}"
+    letsencrypt_eab: true
+    letsencrypt_eab_keyid: "{{ bhr12_acme_eab_keyid }}"
+    letsencrypt_eab_hmac: "{{ bhr12_acme_hmac_key }}"
 
 # https://github.com/MonolithProjects/ansible-github_actions_runner
 # ansible-galaxy role install -r requirements.yml
