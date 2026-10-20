@@ -1,6 +1,9 @@
 ---
 - name: renew letsencrypt certificates
-  command:
+  vars:
+    host: "{% if item is mapping %}{{ item | first }}{% else %}{{ item }}{% endif %}"
+    sans: "{% if item is mapping %}{% for key,value in item.items() %}{{ key }},{{ value | join(',') }}{% endfor %}{% else %}{{item}}{% endif %}"
+  ansible.builtin.command:
     cmd: >
       /usr/bin/certbot certonly --noninteractive
                                 {% if letsencrypt_server is defined %}
@@ -8,7 +11,9 @@
                                 {% endif %}
                                 --keep-until-expiring
                                 --renew-with-new-domains
-                                --domains={{item}}
+                                -- cert
+                                --cert-name {{host}}
+                                --domains {{sans}}
   register: result
   changed_when: "'Certificate is saved at' in result.stdout"
   with_items: "{{ letsencrypt_hosts }}"
@@ -17,7 +22,10 @@
 
 # we need to renew directly in order to run the post renewal hooks...
 - name: renew letsencrypt certificates again
-  command:
+  vars:
+    host: "{% if item is mapping %}{{ item | first }}{% else %}{{ item }}{% endif %}"
+    sans: "{% if item is mapping %}{% for key,value in item.items() %}{{ key }},{{ value | join(',') }}{% endfor %}{% else %}{{item}}{% endif %}"
+  ansible.builtin.command:
     cmd: >
       /usr/bin/certbot renew --noninteractive
                              {% if letsencrypt_server is defined %}
@@ -25,7 +33,8 @@
                              {% endif %}
                              --no-random-sleep-on-renew
                              --force-renewal
-                             --cert-name={{item}}
+                             --cert-name {{host}}
+                             --domains {{sans}}
   register: result
   changed_when: '"Congratulations, all renewals succeeded" in result.stdout'
   when: "letsencrypt_enabled and letsencrypt_hosts is defined"

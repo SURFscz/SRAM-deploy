@@ -25,8 +25,9 @@
 # - add apache (of nog liever: nginx)
 - name: Enable Apache modules
   community.general.apache2_module:
-    state: present
     name: "{{ item }}"
+    state: present
+    ignore_configcheck: True
   with_items:
     - "ssl"
     - "proxy"
@@ -47,33 +48,33 @@
     state: "link"
   notify: "restart apache"
 
-- name: Write ci-runner private key
-  copy:
-    content: "{{cirunner_cert.key}}"
-    dest: "{{ ssl_certs_dir }}/ci-runner.sram.surf.nl.key"
-    owner: "root"
-    group: "ssl-cert"
-    mode: "0640"
-  no_log: "{{sram_ansible_nolog}}"
-  notify: "restart apache"
-
-- name: Write ci-runner certificate
-  copy:
-    content: "{{cirunner_cert.cert}}"
-    dest: "{{ ssl_certs_dir }}/ci-runner.sram.surf.nl.crt"
-    owner: "root"
-    group: "root"
-    mode: "0644"
-  notify: "restart apache"
-
-- name: Write ci-runner chain
-  copy:
-    content: "{{cirunner_cert.chain}}"
-    dest: "{{ ssl_certs_dir }}/ci-runner.sram.surf.nl.chain.crt"
-    owner: "root"
-    group: "root"
-    mode: "0644"
-  notify: "restart apache"
+# - name: Write ci-runner private key
+#   copy:
+#     content: "{{cirunner_cert.key}}"
+#     dest: "{{ ssl_certs_dir }}/ci-runner.sram.surf.nl.key"
+#     owner: "root"
+#     group: "ssl-cert"
+#     mode: "0640"
+#   no_log: "{{sram_ansible_nolog}}"
+#   notify: "restart apache"
+#
+# - name: Write ci-runner certificate
+#   copy:
+#     content: "{{cirunner_cert.cert}}"
+#     dest: "{{ ssl_certs_dir }}/ci-runner.sram.surf.nl.crt"
+#     owner: "root"
+#     group: "root"
+#     mode: "0644"
+#   notify: "restart apache"
+#
+# - name: Write ci-runner chain
+#   copy:
+#     content: "{{cirunner_cert.chain}}"
+#     dest: "{{ ssl_certs_dir }}/ci-runner.sram.surf.nl.chain.crt"
+#     owner: "root"
+#     group: "root"
+#     mode: "0644"
+#   notify: "restart apache"
 
 # - add user for ci-runner (draait nu nog als martin)
 - name: Add ci-runner group

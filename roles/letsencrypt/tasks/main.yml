@@ -122,10 +122,11 @@
     - name: set renewal time for harica cert
       vars:
         host: "{% if item is mapping %}{{ item | first }}{% else %}{{ item }}{% endif %}"
-      lineinfile:
+      ansible.builtin.lineinfile:
         path: "{{letsencrypt_account_dir}}/../renewal/{{host}}.conf"
         regex: "^#? *renew_before_expiry *="
         line: "renew_before_expiry = 170 days"
         state: "present"
+        create: true
       when: "'harica' in letsencrypt_server"
       loop: "{{letsencrypt_hosts}}"
