@@ -22,18 +22,19 @@
 # Apache mpm modules need to be handled separately, see
 - name: Change apache worker
   apache2_module:
-    state: "{{ item.state }}"
-    name: "{{ item.name }}"
+    name: "{{ item.key }}"
+    state: "{{ item.value }}"
     ignore_configcheck: True
-  with_items:
-    - { name: "mpm_event",   state: "absent"  }
-    - { name: "mpm_prefork", state: "present" }
+  with_dict:
+    mpm_event: "absent"
+    mpm_prefork: "present"
   notify: "restart apache"
+  failed_when: false
 
 - name: Enable correct apache modules
   apache2_module:
-    state: "{{ item.value }}"
     name: "{{ item.key }}"
+    state: "{{ item.value }}"
     ignore_configcheck: true
   with_dict:
     status: "present"
@@ -47,4 +48,5 @@
     ssl: "present"
     headers: "present"
   notify: "restart apache"
+  failed_when: false
 

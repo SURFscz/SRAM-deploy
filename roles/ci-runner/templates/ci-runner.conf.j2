@@ -11,9 +11,10 @@ Listen 443
         SSLCipherSuite ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES256-GCM-SHA384
         SSLProtocol TLSv1.2 TLSv1.3
 
-        SSLCertificateFile      {{ ssl_certs_dir }}/ci-runner.sram.surf.nl.crt
-        SSLCertificateChainFile {{ ssl_certs_dir }}/ci-runner.sram.surf.nl.chain.crt
-        SSLCertificateKeyFile   {{ ssl_certs_dir }}/ci-runner.sram.surf.nl.key
+        {% set host=cirunner_hostnames[0] | first -%}
+        SSLCertificateFile      /etc/letsencrypt/live/{{ host }}/cert.pem
+        SSLCertificateChainFile /etc/letsencrypt/live/{{ host }}/fullchain.pem
+        SSLCertificateKeyFile   /etc/letsencrypt/live/{{ host }}/privkey.pem
 
         ErrorLog ${APACHE_LOG_DIR}/error.log
         CustomLog ${APACHE_LOG_DIR}/access.log combined
