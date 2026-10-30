@@ -8,9 +8,18 @@
     state: "present"
 
 - name: Add Docker repository.
-  ansible.builtin.apt_repository:
-    repo: "deb [arch=amd64] https://download.docker.com/linux/debian {{ debian_dist }} stable"
-    state: "present"
+  ansible.builtin.copy:
+    dest: /etc/apt/sources.list.d/download_docker_com_linux_debian.list
+    content: "deb [arch=amd64] https://download.docker.com/linux/debian {{ debian_dist }} stable\n"
+    owner: root
+    group: root
+    mode: "0644"
+  register: docker_repo
+
+- name: Update apt cache after repository change.
+  ansible.builtin.apt:
+    update_cache: true
+  when: docker_repo.changed
 
 - name: Create docker config directory
   ansible.builtin.file:
