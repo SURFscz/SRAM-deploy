@@ -50,6 +50,10 @@ jobs:
         run: |
           ./start-vm --ci
 
+      - name: Run E2E tests
+        run: |
+          yarn playwright test
+
       - name: Output SBS version
         run: |
           curl -k https://sbs.ci-runner.sram.surf.nl/info
