@@ -209,6 +209,7 @@ sbs_manage_base_enabled: True
 sbs_manage_base_url: "https://manage.test2.surfconext.nl"
 sbs_manage_sram_rp_entity_id: "sbs.test2.sram.surf.nl"
 sbs_manage_verify_peer: True
+sbs_manage_service_state: "prodaccepted"
 
 sbs_ldap_url: "ldap://ldap.scz-vm.net/dc=services,dc=vnet"
 # entity_id will be replaced run-time in the client
