@@ -1,6 +1,4 @@
 ---
-# debian_dist: 'bookworm'
-
 deb_host: >-
   {% if is_aws | default(false) -%}
     http://cdn-aws.deb.debian.org/debian
