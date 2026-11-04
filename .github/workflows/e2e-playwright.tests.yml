@@ -1,0 +1,19 @@
+---
+name: Run end-to-end playwright tests
+
+on:
+  push:
+  pull_request:
+  # Triggers the workflow manually
+  workflow_dispatch:
+
+jobs:
+  test:
+    if: "github.actor!='dependabot[bot]'"
+    runs-on: "self-hosted"
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout $GITHUB_WORKSPACE
+        uses: actions/checkout@v6
+    
+    
