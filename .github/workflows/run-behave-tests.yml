@@ -1,7 +1,7 @@
 ---
 
 # Documented in https://confluence.ia.surf.nl/spaces/coininfra/pages/209410829/SRAM+CI+Runner
-name: CI-runner
+name: "Run Behave Tests"
 
 on:
   push:
@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  test:
+  run-behave-tests:
     if: "github.actor!='dependabot[bot]'"
     runs-on: "self-hosted"
     steps:
