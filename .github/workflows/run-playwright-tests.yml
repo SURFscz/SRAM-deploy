@@ -2,16 +2,19 @@
 
 name: "Run Playwright Tests"
 
+# Controls when the action will run.
 on:
+  # Triggers the workflow on push or pull request events
   push:
   pull_request:
-  # Triggers the workflow manually
+
+  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 jobs:
   run-playwright-tests:
     if: "github.actor!='dependabot[bot]'"
-    runs-on: "self-hosted"
+    runs-on: "ubuntu-24.04"
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Checkout $GITHUB_WORKSPACE
