@@ -1,6 +1,6 @@
 ---
 
-name: "deploy-docker"
+name: "Test Container Deploy"
 
 # Controls when the action will run.
 on:
@@ -13,7 +13,7 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  deploy_docker:
+  test-containers:
     # The type of runner that the job will run on
     runs-on: "ubuntu-24.04"
 
@@ -41,7 +41,6 @@ jobs:
       - name: Fix docker crap
         run: |
           cat docker/hosts | sudo tee -a /etc/hosts
-          #sudo docker system prune -f
           sudo systemctl stop docker
           sudo mv /var/lib/docker /var/lib/docker.old  # faster than removing
           sudo mkdir -p /mnt/docker
@@ -190,7 +189,3 @@ jobs:
         timeout-minutes: 60
         if: failure()
 
-
-#        env:
-#          ACTIONS_STEP_DEBUG: ${{ secrets.ACTIONS_STEP_DEBUG }}
-#        if: ${{ failure() && env.ACTIONS_STEP_DEBUG == 'true' }}
