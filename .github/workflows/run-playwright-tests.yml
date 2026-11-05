@@ -1,0 +1,105 @@
+---
+
+name: "Run Playwright Tests"
+
+on:
+  push:
+  pull_request:
+  # Triggers the workflow manually
+  workflow_dispatch:
+
+jobs:
+  run-playwright-tests:
+    if: "github.actor!='dependabot[bot]'"
+    runs-on: "self-hosted"
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout $GITHUB_WORKSPACE
+        uses: actions/checkout@v6
+
+      # Run errands
+      - name: Run errands
+        run: |
+          sudo rm -f /opt/pipx_bin/ansible*
+          sudo apt -q update
+          sudo apt -y install ansible bridge-utils apparmor-utils wget \
+                              python3-pip python3-setuptools python3-wheel \
+                              python3-venv yamllint python3-jinja2 python3-yaml \
+                              python3-requests python3-bs4
+          sudo pip3 install --break-system-packages --ignore-installed selenium webdriver-manager
+          git clone --single-branch -b stable https://github.com/dw/mitogen.git ~/mitogen
+          which google-chrome || {
+            wget --quiet https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+            sudo apt install ./google-chrome-stable_current_amd64.deb
+          }
+
+      - name: Use Node.js 24.3.0
+        uses: actions/setup-node@v7
+        with:
+          node-version: "24.3.0"
+          cache: "yarn"
+          cache-dependency-path: '**/e2e-tests/yarn.lock'
+
+      - name: Install playwright
+        shell: bash
+        run: |
+          cd e2e-tests
+          yarn install
+          yarn playwright install --with-deps chromium
+
+      # # Create date output to seconds
+      # - name: Get Date
+      #   id: get-date
+      #   run: echo "date=$(/bin/date -u '+%Y%m%d%k%M%S')" >> $GITHUB_OUTPUT
+
+      # # Restore cache based no fake time key (allways miss)
+      # - name: Setup cache
+      #   id: cache-docker
+      #   uses: actions/cache@v5
+      #   with:
+      #     path: ~/docker-save
+      #     key: docker-save-${{ steps.get-date.outputs.date }}
+      #     restore-keys: docker-save-
+
+      # # Useful for debugging
+      # - name: Show versions
+      #   run: |
+      #     python3 --version
+      #     ansible --version
+
+      # # apparmor is by default enabled for binaries _in_ the containers and is restricting
+      # # mysql from reading tls keys
+      # - name: Disable apparmor
+      #   run: |
+      #     sudo aa-status --json | jq '
+      #       .profiles | to_entries
+      #       | map( select( (.key | startswith("/") ) and .value=="enforce") | .key )
+      #       | .[]
+      #     ' | grep -vE 'totem|pidgin|passt' | \
+      #     while read -r profile; do
+      #       sudo aa-complain "$profile" || true
+      #     done
+
+      # # Install Ansible modules
+      # - name: Install Ansible modules
+      #   run: |
+      #     ansible-galaxy role install -r requirements.yml
+      #     ansible-galaxy collection install -r requirements.yml
+
+      # # Restore docker cache
+      # - name: Restore docker cache
+      #   run: docker load -i ~/docker-save/scz-base-cache.tar || true
+
+      # # Get scz-base-cache ImageID
+      # - name: Get scz-base-cache ImageID
+      #   id: scz-base-cache-id
+      #   run: >
+      #     ID=$(docker image list scz-base-cache -q)
+      #     echo "ID=$ID" >> $GITHUB_OUTPUT
+
+      # # Start containers without deploy
+      # - name: Start containers
+      #   shell: bash
+      #   env:
+      #     SKIP_ANSIBLE: 1
+      #   run: "./start-vm --classic"
