@@ -1,6 +1,6 @@
 ---
 
-# Documented in https://wiki.surfnet.nl/display/coininfra/SRAM+CI+Runner
+# Documented in https://confluence.ia.surf.nl/spaces/coininfra/pages/209410829/SRAM+CI+Runner
 name: CI-runner
 
 on:
@@ -8,11 +8,6 @@ on:
   pull_request:
   # Triggers the workflow manually
   workflow_dispatch:
-    inputs:
-      foobar:
-        description: 'my Foobar'
-        required: true
-        default: 'myBar'
 
 jobs:
   test:
@@ -29,14 +24,6 @@ jobs:
         env:
           secret_vm: ${{ secrets.SECRET_VM }}
         run: "echo $secret_vm > secret_vm"
-
-      - name: Hello World
-        run: |
-          touch HelloWorld
-          echo "Hello world ${{ github.event.inputs.foobar }}" >> HelloWorld
-          uname -a
-          lsb_release -a
-          ansible --version
 
       - name: Stop running dockers
         run: |
