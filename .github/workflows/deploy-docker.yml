@@ -1,5 +1,4 @@
 ---
-# This is a basic workflow to help you get started with Actions
 
 name: "deploy-docker"
 
@@ -31,11 +30,13 @@ jobs:
           sudo apt -y install ansible bridge-utils apparmor-utils wget \
                               python3-pip python3-setuptools python3-wheel \
                               python3-venv yamllint python3-jinja2 python3-yaml \
-                              python3-selenium python3-requests python3-bs4
-          sudo pip3 install --break-system-packages webdriver-manager
+                              python3-requests python3-bs4
+          sudo pip3 install --break-system-packages selenium webdriver-manager
           git clone --single-branch -b stable https://github.com/dw/mitogen.git ~/mitogen
-          wget --quiet https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-          sudo apt install ./google-chrome-stable_current_amd64.deb
+          which google-chrome || {
+            wget --quiet https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+            sudo apt install ./google-chrome-stable_current_amd64.deb
+          }
 
       - name: Fix docker crap
         run: |
