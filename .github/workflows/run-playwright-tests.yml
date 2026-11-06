@@ -35,6 +35,20 @@ jobs:
           wget --quiet https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
           sudo apt install ./google-chrome-stable_current_amd64.deb
 
+      - name: Use Node.js 24.3.0
+        uses: actions/setup-node@v7
+        with:
+          node-version: "24.3.0"
+          cache: "yarn"
+          cache-dependency-path: '**/e2e-tests/yarn.lock'
+
+      - name: Install playwright
+        shell: bash
+        run: |
+          cd e2e-tests
+          yarn install
+          yarn playwright install --with-deps chromium
+
       # Create date output to seconds
       - name: Get Date
         id: get-date
