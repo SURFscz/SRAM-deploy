@@ -135,3 +135,9 @@ jobs:
       - name: Run start-vm
         shell: bash
         run: "./start-vm --classic"
+      
+      - name: Run playwright
+        shell: bash
+        run: |
+          cd e2e-tests
+          yarn playwright test --project=chromium
