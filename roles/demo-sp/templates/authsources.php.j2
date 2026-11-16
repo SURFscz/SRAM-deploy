@@ -18,22 +18,44 @@ $config['test'] = array(
         'description' => [ 'en' => 'SURF Research Access Management demo SP For TEST' ],
 );
 
+# Old ACC config
+#$config['acc'] = array(
+#        'saml:SP',
+#        'entityID' => 'https://demo-sp.sram.surf.nl/saml/module.php/saml/sp/metadata.php/acc',
+#        'certificate' => "saml.pem",
+#        'privatekey' => "saml.key",
+#        'idp' => "https://proxy.acc.sram.eduteams.org/proxy",
+#        'name' => [ 'en' => 'SRAM Acc Demo SP' ],
+#        'description' => [ 'en' => 'SURF Research Access Management demo SP For ACC' ],
+#);
+
 $config['acc'] = array(
         'saml:SP',
         'entityID' => 'https://demo-sp.sram.surf.nl/saml/module.php/saml/sp/metadata.php/acc',
         'certificate' => "saml.pem",
         'privatekey' => "saml.key",
-        'idp' => "https://proxy.acc.sram.eduteams.org/proxy",
+        'idp' => "https://engine.test.surfconext.nl/authentication/idp/metadata",
         'name' => [ 'en' => 'SRAM Acc Demo SP' ],
         'description' => [ 'en' => 'SURF Research Access Management demo SP For ACC' ],
 );
+
+# Old PRD config
+#$config['prd'] = array(
+#        'saml:SP',
+#        'entityID' => 'https://demo-sp.sram.surf.nl/saml/module.php/saml/sp/metadata.php/prd',
+#        'certificate' => "saml.pem",
+#        'privatekey' => "saml.key",
+#        'idp' => "https://proxy.sram.surf.nl/proxy",
+#        'name' => [ 'en' => 'SRAM Prod Demo SP' ],
+#        'description' => [ 'en' => 'SURF Research Access Management demo SP For PROD' ],
+#);
 
 $config['prd'] = array(
         'saml:SP',
         'entityID' => 'https://demo-sp.sram.surf.nl/saml/module.php/saml/sp/metadata.php/prd',
         'certificate' => "saml.pem",
         'privatekey' => "saml.key",
-        'idp' => "https://proxy.sram.surf.nl/proxy",
+        'idp' => "https://engine.surfconext.nl/authentication/idp/metadata",
         'name' => [ 'en' => 'SRAM Prod Demo SP' ],
         'description' => [ 'en' => 'SURF Research Access Management demo SP For PROD' ],
 );

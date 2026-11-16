@@ -1,4 +1,5 @@
 ---
+# Yes, this fails in check mode because php_version is not set
 - name: "restart php-fpm"
   listen: "restart php-fpm"
   systemd:

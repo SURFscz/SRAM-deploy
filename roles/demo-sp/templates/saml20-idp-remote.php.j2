@@ -91,3 +91,294 @@ $metadata['https://engine.test.surfconext.nl/authentication/idp/metadata'] = [
         ],
     ],
 ];
+
+$metadata['https://engine.test.surfconext.nl/authentication/idp/metadata'] = [
+    'entityid' => 'https://engine.test.surfconext.nl/authentication/idp/metadata',
+    'description' => [
+        'en' => 'SURF BV',
+    ],
+    'OrganizationName' => [
+        'en' => 'SURF BV',
+    ],
+    'name' => [
+        'nl' => 'SURFconext Test environment',
+        'en' => 'SURFconext Test environment',
+    ],
+    'OrganizationDisplayName' => [
+        'en' => 'SURF',
+    ],
+    'url' => [
+        'en' => 'https://www.surf.nl',
+    ],
+    'OrganizationURL' => [
+        'en' => 'https://www.surf.nl',
+    ],
+    'contacts' => [
+        [
+            'contactType' => 'administrative',
+            'givenName' => 'SURFconext support',
+            'emailAddress' => [
+                'support@surfconext.nl',
+            ],
+        ],
+        [
+            'contactType' => 'technical',
+            'givenName' => 'SURFconext support',
+            'emailAddress' => [
+                'support@surfconext.nl',
+            ],
+        ],
+        [
+            'contactType' => 'support',
+            'givenName' => 'SURFconext support',
+            'emailAddress' => [
+                'help@surfconext.nl',
+            ],
+        ],
+    ],
+    'metadata-set' => 'saml20-idp-remote',
+    'SingleSignOnService' => [
+        [
+            'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
+            'Location' => 'https://engine.test.surfconext.nl/authentication/idp/single-sign-on/key:20230403',
+        ],
+    ],
+    'SingleLogoutService' => [],
+    'ArtifactResolutionService' => [],
+    'NameIDFormats' => [
+        'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent',
+        'urn:oasis:names:tc:SAML:2.0:nameid-format:transient',
+        'urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified',
+    ],
+    'keys' => [
+        [
+            'encryption' => false,
+            'signing' => true,
+            'type' => 'X509Certificate',
+            'X509Certificate' => 'MIIE7TCCA1WgAwIBAgIJANrbxA3xAUIIMA0GCSqGSIb3DQEBCwUAMIGMMQswCQYDVQQGEwJOTDEQMA4GA1UECAwHVXRyZWNodDEQMA4GA1UEBwwHVXRyZWNodDESMBAGA1UECgwJU1VSRiBCLlYuMRgwFgYDVQQLDA9TVVJGY29uZXh0IFRFU1QxKzApBgNVBAMMImVuZ2luZS50ZXN0LnN1cmZjb25leHQubmwgMjAyMzA0MDMwHhcNMjMwNDAzMTI1ODA0WhcNMjgwNDAyMTI1ODA0WjCBjDELMAkGA1UEBhMCTkwxEDAOBgNVBAgMB1V0cmVjaHQxEDAOBgNVBAcMB1V0cmVjaHQxEjAQBgNVBAoMCVNVUkYgQi5WLjEYMBYGA1UECwwPU1VSRmNvbmV4dCBURVNUMSswKQYDVQQDDCJlbmdpbmUudGVzdC5zdXJmY29uZXh0Lm5sIDIwMjMwNDAzMIIBojANBgkqhkiG9w0BAQEFAAOCAY8AMIIBigKCAYEAx+vZHDla/MMnksJjWfKwXXl7cmW9sEaavn3xNEGa9qjxA5GZXwQjSIrKwB9LLZLIPQIjyIzUJDl1oUrx3TYEg8wjYGs/PhavVLdlpJTqPHoSGKpHBQBoAqaN3hT9ahFkD3RyamLOWX0o4lOnManIuWMhdQe5qVbQehlbpKLbsLIApYryE2aTICQ0KxB1aobbudaslujYXuqAC8SZaP+lbZ7Pa9NkLI03UDk8wO5ZpCA/vad/6/QTfMqPrXM8xho8YjIXgUDSPbyyi8R0I6vDlk1asH2e8ujmregrSBu02reQLft4Drr1xBWLc7y23mFcixjEa1fynWcVvshfVJe2Syk+1Mak3TuAW2+/i6n8GcQejH5UgVBRpOi/XE9Gw37ImD4sld2kDnztsoqF1+LGTciolPJiB1mja6Ew9NRKy1y3waM3ZTKZyHg+GKZumtmTw+4dC72MnH8lkiB8iYInPB5jvUK/c14rDmOzaGWJavjLnxy8UXuKCJJUOMz0JxWlAgMBAAGjUDBOMB0GA1UdDgQWBBQC4qy6CHN6ndJyqycDbZYtOrjESDAfBgNVHSMEGDAWgBQC4qy6CHN6ndJyqycDbZYtOrjESDAMBgNVHRMEBTADAQH/MA0GCSqGSIb3DQEBCwUAA4IBgQAvrqfrfeY4J+wpSaaGHD53Z7X8SZx0jyHUbszYrKlAgxNO8bo0zbbCSkaJ/DJx7XmY2e1Po3u/qrYa3PQSlC31iQCF+8StLtGFdRLPAabl8OS5YqvOyHF0LHqhnJGkIgWIadkwlez4O4fA1X7JDk3K9oz/thR5xsJY31yCFxIWSaQVEW8j1vKcb0jK7ig7JHa7APvZNQY2A9Y06YhFEeNCu8MjmTHtY3Khko3PrsTIzXcUxWCztjvCmv4y7Jzhn4WzRKpRRskzaU6fZ6lty6Fk5L5u0PTfDQ8YNzgxfniIjdkeBLxSmvvoL6BhhDhwlHoSGekmDnyVh0n9qUKp5uBNsdy6LsQF6KJ1jNEN0raMOf3FS1bt0SWPTpZoXEEM6ao6TlfndvDX2zKzUdhE82QpNXThHZXrF6w3lgMyUugcxlvC2OwsJzmYH8fSU+xxSO8TrwDd9unmy+4hGfF3Gm7Oj+AI+6czR7VWtqz1dcV1sfi/fc9EVUD15XCiPD38F9s=',
+        ],
+    ],
+    'UIInfo' => [
+        'DisplayName' => [
+            'nl' => 'SURFconext Test environment',
+            'en' => 'SURFconext Test environment',
+        ],
+        'Description' => [
+            'nl' => 'SURFconext Test environment',
+            'en' => 'SURFconext Test environment',
+        ],
+        'InformationURL' => [],
+        'PrivacyStatementURL' => [],
+        'Keywords' => [
+            'en' => [
+                'SURFconext',
+                'engine',
+            ],
+            'nl' => [
+                'SURFconext',
+                'engine',
+            ],
+        ],
+        'Logo' => [
+            [
+                'url' => 'https://static.surfconext.nl/media/idp/surfconext.png',
+                'height' => 160,
+                'width' => 200,
+            ],
+        ],
+    ],
+];
+
+$metadata['https://engine.acc.surfconext.nl/authentication/idp/metadata'] = [
+    'entityid' => 'https://engine.acc.surfconext.nl/authentication/idp/metadata',
+    'description' => [
+        'en' => 'SURF BV',
+    ],
+    'OrganizationName' => [
+        'en' => 'SURF BV',
+    ],
+    'name' => [
+        'nl' => 'SURFconext ACC',
+        'en' => 'SURFconext ACC',
+    ],
+    'OrganizationDisplayName' => [
+        'en' => 'SURF',
+    ],
+    'url' => [
+        'en' => 'https://www.surf.nl',
+    ],
+    'OrganizationURL' => [
+        'en' => 'https://www.surf.nl',
+    ],
+    'contacts' => [
+        [
+            'contactType' => 'administrative',
+            'givenName' => 'SURFconext support',
+            'emailAddress' => [
+                'support@surfconext.nl',
+            ],
+        ],
+        [
+            'contactType' => 'technical',
+            'givenName' => 'SURFconext support',
+            'emailAddress' => [
+                'support@surfconext.nl',
+            ],
+        ],
+        [
+            'contactType' => 'support',
+            'givenName' => 'SURFconext support',
+            'emailAddress' => [
+                'help@surfconext.nl',
+            ],
+        ],
+    ],
+    'metadata-set' => 'saml20-idp-remote',
+    'SingleSignOnService' => [
+        [
+            'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
+            'Location' => 'https://engine.acc.surfconext.nl/authentication/idp/single-sign-on/key:20230503',
+        ],
+    ],
+    'SingleLogoutService' => [],
+    'ArtifactResolutionService' => [],
+    'NameIDFormats' => [
+        'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent',
+        'urn:oasis:names:tc:SAML:2.0:nameid-format:transient',
+        'urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified',
+    ],
+    'keys' => [
+        [
+            'encryption' => false,
+            'signing' => true,
+            'type' => 'X509Certificate',
+            'X509Certificate' => 'MIIE7zCCA1egAwIBAgIUImyUR1zylpXeIX3bRtgqtnKgPyowDQYJKoZIhvcNAQELBQAwgYYxCzAJBgNVBAYTAk5MMRAwDgYDVQQIDAdVdHJlY2h0MRAwDgYDVQQHDAdVdHJlY2h0MRIwEAYDVQQKDAlTVVJGIEIuVi4xEzARBgNVBAsMClNVUkZjb25leHQxKjAoBgNVBAMMIWVuZ2luZS5hY2Muc3VyZmNvbmV4dC5ubCAyMDIzMDUwMzAeFw0yMzA1MDMxMTM0MTZaFw0yODA1MDIxMTM0MTZaMIGGMQswCQYDVQQGEwJOTDEQMA4GA1UECAwHVXRyZWNodDEQMA4GA1UEBwwHVXRyZWNodDESMBAGA1UECgwJU1VSRiBCLlYuMRMwEQYDVQQLDApTVVJGY29uZXh0MSowKAYDVQQDDCFlbmdpbmUuYWNjLnN1cmZjb25leHQubmwgMjAyMzA1MDMwggGiMA0GCSqGSIb3DQEBAQUAA4IBjwAwggGKAoIBgQC7MAGRa2oP8QBa+nlU+MFX4XHIvQg8bm+pRAN4sDHXIom+dD5Uvboq/y2+Pc1tio10k/jfJrc9zd72ECVhN21WE/bZa6EQsprxF0rklMQizdPOrZ+XLt1zNddb7D7LCZ/0VRD2xJQ5ojeWNfEdKHFjIG7Oe+LbQAFgLlkN4YXSyqBdCUrbK3FjOSWAH56ZoKVCr0plSTXINTNVbC6IK+jAUV7iLUIqFkmecbEvC6mxt9Nacsbu2MYVee3adG0WQKXGCjIap4A7Dvml0JtuS8iO07IQqrCi768JswgobKDTifWudi07wiqImmULiWIAJwXj8QA+PCLhJ2QSGCL1i4ZJUw5kD2snfIjHW7zDaZMhUmKzpxz2Z4RnILVxapu+2qXBrWqHNYKGwrQnD2Z4116UKB94adr1DCIw94hqJYRBpi91WgnVaouDQ+JPXhirWZvOEKVHQEqBQQc7VzLoMdc9lH+rP7UkIq/0r71g0pr+TQeaaP5/LJh7V8UpUPxFGuMCAwEAAaNTMFEwHQYDVR0OBBYEFPHaFu/kUyzlZhzQj7lpt19VM5doMB8GA1UdIwQYMBaAFPHaFu/kUyzlZhzQj7lpt19VM5doMA8GA1UdEwEB/wQFMAMBAf8wDQYJKoZIhvcNAQELBQADggGBABG2deVnt+Qu4SLT8fzFbilqZUVwDJRoJSr7O+Gkb8anaVxQbNPcGW7B2b75toNqw8n5/9q0Py/JWP5Zy8EIycZZxtXuhZrs0G1Ep3TgAAHyvfGuwjNZHA3+R7zkxR47di24Agtd8d/HOjlRz3YwHS8XbKMInq6weJ0xc8ZvX7SxEOf+dls6lA9OWeWpKrwUalowAVdJijZiasl7MuWqVUiTOdCp/3hTzIDoOJh8zqgYN1ghUiJR6ri9+FLUhCOBifI7zHuNd2pWIfHk9PypGWmC8GHdSpR6kIz/pOioJS/CnMAIslw5QKjtwbGRcJh1v9QT+w2dYtCCHBuoBS5Q4nienBMLWdzSBT80jNVD/R1rOEY6rflp4WD8uT1YfpmUJaSKq4j0M7AHfb4bXI0KQQIV5tA8rNXlP9j6D+tbkfDx3CcTKGlSMc3Iszxlw0p7ndVXVlGCpe69Cz23SIXuUsgZhkFGMCvggfT2720R/sNnK73QWr7zTjoSxA5m0OoHUw==',
+        ],
+    ],
+    'UIInfo' => [
+        'DisplayName' => [
+            'nl' => 'SURFconext ACC',
+            'en' => 'SURFconext ACC',
+        ],
+        'Description' => [
+            'nl' => 'SURFconext ACC',
+            'en' => 'SURFconext ACC',
+        ],
+        'InformationURL' => [],
+        'PrivacyStatementURL' => [],
+        'Keywords' => [
+            'en' => [
+                'SURFconext',
+                'engine',
+            ],
+            'nl' => [
+                'SURFconext',
+                'engine',
+            ],
+        ],
+        'Logo' => [
+            [
+                'url' => 'https://static.surfconext.nl/media/idp/surfconext.png',
+                'height' => 160,
+                'width' => 200,
+            ],
+        ],
+    ],
+];
+
+$metadata['https://engine.surfconext.nl/authentication/idp/metadata'] = [
+    'entityid' => 'https://engine.surfconext.nl/authentication/idp/metadata',
+    'description' => [
+        'en' => 'SURF BV',
+    ],
+    'OrganizationName' => [
+        'en' => 'SURF BV',
+    ],
+    'name' => [
+        'nl' => 'SURFconext',
+        'en' => 'SURFconext',
+    ],
+    'OrganizationDisplayName' => [
+        'en' => 'SURF',
+    ],
+    'url' => [
+        'en' => 'https://www.surf.nl',
+    ],
+    'OrganizationURL' => [
+        'en' => 'https://www.surf.nl',
+    ],
+    'contacts' => [
+        [
+            'contactType' => 'administrative',
+            'givenName' => 'SURFconext support',
+            'emailAddress' => [
+                'support@surfconext.nl',
+            ],
+        ],
+        [
+            'contactType' => 'technical',
+            'givenName' => 'SURFconext support',
+            'emailAddress' => [
+                'support@surfconext.nl',
+            ],
+        ],
+        [
+            'contactType' => 'support',
+            'givenName' => 'SURFconext support',
+            'emailAddress' => [
+                'help@surfconext.nl',
+            ],
+        ],
+    ],
+    'metadata-set' => 'saml20-idp-remote',
+    'SingleSignOnService' => [
+        [
+            'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
+            'Location' => 'https://engine.surfconext.nl/authentication/idp/single-sign-on/key:20230503',
+        ],
+    ],
+    'SingleLogoutService' => [],
+    'ArtifactResolutionService' => [],
+    'NameIDFormats' => [
+        'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent',
+        'urn:oasis:names:tc:SAML:2.0:nameid-format:transient',
+        'urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified',
+    ],
+    'keys' => [
+        [
+            'encryption' => false,
+            'signing' => true,
+            'type' => 'X509Certificate',
+            'X509Certificate' => 'MIIE5zCCA0+gAwIBAgIUIJeRiN7bgv0apHl2FId0MnX50AwwDQYJKoZIhvcNAQELBQAwgYIxCzAJBgNVBAYTAk5MMRAwDgYDVQQIDAdVdHJlY2h0MRAwDgYDVQQHDAdVdHJlY2h0MRIwEAYDVQQKDAlTVVJGIEIuVi4xEzARBgNVBAsMClNVUkZjb25leHQxJjAkBgNVBAMMHWVuZ2luZS5zdXJmY29uZXh0Lm5sIDIwMjMwNTAzMB4XDTIzMDUwMzEwMDkwNFoXDTI4MDUwMjEwMDkwNFowgYIxCzAJBgNVBAYTAk5MMRAwDgYDVQQIDAdVdHJlY2h0MRAwDgYDVQQHDAdVdHJlY2h0MRIwEAYDVQQKDAlTVVJGIEIuVi4xEzARBgNVBAsMClNVUkZjb25leHQxJjAkBgNVBAMMHWVuZ2luZS5zdXJmY29uZXh0Lm5sIDIwMjMwNTAzMIIBojANBgkqhkiG9w0BAQEFAAOCAY8AMIIBigKCAYEAmarOz3JN7K2rZJxR5Oy061oRh3aZ3zmM8jbUaztSXNJwmZaN+AZjnowSkyT9MRRDLn4ZX1hy1f4kQOhf8BxU9TxK1ATviGUegpT2fUa3HR3JQyi8zMSjS3aGJxwokE4uST10SI1fV4aG8SsbKb0tzaH22eT6wJHgvfFs7iSOZdcI7kvXEGLPP7VIfRaiKqIxDT5DcUe0QX5F1zcPPniazSCwW81Ta2xZnwrXKJiXwgl3K2SrBBN7ss/qmSRpBT1pLvBiIDbM8n8fp8+lGQzX6DcGqJA7+5+UryRIY5f6ZzJs5qUNzTdLQLE82xaZsyhJVQrVkuXk5ufCXOa5izspTnVMOgu56FH0b0iwvpEwq1OAtrWoj/CIOZt0VsTB4cn00sATWjV/ss33iauEqSsb8e7THIZfF2nZ5QBG3mUynsyTTU5cxouTQ+UdISvdAOhrV5a4j/d5rbqplVFjCm0KNCIz/tnNIQpGDvmk9vMn9Z52tJ9gQYo/rv4pUGxKu7yTAgMBAAGjUzBRMB0GA1UdDgQWBBSLXQ3uF1SkIkMTdXl9Om/jn3asZjAfBgNVHSMEGDAWgBSLXQ3uF1SkIkMTdXl9Om/jn3asZjAPBgNVHRMBAf8EBTADAQH/MA0GCSqGSIb3DQEBCwUAA4IBgQBX1rZrm9EakYBnr64BRTKEZ3bIju7CvdbDo2kJMJkLN94qndkwntiECJ53M5lEzR96MrYs20Puqs3/OuJPyJ6CyUM3fsYR8fgXqapgVdyf8nLCAKM+HjhbLZzbkrdLeo+szeBbYV0XDotz4j/oLPnnJDNSDx9pW61woXdqJI8EYu61+IZ+VV6VBChfxZmtVeFU8aaK2tQn498Dy5Jf4zibtmuBmx5DMNQLG4onOG6wp4WEvy6XEEyXz+ve6KtJP9tBbxbIsJX0mfRP8w1pX8ttWUGGfCSb+YlX2NgdIayVxg8UjW1BrjQnDX6+f8ENn3980J74LTRF2QdDtM5DtPHPzOfsUsTl7A1DMs9+86z9Y69XyFWMExZoouSo2a8krTW1fqXhmN1nuzndrcrkHd6sVZy7ikcrpXYdcxhn20mNRO1erqBGue/UyHRpNCUGvTIDx6U6VW9wDrN4gXp8HFygyAqN6bpvnATbHbOqGB2nA04PZRklBqlod0mZCq4Z1pQ=',
+        ],
+    ],
+    'UIInfo' => [
+        'DisplayName' => [
+            'nl' => 'SURFconext',
+            'en' => 'SURFconext',
+        ],
+        'Description' => [
+            'nl' => 'SURFconext',
+            'en' => 'SURFconext',
+        ],
+        'InformationURL' => [],
+        'PrivacyStatementURL' => [],
+        'Keywords' => [
+            'en' => [
+                'SURFconext',
+                'engine',
+            ],
+            'nl' => [
+                'SURFconext',
+                'engine',
+            ],
+        ],
+        'Logo' => [
+            [
+                'url' => 'https://static.surfconext.nl/media/idp/surfconext.png',
+                'height' => 160,
+                'width' => 200,
+            ],
+        ],
+    ],
+];
