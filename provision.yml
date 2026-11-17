@@ -11,12 +11,14 @@
     - name: "Read vars from secrets file"
       include_vars: "{{ secrets_file }}"
     - name: "Get local git version of deploy and inventory"  # noqa: run-once[task]
-      command:
-        cmd: "git log --pretty=format:'%h%d' -n1"
+      ansible.builtin.command:
+        cmd: git log --pretty=format:'%h%d' -n1
         chdir: "{{item}}"
-      with_items: ["{{playbook_dir}}","{{inventory_dir}}"]
-      delegate_to: "localhost"
-      register: "git_version"
+      loop:
+        - "{{ playbook_dir }}"
+        - "{{ inventory_dir }}"
+      delegate_to: localhost
+      register: git_version
       changed_when: false
       run_once: true
 
