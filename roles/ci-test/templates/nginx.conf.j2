@@ -1,5 +1,5 @@
 server {
-    listen {{ ci_rp_backend_port }} ssl http2;
+    listen {{ ci_rp_backend_port }} ssl;
     server_name {{ inventory_hostname }};
 
     ssl_certificate        {{ ssl_certs_dir }}/{{ internal_base_domain }}.crt;
@@ -26,7 +26,7 @@ server {
 }
 
 server {
-    listen {{ ci_idp_backend_port }} ssl http2;
+    listen {{ ci_idp_backend_port }} ssl;
     server_name {{ inventory_hostname }};
 
     ssl_certificate        {{ ssl_certs_dir }}/{{ internal_base_domain }}.crt;
