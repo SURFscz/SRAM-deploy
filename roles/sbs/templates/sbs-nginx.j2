@@ -1,5 +1,5 @@
 server {
-    listen {{sbs_backend_port}} ssl http2;
+    listen {{sbs_backend_port}} ssl;
     server_name _        sbs.vm.scz-vm.net;
 
     ssl_certificate     {{ ssl_certs_dir }}/{{ internal_base_domain }}.crt;
