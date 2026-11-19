@@ -91,6 +91,7 @@ manage:
   user: "{{ sbs_manage_user }}"
   password: "{{ sbs_manage_password }}"
   verify_peer: {{ sbs_manage_verify_peer }}
+  service_state: "{{ sbs_manage_service_state }}"
 
 aup:
   version: 1
@@ -130,8 +131,6 @@ metadata:
   # No need for environment specific values
   scope_override:
     knaw.nl: "Koninklijke Nederlandse Akademie van Wetenschappen (KNAW)"
-
-cron_job_responsible: {{ sbs_cron_job_responsible }}
 
 platform_admin_notifications:
   # Do we daily check for CO join_requests and CO requests and send a summary mail to beheer_email?
@@ -265,5 +264,5 @@ excluded_user_accounts:
 {% endfor %}
 
 engine_block:
-  api_token: "{{ sbs_engine_block_api_token }}"
+  api_token: {{ sbs_engine_block_api_token }}
   entity_id: "{{ sbs_engine_block_entity_id }}"

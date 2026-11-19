@@ -82,8 +82,8 @@ admin:
   sho: "{{base_domain}}"
 
 # versions
-sbs_version: "branch+main"
-plsc_version: "main"
+sbs_version:  "v71.8"
+plsc_version: "v39"
 
 # poor man's user management
 root:
