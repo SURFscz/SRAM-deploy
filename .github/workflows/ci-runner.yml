@@ -24,6 +24,9 @@ jobs:
         uses: actions/checkout@v6
 
       # Decrypt secret
+      # This is an Ansible Vault key, used to decrypt Ansible secrets
+      # The vault key is stored in https://github.com/SURFscz/SRAM-deploy/settings/secrets/actions
+      # and used in ../../start-vm:174
       - name: Copy secret
         shell: bash
         env:
