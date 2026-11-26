@@ -136,15 +136,6 @@ jobs:
       - name: Run idempotency check...
         run: /usr/bin/python3 ./scripts/check-idempotency-status
 
-      - name: Debug browser setup
-        run: |
-          whoami
-          which -a google-chrome google-chrome-stable chromium chromedriver || true
-          google-chrome --version || true
-          chromedriver --version || true
-          df -h /dev/shm
-          google-chrome --headless=new --no-sandbox --disable-gpu --dump-dom about:blank
-
       # Run SBS logintest
       - name: Run SBS logintest
         run: /usr/bin/python3 ./scripts/sbs-login.py
