@@ -91,6 +91,7 @@ manage:
   user: "{{ sbs_manage_user }}"
   password: "{{ sbs_manage_password }}"
   verify_peer: {{ sbs_manage_verify_peer }}
+  service_state: "{{ sbs_manage_service_state }}"
 
 aup:
   version: 1
@@ -265,5 +266,5 @@ excluded_user_accounts:
 {% endfor %}
 
 engine_block:
-  api_token: "{{ sbs_engine_block_api_token }}"
+  api_token: {{ sbs_engine_block_api_token }}
   entity_id: "{{ sbs_engine_block_entity_id }}"

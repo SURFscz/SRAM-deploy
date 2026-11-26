@@ -73,7 +73,6 @@ admin:
   sho: "{{base_domain}}"
 
 # versions
-# versions
 sbs_version: "branch+main"
 plsc_version: "main"
 
