@@ -3,8 +3,6 @@
 import time
 import json
 import traceback
-import shutil
-import os
 
 from selenium import webdriver
 from selenium import __version__ as selenium_version
@@ -29,25 +27,8 @@ options = webdriver.chrome.options.Options()
 options.add_argument('--headless')
 options.add_argument('ignore-certificate-errors')
 options.set_capability('goog:loggingPrefs', {'browser': 'ALL'})
-options.add_argument('--no-sandbox')
-options.add_argument('--disable-dev-shm-usage')
-options.add_argument('--disable-gpu')
 
-# Use whichever browser is installed on this machine
-browser_bin = (
-    shutil.which("google-chrome")
-    or shutil.which("google-chrome-stable")
-    or shutil.which("chromium")
-    or shutil.which("chromium-browser")
-)
-if browser_bin:
-    options.binary_location = browser_bin
-
-# Prefer a system chromedriver, otherwise Selenium Manager fetches a matching one
-driver_path = os.environ.get("CHROMEDRIVER_PATH")  # optional override
-service = ChromeService(driver_path) if driver_path else ChromeService()
-
-browser = CustomChrome(service=service, options=options)
+browser = CustomChrome(service=ChromeService(ChromeDriverManager().install()), options=options)
 wait = WebDriverWait(browser, timeout=3)
 
 send_command = ('POST', '/session/$sessionId/chromium/send_command')
