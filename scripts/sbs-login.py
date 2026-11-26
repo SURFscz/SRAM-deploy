@@ -28,6 +28,7 @@ options = webdriver.chrome.options.Options()
 options.add_argument('--headless')
 options.add_argument('ignore-certificate-errors')
 options.set_capability('goog:loggingPrefs', {'browser': 'ALL'})
+options.add_argument('--no-sandbox')
 
 # Use whichever browser is installed on this machine
 browser_bin = (
