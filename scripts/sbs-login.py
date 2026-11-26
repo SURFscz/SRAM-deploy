@@ -4,6 +4,7 @@ import time
 import json
 import traceback
 import shutil
+import os
 
 from selenium import webdriver
 from selenium import __version__ as selenium_version
